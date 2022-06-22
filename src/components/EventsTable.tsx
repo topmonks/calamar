@@ -2,23 +2,30 @@ import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { eventsState } from "../state/events";
 import {
+  Box,
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Grid,
+  IconButton,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
   TableRow,
+  TextField,
 } from "@mui/material";
 import { getEvents } from "../services/eventsService";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
+import { ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
+import EventsTableRow from "./EventsTableRow";
+import EventsParamsTable from "./EventsParamsTable";
 
 const HeaderTableRow = styled(TableRow)`
   th {
@@ -26,63 +33,196 @@ const HeaderTableRow = styled(TableRow)`
   }
 `;
 
+const shortenHash = (hash: string) => {
+  return `${hash.slice(0, 6)}...${hash.slice(-6)}`;
+};
+
+type Page = {
+  limit: number;
+  offset: number;
+};
+
 function EventsTable() {
   const [events, setEvents] = useRecoilState(eventsState);
   const [checked, setChecked] = React.useState(true);
+  const [filter, setFilter] = React.useState({
+    section: "",
+    method: "",
+    extrinsic: {
+      signer: "",
+      isSigned: true,
+    },
+  } as {
+    section: string;
+    method: string;
+    extrinsic: {
+      signer: string;
+      isSigned: boolean | undefined;
+    };
+  });
+  const [pagination, setPagination] = React.useState({
+    limit: 10,
+    offset: 0,
+  } as Page);
+
   const navigate = useNavigate();
 
-  const getEventsAndSetState = async (onlySigned: boolean) => {
-    const events = await getEvents(10, 0, onlySigned);
-    setEvents(events);
-  };
-
-  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeOnlySignedCheckbox = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setChecked(event.target.checked);
-    await getEventsAndSetState(event.target.checked);
+    // remove isSigned from filter if unchecked
+    if (event.target.checked) {
+      setFilter({
+        ...filter,
+        extrinsic: {
+          ...filter.extrinsic,
+          isSigned: true,
+        },
+      });
+    } else {
+      delete filter.extrinsic.isSigned;
+      setFilter(filter);
+    }
   };
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      await getEventsAndSetState(checked);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    const getEventsAndSetState = async (
+      limit: number,
+      offset: number,
+      filter?: {
+        section?: string;
+        method?: string;
+        signer?: string;
+        isSigned?: boolean;
+      }
+    ) => {
+      const events = await getEvents(limit, offset, filter || {});
+      setEvents(events);
+    };
+    getEventsAndSetState(pagination.limit, pagination.offset, filter);
+    // const interval = setInterval(async () => {
+    //   await getEventsAndSetState(filter);
+    // }, 10000);
+    // return () => clearInterval(interval);
+  }, [
+    filter.section,
+    filter.method,
+    filter.extrinsic.signer,
+    filter.extrinsic.isSigned,
+    filter,
+    pagination.offset,
+    pagination.limit,
+    pagination,
+    setEvents,
+  ]);
+
+  function getPreviousPage() {
+    if (pagination.offset === 0) {
+      return;
+    }
+    setPagination({
+      ...pagination,
+      offset: pagination.offset - pagination.limit,
+    });
+  }
+
+  function getNextPage() {
+    setPagination({
+      ...pagination,
+      offset: pagination.offset + pagination.limit,
+    });
+  }
 
   return (
     <div>
-      <h3>Events</h3>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={checked}
-              inputProps={{ "aria-label": "controlled" }}
-              onChange={handleChange}
-            />
-          }
-          label="Only signed"
-        />
-      </FormGroup>
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table" sx={{ minWidth: 650 }}>
+      <TableContainer
+        component={Paper}
+        sx={{ minWidth: 650, width: "fit-content", margin: "auto" }}
+      >
+        <Table aria-label="simple table">
           <TableHead>
             <HeaderTableRow>
-              <TableCell>Id</TableCell>
-              <TableCell align="right">Section</TableCell>
-              <TableCell align="right">Method</TableCell>
-              <TableCell align="right">Is signed</TableCell>
-              <TableCell align="right">Signer</TableCell>
+              <TableCell colSpan={7}>
+                <h3>Events</h3>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={checked}
+                        inputProps={{ "aria-label": "controlled" }}
+                        onChange={(e) => handleChangeOnlySignedCheckbox(e)}
+                      />
+                    }
+                    label="Only signed"
+                  />
+                </FormGroup>
+              </TableCell>
+            </HeaderTableRow>
+            <HeaderTableRow>
               <TableCell />
+              <TableCell>Id</TableCell>
+              <TableCell align="right">
+                <Grid container spacing={2}>
+                  <Grid item>
+                    <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                      <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+                      <TextField
+                        id="search-section"
+                        label="Search"
+                        onChange={(e) => {
+                          setFilter({ ...filter, section: e.target.value });
+                        }}
+                        variant="standard"
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item>Section</Grid>
+                </Grid>
+              </TableCell>
+              <TableCell align="right">
+                <div style={{ float: "right" }}>Method</div>
+                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                  <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+                  <TextField
+                    id="search-method"
+                    label="Search"
+                    onChange={(e) => {
+                      setFilter({ ...filter, method: e.target.value });
+                    }}
+                    variant="standard"
+                  />
+                </Box>
+              </TableCell>
+              <TableCell align="right">Is signed</TableCell>
+              <TableCell align="right">
+                <div style={{ float: "right" }}>Signer</div>
+                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                  <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+                  <TextField
+                    id="search-signer"
+                    label="Search"
+                    onChange={(e) => {
+                      setFilter({
+                        ...filter,
+                        extrinsic: {
+                          ...filter.extrinsic,
+                          signer: e.target.value,
+                        },
+                      });
+                    }}
+                    variant="standard"
+                  />
+                </Box>
+              </TableCell>
+              <TableCell align="right">Extrinsic hash</TableCell>
             </HeaderTableRow>
           </TableHead>
           <TableBody>
             {events.map((event: any) => (
-              <TableRow
+              <EventsTableRow
+                expandComponent={<EventsParamsTable params={event.params} />}
                 key={event.id}
-                onClick={() => {
-                  navigate("/events/" + event.id);
-                }}
-                style={{ cursor: "pointer" }}
                 sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
@@ -99,12 +239,37 @@ function EventsTable() {
                 </TableCell>
                 <TableCell align="right">{event.extrinsic.signer}</TableCell>
                 <TableCell align="right">
-                  <KeyboardArrowRight />
+                  <a
+                    href={`/extrinsic/${event.extrinsic.hash}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/extrinsic/${event.extrinsic.hash}`);
+                    }}
+                  >
+                    {shortenHash(event.extrinsic.hash)}
+                  </a>
                 </TableCell>
-              </TableRow>
+              </EventsTableRow>
             ))}
           </TableBody>
         </Table>
+        <TableFooter>
+          <TableRow>
+            <TableCell>
+              <>
+                <IconButton
+                  disabled={pagination.offset === 0}
+                  onClick={() => getPreviousPage()}
+                >
+                  <ChevronLeft />
+                </IconButton>
+                <IconButton onClick={() => getNextPage()}>
+                  <ChevronRight />
+                </IconButton>
+              </>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
       </TableContainer>
     </div>
   );

@@ -7,6 +7,6 @@ import { getEvents } from "../services/eventsService";
 export const eventsState = atom({
   key: "events",
   default: (async () => {
-    return getEvents(10, 0);
+    return getEvents(10, 0, {});
   })(),
 });
