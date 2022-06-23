@@ -1,42 +1,20 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { ExtrinsicsFilter } from "./extrinsicsService";
+import { filterToWhere } from "../utils/filterToWhere";
 
-export type ExtrinsicFilter = {
-  isSigned?: boolean;
-  hash?: string;
-};
-
-export type Filter = {
+export type EventsFilter = {
   id?: string;
   section?: string;
   method?: string;
   signer?: string;
-  extrinsic?: ExtrinsicFilter;
+  extrinsic?: ExtrinsicsFilter;
 };
 
-// create filterToWhere function
-const filterToWhere = (filter: Filter): string => {
-  let where = "";
-  for (let key in filter) {
-    // @ts-ignore
-    if (filter[key] instanceof Object) {
-      where += `${key}: {`;
-      // @ts-ignore
-      where += filterToWhere(filter[key]);
-      where += `}`;
-    } else {
-      // @ts-ignore
-      if (filter[key] !== "") {
-        // @ts-ignore
-        where += `${key}: {_eq: ${filter[key]}}, `;
-      }
-    }
-  }
-  // where = where.slice(0, -2);
-  where = where.replace(/"([^(")"]+)":/g, "$1:");
-  return where;
-};
-
-const getEvents = async (limit: Number, offset: Number, filter: Filter) => {
+const getEvents = async (
+  limit: Number,
+  offset: Number,
+  filter: EventsFilter
+) => {
   const where = filterToWhere(filter);
 
   const response =
@@ -46,6 +24,7 @@ const getEvents = async (limit: Number, offset: Number, filter: Filter) => {
         section
         method
         params
+        created_at
         extrinsic {
           hash
           signer  

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { eventsState } from "../state/events";
+import { eventsState } from "../../state/events";
 import {
   Box,
   Checkbox,
@@ -17,8 +17,9 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
 } from "@mui/material";
-import { getEvents } from "../services/eventsService";
+import { getEvents } from "../../services/eventsService";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useNavigate } from "react-router-dom";
@@ -26,16 +27,17 @@ import styled from "@emotion/styled";
 import { ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
 import EventsTableRow from "./EventsTableRow";
 import EventsParamsTable from "./EventsParamsTable";
+import { shortenHash } from "../../utils/shortenHash";
+import {
+  convertTimestampToTimeFromNow,
+  formatDate,
+} from "../../utils/convertTimestampToTimeFromNow";
 
 const HeaderTableRow = styled(TableRow)`
   th {
     font-weight: bold !important;
   }
 `;
-
-const shortenHash = (hash: string) => {
-  return `${hash.slice(0, 6)}...${hash.slice(-6)}`;
-};
 
 type Page = {
   limit: number;
@@ -101,10 +103,10 @@ function EventsTable() {
       setEvents(events);
     };
     getEventsAndSetState(pagination.limit, pagination.offset, filter);
-    // const interval = setInterval(async () => {
-    //   await getEventsAndSetState(filter);
-    // }, 10000);
-    // return () => clearInterval(interval);
+    const interval = setInterval(async () => {
+      await getEventsAndSetState(pagination.limit, pagination.offset, filter);
+    }, 10000);
+    return () => clearInterval(interval);
   }, [
     filter.section,
     filter.method,
@@ -216,6 +218,7 @@ function EventsTable() {
                 </Box>
               </TableCell>
               <TableCell align="right">Extrinsic hash</TableCell>
+              <TableCell align="right">Time</TableCell>
             </HeaderTableRow>
           </TableHead>
           <TableBody>
@@ -237,7 +240,9 @@ function EventsTable() {
                     <CancelIcon />
                   )}
                 </TableCell>
-                <TableCell align="right">{event.extrinsic.signer}</TableCell>
+                <TableCell align="right">
+                  {shortenHash(event.extrinsic.signer)}
+                </TableCell>
                 <TableCell align="right">
                   <a
                     href={`/extrinsic/${event.extrinsic.hash}`}
@@ -248,6 +253,13 @@ function EventsTable() {
                   >
                     {shortenHash(event.extrinsic.hash)}
                   </a>
+                </TableCell>
+                <TableCell>
+                  <Tooltip placement="top" title={formatDate(event.created_at)}>
+                    <span>
+                      {convertTimestampToTimeFromNow(event.created_at)}
+                    </span>
+                  </Tooltip>
                 </TableCell>
               </EventsTableRow>
             ))}
