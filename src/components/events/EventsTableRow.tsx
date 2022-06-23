@@ -22,8 +22,8 @@ function EventsTableRow({ children, expandComponent, ...otherProps }: Props) {
         {children}
       </TableRow>
       {isExpanded && (
-        <TableRow>
-          <TableCell colSpan={7}>{expandComponent}</TableCell>
+        <TableRow style={{ backgroundColor: "#fed6d2" }}>
+          <TableCell colSpan={8}>{expandComponent}</TableCell>
         </TableRow>
       )}
     </>

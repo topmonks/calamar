@@ -35,7 +35,7 @@ function EventsParamsTable({
   return (
     <TableContainer
       component={Paper}
-      style={{ maxWidth: "100%", width: "fit-content", margin: "auto" }}
+      style={{ maxWidth: "100%", width: "fit-content" }}
     >
       <Table>
         <TableHead>

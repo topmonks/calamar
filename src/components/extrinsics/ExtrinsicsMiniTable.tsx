@@ -68,10 +68,7 @@ function ExtrinsicsMiniTable() {
   }
 
   return (
-    <TableContainer
-      component={Paper}
-      style={{ width: "fit-content", margin: "auto" }}
-    >
+    <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>

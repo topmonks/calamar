@@ -138,87 +138,111 @@ function EventsTable() {
 
   return (
     <div>
-      <TableContainer
-        component={Paper}
-        sx={{ minWidth: 650, width: "fit-content", margin: "auto" }}
-      >
+      <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
             <HeaderTableRow>
-              <TableCell colSpan={7}>
-                <h3>Events</h3>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        inputProps={{ "aria-label": "controlled" }}
-                        onChange={(e) => handleChangeOnlySignedCheckbox(e)}
+              <TableCell colSpan={8}>
+                <Grid container spacing={2}>
+                  <Grid item xs="auto">
+                    <h3>Events</h3>
+                  </Grid>
+                  <Grid item xs="auto">
+                    <FormGroup style={{ marginTop: "8px" }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={checked}
+                            inputProps={{ "aria-label": "controlled" }}
+                            onChange={(e) => handleChangeOnlySignedCheckbox(e)}
+                          />
+                        }
+                        label="Only signed"
                       />
-                    }
-                    label="Only signed"
-                  />
-                </FormGroup>
+                    </FormGroup>
+                  </Grid>
+                </Grid>
               </TableCell>
             </HeaderTableRow>
             <HeaderTableRow>
               <TableCell />
               <TableCell>Id</TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Grid container spacing={2}>
+                  <Grid item style={{ margin: "auto" }}>
+                    Section
+                  </Grid>
                   <Grid item>
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-                      <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
                       <TextField
+                        InputProps={{
+                          startAdornment: <Search />,
+                        }}
                         id="search-section"
-                        label="Search"
                         onChange={(e) => {
                           setFilter({ ...filter, section: e.target.value });
                         }}
-                        variant="standard"
+                        size="small"
+                        variant="filled"
                       />
                     </Box>
                   </Grid>
-                  <Grid item>Section</Grid>
                 </Grid>
               </TableCell>
-              <TableCell align="right">
-                <div style={{ float: "right" }}>Method</div>
-                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-                  <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-                  <TextField
-                    id="search-method"
-                    label="Search"
-                    onChange={(e) => {
-                      setFilter({ ...filter, method: e.target.value });
-                    }}
-                    variant="standard"
-                  />
-                </Box>
+              <TableCell>
+                <Grid container spacing={2}>
+                  <Grid item style={{ margin: "auto" }}>
+                    Method
+                  </Grid>
+                  <Grid item>
+                    <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                      <TextField
+                        InputProps={{
+                          startAdornment: <Search />,
+                        }}
+                        id="search-method"
+                        onChange={(e) => {
+                          setFilter({ ...filter, method: e.target.value });
+                        }}
+                        size="small"
+                        variant="filled"
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
               </TableCell>
-              <TableCell align="right">Is signed</TableCell>
-              <TableCell align="right">
-                <div style={{ float: "right" }}>Signer</div>
-                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-                  <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-                  <TextField
-                    id="search-signer"
-                    label="Search"
-                    onChange={(e) => {
-                      setFilter({
-                        ...filter,
-                        extrinsic: {
-                          ...filter.extrinsic,
-                          signer: e.target.value,
-                        },
-                      });
-                    }}
-                    variant="standard"
-                  />
-                </Box>
+              <TableCell>Is signed</TableCell>
+              <TableCell>
+                <Grid container spacing={2} wrap="nowrap">
+                  <Grid item style={{ margin: "auto" }}>
+                    Signer
+                  </Grid>
+                  <Grid item>
+                    <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                      <TextField
+                        InputProps={{
+                          startAdornment: <Search />,
+                        }}
+                        id="search-signer"
+                        onChange={(e) => {
+                          setFilter({
+                            ...filter,
+                            extrinsic: {
+                              ...filter.extrinsic,
+                              signer: e.target.value,
+                            },
+                          });
+                        }}
+                        size="small"
+                        variant="filled"
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
               </TableCell>
-              <TableCell align="right">Extrinsic hash</TableCell>
-              <TableCell align="right">Time</TableCell>
+              <TableCell>Extrinsic hash</TableCell>
+              <TableCell>Time</TableCell>
+              <TableCell />
             </HeaderTableRow>
           </TableHead>
           <TableBody>
@@ -231,19 +255,17 @@ function EventsTable() {
                 }}
               >
                 <TableCell>{event.id}</TableCell>
-                <TableCell align="right">{event.section}</TableCell>
-                <TableCell align="right">{event.method}</TableCell>
-                <TableCell align="right">
+                <TableCell>{event.section}</TableCell>
+                <TableCell>{event.method}</TableCell>
+                <TableCell>
                   {event.extrinsic.isSigned ? (
                     <CheckCircleIcon />
                   ) : (
                     <CancelIcon />
                   )}
                 </TableCell>
-                <TableCell align="right">
-                  {shortenHash(event.extrinsic.signer)}
-                </TableCell>
-                <TableCell align="right">
+                <TableCell>{shortenHash(event.extrinsic.signer)}</TableCell>
+                <TableCell>
                   <a
                     href={`/extrinsic/${event.extrinsic.hash}`}
                     onClick={(e) => {
