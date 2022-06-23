@@ -6,7 +6,7 @@ import BlocksMiniTable from "../components/blocks/BlocksMiniTable";
 
 function Dashboard() {
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} style={{ padding: "64px 64px" }}>
       <Grid item xs={6}>
         <BlocksMiniTable />
       </Grid>
