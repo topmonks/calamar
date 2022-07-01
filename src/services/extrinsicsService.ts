@@ -6,6 +6,7 @@ export type ExtrinsicsFilter = {
   blockId?: string;
   hash?: string;
   isSigned?: boolean;
+  signer?: string;
 };
 
 const getExtrinsics = async (
