@@ -9,12 +9,18 @@ import ExtrinsicPage from "./screens/extrinsic";
 function App() {
   return (
     <RecoilRoot>
-      <BrowserRouter>
+      <BrowserRouter
+        basename={
+          window.location.hostname === "localhost"
+            ? undefined
+            : process.env.PUBLIC_URL
+        }
+      >
         <Routes>
-          <Route element={<EventsTable />} path="/calamar/events" />
-          <Route element={<ExtrinsicPage />} path="/calamar/extrinsic/:hash" />
-          <Route element={<></>} path="/calamar/blocks" />
-          <Route element={<Dashboard />} path="/calamar/" />
+          <Route element={<EventsTable />} path="/events" />
+          <Route element={<ExtrinsicPage />} path="/extrinsic/:hash" />
+          <Route element={<></>} path="/blocks" />
+          <Route element={<Dashboard />} path="/" />
         </Routes>
       </BrowserRouter>
     </RecoilRoot>

@@ -15,7 +15,7 @@ function SearchInput() {
         console.log(block);
       } else {
         // redirect to page with extrinsic details
-        window.location.href = `/calamar/extrinsic/${search}`;
+        window.location.href = `/extrinsic/${search}`;
       }
     } else {
       // other search

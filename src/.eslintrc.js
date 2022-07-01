@@ -27,6 +27,7 @@ module.exports = {
   },
   rules: {
     "react/jsx-sort-props": "error",
+    "no-unused-vars": "warn",
   },
   overrides: [
     {
