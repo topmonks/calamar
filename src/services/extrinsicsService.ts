@@ -2,15 +2,26 @@ import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
 export type ExtrinsicsFilter = {
-  isSigned?: boolean;
+  id?: string;
+  blockId?: string;
   hash?: string;
+  isSigned?: boolean;
 };
 
 const getExtrinsics = async (
   limit: Number,
   offset: Number,
   filter: ExtrinsicsFilter,
-  fields = ["id", "section", "method", "signer", "hash", "created_at"]
+  fields = [
+    "id",
+    "section",
+    "method",
+    "signer",
+    "hash",
+    "created_at",
+    "blockId",
+    "blockHash",
+  ]
 ) => {
   const where = filterToWhere(filter);
 

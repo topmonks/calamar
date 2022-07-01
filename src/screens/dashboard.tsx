@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import EventsTable from "../components/events/EventsTable";
-import ExtrinsicsMiniTable from "../components/extrinsics/ExtrinsicsMiniTable";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import BlocksMiniTable from "../components/blocks/BlocksMiniTable";
 import SearchInput from "../components/SearchInput";
 
@@ -14,9 +14,7 @@ function Dashboard() {
       <Grid item xs={6}>
         <BlocksMiniTable />
       </Grid>
-      <Grid item xs={6}>
-        <ExtrinsicsMiniTable />
-      </Grid>
+      <Grid item xs={6}></Grid>
       <Grid item xs={12}>
         <EventsTable />
       </Grid>

@@ -26,8 +26,9 @@ const getEvents = async (
         params
         created_at
         extrinsic {
+          id
           hash
-          signer  
+          signer
           isSigned
         }
       }}`);

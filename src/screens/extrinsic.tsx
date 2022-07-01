@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { getExtrinsics } from "../services/extrinsicsService";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -20,26 +20,15 @@ import ExtrinsicEventsTable from "../components/extrinsics/ExtrinsicEventsTable"
 
 function ExtrinsicPage() {
   const [extrinsic, setExtrinsic] = React.useState<any>(null);
-  let { hash } = useParams();
-  const [events, setEvents] = React.useState<any>([]);
+  let { id } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
-      const extrinsic = await getExtrinsics(1, 0, { hash });
+      const extrinsic = await getExtrinsics(1, 0, { id });
       setExtrinsic(extrinsic[0]);
     };
     fetchData();
-  }, [hash]);
-
-  useEffect(() => {
-    const getEventsAndSetState = async () => {
-      if (hash) {
-        const events = await getEvents(100, 0, { extrinsic: { hash } });
-        setEvents(events);
-      }
-    };
-    getEventsAndSetState();
-  }, [setEvents]);
+  }, [id]);
 
   if (extrinsic) {
     return (
@@ -62,6 +51,14 @@ function ExtrinsicPage() {
               <TableRow>
                 <TableCell>Method</TableCell>
                 <TableCell>{extrinsic.method}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Block hash</TableCell>
+                <TableCell>
+                  <Link to={`/block/${extrinsic.blockId}`}>
+                    {extrinsic.blockHash}
+                  </Link>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Is signed</TableCell>
@@ -89,7 +86,7 @@ function ExtrinsicPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        <ExtrinsicEventsTable events={events} />
+        <ExtrinsicEventsTable extrinsicId={extrinsic.id} />
       </div>
     );
   }

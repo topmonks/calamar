@@ -5,6 +5,7 @@ import EventsTable from "./components/events/EventsTable";
 import { RecoilRoot } from "recoil";
 import Dashboard from "./screens/dashboard";
 import ExtrinsicPage from "./screens/extrinsic";
+import BlockPage from "./screens/block";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
       >
         <Routes>
           <Route element={<EventsTable />} path="/events" />
-          <Route element={<ExtrinsicPage />} path="/extrinsic/:hash" />
+          <Route element={<ExtrinsicPage />} path="/extrinsic/:id" />
+          <Route element={<BlockPage />} path="/block/:id" />
           <Route element={<></>} path="/blocks" />
           <Route element={<Dashboard />} path="/" />
         </Routes>

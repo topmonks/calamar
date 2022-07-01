@@ -2,8 +2,9 @@ import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
 export type BlocksFilter = {
-  isSigned?: boolean;
+  id?: string;
   hash?: string;
+  isSigned?: boolean;
 };
 
 const getBlocks = async (
