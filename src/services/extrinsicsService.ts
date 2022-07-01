@@ -4,6 +4,7 @@ import { filterToWhere } from "../utils/filterToWhere";
 export type ExtrinsicsFilter = {
   isSigned?: boolean;
   hash?: string;
+  signer?: string;
 };
 
 const getExtrinsics = async (

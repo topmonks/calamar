@@ -4,22 +4,21 @@ import { filterToWhere } from "../utils/filterToWhere";
 export type BlocksFilter = {
   isSigned?: boolean;
   hash?: string;
+  height?: number;
 };
 
 const getBlocks = async (
   limit: Number,
   offset: Number,
-  filter: BlocksFilter
+  filter: BlocksFilter,
+  fields: string[] = ["id", "hash", "height", "created_at"]
 ) => {
   const where = filterToWhere(filter);
 
   const response =
     await fetchGraphql(`query MyQuery { substrate_block(limit: ${limit}, offset: ${offset}, order_by: {height: desc},
      where: {${where}}) {
-        id
-        hash
-        height
-        created_at
+        ${fields.map((field) => `${field} `)}
       }}`);
   return response.substrate_block;
 };

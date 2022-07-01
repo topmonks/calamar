@@ -2,27 +2,45 @@ import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import { getExtrinsics } from "../services/extrinsicsService";
 import { getBlocks } from "../services/blocksService";
+import { useNavigate } from "react-router-dom";
+
+function isNumber(str: string) {
+  return /^\+?(0|[1-9]\d*)$/.test(str);
+}
 
 function SearchInput() {
   const [search, setSearch] = React.useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (search.startsWith("0x")) {
       const extrinsic = await getExtrinsics(1, 0, { hash: search }, ["id"]);
-      if (!extrinsic.length) {
-        const block = await getBlocks(1, 0, { hash: search });
-        console.log(block);
+      if (extrinsic.length > 0) {
+        navigate(`/extrinsic/${extrinsic.id}`);
       } else {
-        // redirect to page with extrinsic details
-        window.location.href = `/extrinsic/${search}`;
+        const block = await getBlocks(1, 0, { hash: search });
+        if (block.length > 0) {
+          navigate(`/block/${block.id}`);
+        } else {
+          alert("No block or extrinsic found");
+        }
+      }
+    } else if (isNumber(search)) {
+      const block = await getBlocks(1, 0, { height: parseInt(search) }, ["id"]);
+      if (block.length > 0) {
+        navigate(`/block/${block.id}`);
+      } else {
+        alert("No block found");
       }
     } else {
-      // other search
+      const extrinsic = await getExtrinsics(1, 0, { signer: search }, ["id"]);
+      if (extrinsic.length > 0) {
+        navigate(`/account/${search}`);
+      } else {
+        navigate(`/extrinsics/${search}`);
+      }
     }
-
-    const extrinsic = await getExtrinsics(1, 0, { hash: search });
-    console.log(extrinsic);
   };
 
   return (
