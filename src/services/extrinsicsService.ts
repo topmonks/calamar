@@ -9,20 +9,17 @@ export type ExtrinsicsFilter = {
 const getExtrinsics = async (
   limit: Number,
   offset: Number,
-  filter: ExtrinsicsFilter
+  filter: ExtrinsicsFilter,
+  fields = ["id", "section", "method", "signer", "hash", "created_at"]
 ) => {
   const where = filterToWhere(filter);
 
   const response =
     await fetchGraphql(`query MyQuery { substrate_extrinsic(limit: ${limit}, offset: ${offset}, order_by: {blockNumber: desc},
      where: {${where}}) {
-        id
-        section
-        method
-        signer
-        created_at
+        ${fields.map((field) => `${field} `)}
       }}`);
-  return response.substrate_extrinsic;
+  return response?.substrate_extrinsic;
 };
 
 export { getExtrinsics };

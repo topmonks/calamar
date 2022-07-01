@@ -36,12 +36,8 @@ export const convertTimestampToTimeFromNow = (time: string) => {
 };
 
 export const formatDate = (timestamp: string) => {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
-  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+  const timeMoment = moment.tz(timestamp, sourceTimezone);
+  const timeMomentBrowser = timeMoment.clone().tz(browserTimezone);
+
+  return timeMomentBrowser.format("MMM DD, YYYY h:mm A");
 };

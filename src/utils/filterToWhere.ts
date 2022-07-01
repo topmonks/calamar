@@ -1,17 +1,15 @@
 export const filterToWhere = (filter: any): string => {
   let where = "";
   for (let key in filter) {
-    // @ts-ignore
     if (filter[key] instanceof Object) {
       where += `${key}: {`;
-      // @ts-ignore
       where += filterToWhere(filter[key]);
       where += `}`;
     } else {
-      // @ts-ignore
       if (filter[key] !== "") {
-        // @ts-ignore
-        where += `${key}: {_eq: ${filter[key]}}, `;
+        const isString = typeof filter[key] === "string";
+        const value = isString ? `"${filter[key]}"` : filter[key];
+        where += `${key}: {_eq: ${value}}, `;
       }
     }
   }
