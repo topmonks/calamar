@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/calamar/static/css/main.ceea2171.css",
-    "main.js": "/calamar/static/js/main.341fde2f.js",
-    "static/js/787.e83638fb.chunk.js": "/calamar/static/js/787.e83638fb.chunk.js",
+    "main.js": "/calamar/static/js/main.7301c5cc.js",
+    "static/js/787.fcdfc7c5.chunk.js": "/calamar/static/js/787.fcdfc7c5.chunk.js",
     "index.html": "/calamar/index.html",
     "main.ceea2171.css.map": "/calamar/static/css/main.ceea2171.css.map",
-    "main.341fde2f.js.map": "/calamar/static/js/main.341fde2f.js.map",
-    "787.e83638fb.chunk.js.map": "/calamar/static/js/787.e83638fb.chunk.js.map"
+    "main.7301c5cc.js.map": "/calamar/static/js/main.7301c5cc.js.map",
+    "787.fcdfc7c5.chunk.js.map": "/calamar/static/js/787.fcdfc7c5.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ceea2171.css",
-    "static/js/main.341fde2f.js"
+    "static/js/main.7301c5cc.js"
   ]
 }
