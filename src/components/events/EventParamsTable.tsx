@@ -107,8 +107,8 @@ function EventParamsTable({
     >
       <StyledTable size="small">
         <TableBody>
-          {params.map((param) => (
-            <EventParam key={param.name} param={param} />
+          {params.map((param, index) => (
+            <EventParam key={index} param={param} />
           ))}
         </TableBody>
       </StyledTable>
