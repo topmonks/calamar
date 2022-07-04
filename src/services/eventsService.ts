@@ -18,7 +18,7 @@ const getEvents = async (
   const where = filterToWhere(filter);
 
   const response =
-    await fetchGraphql(`query MyQuery { substrate_event(limit: ${limit}, offset: ${offset}, order_by: {blockTimestamp: desc},
+    await fetchGraphql(`query MyQuery { substrate_event(limit: ${limit}, offset: ${offset}, order_by: {indexInBlock: asc},
      where: {${where}}) {
         id
         section
