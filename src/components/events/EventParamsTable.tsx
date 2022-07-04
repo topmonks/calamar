@@ -29,43 +29,27 @@ function renderParamValue(value: any) {
   }
 }
 
-function renderParam(param: any) {
-  try {
-    if (typeof param.value === "object") {
-      const type = tryJsonParse(param.type);
+function EventParam(props: { param: any }) {
+  const { param } = props;
 
-      const valueKeys = Object.keys(param.value);
-      valueKeys.sort();
+  if (typeof param.value === "object") {
+    const type = tryJsonParse(param.type);
 
-      if (typeof type === "object") {
-        const typeKeys = Object.keys(type);
+    const valueKeys = Object.keys(param.value);
+    valueKeys.sort();
 
-        if (
-          valueKeys.length === typeKeys.length &&
-          valueKeys.every((k) => typeKeys.includes(k))
-        ) {
-          return (
-            <>
-              {valueKeys.map((key) => (
-                <TableRow key={key}>
-                  <TypeCell>{type[key]}</TypeCell>
-                  <TableCell>
-                    <strong>{key}</strong>
-                  </TableCell>
-                  <TableCell>{renderParamValue(param.value[key])}</TableCell>
-                </TableRow>
-              ))}
-            </>
-          );
-        }
-      } else {
+    if (typeof type === "object") {
+      const typeKeys = Object.keys(type);
+
+      if (
+        valueKeys.length === typeKeys.length &&
+        valueKeys.every((k) => typeKeys.includes(k))
+      ) {
         return (
           <>
-            {valueKeys.map((key, index) => (
+            {valueKeys.map((key) => (
               <TableRow key={key}>
-                {index === 0 && (
-                  <TypeCell rowSpan={valueKeys.length}>{type}</TypeCell>
-                )}
+                <TypeCell>{type[key]}</TypeCell>
                 <TableCell>
                   <strong>{key}</strong>
                 </TableCell>
@@ -75,9 +59,23 @@ function renderParam(param: any) {
           </>
         );
       }
+    } else {
+      return (
+        <>
+          {valueKeys.map((key, index) => (
+            <TableRow key={key}>
+              {index === 0 && (
+                <TypeCell rowSpan={valueKeys.length}>{type}</TypeCell>
+              )}
+              <TableCell>
+                <strong>{key}</strong>
+              </TableCell>
+              <TableCell>{renderParamValue(param.value[key])}</TableCell>
+            </TableRow>
+          ))}
+        </>
+      );
     }
-  } catch (e) {
-    // nothing
   }
 
   return (
@@ -88,7 +86,7 @@ function renderParam(param: any) {
   );
 }
 
-function EventsParamsTable({
+function EventParamsTable({
   params,
 }: {
   params: [
@@ -108,10 +106,14 @@ function EventsParamsTable({
       style={{ maxWidth: "100%", width: "fit-content" }}
     >
       <StyledTable size="small">
-        <TableBody>{params.map(renderParam)}</TableBody>
+        <TableBody>
+          {params.map((param) => (
+            <EventParam key={param.name} param={param} />
+          ))}
+        </TableBody>
       </StyledTable>
     </TableContainer>
   );
 }
 
-export default EventsParamsTable;
+export default EventParamsTable;

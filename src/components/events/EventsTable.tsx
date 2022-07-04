@@ -26,7 +26,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
 import EventsTableRow from "./EventsTableRow";
-import EventsParamsTable from "./EventsParamsTable";
+import EventParamsTable from "./EventParamsTable";
 import { shortenHash } from "../../utils/shortenHash";
 import {
   convertTimestampToTimeFromNow,
@@ -222,7 +222,7 @@ function EventsTable() {
       <TableBody>
         {events.map((event: any) => (
           <EventsTableRow
-            expandComponent={<EventsParamsTable params={event.params} />}
+            expandComponent={<EventParamsTable params={event.params} />}
             key={event.id}
             sx={{
               "&:last-child td, &:last-child th": { border: 0 },

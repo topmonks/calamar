@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import styled from "@emotion/styled";
 import EventsTableRow from "../events/EventsTableRow";
-import EventsParamsTable from "../events/EventsParamsTable";
+import EventParamsTable from "../events/EventParamsTable";
 import { getEvents } from "../../services/eventsService";
 import { usePagination } from "../../hooks/usePagination";
 import { TablePagination } from "../TablePagination";
@@ -64,7 +64,7 @@ function ExtrinsicEventsTable(props: ExtrinsicEventsTableProps) {
             <TableCell>{event.section}</TableCell>
             <TableCell>{event.method}</TableCell>
             <TableCell>
-              <EventsParamsTable params={event.params} />
+              <EventParamsTable params={event.params} />
             </TableCell>
           </TableRow>
         ))}
