@@ -1,7 +1,6 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import EventsTable from "../components/events/EventsTable";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import BlocksMiniTable from "../components/blocks/BlocksMiniTable";
 import SearchInput from "../components/SearchInput";
 

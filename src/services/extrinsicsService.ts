@@ -6,7 +6,7 @@ export type ExtrinsicsFilter = {
   blockId?: string;
   hash?: string;
   isSigned?: boolean;
-  signer?: string;
+  signer?: Object;
 };
 
 const getExtrinsics = async (
@@ -27,7 +27,7 @@ const getExtrinsics = async (
   const where = filterToWhere(filter);
 
   const response =
-    await fetchGraphql(`query MyQuery { substrate_extrinsic(limit: ${limit}, offset: ${offset}, order_by: {blockNumber: desc},
+    await fetchGraphql(`query MyQuery { substrate_extrinsic(limit: ${limit}, offset: ${offset}, order_by: {created_at: desc},
      where: {${where}}) {
         ${fields.map((field) => `${field} `)}
       }}`);

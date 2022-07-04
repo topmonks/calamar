@@ -21,7 +21,7 @@ import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../../utils/convertTimestampToTimeFromNow";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ExtrinsicsFilter,
   getExtrinsics,
@@ -32,11 +32,13 @@ import PaginatedTable from "../PaginatedTable";
 
 export type ExtrinsicsTableProps = {
   filter: ExtrinsicsFilter;
+  columns?: string[];
 };
 
-function ExtrinsicsTable(props: ExtrinsicsTableProps) {
-  const { filter } = props;
-
+function ExtrinsicsTable({
+  filter = {},
+  columns = ["id", "section", "method", "signer", "time"],
+}: ExtrinsicsTableProps) {
   const [extrinsics, setExtrinsics] = useState([]);
 
   const pagination = usePagination();
@@ -67,27 +69,53 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
     <PaginatedTable pagination={pagination} title="Extrinsics">
       <TableHead>
         <TableRow>
-          <TableCell>Id</TableCell>
-          <TableCell>Section</TableCell>
-          <TableCell>Method</TableCell>
-          <TableCell>Signer</TableCell>
-          <TableCell>Time</TableCell>
+          {columns.find((value) => value === "id") && <TableCell>Id</TableCell>}
+          {columns.find((value) => value === "section") && (
+            <TableCell>Section</TableCell>
+          )}
+          {columns.find((value) => value === "method") && (
+            <TableCell>Method</TableCell>
+          )}
+          {columns.find((value) => value === "signer") && (
+            <TableCell>Signer</TableCell>
+          )}
+          {columns.find((value) => value === "time") && (
+            <TableCell>Time</TableCell>
+          )}
         </TableRow>
       </TableHead>
       <TableBody>
         {extrinsics.map((extrinsic: any) => (
           <TableRow key={extrinsic.id}>
-            <TableCell>{extrinsic.id}</TableCell>
-            <TableCell>{extrinsic.section}</TableCell>
-            <TableCell>{extrinsic.method}</TableCell>
-            <TableCell>{shortenHash(extrinsic.signer)}</TableCell>
-            <TableCell>
-              <Tooltip placement="top" title={formatDate(extrinsic.created_at)}>
-                <span>
-                  {convertTimestampToTimeFromNow(extrinsic.created_at)}
-                </span>
-              </Tooltip>
-            </TableCell>
+            {columns.find((value) => value === "id") && (
+              <Link to={`/extrinsic/${extrinsic.id}`}>
+                {shortenHash(extrinsic.id)}
+              </Link>
+            )}
+            {columns.find((value) => value === "hash") && (
+              <TableCell>{shortenHash(extrinsic.hash)}</TableCell>
+            )}
+            {columns.find((value) => value === "section") && (
+              <TableCell>{extrinsic.section}</TableCell>
+            )}
+            {columns.find((value) => value === "method") && (
+              <TableCell>{extrinsic.method}</TableCell>
+            )}
+            {columns.find((value) => value === "signer") && (
+              <TableCell>{shortenHash(extrinsic.signer)}</TableCell>
+            )}
+            {columns.find((value) => value === "time") && (
+              <TableCell>
+                <Tooltip
+                  placement="top"
+                  title={formatDate(extrinsic.created_at)}
+                >
+                  <span>
+                    {convertTimestampToTimeFromNow(extrinsic.created_at)}
+                  </span>
+                </Tooltip>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>
