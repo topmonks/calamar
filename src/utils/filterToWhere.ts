@@ -5,11 +5,14 @@ export const filterToWhere = (filter: any): string => {
       where += `${key}: {`;
       where += filterToWhere(filter[key]);
       where += `}`;
-    } else {
-      if (filter[key] !== "") {
-        const isString = typeof filter[key] === "string";
-        const value = isString ? `"${filter[key]}"` : filter[key];
+    } else if (filter[key] !== "") {
+      const isString = typeof filter[key] === "string";
+      const value = isString ? `"${filter[key]}"` : filter[key];
+
+      if (!key.startsWith("_")) {
         where += `${key}: {_eq: ${value}}, `;
+      } else {
+        where += `${key}: ${value}, `;
       }
     }
   }
