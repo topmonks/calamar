@@ -9,6 +9,8 @@ import {
 import React from "react";
 import styled from "@emotion/styled";
 
+import { tryJsonParse } from "../../utils/tryJsonParse";
+
 const StyledTable = styled(Table)`
   background-color: rgba(0, 0, 0, 0.05);
 `;
@@ -17,29 +19,57 @@ const TypeCell = styled(TableCell)`
   opacity: 0.75;
 `;
 
+function renderParamValue(value: any) {
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  } else if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  } else {
+    return value;
+  }
+}
+
 function renderParam(param: any) {
   try {
     if (typeof param.value === "object") {
-      const types = JSON.parse(param.type);
+      const type = tryJsonParse(param.type);
 
       const valueKeys = Object.keys(param.value);
-      const typeKeys = Object.keys(types);
+      valueKeys.sort();
 
-      if (
-        valueKeys.length === typeKeys.length &&
-        valueKeys.every((k) => typeKeys.includes(k))
-      ) {
-        valueKeys.sort();
+      if (typeof type === "object") {
+        const typeKeys = Object.keys(type);
 
+        if (
+          valueKeys.length === typeKeys.length &&
+          valueKeys.every((k) => typeKeys.includes(k))
+        ) {
+          return (
+            <>
+              {valueKeys.map((key) => (
+                <TableRow key={key}>
+                  <TypeCell>{type[key]}</TypeCell>
+                  <TableCell>
+                    <strong>{key}</strong>
+                  </TableCell>
+                  <TableCell>{renderParamValue(param.value[key])}</TableCell>
+                </TableRow>
+              ))}
+            </>
+          );
+        }
+      } else {
         return (
           <>
-            {valueKeys.map((key) => (
+            {valueKeys.map((key, index) => (
               <TableRow key={key}>
+                {index === 0 && (
+                  <TypeCell rowSpan={valueKeys.length}>{type}</TypeCell>
+                )}
                 <TableCell>
                   <strong>{key}</strong>
                 </TableCell>
-                <TableCell>{param.value[key]}</TableCell>
-                <TypeCell>{types[key]}</TypeCell>
+                <TableCell>{renderParamValue(param.value[key])}</TableCell>
               </TableRow>
             ))}
           </>
@@ -52,8 +82,8 @@ function renderParam(param: any) {
 
   return (
     <TableRow>
-      <TableCell colSpan={2}>{param.value}</TableCell>
       <TypeCell>{param.type}</TypeCell>
+      <TableCell colSpan={2}>{renderParamValue(param.value)}</TableCell>
     </TableRow>
   );
 }
