@@ -51,22 +51,22 @@ function ExtrinsicEventsTable(props: ExtrinsicEventsTableProps) {
     <PaginatedTable pagination={pagination} title="Events">
       <TableHead>
         <HeaderTableRow>
-          <TableCell />
           <TableCell>Id</TableCell>
           <TableCell>Section</TableCell>
           <TableCell>Method</TableCell>
+          <TableCell>Parameters</TableCell>
         </HeaderTableRow>
       </TableHead>
       <TableBody>
         {events.map((event: any) => (
-          <EventsTableRow
-            expandComponent={<EventsParamsTable params={event.params} />}
-            key={event.id}
-          >
+          <TableRow key={event.id}>
             <TableCell>{event.id}</TableCell>
             <TableCell>{event.section}</TableCell>
             <TableCell>{event.method}</TableCell>
-          </EventsTableRow>
+            <TableCell>
+              <EventsParamsTable params={event.params} />
+            </TableCell>
+          </TableRow>
         ))}
       </TableBody>
     </PaginatedTable>

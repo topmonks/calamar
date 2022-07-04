@@ -9,6 +9,11 @@ import {
 } from "@mui/material";
 import React from "react";
 import styled from "@emotion/styled";
+
+const StyledTable = styled(Table)`
+  background-color: rgba(0, 0, 0, 0.05);
+`;
+
 const HeaderTableRow = styled(TableRow)`
   th {
     font-weight: bold !important;
@@ -32,12 +37,16 @@ function EventsParamsTable({
     }
     return value;
   };
+
+  console.log("P", params);
+
   return (
     <TableContainer
       component={Paper}
+      elevation={0}
       style={{ maxWidth: "100%", width: "fit-content" }}
     >
-      <Table>
+      <StyledTable size="small">
         <TableHead>
           <HeaderTableRow>
             <TableCell>Type</TableCell>
@@ -46,13 +55,13 @@ function EventsParamsTable({
         </TableHead>
         <TableBody>
           {params.map((param: any) => (
-            <TableRow key={param.type}>
+            <TableRow key={param.name}>
               <TableCell>{param.type}</TableCell>
               <TableCell>{stringifyValue(param.value)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </StyledTable>
     </TableContainer>
   );
 }
