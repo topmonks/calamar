@@ -24,7 +24,7 @@ function ExtrinsicPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const extrinsic = await getExtrinsics(1, 0, { id });
+      const extrinsic = await getExtrinsics(1, 0, { id: { _eq: id } });
       setExtrinsic(extrinsic[0]);
     };
     fetchData();

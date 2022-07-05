@@ -14,7 +14,7 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { getEvents } from "../../services/eventsService";
+import { EventsFilter, getEvents } from "../../services/eventsService";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Link, useNavigate } from "react-router-dom";
@@ -42,22 +42,15 @@ type Page = {
 };
 
 function EventsTable() {
-  const [events, setEvents] = useRecoilState(eventsState);
+  const [events, setEvents] = React.useState<any>([]);
   const [checked, setChecked] = React.useState(true);
-  const [filter, setFilter] = React.useState({
-    section: "",
-    method: "",
+  const [filter, setFilter] = React.useState<EventsFilter>({
+    section: { _eq: "" },
+    method: { _eq: "" },
     extrinsic: {
-      signer: "",
-      isSigned: true,
+      signer: { _eq: "" },
+      isSigned: { _eq: true },
     },
-  } as {
-    section: string;
-    method: string;
-    extrinsic: {
-      signer: string;
-      isSigned: boolean | undefined;
-    };
   });
   const pagination = usePagination(10, true);
 
@@ -73,11 +66,13 @@ function EventsTable() {
         ...filter,
         extrinsic: {
           ...filter.extrinsic,
-          isSigned: true,
+          isSigned: { _eq: true },
         },
       });
     } else {
-      delete filter.extrinsic.isSigned;
+      if (filter.extrinsic) {
+        delete filter.extrinsic.isSigned;
+      }
       setFilter(filter);
     }
   };
@@ -86,12 +81,7 @@ function EventsTable() {
     const getEventsAndSetState = async (
       limit: number,
       offset: number,
-      filter?: {
-        section?: string;
-        method?: string;
-        signer?: string;
-        isSigned?: boolean;
-      }
+      filter?: EventsFilter
     ) => {
       const events = await getEvents(limit, offset, filter || {});
       setEvents(events);
@@ -104,8 +94,8 @@ function EventsTable() {
   }, [
     filter.section,
     filter.method,
-    filter.extrinsic.signer,
-    filter.extrinsic.isSigned,
+    filter.extrinsic?.signer,
+    filter.extrinsic?.isSigned,
     filter,
     pagination.offset,
     pagination.limit,
@@ -149,7 +139,10 @@ function EventsTable() {
                     }}
                     id="search-section"
                     onChange={(e) => {
-                      setFilter({ ...filter, section: e.target.value });
+                      setFilter({
+                        ...filter,
+                        section: { _eq: e.target.value },
+                      });
                     }}
                     size="small"
                     variant="filled"
@@ -171,7 +164,7 @@ function EventsTable() {
                     }}
                     id="search-method"
                     onChange={(e) => {
-                      setFilter({ ...filter, method: e.target.value });
+                      setFilter({ ...filter, method: { _eq: e.target.value } });
                     }}
                     size="small"
                     variant="filled"
@@ -198,7 +191,7 @@ function EventsTable() {
                         ...filter,
                         extrinsic: {
                           ...filter.extrinsic,
-                          signer: e.target.value,
+                          signer: { _eq: e.target.value },
                         },
                       });
                     }}

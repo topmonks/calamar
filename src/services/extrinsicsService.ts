@@ -1,13 +1,14 @@
+import { Filter } from "../model/filter";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
-export type ExtrinsicsFilter = {
-  id?: string;
-  blockId?: string;
-  hash?: string;
-  isSigned?: boolean;
-  signer?: Object;
-};
+export type ExtrinsicsFilter = Filter<{
+  id: string;
+  blockId: string;
+  hash: string;
+  isSigned: boolean;
+  signer: string;
+}>;
 
 const getExtrinsics = async (
   limit: Number,

@@ -1,14 +1,15 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { ExtrinsicsFilter } from "./extrinsicsService";
 import { filterToWhere } from "../utils/filterToWhere";
+import { Filter } from "../model/filter";
 
-export type EventsFilter = {
-  id?: string;
-  section?: string;
-  method?: string;
-  signer?: string;
-  extrinsic?: ExtrinsicsFilter;
-};
+export type EventsFilter = Filter<{
+  id: string;
+  section: string;
+  method: string;
+  signer: string;
+  extrinsic: ExtrinsicsFilter;
+}>;
 
 const getEvents = async (
   limit: Number,

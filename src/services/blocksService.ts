@@ -1,12 +1,13 @@
+import { Filter } from "../model/filter";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
-export type BlocksFilter = {
-  id?: string;
-  hash?: string;
-  isSigned?: boolean;
-  height?: number;
-};
+export type BlocksFilter = Filter<{
+  id: string;
+  hash: string;
+  isSigned: boolean;
+  height: number;
+}>;
 
 const getBlocks = async (
   limit: Number,

@@ -25,7 +25,7 @@ function BlockPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const block = await getBlocks(1, 0, { id });
+      const block = await getBlocks(1, 0, { id: { _eq: id } });
       setBlock(block[0]);
     };
     fetchData();

@@ -15,11 +15,13 @@ function SearchInput() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (search.startsWith("0x")) {
-      const extrinsic = await getExtrinsics(1, 0, { hash: search }, ["id"]);
+      const extrinsic = await getExtrinsics(1, 0, { hash: { _eq: search } }, [
+        "id",
+      ]);
       if (extrinsic.length > 0) {
         navigate(`/extrinsic/${extrinsic.id}`);
       } else {
-        const block = await getBlocks(1, 0, { hash: search });
+        const block = await getBlocks(1, 0, { hash: { _eq: search } });
         if (block.length > 0) {
           navigate(`/block/${block.id}`);
         } else {
@@ -27,14 +29,21 @@ function SearchInput() {
         }
       }
     } else if (isNumber(search)) {
-      const block = await getBlocks(1, 0, { height: parseInt(search) }, ["id"]);
+      const block = await getBlocks(
+        1,
+        0,
+        { height: { _eq: parseInt(search) } },
+        ["id"]
+      );
       if (block.length > 0) {
         navigate(`/block/${block.id}`);
       } else {
         alert("No block found");
       }
     } else {
-      const extrinsic = await getExtrinsics(1, 0, { signer: search }, ["id"]);
+      const extrinsic = await getExtrinsics(1, 0, { signer: { _eq: search } }, [
+        "id",
+      ]);
       if (extrinsic.length > 0) {
         navigate(`/account/${search}`);
       } else {

@@ -14,8 +14,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { extrinsicsState } from "../../state/extrinsics";
-import { useRecoilState } from "recoil";
 import { shortenHash } from "../../utils/shortenHash";
 import {
   convertTimestampToTimeFromNow,

@@ -36,7 +36,7 @@ function ExtrinsicEventsTable(props: ExtrinsicEventsTableProps) {
 
   useEffect(() => {
     const getEventsAndSetState = async (limit: number, offset: number) => {
-      const filter = { extrinsic: { id: extrinsicId } };
+      const filter = { extrinsic: { id: { _eq: extrinsicId } } };
 
       const events = await getEvents(limit, offset, filter);
       const nextEvents = await getEvents(limit, offset + limit, filter);
