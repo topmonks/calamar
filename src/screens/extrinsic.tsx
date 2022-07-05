@@ -16,7 +16,7 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getEvents } from "../services/eventsService";
-import ExtrinsicEventsTable from "../components/extrinsics/ExtrinsicEventsTable";
+import EventsTable from "../components/events/EventsTable";
 
 function ExtrinsicPage() {
   const [extrinsic, setExtrinsic] = React.useState<any>(null);
@@ -86,7 +86,7 @@ function ExtrinsicPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        <ExtrinsicEventsTable extrinsicId={extrinsic.id} />
+        <EventsTable filter={{ extrinsic: { id: { _eq: extrinsic.id } } }} />
       </div>
     );
   }

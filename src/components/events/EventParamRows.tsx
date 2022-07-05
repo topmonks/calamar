@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import { tryJsonParse } from "../../utils/tryJsonParse";
 
 import EventParamValue from "./EventParamValue";
+import { EventParam } from "../../model/eventParam";
 
 const ParamNameCell = styled(TableCell)({
   maxWidth: 180,
@@ -20,7 +21,12 @@ const ParamType = styled.span({
   wordBreak: "break-all",
 });
 
-function EventParamRows(props: { index: number; param: any }) {
+export type EventParamRowsProps = {
+  param: EventParam;
+  index: number;
+};
+
+function EventParamRows(props: EventParamRowsProps) {
   const { index, param } = props;
 
   const type = tryJsonParse(param.type);
@@ -61,7 +67,7 @@ function EventParamRows(props: { index: number; param: any }) {
     <TableRow>
       <TableCell>{index}</TableCell>
       <ParamNameCell>
-        <ParamType>{type}</ParamType>
+        <ParamType>{param.type}</ParamType>
       </ParamNameCell>
       <TableCell>
         <EventParamValue value={param.value} />

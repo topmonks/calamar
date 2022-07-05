@@ -2,21 +2,21 @@ import React from "react";
 import { Paper, Table, TableBody, TableContainer } from "@mui/material";
 import styled from "@emotion/styled";
 
+import { EventParam } from "../../model/eventParam";
+
 import EventParamRows from "./EventParamRows";
 
 const ParamsTable = styled(Table)({
   backgroundColor: "rgba(0, 0, 0, 0.05)",
 });
 
-function EventParamsTable2({
-  params,
-}: {
-  params: {
-    name: string;
-    type: string;
-    value: any;
-  }[];
-}) {
+export type EventParamsTableProps = {
+  params: EventParam[];
+};
+
+function EventParamsTable(props: EventParamsTableProps) {
+  const { params } = props;
+
   return (
     <TableContainer
       component={Paper}
@@ -34,4 +34,4 @@ function EventParamsTable2({
   );
 }
 
-export default EventParamsTable2;
+export default EventParamsTable;

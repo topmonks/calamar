@@ -8,7 +8,11 @@ type Props = {
   [x: string]: any;
 };
 
-function EventsTableRow({ children, expandComponent, ...otherProps }: Props) {
+function OldEventsTableRow({
+  children,
+  expandComponent,
+  ...otherProps
+}: Props) {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
   return (
@@ -30,4 +34,4 @@ function EventsTableRow({ children, expandComponent, ...otherProps }: Props) {
   );
 }
 
-export default EventsTableRow;
+export default OldEventsTableRow;

@@ -1,4 +1,4 @@
-export const filterToWhere = (filter: any): string => {
+export const filterToWhere = (filter: any = {}): string => {
   let where = "";
   for (let key in filter) {
     if (filter[key] instanceof Object) {

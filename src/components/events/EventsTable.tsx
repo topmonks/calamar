@@ -1,33 +1,11 @@
-import React, { useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { eventsState } from "../../state/events";
-import {
-  Box,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import { EventsFilter, getEvents } from "../../services/eventsService";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
-import { Search } from "@mui/icons-material";
-import EventsTableRow from "./EventsTableRow";
-import EventParamsTable from "./EventParamsTable";
-import { shortenHash } from "../../utils/shortenHash";
-import {
-  convertTimestampToTimeFromNow,
-  formatDate,
-} from "../../utils/convertTimestampToTimeFromNow";
+
+import { EventsFilter, getEvents } from "../../services/eventsService";
 import { usePagination } from "../../hooks/usePagination";
+
+import EventParamsTable from "./EventParamsTable";
 import PaginatedTable from "../PaginatedTable";
 
 const HeaderTableRow = styled(TableRow)`
@@ -36,204 +14,48 @@ const HeaderTableRow = styled(TableRow)`
   }
 `;
 
-type Page = {
-  limit: number;
-  offset: number;
+export type EventsTableProps = {
+  filter: EventsFilter;
 };
 
-function EventsTable() {
-  const [events, setEvents] = React.useState<any>([]);
-  const [checked, setChecked] = React.useState(true);
-  const [filter, setFilter] = React.useState<EventsFilter>({
-    section: { _eq: "" },
-    method: { _eq: "" },
-    extrinsic: {
-      signer: { _eq: "" },
-      isSigned: { _eq: true },
-    },
-  });
-  const pagination = usePagination(10, true);
+function EventsTable(props: EventsTableProps) {
+  const { filter } = props;
 
-  const navigate = useNavigate();
+  const [events, setEvents] = useState([]);
 
-  const handleChangeOnlySignedCheckbox = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setChecked(event.target.checked);
-    // remove isSigned from filter if unchecked
-    if (event.target.checked) {
-      setFilter({
-        ...filter,
-        extrinsic: {
-          ...filter.extrinsic,
-          isSigned: { _eq: true },
-        },
-      });
-    } else {
-      if (filter.extrinsic) {
-        delete filter.extrinsic.isSigned;
-      }
-      setFilter(filter);
-    }
-  };
+  const pagination = usePagination();
 
   useEffect(() => {
-    const getEventsAndSetState = async (
-      limit: number,
-      offset: number,
-      filter?: EventsFilter
-    ) => {
-      const events = await getEvents(limit, offset, filter || {});
+    const getEventsAndSetState = async (limit: number, offset: number) => {
+      const events = await getEvents(limit, offset, filter);
+      const nextEvents = await getEvents(limit, offset + limit, filter);
+
       setEvents(events);
+      pagination.setHasNext(nextEvents.length > 0);
     };
-    getEventsAndSetState(pagination.limit, pagination.offset, filter);
-    const interval = setInterval(async () => {
-      await getEventsAndSetState(pagination.limit, pagination.offset, filter);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [
-    filter.section,
-    filter.method,
-    filter.extrinsic?.signer,
-    filter.extrinsic?.isSigned,
-    filter,
-    pagination.offset,
-    pagination.limit,
-    pagination,
-    setEvents,
-  ]);
+    getEventsAndSetState(pagination.limit, pagination.offset);
+  }, [filter, pagination]);
 
   return (
-    <PaginatedTable
-      extra={
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={checked}
-                inputProps={{ "aria-label": "controlled" }}
-                onChange={(e) => handleChangeOnlySignedCheckbox(e)}
-              />
-            }
-            label="Only signed"
-          />
-        </FormGroup>
-      }
-      pagination={pagination}
-      title="Events"
-    >
+    <PaginatedTable pagination={pagination} title="Events">
       <TableHead>
         <HeaderTableRow>
-          <TableCell />
           <TableCell>Id</TableCell>
-          <TableCell>
-            <Grid container spacing={2}>
-              <Grid item style={{ margin: "auto" }}>
-                Section
-              </Grid>
-              <Grid item>
-                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-                  <TextField
-                    InputProps={{
-                      startAdornment: <Search />,
-                    }}
-                    id="search-section"
-                    onChange={(e) => {
-                      setFilter({
-                        ...filter,
-                        section: { _eq: e.target.value },
-                      });
-                    }}
-                    size="small"
-                    variant="filled"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </TableCell>
-          <TableCell>
-            <Grid container spacing={2}>
-              <Grid item style={{ margin: "auto" }}>
-                Method
-              </Grid>
-              <Grid item>
-                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-                  <TextField
-                    InputProps={{
-                      startAdornment: <Search />,
-                    }}
-                    id="search-method"
-                    onChange={(e) => {
-                      setFilter({ ...filter, method: { _eq: e.target.value } });
-                    }}
-                    size="small"
-                    variant="filled"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </TableCell>
-          <TableCell>Is signed</TableCell>
-          <TableCell>
-            <Grid container spacing={2} wrap="nowrap">
-              <Grid item style={{ margin: "auto" }}>
-                Signer
-              </Grid>
-              <Grid item>
-                <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-                  <TextField
-                    InputProps={{
-                      startAdornment: <Search />,
-                    }}
-                    id="search-signer"
-                    onChange={(e) => {
-                      setFilter({
-                        ...filter,
-                        extrinsic: {
-                          ...filter.extrinsic,
-                          signer: { _eq: e.target.value },
-                        },
-                      });
-                    }}
-                    size="small"
-                    variant="filled"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </TableCell>
-          <TableCell>Extrinsic hash</TableCell>
-          <TableCell>Time</TableCell>
-          <TableCell />
+          <TableCell>Section</TableCell>
+          <TableCell>Method</TableCell>
+          <TableCell>Parameters</TableCell>
         </HeaderTableRow>
       </TableHead>
       <TableBody>
         {events.map((event: any) => (
-          <EventsTableRow
-            expandComponent={<EventParamsTable params={event.params} />}
-            key={event.id}
-            sx={{
-              "&:last-child td, &:last-child th": { border: 0 },
-            }}
-          >
+          <TableRow key={event.id}>
             <TableCell>{event.id}</TableCell>
             <TableCell>{event.section}</TableCell>
             <TableCell>{event.method}</TableCell>
             <TableCell>
-              {event.extrinsic.isSigned ? <CheckCircleIcon /> : <CancelIcon />}
+              <EventParamsTable params={event.params} />
             </TableCell>
-            <TableCell>{shortenHash(event.extrinsic.signer)}</TableCell>
-            <TableCell>
-              <Link to={`/extrinsic/${event.extrinsic.id}`}>
-                {shortenHash(event.extrinsic.hash)}
-              </Link>
-            </TableCell>
-            <TableCell>
-              <Tooltip placement="top" title={formatDate(event.created_at)}>
-                <span>{convertTimestampToTimeFromNow(event.created_at)}</span>
-              </Tooltip>
-            </TableCell>
-          </EventsTableRow>
+          </TableRow>
         ))}
       </TableBody>
     </PaginatedTable>

@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import EventsTable from "../components/events/EventsTable";
+import OldEventsTable from "../components/events/OldEventsTable";
 import BlocksMiniTable from "../components/blocks/BlocksMiniTable";
 import SearchInput from "../components/SearchInput";
 
@@ -15,7 +15,7 @@ function Dashboard() {
       </Grid>
       <Grid item xs={6}></Grid>
       <Grid item xs={12}>
-        <EventsTable />
+        <OldEventsTable />
       </Grid>
     </Grid>
   );

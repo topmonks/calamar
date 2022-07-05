@@ -28,7 +28,11 @@ const ParamValue = styled.div({
   maxWidth: 550,
 });
 
-function EventParamValue(props: { value: any }) {
+export type EventParamValueProps = {
+  value: any;
+};
+
+function EventParamValue(props: EventParamValueProps) {
   const { value } = props;
 
   if (Array.isArray(value)) {

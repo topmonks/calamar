@@ -1,31 +1,23 @@
+import React from "react";
 import {
-  Button,
-  Grid,
-  IconButton,
-  Paper,
-  Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
-  Toolbar,
   Tooltip,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { shortenHash } from "../../utils/shortenHash";
 import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../../utils/convertTimestampToTimeFromNow";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ExtrinsicsFilter,
   getExtrinsics,
 } from "../../services/extrinsicsService";
 import { usePagination } from "../../hooks/usePagination";
-import { TablePagination } from "../TablePagination";
 import PaginatedTable from "../PaginatedTable";
 
 export type ExtrinsicsTableProps = {
@@ -34,7 +26,7 @@ export type ExtrinsicsTableProps = {
 };
 
 function ExtrinsicsTable({
-  filter = {},
+  filter,
   columns = ["id", "section", "method", "signer", "time"],
 }: ExtrinsicsTableProps) {
   const [extrinsics, setExtrinsics] = useState([]);
@@ -86,9 +78,9 @@ function ExtrinsicsTable({
         {extrinsics.map((extrinsic: any) => (
           <TableRow key={extrinsic.id}>
             {columns.find((value) => value === "id") && (
-              <Link to={`/extrinsic/${extrinsic.id}`}>
-                {shortenHash(extrinsic.id)}
-              </Link>
+              <TableCell>
+                <Link to={`/extrinsic/${extrinsic.id}`}>{extrinsic.id}</Link>
+              </TableCell>
             )}
             {columns.find((value) => value === "hash") && (
               <TableCell>{shortenHash(extrinsic.hash)}</TableCell>

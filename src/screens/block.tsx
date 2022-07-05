@@ -15,7 +15,7 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getBlocks } from "../services/blocksService";
-import ExtrinsicEventsTable from "../components/extrinsics/ExtrinsicEventsTable";
+import EventsTable from "../components/events/EventsTable";
 import { getExtrinsics } from "../services/extrinsicsService";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
