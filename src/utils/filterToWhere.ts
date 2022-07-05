@@ -4,7 +4,7 @@ export const filterToWhere = (filter: any): string => {
     if (filter[key] instanceof Object) {
       where += `${key}: {`;
       where += filterToWhere(filter[key]);
-      where += `}`;
+      where += `},`;
     } else if (filter[key] !== "") {
       const isString = typeof filter[key] === "string";
       const value = isString ? `"${filter[key]}"` : filter[key];

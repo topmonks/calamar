@@ -7,13 +7,8 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
-  IconButton,
-  Paper,
-  Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
   TextField,
@@ -24,7 +19,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import EventsTableRow from "./EventsTableRow";
 import EventParamsTable from "./EventParamsTable";
 import { shortenHash } from "../../utils/shortenHash";

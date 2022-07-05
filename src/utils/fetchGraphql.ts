@@ -3,7 +3,6 @@
 export async function fetchGraphql(query: string) {
   let results = await fetch(
     // TODO: change when launch
-    //`https://kusama.indexer.gc.subsquid.io/v4/graphql`,
     `https://polkadot.indexer.gc.subsquid.io/v4/graphql`,
     // `https://${getSubdomain()}.indexer.gc.subsquid.io/v4/graphql`,
     {
