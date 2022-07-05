@@ -16,6 +16,7 @@ import { getEvents } from "../../services/eventsService";
 import { usePagination } from "../../hooks/usePagination";
 import { TablePagination } from "../TablePagination";
 import PaginatedTable from "../PaginatedTable";
+import EventParamsTable2 from "../events/EventParamsTable";
 
 const HeaderTableRow = styled(TableRow)`
   th {
@@ -64,7 +65,7 @@ function ExtrinsicEventsTable(props: ExtrinsicEventsTableProps) {
             <TableCell>{event.section}</TableCell>
             <TableCell>{event.method}</TableCell>
             <TableCell>
-              <EventParamsTable params={event.params} />
+              <EventParamsTable2 params={event.params} />
             </TableCell>
           </TableRow>
         ))}
