@@ -14,37 +14,47 @@ function SearchInput() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (search.startsWith("0x")) {
-      const extrinsic = await getExtrinsics(1, 0, { hash: { _eq: search } }, [
-        "id",
-      ]);
-      if (extrinsic.length > 0) {
-        navigate(`/extrinsic/${extrinsic.id}`);
+      const extrinsics = await getExtrinsics(
+        1,
+        0,
+        { hash: { _eq: search } },
+        {},
+        ["id"]
+      );
+      if (extrinsics.length > 0) {
+        navigate(`/extrinsic/${extrinsics[0].id}`);
       } else {
-        const block = await getBlocks(1, 0, { hash: { _eq: search } });
-        if (block.length > 0) {
-          navigate(`/block/${block.id}`);
+        const blocks = await getBlocks(1, 0, { hash: { _eq: search } });
+        if (blocks.length > 0) {
+          navigate(`/block/${blocks[0].id}`);
         } else {
           alert("No block or extrinsic found");
         }
       }
     } else if (isNumber(search)) {
-      const block = await getBlocks(
+      const blocks = await getBlocks(
         1,
         0,
         { height: { _eq: parseInt(search) } },
         ["id"]
       );
-      if (block.length > 0) {
-        navigate(`/block/${block.id}`);
+      console.log("BBH", blocks);
+      if (blocks.length > 0) {
+        navigate(`/block/${blocks[0].id}`);
       } else {
         alert("No block found");
       }
     } else {
-      const extrinsic = await getExtrinsics(1, 0, { signer: { _eq: search } }, [
-        "id",
-      ]);
-      if (extrinsic.length > 0) {
+      const extrinsics = await getExtrinsics(
+        1,
+        0,
+        { signer: { _eq: search } },
+        {},
+        ["id"]
+      );
+      if (extrinsics.length > 0) {
         navigate(`/account/${search}`);
       } else {
         navigate(`/extrinsics/${search}`);
@@ -68,7 +78,7 @@ function SearchInput() {
               />
             </Grid>
             <Grid item xs="auto">
-              <Button color="primary" variant="contained">
+              <Button color="primary" type="submit" variant="contained">
                 Search
               </Button>
             </Grid>

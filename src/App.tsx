@@ -6,6 +6,7 @@ import Dashboard from "./screens/dashboard";
 import ExtrinsicPage from "./screens/extrinsic";
 import BlockPage from "./screens/block";
 import AccountPage from "./screens/account";
+import Dev from "./screens/dev";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route element={<ExtrinsicPage />} path="/extrinsic/:id" />
           <Route element={<BlockPage />} path="/block/:id" />
           <Route element={<AccountPage />} path="/account/:address" />
+          <Route element={<Dev />} path="/dev" />
           <Route element={<Dashboard />} path="/" />
         </Routes>
       </BrowserRouter>

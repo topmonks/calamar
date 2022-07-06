@@ -63,7 +63,10 @@ function BlockPage() {
           </TableBody>
         </Table>
       </TableContainer>
-      <ExtrinsicsTable filter={{ blockId: block.id }} />
+      <ExtrinsicsTable
+        filter={{ blockId: block.id }}
+        order={{ created_at: "desc" }}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { Filter } from "../model/filter";
+import { Order } from "../model/order";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
@@ -13,7 +14,8 @@ export type ExtrinsicsFilter = Filter<{
 const getExtrinsics = async (
   limit: Number,
   offset: Number,
-  filter: ExtrinsicsFilter,
+  filter?: ExtrinsicsFilter,
+  order?: Order,
   fields = [
     "id",
     "section",
@@ -26,9 +28,12 @@ const getExtrinsics = async (
   ]
 ) => {
   const where = filterToWhere(filter);
+  const orderBy = Object.entries(order || {})
+    .map((e) => `${e[0]}: ${e[1]}`)
+    .join(", ");
 
   const response =
-    await fetchGraphql(`query MyQuery { substrate_extrinsic(limit: ${limit}, offset: ${offset}, order_by: {created_at: desc},
+    await fetchGraphql(`query MyQuery { substrate_extrinsic(limit: ${limit}, offset: ${offset}, order_by: {${orderBy}},
      where: {${where}}) {
         ${fields.map((field) => `${field} `)}
       }}`);

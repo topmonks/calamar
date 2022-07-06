@@ -3,19 +3,19 @@ import React from "react";
 import OldEventsTable from "../components/events/OldEventsTable";
 import BlocksMiniTable from "../components/blocks/BlocksMiniTable";
 import SearchInput from "../components/SearchInput";
-import { Link } from "react-router-dom";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
-function Dashboard() {
+function Dev() {
   return (
     <Grid container spacing={2} style={{ padding: "64px 64px" }}>
       <Grid item xs={12}>
-        <SearchInput />
+        <ExtrinsicsTable />
       </Grid>
       <Grid item xs={12}>
-        <Link to="/dev">dev</Link>
+        <OldEventsTable />
       </Grid>
     </Grid>
   );
 }
 
-export default Dashboard;
+export default Dev;

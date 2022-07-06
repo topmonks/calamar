@@ -19,14 +19,17 @@ import {
 } from "../../services/extrinsicsService";
 import { usePagination } from "../../hooks/usePagination";
 import PaginatedTable from "../PaginatedTable";
+import { Order } from "../../model/order";
 
 export type ExtrinsicsTableProps = {
-  filter: ExtrinsicsFilter;
+  filter?: ExtrinsicsFilter;
+  order?: Order;
   columns?: string[];
 };
 
 function ExtrinsicsTable({
   filter,
+  order,
   columns = ["id", "section", "method", "signer", "time"],
 }: ExtrinsicsTableProps) {
   const [extrinsics, setExtrinsics] = useState([]);
@@ -35,8 +38,13 @@ function ExtrinsicsTable({
 
   useEffect(() => {
     const getExtrinsicsAndSetState = async (limit: number, offset: number) => {
-      const extrinsics = await getExtrinsics(limit, offset, filter);
-      const nextExtrinsics = await getExtrinsics(limit, offset + limit, filter);
+      const extrinsics = await getExtrinsics(limit, offset, filter, order);
+      const nextExtrinsics = await getExtrinsics(
+        limit,
+        offset + limit,
+        filter,
+        order
+      );
 
       console.log("nextE", nextExtrinsics);
 

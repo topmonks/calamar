@@ -11,6 +11,7 @@ function AccountPage() {
       <ExtrinsicsTable
         columns={["id", "section", "method", "time"]}
         filter={filter}
+        order={{ created_at: "desc" }}
       />
     </div>
   );
