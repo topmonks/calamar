@@ -37,10 +37,63 @@
   }
 }
 
-.detail-page {
-  background-image: url("/public/detail-page-bgr.svg");
+.vertical-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.home-page {
-  background-image: url("/public/main-screen-bgr.svg");
+table {
+  font-family: "Open Sans", sans-serif;
+}
+
+table td {
+  font-weight: 400;
+  font-size: 16px!important;
+  line-height: 22px!important;
+}
+
+.calamar-card {
+  border-radius: 8px;
+  box-shadow: 0px 0px 64px rgba(98, 151, 163, 0.13);
+  padding: 48px;
+  background-color: white;
+}
+
+.calamar-table-header {
+  font-weight: 700!important;
+  font-size: 24px!important;
+  line-height: 33px!important;
+}
+
+.calamar-info-table td, th {
+  font-family: "Open Sans", sans-serif;
+}
+
+.calamar-info-table td:first-child {
+  font-weight: 700!important;
+  padding-left: 0;
+}
+
+.calamar-table td:first-child, th:first-child {
+  padding-left: 0;
+}
+
+.calamar-table td, th {
+  font-family: "Open Sans", sans-serif!important;
+}
+
+.calamar-table th {
+  font-weight: 700!important;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+a {
+  color: #14A1C0;
+  text-decoration: none;
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, FormGroup, TextField } from "@mui/material";
+import { Button, FormGroup, Grid, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 
 import { getExtrinsicById, getExtrinsics } from "../services/extrinsicsService";
@@ -8,7 +8,7 @@ import { getBlockById, getBlocks } from "../services/blocksService";
 import { getEvents } from "../services/eventsService";
 
 const StyledTextField = styled(TextField)`
-  max-width: 700px;
+  min-width: 700px !important;
   background-color: #f5f5f5;
   .MuiInputBase-root {
     border-radius: 8px 0px 0px 8px !important;
@@ -26,7 +26,8 @@ const StyledButton = styled(Button)`
   border: 1px solid #d8545c !important;
   color: #ffffff !important;
   border-radius: 0px 8px 8px 0px !important;
-  width: 200px !important;
+  width: 150px !important;
+  height: 56px;
 `;
 
 function isNumber(str: string) {
@@ -35,7 +36,7 @@ function isNumber(str: string) {
 
 function SearchInput() {
   const [search, setSearch] = React.useState<string>("");
-  const [notFound, setNotFound] = React.useState<string | false>(false);
+  const [, setNotFound] = React.useState<string | false>(false);
 
   const navigate = useNavigate();
 
@@ -103,24 +104,38 @@ function SearchInput() {
   };
 
   return (
-    <FormGroup row style={{ justifyContent: "center" }}>
-      <StyledTextField
-        fullWidth
-        id="search"
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Extrinsic hash / account address / block hash / block height / section / method / name"
-        value={search}
-        variant="outlined"
-      />
-      <StyledButton
-        className="calamar-button"
-        disableElevation
-        onClick={handleSubmit}
-        variant="contained"
+    <form onSubmit={handleSubmit} style={{ width: "fit-content" }}>
+      <FormGroup
+        row
+        style={{
+          justifyContent: "center",
+        }}
       >
-        Search
-      </StyledButton>
-    </FormGroup>
+        <Grid container>
+          <Grid item xs="auto">
+            <StyledTextField
+              fullWidth
+              id="search"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Extrinsic hash / account address / block hash / block height / section / method / name"
+              value={search}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs="auto">
+            <StyledButton
+              className="calamar-button"
+              disableElevation
+              onClick={handleSubmit}
+              type="submit"
+              variant="contained"
+            >
+              Search
+            </StyledButton>
+          </Grid>
+        </Grid>
+      </FormGroup>
+    </form>
   );
 }
 
