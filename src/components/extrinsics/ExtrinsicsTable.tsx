@@ -17,35 +17,33 @@ import {
   ExtrinsicsFilter,
   getExtrinsics,
 } from "../../services/extrinsicsService";
-import { usePagination } from "../../hooks/usePagination";
+import { Pagination, usePagination } from "../../hooks/usePagination";
 import PaginatedTable from "../PaginatedTable";
 import { Order } from "../../model/order";
 
 export type ExtrinsicsTableProps = {
-  data: any[];
+  items: any[];
+  pagination: Pagination;
   title?: ReactNode;
   columns?: string[];
 };
 
 function ExtrinsicsTable({
-  data,
+  items,
+  pagination,
   title = "Extrinsics",
-  columns = ["id", "section", "method", "signer", "time"],
+  columns = ["id", "name", "signer", "time"],
 }: ExtrinsicsTableProps) {
-  const pagination = usePagination();
-
-  console.log("hasN", pagination.hasNext);
-
   return (
     <PaginatedTable pagination={pagination} title={title}>
       <TableHead>
         <TableRow>
           {columns.find((value) => value === "id") && <TableCell>Id</TableCell>}
-          {columns.find((value) => value === "section") && (
-            <TableCell>Section</TableCell>
+          {columns.find((value) => value === "name") && (
+            <TableCell>Name</TableCell>
           )}
-          {columns.find((value) => value === "method") && (
-            <TableCell>Method</TableCell>
+          {columns.find((value) => value === "hash") && (
+            <TableCell>Hash</TableCell>
           )}
           {columns.find((value) => value === "signer") && (
             <TableCell>Signer</TableCell>
@@ -56,7 +54,7 @@ function ExtrinsicsTable({
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.map((extrinsic: any) => (
+        {items.map((extrinsic: any) => (
           <TableRow key={extrinsic.id}>
             {columns.find((value) => value === "id") && (
               <TableCell>
@@ -66,23 +64,22 @@ function ExtrinsicsTable({
             {columns.find((value) => value === "hash") && (
               <TableCell>{shortenHash(extrinsic.hash)}</TableCell>
             )}
-            {columns.find((value) => value === "section") && (
-              <TableCell>{extrinsic.section}</TableCell>
-            )}
-            {columns.find((value) => value === "method") && (
-              <TableCell>{extrinsic.method}</TableCell>
+            {columns.find((value) => value === "name") && (
+              <TableCell>{extrinsic.call.name}</TableCell>
             )}
             {columns.find((value) => value === "signer") && (
-              <TableCell>{shortenHash(extrinsic.signer)}</TableCell>
+              <TableCell>
+                {shortenHash(extrinsic.signature?.address.value)}
+              </TableCell>
             )}
             {columns.find((value) => value === "time") && (
               <TableCell>
                 <Tooltip
                   placement="top"
-                  title={formatDate(extrinsic.created_at)}
+                  title={formatDate(extrinsic.block.timestamp)}
                 >
                   <span>
-                    {convertTimestampToTimeFromNow(extrinsic.created_at)}
+                    {convertTimestampToTimeFromNow(extrinsic.block.timestamp)}
                   </span>
                 </Tooltip>
               </TableCell>

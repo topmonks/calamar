@@ -1,9 +1,8 @@
-import { Filter } from "../model/filter";
 import { Order } from "../model/order";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
-export type ExtrinsicsFilter = Filter<{
+export type ExtrinsicsFilter = any; /*Filter<{
   id: string;
   blockId: string;
   hash: string;
@@ -12,7 +11,38 @@ export type ExtrinsicsFilter = Filter<{
   name: string;
   section: string;
   method: string;
-}>;
+  substrate_events: Filter<{
+    name: string;
+  }>;
+}>;*/
+
+export async function getExtrinsicById(id: string) {
+  const response = await fetchGraphql(
+    `
+      query ($id: ID!) {
+        extrinsicById(id: $id) {
+          id
+          hash
+          call {
+            name
+            args
+          }
+          block {
+            id
+            hash
+            timestamp
+          }
+          signature
+        }
+      }
+    `,
+    {
+      id,
+    }
+  );
+
+  return response?.extrinsicById;
+}
 
 const getExtrinsics = async (
   limit: Number,
@@ -35,12 +65,30 @@ const getExtrinsics = async (
     .map((e) => `${e[0]}: ${e[1]}`)
     .join(", ");
 
-  const response =
-    await fetchGraphql(`query MyQuery { substrate_extrinsic(limit: ${limit}, offset: ${offset}, order_by: {${orderBy}},
-     where: {${where}}) {
-        ${fields.map((field) => `${field} `)}
-      }}`);
-  return response?.substrate_extrinsic;
+  const response = await fetchGraphql(
+    `query ($limit: Int!, $offset: Int!) {
+      extrinsics(limit: $limit, offset: $offset, where: {${where}}) {
+        id
+        hash
+        call {
+          name
+          args
+        }
+        block {
+          id
+          hash
+          timestamp
+        }
+        signature
+      }
+    }`,
+    {
+      limit,
+      offset,
+    }
+  );
+
+  return response?.extrinsics;
 };
 
 export { getExtrinsics };

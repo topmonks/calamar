@@ -1,40 +1,50 @@
-interface CommonFilter<T> {
+/*interface CommonFilterOperators<T> {
   _eq?: T;
   _lt?: T;
   _lte?: T;
   _gt?: T;
   _gte?: T;
   _in?: T[];
-  _is_null?: boolean;
-  _neq?: T;
-  _nin?: T[];
+  _isNull?: boolean;
+  _not_eq?: T;
+  _not_in?: T[];
 }
 
-interface StringFilter extends CommonFilter<string> {
-  _ilike?: string;
-  _iregex?: string;
-  _like?: string;
-  _regex?: string;
-  _similar?: string;
-  _nilike?: string;
-  _niregex?: string;
-  _nlike?: string;
-  _nregex?: string;
-  _nsimilar?: string;
+type PropertyFilter2<P extends string, FD extends CommonFilterOperators<any>> = {
+  [OP in keyof FD as `${P}${string & OP}`]: FD[OP];
+};
+
+interface StringFilterOperators extends CommonFilterOperators<string> {
+  _contains?: string;
+  _containsInsensitive?: string;
+  _startsWith?: string;
+  _endsWith?: string;
+  _not_contains?: string;
+  _not_containsInsensitive?: string;
+  _not_startsWith?: string;
+  _not_endsWith?: string;
 }
 
 export type PropertyFilter<T> = T extends string
-  ? StringFilter
-  : CommonFilter<T>;
+  ? StringFilterOperators
+  : CommonFilterOperators<T>;
 
 export type FilterWithoutLogical<T> = {
   [K in keyof T as Exclude<K, "_and" | "_or" | "_not">]?: T[K];
 };
 
 export type Filter<T> = {
-  [K in keyof T]?: T[K] extends Filter<object> ? T[K] : PropertyFilter<T[K]>;
+  [K in keyof T]?: T[K] extends Filter<object> ? T[K] : PropertyFilter<K, T[K]>;
 } & {
   _and?: Filter<T>;
   _or?: Filter<T>;
   _not?: Filter<T>;
 };
+
+const x: PropertyFilter2<"name", CommonFilterOperators<string>>;
+
+const y: Filter<{
+  a: string;
+  b: number;
+}>*/
+export {};

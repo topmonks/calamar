@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button, FormGroup, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 
-import { getExtrinsics } from "../services/extrinsicsService";
-import { getBlocks } from "../services/blocksService";
+import { getExtrinsicById, getExtrinsics } from "../services/extrinsicsService";
+import { getBlockById, getBlocks } from "../services/blocksService";
 import { getEvents } from "../services/eventsService";
 
 const StyledTextField = styled(TextField)`
@@ -45,19 +45,13 @@ function SearchInput() {
     setNotFound(false);
 
     if (search.startsWith("0x")) {
-      const extrinsics = await getExtrinsics(
-        1,
-        0,
-        { hash: { _eq: search } },
-        {},
-        ["id"]
-      );
+      const extrinsics = await getExtrinsics(1, 0, { hash_eq: search });
 
       if (extrinsics.length > 0) {
         return navigate(`/extrinsic/${extrinsics[0].id}`);
       }
 
-      const blocks = await getBlocks(1, 0, { hash: { _eq: search } });
+      const blocks = await getBlocks(1, 0, { hash_eq: search });
       if (blocks.length > 0) {
         return navigate(`/block/${blocks[0].id}`);
       }
@@ -66,12 +60,9 @@ function SearchInput() {
     }
 
     if (isNumber(search)) {
-      const blocks = await getBlocks(
-        1,
-        0,
-        { height: { _eq: parseInt(search) } },
-        ["id"]
-      );
+      const blocks = await getBlocks(1, 0, { height_eq: parseInt(search) }, [
+        "id",
+      ]);
 
       if (blocks.length > 0) {
         return navigate(`/block/${blocks[0].id}`);
@@ -80,7 +71,7 @@ function SearchInput() {
       setNotFound("No block found.");
     }
 
-    let extrinsics = await getExtrinsics(
+    /*let extrinsics = await getExtrinsics(
       1,
       0,
       { signer: { _eq: search } },
@@ -90,20 +81,20 @@ function SearchInput() {
 
     if (extrinsics.length > 0) {
       return navigate(`/account/${search}`);
-    }
+    }*/
 
-    extrinsics = await getExtrinsics(
+    const extrinsics = await getExtrinsics(
       1,
       0,
       {
-        name: { _eq: search },
+        call: { name_eq: search },
       },
       {},
       ["id"]
     );
 
     const events = await getEvents(1, 0, {
-      name: { _eq: search },
+      name_eq: search,
     });
 
     if (extrinsics.length > 0 || events.length > 0) {

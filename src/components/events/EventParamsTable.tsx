@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Paper, Table, TableBody, TableContainer } from "@mui/material";
 import styled from "@emotion/styled";
 
@@ -11,11 +11,17 @@ const ParamsTable = styled(Table)({
 });
 
 export type EventParamsTableProps = {
-  params: EventParam[];
+  args: any;
 };
 
 function EventParamsTable(props: EventParamsTableProps) {
-  const { params } = props;
+  const { args } = props;
+
+  console.log(args);
+  const argsArray: any[] = useMemo(
+    () => (Array.isArray(args) ? args : [args]),
+    [args]
+  );
 
   return (
     <TableContainer
@@ -25,8 +31,8 @@ function EventParamsTable(props: EventParamsTableProps) {
     >
       <ParamsTable size="small">
         <TableBody>
-          {params.map((param, index) => (
-            <EventParamRows index={index} key={index} param={param} />
+          {argsArray.map((arg, index) => (
+            <EventParamRows index={index} key={index} param={arg} />
           ))}
         </TableBody>
       </ParamsTable>

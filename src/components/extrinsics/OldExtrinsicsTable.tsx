@@ -33,12 +33,12 @@ function OldExtrinsicsTable({
   order,
   columns = ["id", "section", "method", "signer", "time"],
 }: ExtrinsicsTableProps) {
-  const [extrinsics, pagination] = useExtrinsics(filter, order);
+  const extrinsics = useExtrinsics(filter, order);
 
-  console.log("hasN", pagination.hasNext);
+  console.log("hasN", extrinsics.pagination.hasNext);
 
   return (
-    <PaginatedTable pagination={pagination} title="Extrinsics">
+    <PaginatedTable pagination={extrinsics.pagination} title="Extrinsics">
       <TableHead>
         <TableRow>
           {columns.find((value) => value === "id") && <TableCell>Id</TableCell>}
@@ -57,7 +57,7 @@ function OldExtrinsicsTable({
         </TableRow>
       </TableHead>
       <TableBody>
-        {extrinsics.map((extrinsic: any) => (
+        {extrinsics.items.map((extrinsic: any) => (
           <TableRow key={extrinsic.id}>
             {columns.find((value) => value === "id") && (
               <TableCell>

@@ -1,5 +1,5 @@
 export const shortenHash = (hash: string) => {
-  if (hash.length < 15) {
+  if (!hash || hash.length < 15) {
     return hash;
   }
 

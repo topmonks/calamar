@@ -8,12 +8,7 @@ export const filterToWhere = (filter: any = {}): string => {
     } else if (filter[key] !== "") {
       const isString = typeof filter[key] === "string";
       const value = isString ? `"${filter[key]}"` : filter[key];
-
-      if (!key.startsWith("_")) {
-        where += `${key}: {_eq: ${value}}, `;
-      } else {
-        where += `${key}: ${value}, `;
-      }
+      where += `${key}: ${value}, `;
     }
   }
   // where = where.slice(0, -2);

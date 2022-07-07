@@ -210,7 +210,7 @@ function OldEventsTable() {
       <TableBody>
         {events.map((event: any) => (
           <OldEventsTableRow
-            expandComponent={<EventParamsTable params={event.params} />}
+            expandComponent={<EventParamsTable args={event.params} />}
             key={event.id}
             sx={{
               "&:last-child td, &:last-child th": { border: 0 },

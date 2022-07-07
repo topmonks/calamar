@@ -1,13 +1,30 @@
-import { Filter } from "../model/filter";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { filterToWhere } from "../utils/filterToWhere";
 
-export type BlocksFilter = Filter<{
+export type BlocksFilter = any; /*Filter<{
   id: string;
   hash: string;
   isSigned: boolean;
   height: number;
-}>;
+}>;*/
+
+export async function getBlockById(id: string) {
+  const response = await fetchGraphql(
+    `query ($id: ID!) {
+      blockById(id: $id) {
+        id
+        hash
+        height
+        timestamp
+      }
+    }`,
+    {
+      id,
+    }
+  );
+
+  return response?.blockById;
+}
 
 const getBlocks = async (
   limit: Number,
@@ -17,12 +34,19 @@ const getBlocks = async (
 ) => {
   const where = filterToWhere(filter);
 
-  const response =
-    await fetchGraphql(`query MyQuery { substrate_block(limit: ${limit}, offset: ${offset}, order_by: {height: desc},
-     where: {${where}}) {
-        ${fields.map((field) => `${field} `)}
-      }}`);
-  return response.substrate_block;
+  const response = await fetchGraphql(
+    `
+      query MyQuery {
+        blocks(limit: ${limit}, offset: ${offset}, where: {${where}}) {
+          id
+          hash
+          height
+          timestamp
+        }
+      }
+    `
+  );
+  return response.blocks;
 };
 
 export { getBlocks };

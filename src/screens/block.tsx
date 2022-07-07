@@ -18,22 +18,22 @@ import { getBlocks } from "../services/blocksService";
 import EventsTable from "../components/events/EventsTable";
 import { getExtrinsics } from "../services/extrinsicsService";
 import OldExtrinsicsTable from "../components/extrinsics/OldExtrinsicsTable";
+import { useBlockById } from "../hooks/useBlockById";
+import { useExtrinsics } from "../hooks/useExtrinsics";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
 function BlockPage() {
-  const [block, setBlock] = React.useState<any>(null);
   let { id } = useParams();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const block = await getBlocks(1, 0, { id: { _eq: id } });
-      setBlock(block[0]);
-    };
-    fetchData();
-  }, [id]);
+  const block = useBlockById(id);
+  const extrinsics = useExtrinsics({ block: { id_eq: id } });
 
   if (!block) {
     return null;
   }
+
+  console.log(block);
+  console.log(extrinsics);
 
   return (
     <div>
@@ -55,18 +55,22 @@ function BlockPage() {
             <TableRow>
               <TableCell>Date</TableCell>
               <TableCell>
-                <Tooltip placement="top" title={formatDate(block.created_at)}>
-                  <span>{convertTimestampToTimeFromNow(block.created_at)}</span>
+                <Tooltip placement="top" title={formatDate(block.timestamp)}>
+                  <span>{convertTimestampToTimeFromNow(block.timestamp)}</span>
                 </Tooltip>
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
-      <OldExtrinsicsTable
+      <ExtrinsicsTable
+        items={extrinsics.items}
+        pagination={extrinsics.pagination}
+      />
+      {/*<OldExtrinsicsTable
         filter={{ blockId: block.id }}
         order={{ created_at: "desc" }}
-      />
+  />*/}
     </div>
   );
 }

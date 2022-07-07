@@ -3,7 +3,7 @@ import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
 
 import { EventsFilter, getEvents } from "../../services/eventsService";
-import { usePagination } from "../../hooks/usePagination";
+import { Pagination, usePagination } from "../../hooks/usePagination";
 
 import EventParamsTable from "./EventParamsTable";
 import PaginatedTable from "../PaginatedTable";
@@ -15,45 +15,29 @@ const HeaderTableRow = styled(TableRow)`
 `;
 
 export type EventsTableProps = {
-  filter: EventsFilter;
+  items: any[];
+  pagination: Pagination;
 };
 
 function EventsTable(props: EventsTableProps) {
-  const { filter } = props;
-
-  const [events, setEvents] = useState([]);
-
-  const pagination = usePagination();
-
-  useEffect(() => {
-    const getEventsAndSetState = async (limit: number, offset: number) => {
-      const events = await getEvents(limit, offset, filter);
-      const nextEvents = await getEvents(limit, offset + limit, filter);
-
-      setEvents(events);
-      pagination.setHasNext(nextEvents.length > 0);
-    };
-    getEventsAndSetState(pagination.limit, pagination.offset);
-  }, [filter, pagination]);
+  const { items, pagination } = props;
 
   return (
     <PaginatedTable pagination={pagination} title="Events">
       <TableHead>
         <HeaderTableRow>
           <TableCell>Id</TableCell>
-          <TableCell>Section</TableCell>
-          <TableCell>Method</TableCell>
+          <TableCell>Name</TableCell>
           <TableCell>Parameters</TableCell>
         </HeaderTableRow>
       </TableHead>
       <TableBody>
-        {events.map((event: any) => (
+        {items.map((event: any) => (
           <TableRow key={event.id}>
             <TableCell>{event.id}</TableCell>
-            <TableCell>{event.section}</TableCell>
-            <TableCell>{event.method}</TableCell>
+            <TableCell>{event.name}</TableCell>
             <TableCell>
-              <EventParamsTable params={event.params} />
+              <EventParamsTable args={event.args} />
             </TableCell>
           </TableRow>
         ))}
