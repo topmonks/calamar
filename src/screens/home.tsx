@@ -21,7 +21,6 @@ function Home() {
       <div style={{ margin: "auto", width: "fit-content" }}>
         <SearchInput />
       </div>
-      <Link to="/dev">dev</Link>
     </div>
   );
 }
