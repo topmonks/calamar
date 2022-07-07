@@ -1,9 +1,33 @@
-import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, FormGroup, TextField } from "@mui/material";
+import styled from "@emotion/styled";
+
 import { getExtrinsics } from "../services/extrinsicsService";
 import { getBlocks } from "../services/blocksService";
-import { useNavigate } from "react-router-dom";
 import { getEvents } from "../services/eventsService";
+
+const StyledTextField = styled(TextField)`
+  max-width: 700px;
+  background-color: #f5f5f5;
+  .MuiInputBase-root {
+    border-radius: 8px 0px 0px 8px !important;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  text-transform: none !important;
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  line-height: 27px !important;
+  background-color: #ff646d !important;
+  border: 1px solid #d8545c !important;
+  color: #ffffff !important;
+  border-radius: 0px 8px 8px 0px !important;
+  width: 200px !important;
+`;
 
 function isNumber(str: string) {
   return /^\+?(0|[1-9]\d*)$/.test(str);
@@ -15,7 +39,7 @@ function SearchInput() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     setNotFound(false);
@@ -88,29 +112,24 @@ function SearchInput() {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs>
-              <TextField
-                fullWidth
-                id="search"
-                label="Extrinsic hash / account address / block hash / block height"
-                onChange={(e) => setSearch(e.target.value)}
-                value={search}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs="auto">
-              <Button color="primary" type="submit" variant="contained">
-                Search
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </Grid>
-    </Grid>
+    <FormGroup row style={{ justifyContent: "center" }}>
+      <StyledTextField
+        fullWidth
+        id="search"
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Extrinsic hash / account address / block hash / block height / section / method / name"
+        value={search}
+        variant="outlined"
+      />
+      <StyledButton
+        className="calamar-button"
+        disableElevation
+        onClick={handleSubmit}
+        variant="contained"
+      >
+        Search
+      </StyledButton>
+    </FormGroup>
   );
 }
 

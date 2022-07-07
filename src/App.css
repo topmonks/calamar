@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.detail-page {
+  background-image: url("/public/detail-page-bgr.svg");
+}
+
+.home-page {
+  background-image: url("/public/main-screen-bgr.svg");
+}
