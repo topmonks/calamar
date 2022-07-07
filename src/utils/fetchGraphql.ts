@@ -1,11 +1,12 @@
-// import getSubdomain from "./getSubdomain";
+import config from "../calamar-config";
 
 export async function fetchGraphql(query: string, variables: object = {}) {
   let results = await fetch(
     // TODO: change when launch
     //`https://polkadot.indexer.gc.subsquid.io/v4/graphql`,
     //`https://kusama.indexer.gc.subsquid.io/v4/graphql`,
-    `https://kusama.explorer.subsquid.io/graphql`,
+    config.apiEndpoint || "https://kusama.explorer.subsquid.io/graphql",
+    // `https://kusama.explorer.subsquid.io/graphql`,
     // `https://${getSubdomain()}.indexer.gc.subsquid.io/v4/graphql`,
     {
       method: "POST",
