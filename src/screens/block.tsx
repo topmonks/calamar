@@ -5,6 +5,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableRow,
   Tooltip,
 } from "@mui/material";
@@ -12,12 +13,9 @@ import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { getBlocks } from "../services/blocksService";
-import EventsTable from "../components/events/EventsTable";
-import { getExtrinsics } from "../services/extrinsicsService";
 import OldExtrinsicsTable from "../components/extrinsics/OldExtrinsicsTable";
+import ResultLayout from "../components/ResultLayout";
 
 function BlockPage() {
   const [block, setBlock] = React.useState<any>(null);
@@ -36,38 +34,45 @@ function BlockPage() {
   }
 
   return (
-    <div>
-      <TableContainer>
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>{block.id}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Hash</TableCell>
-              <TableCell>{block.hash}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Block height</TableCell>
-              <TableCell>{block.height}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>
-                <Tooltip placement="top" title={formatDate(block.created_at)}>
-                  <span>{convertTimestampToTimeFromNow(block.created_at)}</span>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <ResultLayout>
+      <div className="calamar-info-card">
+        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+          Block #{block.id}
+        </div>
+        <TableContainer>
+          <Table className="calamar-info-table">
+            <TableBody>
+              <TableRow>
+                <TableCell>Id</TableCell>
+                <TableCell>{block.id}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Hash</TableCell>
+                <TableCell>{block.hash}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Block height</TableCell>
+                <TableCell>{block.height}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>
+                  <Tooltip placement="top" title={formatDate(block.created_at)}>
+                    <span>
+                      {convertTimestampToTimeFromNow(block.created_at)}
+                    </span>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       <OldExtrinsicsTable
         filter={{ blockId: block.id }}
         order={{ created_at: "desc" }}
       />
-    </div>
+    </ResultLayout>
   );
 }
 

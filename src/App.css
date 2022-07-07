@@ -37,10 +37,28 @@
   }
 }
 
-.detail-page {
-  background-image: url("/public/detail-page-bgr.svg");
+.vertical-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.home-page {
-  background-image: url("/public/main-screen-bgr.svg");
+.calamar-info-card {
+  border-radius: 8px;
+  box-shadow: 0px 0px 64px rgba(98, 151, 163, 0.13);
+  padding: 48px;
+  background-color: white;
+}
+
+.calamar-table-header {
+  font-weight: 700!important;
+  font-size: 24px!important;
+  line-height: 33px!important;
+}
+
+.calamar-info-table td:first-child {
+  font-weight: 700!important;
+  font-size: 16px!important;
+  line-height: 22px!important;
+  padding-left: 0;
 }
