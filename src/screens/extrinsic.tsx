@@ -80,7 +80,14 @@ function ExtrinsicPage() {
               </TableRow>
               <TableRow>
                 <TableCell>Account</TableCell>
-                <TableCell>{extrinsic.signature?.address.value}</TableCell>
+
+                <TableCell>
+                  {extrinsic.signature?.address.value && (
+                    <Link to={`/account/${extrinsic.signature.address.value}`}>
+                      {extrinsic.signature.address.value}
+                    </Link>
+                  )}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
