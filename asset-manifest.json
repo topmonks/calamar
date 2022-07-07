@@ -1,15 +1,19 @@
 {
   "files": {
-    "main.css": "/calamar/static/css/main.ceea2171.css",
-    "main.js": "/calamar/static/js/main.5e3f0c8f.js",
+    "main.css": "/calamar/static/css/main.6ac7ff4b.css",
+    "main.js": "/calamar/static/js/main.608a4f2e.js",
     "static/js/787.fcdfc7c5.chunk.js": "/calamar/static/js/787.fcdfc7c5.chunk.js",
+    "static/media/calamar-logo-export-05.svg": "/calamar/static/media/calamar-logo-export-05.90aee75cd50751973c7c905b4591cdb3.svg",
+    "static/media/calamar-logo-export-02.svg": "/calamar/static/media/calamar-logo-export-02.6a59d7f0f58901b186e6d85251814e7d.svg",
+    "static/media/main-screen-bgr.svg": "/calamar/static/media/main-screen-bgr.24c51a8e2e85d0db4cb19827a3684b5d.svg",
+    "static/media/detail-page-bgr.svg": "/calamar/static/media/detail-page-bgr.2832135d10deec35d85b89f5be71a200.svg",
     "index.html": "/calamar/index.html",
-    "main.ceea2171.css.map": "/calamar/static/css/main.ceea2171.css.map",
-    "main.5e3f0c8f.js.map": "/calamar/static/js/main.5e3f0c8f.js.map",
+    "main.6ac7ff4b.css.map": "/calamar/static/css/main.6ac7ff4b.css.map",
+    "main.608a4f2e.js.map": "/calamar/static/js/main.608a4f2e.js.map",
     "787.fcdfc7c5.chunk.js.map": "/calamar/static/js/787.fcdfc7c5.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ceea2171.css",
-    "static/js/main.5e3f0c8f.js"
+    "static/css/main.6ac7ff4b.css",
+    "static/js/main.608a4f2e.js"
   ]
 }
