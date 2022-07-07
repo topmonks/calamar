@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RecoilRoot } from "recoil";
-import Dashboard from "./screens/dashboard";
+import Home from "./screens/home";
 import ExtrinsicPage from "./screens/extrinsic";
 import BlockPage from "./screens/block";
 import AccountPage from "./screens/account";
@@ -23,7 +23,7 @@ function App() {
           <Route element={<BlockPage />} path="/block/:id" />
           <Route element={<AccountPage />} path="/account/:address" />
           <Route element={<Dev />} path="/dev" />
-          <Route element={<Dashboard />} path="/" />
+          <Route element={<Home />} path="/" />
         </Routes>
       </BrowserRouter>
     </RecoilRoot>
