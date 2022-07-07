@@ -32,9 +32,7 @@ export type FilterWithoutLogical<T> = {
 };
 
 export type Filter<T> = {
-  [K in keyof T]?: T[K] extends Filter<object>
-    ? FilterWithoutLogical<T[K]>
-    : PropertyFilter<T[K]>;
+  [K in keyof T]?: T[K] extends Filter<object> ? T[K] : PropertyFilter<T[K]>;
 } & {
   _and?: Filter<T>;
   _or?: Filter<T>;

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import {
   TableBody,
   TableCell,
@@ -20,24 +20,25 @@ import {
 import { usePagination } from "../../hooks/usePagination";
 import PaginatedTable from "../PaginatedTable";
 import { Order } from "../../model/order";
+import { useExtrinsics } from "../../hooks/useExtrinsics";
 
 export type ExtrinsicsTableProps = {
-  data: any[];
-  title?: ReactNode;
+  filter?: ExtrinsicsFilter;
+  order?: Order;
   columns?: string[];
 };
 
-function ExtrinsicsTable({
-  data,
-  title = "Extrinsics",
+function OldExtrinsicsTable({
+  filter,
+  order,
   columns = ["id", "section", "method", "signer", "time"],
 }: ExtrinsicsTableProps) {
-  const pagination = usePagination();
+  const [extrinsics, pagination] = useExtrinsics(filter, order);
 
   console.log("hasN", pagination.hasNext);
 
   return (
-    <PaginatedTable pagination={pagination} title={title}>
+    <PaginatedTable pagination={pagination} title="Extrinsics">
       <TableHead>
         <TableRow>
           {columns.find((value) => value === "id") && <TableCell>Id</TableCell>}
@@ -56,7 +57,7 @@ function ExtrinsicsTable({
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.map((extrinsic: any) => (
+        {extrinsics.map((extrinsic: any) => (
           <TableRow key={extrinsic.id}>
             {columns.find((value) => value === "id") && (
               <TableCell>
@@ -94,4 +95,4 @@ function ExtrinsicsTable({
   );
 }
 
-export default ExtrinsicsTable;
+export default OldExtrinsicsTable;

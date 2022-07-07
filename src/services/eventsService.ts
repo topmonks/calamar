@@ -5,6 +5,7 @@ import { Filter } from "../model/filter";
 
 export type EventsFilter = Filter<{
   id: string;
+  name: string;
   section: string;
   method: string;
   signer: string;
@@ -30,6 +31,8 @@ const getEvents = async (
         extrinsic {
           id
           hash
+          section
+          method
           signer
           isSigned
         }

@@ -17,7 +17,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { getBlocks } from "../services/blocksService";
 import EventsTable from "../components/events/EventsTable";
 import { getExtrinsics } from "../services/extrinsicsService";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import OldExtrinsicsTable from "../components/extrinsics/OldExtrinsicsTable";
 
 function BlockPage() {
   const [block, setBlock] = React.useState<any>(null);
@@ -63,7 +63,7 @@ function BlockPage() {
           </TableBody>
         </Table>
       </TableContainer>
-      <ExtrinsicsTable
+      <OldExtrinsicsTable
         filter={{ blockId: block.id }}
         order={{ created_at: "desc" }}
       />

@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import OldExtrinsicsTable from "../components/extrinsics/OldExtrinsicsTable";
 
 function AccountPage() {
   let { address } = useParams();
@@ -8,7 +8,7 @@ function AccountPage() {
 
   return (
     <div>
-      <ExtrinsicsTable
+      <OldExtrinsicsTable
         columns={["id", "section", "method", "time"]}
         filter={filter}
         order={{ created_at: "desc" }}

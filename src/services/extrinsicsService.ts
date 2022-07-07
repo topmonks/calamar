@@ -9,6 +9,9 @@ export type ExtrinsicsFilter = Filter<{
   hash: string;
   isSigned: boolean;
   signer: string;
+  name: string;
+  section: string;
+  method: string;
 }>;
 
 const getExtrinsics = async (

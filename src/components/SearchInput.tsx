@@ -3,17 +3,22 @@ import React from "react";
 import { getExtrinsics } from "../services/extrinsicsService";
 import { getBlocks } from "../services/blocksService";
 import { useNavigate } from "react-router-dom";
+import { getEvents } from "../services/eventsService";
 
 function isNumber(str: string) {
   return /^\+?(0|[1-9]\d*)$/.test(str);
 }
 
 function SearchInput() {
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = React.useState<string>("");
+  const [notFound, setNotFound] = React.useState<string | false>(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setNotFound(false);
 
     if (search.startsWith("0x")) {
       const extrinsics = await getExtrinsics(
@@ -23,42 +28,62 @@ function SearchInput() {
         {},
         ["id"]
       );
+
       if (extrinsics.length > 0) {
-        navigate(`/extrinsic/${extrinsics[0].id}`);
-      } else {
-        const blocks = await getBlocks(1, 0, { hash: { _eq: search } });
-        if (blocks.length > 0) {
-          navigate(`/block/${blocks[0].id}`);
-        } else {
-          alert("No block or extrinsic found");
-        }
+        return navigate(`/extrinsic/${extrinsics[0].id}`);
       }
-    } else if (isNumber(search)) {
+
+      const blocks = await getBlocks(1, 0, { hash: { _eq: search } });
+      if (blocks.length > 0) {
+        return navigate(`/block/${blocks[0].id}`);
+      }
+
+      setNotFound("No extrinsic nor block found.");
+    }
+
+    if (isNumber(search)) {
       const blocks = await getBlocks(
         1,
         0,
         { height: { _eq: parseInt(search) } },
         ["id"]
       );
-      console.log("BBH", blocks);
+
       if (blocks.length > 0) {
-        navigate(`/block/${blocks[0].id}`);
-      } else {
-        alert("No block found");
+        return navigate(`/block/${blocks[0].id}`);
       }
-    } else {
-      const extrinsics = await getExtrinsics(
-        1,
-        0,
-        { signer: { _eq: search } },
-        {},
-        ["id"]
-      );
-      if (extrinsics.length > 0) {
-        navigate(`/account/${search}`);
-      } else {
-        navigate(`/extrinsics/${search}`);
-      }
+
+      setNotFound("No block found.");
+    }
+
+    let extrinsics = await getExtrinsics(
+      1,
+      0,
+      { signer: { _eq: search } },
+      {},
+      ["id"]
+    );
+
+    if (extrinsics.length > 0) {
+      return navigate(`/account/${search}`);
+    }
+
+    extrinsics = await getExtrinsics(
+      1,
+      0,
+      {
+        name: { _eq: search },
+      },
+      {},
+      ["id"]
+    );
+
+    const events = await getEvents(1, 0, {
+      name: { _eq: search },
+    });
+
+    if (extrinsics.length > 0 || events.length > 0) {
+      return navigate(`/extrinsics-by-name/${search}`);
     }
   };
 
