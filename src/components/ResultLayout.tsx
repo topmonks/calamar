@@ -40,13 +40,15 @@ function ResultLayout({ children }: { children: ReactNode }) {
           backgroundColor: "white",
         }}
       >
-        <Logo
-          onClick={() => navigate("/")}
-          style={{ width: "250px", float: "left", cursor: "pointer" }}
-        />
-        <div style={{ width: "fit-content", float: "right" }}>
-          <div className="vertical-center" style={{ height: 100 }}>
-            <SearchInput />
+        <div style={{ maxWidth: "1500px", margin: "auto" }}>
+          <Logo
+            onClick={() => navigate("/")}
+            style={{ width: "250px", float: "left", cursor: "pointer" }}
+          />
+          <div style={{ width: "fit-content", float: "right" }}>
+            <div className="vertical-center" style={{ height: 100 }}>
+              <SearchInput />
+            </div>
           </div>
         </div>
       </div>
