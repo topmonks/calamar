@@ -35,7 +35,7 @@ function isNumber(str: string) {
 
 function SearchInput() {
   const [search, setSearch] = React.useState<string>("");
-  const [notFound, setNotFound] = React.useState<string | false>(false);
+  const [, setNotFound] = React.useState<string | false>(false);
 
   const navigate = useNavigate();
 
@@ -112,24 +112,27 @@ function SearchInput() {
   };
 
   return (
-    <FormGroup row style={{ justifyContent: "center" }}>
-      <StyledTextField
-        fullWidth
-        id="search"
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Extrinsic hash / account address / block hash / block height / section / method / name"
-        value={search}
-        variant="outlined"
-      />
-      <StyledButton
-        className="calamar-button"
-        disableElevation
-        onClick={handleSubmit}
-        variant="contained"
-      >
-        Search
-      </StyledButton>
-    </FormGroup>
+    <form onSubmit={handleSubmit}>
+      <FormGroup row style={{ justifyContent: "center" }}>
+        <StyledTextField
+          fullWidth
+          id="search"
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Extrinsic hash / account address / block hash / block height / section / method / name"
+          value={search}
+          variant="outlined"
+        />
+        <StyledButton
+          className="calamar-button"
+          disableElevation
+          onClick={handleSubmit}
+          type="submit"
+          variant="contained"
+        >
+          Search
+        </StyledButton>
+      </FormGroup>
+    </form>
   );
 }
 
