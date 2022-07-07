@@ -35,7 +35,7 @@ function BlockPage() {
 
   return (
     <ResultLayout>
-      <div className="calamar-info-card">
+      <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
           Block #{block.id}
         </div>
@@ -68,10 +68,12 @@ function BlockPage() {
           </Table>
         </TableContainer>
       </div>
-      <OldExtrinsicsTable
-        filter={{ blockId: block.id }}
-        order={{ created_at: "desc" }}
-      />
+      <div style={{ marginTop: 16, marginBottom: 16 }}>
+        <OldExtrinsicsTable
+          filter={{ blockId: block.id }}
+          order={{ created_at: "desc" }}
+        />
+      </div>
     </ResultLayout>
   );
 }
