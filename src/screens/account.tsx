@@ -1,19 +1,32 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import OldExtrinsicsTable from "../components/extrinsics/OldExtrinsicsTable";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import ResultLayout from "../components/ResultLayout";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 
 function AccountPage() {
   let { address } = useParams();
-  const filter = { signer: { _eq: address } };
+
+  const extrinsics = useExtrinsics({
+    signature_jsonContains: `{\\"address\\": \\"${address}\\"}`,
+  });
 
   return (
-    <div>
-      <OldExtrinsicsTable
-        columns={["id", "section", "method", "time"]}
-        filter={filter}
-        order={{ created_at: "desc" }}
-      />
-    </div>
+    <ResultLayout>
+      <div className="calamar-card">
+        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+          Account #{address}
+        </div>
+        <div>TODO</div>
+      </div>
+      <div style={{ marginTop: 16, marginBottom: 16 }}>
+        <ExtrinsicsTable
+          columns={["id", "name", "time"]}
+          items={extrinsics.items}
+          pagination={extrinsics.pagination}
+        />
+      </div>
+    </ResultLayout>
   );
 }
 

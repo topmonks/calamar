@@ -12,6 +12,6 @@ export const filterToWhere = (filter: any = {}): string => {
     }
   }
   // where = where.slice(0, -2);
-  where = where.replace(/"([^(")"]+)":/g, "$1:");
+  //where = where.replace(/"([^(")"]+)":/g, "$1:");
   return where;
 };
