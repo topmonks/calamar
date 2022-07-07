@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormGroup, Grid, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 
@@ -45,7 +45,11 @@ function isNumber(str: string) {
 }
 
 function SearchInput() {
-  const [search, setSearch] = React.useState<string>("");
+  const [qs] = useSearchParams();
+  const query = qs.get("query");
+  console.log(qs, query);
+
+  const [search, setSearch] = React.useState<string>(query || "");
   const [, setNotFound] = React.useState<string | false>(false);
 
   const navigate = useNavigate();
@@ -67,7 +71,8 @@ function SearchInput() {
         return navigate(`/block/${blocks[0].id}`);
       }
 
-      setNotFound("No extrinsic nor block found.");
+      //setNotFound("No extrinsic nor block found.");
+      return navigate(`/not-found?query=${search}`);
     }
 
     if (isNumber(search)) {
@@ -79,7 +84,8 @@ function SearchInput() {
         return navigate(`/block/${blocks[0].id}`);
       }
 
-      setNotFound("No block found.");
+      //setNotFound("No block found.");
+      return navigate(`/not-found?query=${search}`);
     }
 
     let extrinsics = await getExtrinsics(
@@ -111,6 +117,8 @@ function SearchInput() {
     if (extrinsics.length > 0 || events.length > 0) {
       return navigate(`/extrinsics-by-name/${search}`);
     }
+
+    return navigate(`/not-found?query=${search}`);
   };
 
   return (
