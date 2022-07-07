@@ -82,19 +82,19 @@ function SearchInput() {
       setNotFound("No block found.");
     }
 
-    /*let extrinsics = await getExtrinsics(
+    let extrinsics = await getExtrinsics(
       1,
       0,
-      { signer: { _eq: search } },
+      { signature_jsonContains: `{\\"address\\": \\"${search}\\"}` },
       {},
       ["id"]
     );
 
     if (extrinsics.length > 0) {
       return navigate(`/account/${search}`);
-    }*/
+    }
 
-    const extrinsics = await getExtrinsics(
+    extrinsics = await getExtrinsics(
       1,
       0,
       {

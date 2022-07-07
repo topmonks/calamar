@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import ResultLayout from "../components/ResultLayout";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { getEvents } from "../services/eventsService";
@@ -28,30 +29,35 @@ function ExtrinsicsByNamePage() {
   console.log(extrinsicsByName);
 
   return (
-    <>
+    <ResultLayout>
       {extrinsicsByName.items.length > 0 && (
-        <ExtrinsicsTable
-          items={extrinsicsByName.items}
-          pagination={extrinsicsByName.pagination}
-          title={
-            <span>
-              Extrinsics with name <em>{name}</em>
-            </span>
-          }
-        />
+        <div style={{ marginBottom: 16 }}>
+          <ExtrinsicsTable
+            items={extrinsicsByName.items}
+            pagination={extrinsicsByName.pagination}
+            title={
+              <span>
+                Extrinsics with name{" "}
+                <span style={{ fontWeight: "normal" }}>{name}</span>
+              </span>
+            }
+          />
+        </div>
       )}
       {/*extrinsicsByEventName.items.length > 0 && (
-        <ExtrinsicsTable
-          items={extrinsicsByEventName.items}
-          pagination={extrinsicsByEventName.pagination}
-          title={
-            <span>
-              Extrinsics with event <em>{name}</em>
-            </span>
-          }
-        />
-        )*/}
-    </>
+        <div style={{ marginTop: 16, marginBottom: 16 }}>
+          <ExtrinsicsTable
+            items={extrinsicsByEventName.items}
+            pagination={extrinsicsByEventName.pagination}
+            title={
+              <span>
+                Extrinsics with event <em>{name}</em>
+              </span>
+            }
+          />
+        </div>
+      )*/}
+    </ResultLayout>
   );
 }
 
