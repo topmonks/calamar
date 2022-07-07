@@ -117,7 +117,7 @@ function SearchInput() {
               fullWidth
               id="search"
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Extrinsic hash / account address / block hash / block height / section / method / name"
+              placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
               value={search}
               variant="outlined"
             />
