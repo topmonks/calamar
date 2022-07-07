@@ -32,7 +32,7 @@ function ResultLayout({
           width: "calc(100vw - 64px)",
         }}
       >
-        {children}
+        <div style={{ maxWidth: "1500px", margin: "auto" }}>{children}</div>
       </div>
       <div
         style={{
