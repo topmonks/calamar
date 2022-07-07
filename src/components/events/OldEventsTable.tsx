@@ -177,7 +177,7 @@ function OldEventsTable() {
           <TableCell>
             <Grid container spacing={2} wrap="nowrap">
               <Grid item style={{ margin: "auto" }}>
-                Signer
+                Account
               </Grid>
               <Grid item>
                 <Box sx={{ display: "flex", alignItems: "flex-end" }}>

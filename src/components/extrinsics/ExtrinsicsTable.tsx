@@ -46,7 +46,7 @@ function ExtrinsicsTable({
             <TableCell>Hash</TableCell>
           )}
           {columns.find((value) => value === "signer") && (
-            <TableCell>Signer</TableCell>
+            <TableCell>Account</TableCell>
           )}
           {columns.find((value) => value === "time") && (
             <TableCell>Time</TableCell>
