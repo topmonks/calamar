@@ -8,10 +8,20 @@ import { getBlockById, getBlocks } from "../services/blocksService";
 import { getEvents } from "../services/eventsService";
 
 const StyledTextField = styled(TextField)`
-  min-width: 700px !important;
+  min-width: 800px !important;
   background-color: #f5f5f5;
+
   .MuiInputBase-root {
+    font-family: "Open Sans", sans-serif !important;
     border-radius: 8px 0px 0px 8px !important;
+  }
+  & label.Mui-focused {
+    color: #d8545c;
+  }
+  & .MuiOutlinedInput-root {
+    &.Mui-focused fieldset {
+      border-color: #d8545c;
+    }
   }
 `;
 
