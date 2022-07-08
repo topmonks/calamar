@@ -75,6 +75,7 @@ function ExtrinsicsTable({
             {columns.find((value) => value === "time") && (
               <TableCell>
                 <Tooltip
+                  arrow
                   placement="top"
                   title={formatDate(extrinsic.block.timestamp)}
                 >

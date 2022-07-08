@@ -19,6 +19,7 @@ import { useEvents } from "../hooks/useEvents";
 import ResultLayout from "../components/ResultLayout";
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 
 function ExtrinsicPage() {
   let { id } = useParams();
@@ -45,12 +46,18 @@ function ExtrinsicPage() {
               </TableRow>
               <TableRow>
                 <TableCell>Hash</TableCell>
-                <TableCell>{extrinsic.hash}</TableCell>
+                <TableCell>
+                  {extrinsic.hash}
+                  <span style={{ marginLeft: 8 }}>
+                    <CopyToClipboardButton value={extrinsic.hash} />
+                  </span>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Block time</TableCell>
                 <TableCell>
                   <Tooltip
+                    arrow
                     placement="top"
                     title={formatDate(extrinsic.block.timestamp)}
                   >
@@ -80,7 +87,6 @@ function ExtrinsicPage() {
               </TableRow>
               <TableRow>
                 <TableCell>Account</TableCell>
-
                 <TableCell>
                   {extrinsic.signature?.address.value && (
                     <Link to={`/account/${extrinsic.signature.address.value}`}>

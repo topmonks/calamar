@@ -17,6 +17,7 @@ import { useBlock } from "../hooks/useBlock";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import ResultLayout from "../components/ResultLayout";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 
 function BlockPage() {
   let { id } = useParams();
@@ -46,7 +47,12 @@ function BlockPage() {
               </TableRow>
               <TableRow>
                 <TableCell>Hash</TableCell>
-                <TableCell>{block.hash}</TableCell>
+                <TableCell>
+                  {block.hash}
+                  <span style={{ marginLeft: 8 }}>
+                    <CopyToClipboardButton value={block.hash} />
+                  </span>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Block height</TableCell>
@@ -55,7 +61,11 @@ function BlockPage() {
               <TableRow>
                 <TableCell>Date</TableCell>
                 <TableCell>
-                  <Tooltip placement="top" title={formatDate(block.timestamp)}>
+                  <Tooltip
+                    arrow
+                    placement="top"
+                    title={formatDate(block.timestamp)}
+                  >
                     <span>
                       {convertTimestampToTimeFromNow(block.timestamp)}
                     </span>
