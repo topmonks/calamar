@@ -105,7 +105,11 @@ function BlocksMiniTable() {
               <TableCell>{shortenHash(block.hash)}</TableCell>
               <TableCell>{block.height}</TableCell>
               <TableCell>
-                <Tooltip placement="top" title={formatDate(block.created_at)}>
+                <Tooltip
+                  arrow
+                  placement="top"
+                  title={formatDate(block.created_at)}
+                >
                   <span>{convertTimestampToTimeFromNow(block.created_at)}</span>
                 </Tooltip>
               </TableCell>
