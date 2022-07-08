@@ -3,7 +3,7 @@ import { Grid } from "@mui/material";
 import ResultLayout from "../components/ResultLayout";
 import { useSearchParams } from "react-router-dom";
 
-function NotFound() {
+function NotFoundPage() {
   const [qs] = useSearchParams();
   const query = qs.get("query");
   console.log(qs, query);
@@ -23,4 +23,4 @@ function NotFound() {
   );
 }
 
-export default NotFound;
+export default NotFoundPage;

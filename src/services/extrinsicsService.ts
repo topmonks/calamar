@@ -16,58 +16,25 @@ export type ExtrinsicsFilter = any; /*Filter<{
   }>;
 }>;*/
 
-export async function getExtrinsicById(id: string) {
-  const response = await fetchGraphql(
-    `
-      query ($id: ID!) {
-        extrinsicById(id: $id) {
-          id
-          hash
-          call {
-            name
-            args
-          }
-          block {
-            id
-            hash
-            timestamp
-          }
-          signature
-        }
-      }
-    `,
-    {
-      id,
-    }
-  );
-
-  return response?.extrinsicById;
+export async function getExtrinsic(filter?: ExtrinsicsFilter) {
+  const extrinsics = await getExtrinsics(1, 0, filter);
+  return extrinsics?.[0];
 }
 
-const getExtrinsics = async (
+export async function getExtrinsics(
   limit: Number,
   offset: Number,
   filter?: ExtrinsicsFilter,
-  order?: Order,
-  fields = [
-    "id",
-    "section",
-    "method",
-    "signer",
-    "hash",
-    "created_at",
-    "blockId",
-    "blockHash",
-  ]
-) => {
+  order?: Order
+) {
   const where = filterToWhere(filter);
   const orderBy = Object.entries(order || {})
     .map((e) => `${e[0]}: ${e[1]}`)
     .join(", ");
 
   const response = await fetchGraphql(
-    `query ($limit: Int!, $offset: Int!) {
-      extrinsics(limit: $limit, offset: $offset, where: ${where}) {
+    `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput) {
+      extrinsics(limit: $limit, offset: $offset, where: $filter) {
         id
         hash
         call {
@@ -85,10 +52,9 @@ const getExtrinsics = async (
     {
       limit,
       offset,
+      filter,
     }
   );
 
   return response?.extrinsics;
-};
-
-export { getExtrinsics };
+}

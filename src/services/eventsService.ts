@@ -10,23 +10,31 @@ export type EventsFilter = any; /*Filter<{
   extrinsic: ExtrinsicsFilter;
 }>;*/
 
+export async function getEvent(filter: EventsFilter) {
+  const events = await getEvents(1, 0, filter);
+  return events?.[0];
+}
+
 export async function getEvents(
   limit: Number,
   offset: Number,
   filter: EventsFilter
 ) {
-  const where = filterToWhere(filter);
-
   const response = await fetchGraphql(
     `
-      query {
-        events(limit: ${limit}, offset: ${offset}, where: ${where}) {
+      query ($limit: Int!, $offset: Int!, $filter: EventWhereInput) {
+        events(limit: $limit, offset: $offset, where: $filter) {
           id
           name
           args
         }
       }
-    `
+    `,
+    {
+      limit,
+      offset,
+      filter,
+    }
   );
 
   return response?.events;

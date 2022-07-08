@@ -13,7 +13,7 @@ import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import { useBlockById } from "../hooks/useBlockById";
+import { useBlock } from "../hooks/useBlock";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import ResultLayout from "../components/ResultLayout";
@@ -21,8 +21,8 @@ import ResultLayout from "../components/ResultLayout";
 function BlockPage() {
   let { id } = useParams();
 
-  const block = useBlockById(id);
-  const extrinsics = useExtrinsics({ block: { id_eq: id } });
+  const block = useBlock({ id_eq: id }, { skip: !id });
+  const extrinsics = useExtrinsics({ block: { id_eq: id } }, {}, { skip: !id });
 
   if (!block) {
     return null;

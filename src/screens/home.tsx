@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
 import Background from "../assets/main-screen-bgr.svg";
 
-function Home() {
+function HomePage() {
   return (
     <div
       style={{
@@ -25,4 +25,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomePage;

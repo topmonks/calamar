@@ -1,15 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
+import { FetchOptions } from "../model/fetchOptions";
 
 import { EventsFilter, getEvents } from "../services/eventsService";
 
 import { usePagination } from "./usePagination";
 
-export function useEvents(filter: EventsFilter = {}) {
+export function useEvents(filter: EventsFilter, options?: FetchOptions) {
   const [items, setItems] = useState([]);
 
   const pagination = usePagination();
 
   useEffect(() => {
+    if (options?.skip) {
+      return;
+    }
+
     const fetchItems = async (limit: number, offset: number) => {
       const extrinsics = await getEvents(limit, offset, filter);
       const nextExtrinsics = await getEvents(limit, offset + limit, filter);
@@ -25,7 +30,7 @@ export function useEvents(filter: EventsFilter = {}) {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [JSON.stringify(filter), pagination, setItems]);
+  }, [JSON.stringify(filter), options?.skip, pagination, setItems]);
 
   return useMemo(
     () => ({

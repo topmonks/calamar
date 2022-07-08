@@ -8,45 +8,32 @@ export type BlocksFilter = any; /*Filter<{
   height: number;
 }>;*/
 
-export async function getBlockById(id: string) {
-  const response = await fetchGraphql(
-    `query ($id: ID!) {
-      blockById(id: $id) {
-        id
-        hash
-        height
-        timestamp
-      }
-    }`,
-    {
-      id,
-    }
-  );
-
-  return response?.blockById;
+export async function getBlock(filter: BlocksFilter) {
+  const blocks = await getBlocks(1, 0, filter);
+  return blocks?.[0];
 }
 
-const getBlocks = async (
+export async function getBlocks(
   limit: Number,
   offset: Number,
-  filter: BlocksFilter,
-  fields: string[] = ["id", "hash", "height", "created_at"]
-) => {
-  const where = filterToWhere(filter);
-
+  filter: BlocksFilter
+) {
   const response = await fetchGraphql(
     `
-      query MyQuery {
-        blocks(limit: ${limit}, offset: ${offset}, where: ${where}) {
+      query ($limit: Int!, $offset: Int!, $filter: BlockWhereInput) {
+        blocks(limit: $limit, offset: $offset, where: $filter) {
           id
           hash
           height
           timestamp
         }
       }
-    `
+    `,
+    {
+      limit,
+      offset,
+      filter,
+    }
   );
   return response.blocks;
-};
-
-export { getBlocks };
+}

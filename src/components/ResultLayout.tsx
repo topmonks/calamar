@@ -2,7 +2,7 @@ import React, { ReactComponentElement, ReactNode } from "react";
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 import SearchInput from "./SearchInput";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ResultLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -41,11 +41,11 @@ function ResultLayout({ children }: { children: ReactNode }) {
         }}
       >
         <div style={{ maxWidth: "1500px", margin: "auto" }}>
-          <a href="/">
+          <Link to="/">
             <Logo
               style={{ width: "250px", float: "left", cursor: "pointer" }}
             />
-          </a>
+          </Link>
           <div style={{ width: "fit-content", float: "right" }}>
             <div className="vertical-center" style={{ height: 100 }}>
               <SearchInput />

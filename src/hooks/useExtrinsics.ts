@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
+import { FetchOptions } from "../model/fetchOptions";
 
 import { Order } from "../model/order";
 import { ExtrinsicsFilter, getExtrinsics } from "../services/extrinsicsService";
 
 import { usePagination } from "./usePagination";
 
-export function useExtrinsics(filter: ExtrinsicsFilter = {}, order?: Order) {
+export function useExtrinsics(
+  filter: ExtrinsicsFilter,
+  order?: Order,
+  options?: FetchOptions
+) {
   const [items, setItems] = useState([]);
 
   const pagination = usePagination();
 
   useEffect(() => {
-    console.log("tu");
+    if (options?.skip) {
+      return;
+    }
 
     const fetchItems = async (limit: number, offset: number) => {
       const extrinsics = await getExtrinsics(limit, offset, filter, order);
@@ -35,7 +42,13 @@ export function useExtrinsics(filter: ExtrinsicsFilter = {}, order?: Order) {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [JSON.stringify(filter), JSON.stringify(order), pagination, setItems]);
+  }, [
+    JSON.stringify(filter),
+    JSON.stringify(order),
+    options?.skip,
+    pagination,
+    setItems,
+  ]);
 
   return useMemo(
     () => ({

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { getExtrinsicById, getExtrinsics } from "../services/extrinsicsService";
+import { getExtrinsics } from "../services/extrinsicsService";
 import { Link, useParams } from "react-router-dom";
 import {
   Table,
@@ -14,7 +14,7 @@ import {
   formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
 import EventsTable from "../components/events/EventsTable";
-import { useExtrinsicById } from "../hooks/useExtrinsicById";
+import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useEvents } from "../hooks/useEvents";
 import ResultLayout from "../components/ResultLayout";
 import CrossIcon from "../assets/cross-icon.png";
@@ -23,8 +23,8 @@ import CheckIcon from "../assets/check-icon.png";
 function ExtrinsicPage() {
   let { id } = useParams();
 
-  const extrinsic = useExtrinsicById(id);
-  const events = useEvents({ extrinsic: { id_eq: id } });
+  const extrinsic = useExtrinsic({ id_eq: id }, { skip: !id });
+  const events = useEvents({ extrinsic: { id_eq: id } }, { skip: !id });
 
   if (!extrinsic) {
     return null;

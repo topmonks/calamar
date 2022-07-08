@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
 
@@ -16,14 +16,15 @@ const HeaderTableRow = styled(TableRow)`
 
 export type EventsTableProps = {
   items: any[];
+  title?: ReactNode;
   pagination: Pagination;
 };
 
 function EventsTable(props: EventsTableProps) {
-  const { items, pagination } = props;
+  const { items, pagination, title = "Events" } = props;
 
   return (
-    <PaginatedTable pagination={pagination} title="Events">
+    <PaginatedTable pagination={pagination} title={title}>
       <TableHead>
         <HeaderTableRow>
           <TableCell>Id</TableCell>
