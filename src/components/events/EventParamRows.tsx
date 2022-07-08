@@ -26,15 +26,19 @@ export type EventParamRowsProps = {
   index: number;
 };
 
+const EventParamTableCell = styled(TableCell)`
+  padding: 16px 24px !important;
+`;
+
 function EventParamRows(props: EventParamRowsProps) {
   const { index, param } = props;
 
   return (
     <TableRow>
-      <TableCell>{index}</TableCell>
-      <TableCell>
+      <EventParamTableCell>{index}</EventParamTableCell>
+      <EventParamTableCell>
         <EventParamValue value={param} />
-      </TableCell>
+      </EventParamTableCell>
     </TableRow>
   );
 }

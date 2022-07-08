@@ -2,17 +2,22 @@ import React from "react";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
 
-const ValueTable = styled(Table)({
-  margin: "-6px -16px",
-  width: "auto",
-  wordBreak: "initial",
+const ValueTable = styled(Table)`
+  margin: -6px -16px;
+  width: auto;
+  word-break: initial;
+  td:first-of-type {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+  }
 
-  "tr:last-child": {
-    td: {
-      borderBottom: "none",
-    },
-  },
-});
+  tr:last-child {
+    td {
+      border-bottom: none;
+    }
+  }
+`;
 
 const ParamNameCell = styled(TableCell)({
   width: 150,
