@@ -6,9 +6,13 @@ import { EventParam } from "../../model/eventParam";
 
 import EventParamRows from "./EventParamRows";
 
-const ParamsTable = styled(Table)({
-  backgroundColor: "rgba(0, 0, 0, 0.05)",
-});
+const ParamsTable = styled(Table)`
+  background-color: #f5f5f5;
+  td,
+  th {
+    vertical-align: top;
+  }
+`;
 
 export type EventParamsTableProps = {
   args: any;
@@ -27,7 +31,7 @@ function EventParamsTable(props: EventParamsTableProps) {
     <TableContainer
       component={Paper}
       elevation={0}
-      style={{ maxWidth: "100%", width: "fit-content" }}
+      style={{ maxWidth: "100%", width: "fit-content", borderRadius: 8 }}
     >
       <ParamsTable size="small">
         <TableBody>

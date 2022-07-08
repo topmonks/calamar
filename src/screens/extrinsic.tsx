@@ -37,7 +37,7 @@ function ExtrinsicPage() {
           Extrinsic #{extrinsic.id}
         </div>
         <TableContainer>
-          <Table>
+          <Table className="calamar-info-table">
             <TableBody>
               <TableRow>
                 <TableCell>Id</TableCell>
