@@ -49,7 +49,7 @@ function BlockPage() {
                 <TableCell>Hash</TableCell>
                 <TableCell>
                   {block.hash}
-                  <span style={{ marginRight: 8 }}>
+                  <span style={{ marginLeft: 8 }}>
                     <CopyToClipboardButton value={block.hash} />
                   </span>
                 </TableCell>

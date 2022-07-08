@@ -48,7 +48,7 @@ function ExtrinsicPage() {
                 <TableCell>Hash</TableCell>
                 <TableCell>
                   {extrinsic.hash}
-                  <span style={{ marginRight: 8 }}>
+                  <span style={{ marginLeft: 8 }}>
                     <CopyToClipboardButton value={extrinsic.hash} />
                   </span>
                 </TableCell>
