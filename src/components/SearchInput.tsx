@@ -16,11 +16,11 @@ const StyledTextField = styled(TextField)`
     border-radius: 8px 0px 0px 8px !important;
   }
   & label.Mui-focused {
-    color: #d8545c;
+    color: #14a1c0;
   }
   & .MuiOutlinedInput-root {
     &.Mui-focused fieldset {
-      border-color: #d8545c;
+      border-color: #14a1c0;
     }
   }
 `;
