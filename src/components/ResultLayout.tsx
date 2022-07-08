@@ -41,10 +41,11 @@ function ResultLayout({ children }: { children: ReactNode }) {
         }}
       >
         <div style={{ maxWidth: "1500px", margin: "auto" }}>
-          <Logo
-            onClick={() => navigate("/")}
-            style={{ width: "250px", float: "left", cursor: "pointer" }}
-          />
+          <a href="/">
+            <Logo
+              style={{ width: "250px", float: "left", cursor: "pointer" }}
+            />
+          </a>
           <div style={{ width: "fit-content", float: "right" }}>
             <div className="vertical-center" style={{ height: 100 }}>
               <SearchInput />
