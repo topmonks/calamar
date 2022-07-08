@@ -73,6 +73,9 @@ function ExtrinsicPage() {
                   <Link to={`/block/${extrinsic.block.id}`}>
                     {extrinsic.block.hash}
                   </Link>
+                  <span style={{ marginLeft: 8 }}>
+                    <CopyToClipboardButton value={extrinsic.block.hash} />
+                  </span>
                 </TableCell>
               </TableRow>
               <TableRow>

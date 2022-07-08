@@ -5,7 +5,7 @@ import ClipboardJS from "clipboard";
 const CopyToClipboardButton = ({ value }: { value: string }) => {
   const [copied, setCopied] = React.useState(false);
   useEffect(() => {
-    const clipboard = new ClipboardJS(".copy-btn");
+    const clipboard = new ClipboardJS(".btn-" + value);
     clipboard.on("success", (ev) => {
       setCopied(true);
       setTimeout(() => {
@@ -25,7 +25,7 @@ const CopyToClipboardButton = ({ value }: { value: string }) => {
         placement="top"
         title="Copied"
       >
-        <IconButton className="copy-btn" data-clipboard-text={value}>
+        <IconButton className={"btn-  " + value} data-clipboard-text={value}>
           <svg
             height="24"
             style={{ color: "#14A1C0" }}
