@@ -13,8 +13,6 @@ import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import { getBlocks } from "../services/blocksService";
-import OldExtrinsicsTable from "../components/extrinsics/OldExtrinsicsTable";
 import { useBlockById } from "../hooks/useBlockById";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";

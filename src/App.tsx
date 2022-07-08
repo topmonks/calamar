@@ -6,7 +6,6 @@ import Home from "./screens/home";
 import ExtrinsicPage from "./screens/extrinsic";
 import BlockPage from "./screens/block";
 import AccountPage from "./screens/account";
-import Dev from "./screens/dev";
 import NotFound from "./screens/notFound";
 import ExtrinsicsByNamePage from "./screens/extrinsicsByName";
 
@@ -28,7 +27,6 @@ function App() {
           />
           <Route element={<BlockPage />} path="/block/:id" />
           <Route element={<AccountPage />} path="/account/:address" />
-          <Route element={<Dev />} path="/dev" />
           <Route element={<Home />} path="/" />
           <Route element={<NotFound />} path="*" />
         </Routes>
