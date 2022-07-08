@@ -1,17 +1,21 @@
 export const filterToWhere = (filter: any = {}): string => {
   let where = "";
-  for (let key in filter) {
-    if (filter[key] instanceof Object) {
-      where += `${key}: {`;
-      where += filterToWhere(filter[key]);
-      where += `},`;
-    } else if (filter[key] !== "") {
-      const isString = typeof filter[key] === "string";
-      const value = isString ? `"${filter[key]}"` : filter[key];
-      where += `${key}: ${value}, `;
-    }
+
+  if (Array.isArray(filter)) {
+    return `[
+      ${filter.map(filterToWhere).join(", ")}
+    ]`;
+  } else if (filter instanceof Object) {
+    where += `{
+      ${Object.keys(filter).map(
+        (key) => `${key}: ${filterToWhere(filter[key])}`
+      )}
+    },`;
+  } else if (filter !== "") {
+    const isString = typeof filter === "string";
+    const value = isString ? `"${filter}"` : filter;
+    where += value;
   }
-  // where = where.slice(0, -2);
-  //where = where.replace(/"([^(")"]+)":/g, "$1:");
+
   return where;
 };

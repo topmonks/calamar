@@ -3,12 +3,18 @@ import { useParams } from "react-router-dom";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import ResultLayout from "../components/ResultLayout";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { filterToWhere } from "../utils/filterToWhere";
 
 function AccountPage() {
   let { address } = useParams();
 
   const extrinsics = useExtrinsics({
-    signature_jsonContains: `{\\"address\\": \\"${address}\\"}`,
+    OR: [
+      { signature_jsonContains: `{\\"address\\": \\"${address}\\"}` },
+      {
+        signature_jsonContains: `{\\"address\\": { \\"value\\": \\"${address}\\"} }`,
+      },
+    ],
   });
 
   return (

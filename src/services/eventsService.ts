@@ -20,7 +20,7 @@ export async function getEvents(
   const response = await fetchGraphql(
     `
       query {
-        events(limit: ${limit}, offset: ${offset}, where: {${where}}) {
+        events(limit: ${limit}, offset: ${offset}, where: ${where}) {
           id
           name
           args

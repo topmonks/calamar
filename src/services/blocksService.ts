@@ -37,7 +37,7 @@ const getBlocks = async (
   const response = await fetchGraphql(
     `
       query MyQuery {
-        blocks(limit: ${limit}, offset: ${offset}, where: {${where}}) {
+        blocks(limit: ${limit}, offset: ${offset}, where: ${where}) {
           id
           hash
           height

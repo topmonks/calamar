@@ -59,20 +59,34 @@ function SearchInput() {
 
     setNotFound(false);
 
-    if (search.startsWith("0x")) {
-      const extrinsics = await getExtrinsics(1, 0, { hash_eq: search });
+    let extrinsics = await getExtrinsics(1, 0, { hash_eq: search });
 
-      if (extrinsics.length > 0) {
-        return navigate(`/extrinsic/${extrinsics[0].id}`);
-      }
+    if (extrinsics.length > 0) {
+      return navigate(`/extrinsic/${extrinsics[0].id}`);
+    }
 
-      const blocks = await getBlocks(1, 0, { hash_eq: search });
-      if (blocks.length > 0) {
-        return navigate(`/block/${blocks[0].id}`);
-      }
+    const blocks = await getBlocks(1, 0, { hash_eq: search });
+    if (blocks.length > 0) {
+      return navigate(`/block/${blocks[0].id}`);
+    }
 
-      //setNotFound("No extrinsic nor block found.");
-      return navigate(`/not-found?query=${search}`);
+    extrinsics = await getExtrinsics(
+      1,
+      0,
+      {
+        OR: [
+          { signature_jsonContains: `{\\"address\\": \\"${search}\\"}` },
+          {
+            signature_jsonContains: `{\\"address\\": { \\"value\\": \\"${search}\\"} }`,
+          },
+        ],
+      },
+      {},
+      ["id"]
+    );
+
+    if (extrinsics.length > 0) {
+      return navigate(`/account/${search}`);
     }
 
     if (isNumber(search)) {
@@ -85,37 +99,24 @@ function SearchInput() {
       }
 
       //setNotFound("No block found.");
-      return navigate(`/not-found?query=${search}`);
-    }
+    } else {
+      extrinsics = await getExtrinsics(
+        1,
+        0,
+        {
+          call: { name_eq: search },
+        },
+        {},
+        ["id"]
+      );
 
-    let extrinsics = await getExtrinsics(
-      1,
-      0,
-      { signature_jsonContains: `{\\"address\\": \\"${search}\\"}` },
-      {},
-      ["id"]
-    );
+      const events = await getEvents(1, 0, {
+        name_eq: search,
+      });
 
-    if (extrinsics.length > 0) {
-      return navigate(`/account/${search}`);
-    }
-
-    extrinsics = await getExtrinsics(
-      1,
-      0,
-      {
-        call: { name_eq: search },
-      },
-      {},
-      ["id"]
-    );
-
-    const events = await getEvents(1, 0, {
-      name_eq: search,
-    });
-
-    if (extrinsics.length > 0 || events.length > 0) {
-      return navigate(`/extrinsics-by-name/${search}`);
+      if (extrinsics.length > 0 || events.length > 0) {
+        return navigate(`/extrinsics-by-name/${search}`);
+      }
     }
 
     return navigate(`/not-found?query=${search}`);
