@@ -88,15 +88,47 @@ function ExtrinsicPage() {
                   <img src={extrinsic.signature ? CheckIcon : CrossIcon} />
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell>Account</TableCell>
-                <TableCell>
-                  {extrinsic.signature?.address.value && (
+              {extrinsic.signature?.address.value && (
+                <TableRow>
+                  <TableCell>Account</TableCell>
+                  <TableCell>
                     <Link to={`/account/${extrinsic.signature.address.value}`}>
                       {extrinsic.signature.address.value}
                     </Link>
-                  )}
+                  </TableCell>
+                </TableRow>
+              )}
+              <TableRow>
+                <TableCell>Index in block</TableCell>
+                <TableCell>{extrinsic.indexInBlock}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Success</TableCell>
+                <TableCell>
+                  <img src={extrinsic.success ? CheckIcon : CrossIcon} />
                 </TableCell>
+              </TableRow>
+              {extrinsic.tip && (
+                <TableRow>
+                  <TableCell>Tip</TableCell>
+                  <TableCell>{extrinsic.tip}</TableCell>
+                </TableRow>
+              )}
+              {extrinsic.fee && (
+                <TableRow>
+                  <TableCell>Fee</TableCell>
+                  <TableCell>{extrinsic.fee}</TableCell>
+                </TableRow>
+              )}
+              {extrinsic.error && (
+                <TableRow>
+                  <TableCell>Error</TableCell>
+                  <TableCell>{extrinsic.error}</TableCell>
+                </TableRow>
+              )}
+              <TableRow>
+                <TableCell>Version</TableCell>
+                <TableCell>{extrinsic.version}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
