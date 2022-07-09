@@ -16,12 +16,7 @@ function AccountPage() {
   let { address } = useParams();
 
   const extrinsics = useExtrinsics({
-    OR: [
-      { signature_jsonContains: `{"address": "${address}"}` },
-      {
-        signature_jsonContains: `{"address": { "value": "${address}"} }`,
-      },
-    ],
+    signature_jsonContains: `{"address": { "value": "${address}"} }`,
   });
 
   return (
