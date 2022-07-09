@@ -12,8 +12,8 @@ export function useBlock(filter: BlocksFilter, options?: FetchOptions) {
     }
 
     const fetchData = async () => {
-      const extrinsic = await getBlock(filter);
-      setBlock(extrinsic);
+      const block = await getBlock(filter);
+      setBlock(block);
     };
     fetchData();
   }, [JSON.stringify(filter), options?.skip]);
