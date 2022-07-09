@@ -47,6 +47,12 @@ export async function getExtrinsics(
           timestamp
         }
         signature
+        indexInBlock
+        success
+        tip
+        fee
+        error
+        version
       }
     }`,
     {

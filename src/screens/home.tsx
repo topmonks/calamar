@@ -1,6 +1,5 @@
 import React from "react";
 import SearchInput from "../components/SearchInput";
-import { Link } from "react-router-dom";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
 import Background from "../assets/main-screen-bgr.svg";
 

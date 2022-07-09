@@ -47,6 +47,10 @@ table {
   font-family: "Open Sans", sans-serif;
 }
 
+table tr:last-child > td {
+    border-bottom: none!important;
+}
+
 table td {
   font-weight: 400;
   font-size: 16px!important;

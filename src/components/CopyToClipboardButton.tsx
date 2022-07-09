@@ -1,20 +1,15 @@
 import { IconButton, Tooltip } from "@mui/material";
-import React, { useEffect } from "react";
-import ClipboardJS from "clipboard";
+import React from "react";
 
 const CopyToClipboardButton = ({ value }: { value: string }) => {
   const [copied, setCopied] = React.useState(false);
-  useEffect(() => {
-    const clipboard = new ClipboardJS(".copy-btn");
-    clipboard.on("success", (ev) => {
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 1000);
-      ev.clearSelection();
-    });
-    return () => clipboard.destroy();
-  }, []);
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+  };
 
   return (
     <>
@@ -25,7 +20,7 @@ const CopyToClipboardButton = ({ value }: { value: string }) => {
         placement="top"
         title="Copied"
       >
-        <IconButton className="copy-btn" data-clipboard-text={value}>
+        <IconButton onClick={copyToClipboard}>
           <svg
             height="24"
             style={{ color: "#14A1C0" }}
