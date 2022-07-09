@@ -5,7 +5,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Tooltip,
 } from "@mui/material";
@@ -54,6 +53,26 @@ function BlockPage() {
                   </span>
                 </TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell>Parent hash</TableCell>
+                <TableCell>
+                  {block.parentHash}
+                  <span style={{ marginLeft: 8 }}>
+                    <CopyToClipboardButton value={block.parentHash} />
+                  </span>
+                </TableCell>
+              </TableRow>
+              {block.validator && (
+                <TableRow>
+                  <TableCell>Validator</TableCell>
+                  <TableCell>
+                    {block.validator}
+                    <span style={{ marginLeft: 8 }}>
+                      <CopyToClipboardButton value={block.validator} />
+                    </span>
+                  </TableCell>
+                </TableRow>
+              )}
               <TableRow>
                 <TableCell>Block height</TableCell>
                 <TableCell>{block.height}</TableCell>

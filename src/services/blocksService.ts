@@ -26,6 +26,8 @@ export async function getBlocks(
           hash
           height
           timestamp
+          parentHash
+          validator
         }
       }
     `,
