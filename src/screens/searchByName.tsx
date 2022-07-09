@@ -88,6 +88,7 @@ function SearchByNamePage() {
                 <EventsTable
                   items={events.items}
                   pagination={events.pagination}
+                  showExtrinsic
                 />
               </div>
             )}

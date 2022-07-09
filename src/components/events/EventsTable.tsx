@@ -1,12 +1,14 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React from "react";
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
+import { Link, useNavigate } from "react-router-dom";
 
-import { EventsFilter, getEvents } from "../../services/eventsService";
-import { Pagination, usePagination } from "../../hooks/usePagination";
+import { Pagination } from "../../hooks/usePagination";
 
 import EventParamsTable from "./EventParamsTable";
 import PaginatedTable from "../PaginatedTable";
+import { shortenHash } from "../../utils/shortenHash";
+import { getExtrinsic } from "../../services/extrinsicsService";
 
 const HeaderTableRow = styled(TableRow)`
   th {
@@ -17,10 +19,19 @@ const HeaderTableRow = styled(TableRow)`
 export type EventsTableProps = {
   items: any[];
   pagination: Pagination;
+  showExtrinsic?: boolean;
 };
 
 function EventsTable(props: EventsTableProps) {
-  const { items, pagination } = props;
+  const { items, pagination, showExtrinsic } = props;
+  const navigate = useNavigate();
+
+  const navigateToExtrinsicPage = async (hash: string) => {
+    const extrinsic = await getExtrinsic({ hash_eq: hash });
+    if (extrinsic) {
+      navigate(`/extrinsic/${extrinsic.id}`);
+    }
+  };
 
   return (
     <PaginatedTable pagination={pagination}>
@@ -31,6 +42,7 @@ function EventsTable(props: EventsTableProps) {
           <TableCell>Pos</TableCell>
           <TableCell>Index in block</TableCell>
           <TableCell>Parameters</TableCell>
+          {showExtrinsic && <TableCell>Extrinsic</TableCell>}
         </HeaderTableRow>
       </TableHead>
       <TableBody>
@@ -43,6 +55,16 @@ function EventsTable(props: EventsTableProps) {
             <TableCell>
               <EventParamsTable args={event.args} />
             </TableCell>
+            {showExtrinsic && (
+              <TableCell>
+                <a
+                  onClick={() => navigateToExtrinsicPage(event.extrinsic.hash)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {shortenHash(event.extrinsic.hash)}
+                </a>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>
