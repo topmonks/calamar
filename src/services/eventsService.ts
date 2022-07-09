@@ -27,6 +27,8 @@ export async function getEvents(
           id
           name
           args
+          pos
+          indexInBlock
         }
       }
     `,

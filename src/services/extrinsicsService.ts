@@ -16,6 +16,18 @@ export type ExtrinsicsFilter = any; /*Filter<{
   }>;
 }>;*/
 
+const unifyExtrinsics = (extrinsics: any) => {
+  return extrinsics.map((extrinsic: any) => {
+    if (
+      typeof extrinsic.signature.address === "object" &&
+      extrinsic.signature.address.value
+    ) {
+      extrinsic.signature.address = extrinsic.signature.address.value;
+    }
+    return extrinsic;
+  });
+};
+
 export async function getExtrinsic(filter?: ExtrinsicsFilter) {
   const extrinsics = await getExtrinsics(1, 0, filter);
   return extrinsics?.[0];
@@ -62,5 +74,5 @@ export async function getExtrinsics(
     }
   );
 
-  return response?.extrinsics;
+  return unifyExtrinsics(response?.extrinsics);
 }

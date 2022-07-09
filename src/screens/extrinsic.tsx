@@ -90,13 +90,18 @@ function ExtrinsicPage() {
                   <img src={extrinsic.signature ? CheckIcon : CrossIcon} />
                 </TableCell>
               </TableRow>
-              {extrinsic.signature?.address.value && (
+              {extrinsic.signature?.address && (
                 <TableRow>
                   <TableCell>Account</TableCell>
                   <TableCell>
-                    <Link to={`/account/${extrinsic.signature.address.value}`}>
-                      {extrinsic.signature.address.value}
+                    <Link to={`/account/${extrinsic.signature.address}`}>
+                      {extrinsic.signature.address}
                     </Link>
+                    <span style={{ marginLeft: 8 }}>
+                      <CopyToClipboardButton
+                        value={extrinsic.signature.address}
+                      />
+                    </span>
                   </TableCell>
                 </TableRow>
               )}
@@ -125,7 +130,7 @@ function ExtrinsicPage() {
               {extrinsic.error && (
                 <TableRow>
                   <TableCell>Error</TableCell>
-                  <TableCell>{extrinsic.error}</TableCell>
+                  <TableCell>{JSON.stringify(extrinsic.error)}</TableCell>
                 </TableRow>
               )}
               <TableRow>
