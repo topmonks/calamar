@@ -55,7 +55,7 @@ function EventParamValue(props: EventParamValueProps) {
         </TableBody>
       </ValueTable>
     );
-  } else if (typeof value === "object") {
+  } else if (value && typeof value === "object") {
     const keys = Object.keys(value);
     keys.sort();
 
