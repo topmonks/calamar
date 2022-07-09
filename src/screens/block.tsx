@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -17,12 +17,21 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import ResultLayout from "../components/ResultLayout";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import { getBlock } from "../services/blocksService";
 
 function BlockPage() {
   let { id } = useParams();
 
   const block = useBlock({ id_eq: id }, { skip: !id });
   const extrinsics = useExtrinsics({ block: { id_eq: id } }, {}, { skip: !id });
+  const navigate = useNavigate();
+
+  const navigateToBlockPage = async (hash: string) => {
+    const block = await getBlock({ hash_eq: hash });
+    if (block) {
+      navigate(`/block/${block.id}`);
+    }
+  };
 
   if (!block) {
     return null;
@@ -56,7 +65,12 @@ function BlockPage() {
               <TableRow>
                 <TableCell>Parent hash</TableCell>
                 <TableCell>
-                  {block.parentHash}
+                  <a
+                    onClick={() => navigateToBlockPage(block.parentHash)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {block.parentHash}
+                  </a>
                   <span style={{ marginLeft: 8 }}>
                     <CopyToClipboardButton value={block.parentHash} />
                   </span>
