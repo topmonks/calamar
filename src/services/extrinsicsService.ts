@@ -17,13 +17,16 @@ export type ExtrinsicsFilter = any; /*Filter<{
 }>;*/
 
 const unifyExtrinsics = (extrinsics: any) => {
-  return extrinsics.map((extrinsic: any) => {
-    const address = extrinsic.signature?.address;
-    if (typeof address === "object" && address.value) {
-      extrinsic.signature.address = address.value;
-    }
-    return extrinsic;
-  });
+  return (
+    extrinsics &&
+    extrinsics.map((extrinsic: any) => {
+      const address = extrinsic.signature?.address;
+      if (typeof address === "object" && address.value) {
+        extrinsic.signature.address = address.value;
+      }
+      return extrinsic;
+    })
+  );
 };
 
 export async function getExtrinsic(filter?: ExtrinsicsFilter) {

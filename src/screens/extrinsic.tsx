@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { getExtrinsics } from "../services/extrinsicsService";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Table,

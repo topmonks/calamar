@@ -29,6 +29,9 @@ export async function getEvents(
           args
           pos
           indexInBlock
+          extrinsic {
+            hash
+          }
         }
       }
     `,
