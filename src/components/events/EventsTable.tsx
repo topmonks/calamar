@@ -28,6 +28,8 @@ function EventsTable(props: EventsTableProps) {
         <HeaderTableRow>
           <TableCell>Id</TableCell>
           <TableCell>Name</TableCell>
+          <TableCell>Pos</TableCell>
+          <TableCell>Index in block</TableCell>
           <TableCell>Parameters</TableCell>
         </HeaderTableRow>
       </TableHead>
@@ -36,6 +38,8 @@ function EventsTable(props: EventsTableProps) {
           <TableRow key={event.id}>
             <TableCell>{event.id}</TableCell>
             <TableCell>{event.name}</TableCell>
+            <TableCell>{event.pos}</TableCell>
+            <TableCell>{event.indexInBlock}</TableCell>
             <TableCell>
               <EventParamsTable args={event.args} />
             </TableCell>
