@@ -96,7 +96,7 @@ function SearchInput() {
       });
 
       if (extrinsic || events.length > 0) {
-        return navigate(`/extrinsics-by-name/${search}`);
+        return navigate(`/search-by-name/${search}`);
       }
     }
 

@@ -47,7 +47,10 @@ function AccountPage() {
           </Table>
         </TableContainer>
       </div>
-      <div style={{ marginTop: 16, marginBottom: 16 }}>
+      <div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
+        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+          Extrinsics
+        </div>
         <ExtrinsicsTable
           columns={["id", "name", "time"]}
           items={extrinsics.items}

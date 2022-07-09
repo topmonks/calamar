@@ -21,10 +21,7 @@ function App() {
       >
         <Routes>
           <Route element={<ExtrinsicPage />} path="/extrinsic/:id" />
-          <Route
-            element={<SearchByNamePage />}
-            path="/extrinsics-by-name/:name"
-          />
+          <Route element={<SearchByNamePage />} path="/search-by-name/:name" />
           <Route element={<BlockPage />} path="/block/:id" />
           <Route element={<AccountPage />} path="/account/:address" />
           <Route element={<HomePage />} path="/" />

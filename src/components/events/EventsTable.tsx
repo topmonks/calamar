@@ -16,15 +16,14 @@ const HeaderTableRow = styled(TableRow)`
 
 export type EventsTableProps = {
   items: any[];
-  title?: ReactNode;
   pagination: Pagination;
 };
 
 function EventsTable(props: EventsTableProps) {
-  const { items, pagination, title = "Events" } = props;
+  const { items, pagination } = props;
 
   return (
-    <PaginatedTable pagination={pagination} title={title}>
+    <PaginatedTable pagination={pagination}>
       <TableHead>
         <HeaderTableRow>
           <TableCell>Id</TableCell>

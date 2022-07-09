@@ -27,6 +27,8 @@ function ExtrinsicPage() {
   const extrinsic = useExtrinsic({ id_eq: id }, { skip: !id });
   const events = useEvents({ extrinsic: { id_eq: id } }, { skip: !id });
 
+  console.log(extrinsic);
+
   if (!extrinsic) {
     return null;
   }
@@ -99,7 +101,10 @@ function ExtrinsicPage() {
           </Table>
         </TableContainer>
       </div>
-      <div style={{ marginTop: 16, marginBottom: 16 }}>
+      <div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
+        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+          Events
+        </div>
         <EventsTable items={events.items} pagination={events.pagination} />
       </div>
     </ResultLayout>

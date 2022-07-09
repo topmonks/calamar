@@ -31,11 +31,10 @@ export type ExtrinsicsTableProps = {
 function ExtrinsicsTable({
   items,
   pagination,
-  title = "Extrinsics",
   columns = ["id", "name", "signer", "time"],
 }: ExtrinsicsTableProps) {
   return (
-    <PaginatedTable pagination={pagination} title={title}>
+    <PaginatedTable pagination={pagination}>
       <TableHead>
         <TableRow>
           {columns.find((value) => value === "id") && <TableCell>Id</TableCell>}
