@@ -20,6 +20,7 @@ import {
 import { Pagination, usePagination } from "../../hooks/usePagination";
 import PaginatedTable from "../PaginatedTable";
 import { Order } from "../../model/order";
+import CopyToClipboardButton from "../CopyToClipboardButton";
 
 export type ExtrinsicsTableProps = {
   items: any[];
@@ -68,7 +69,16 @@ function ExtrinsicsTable({
             )}
             {columns.find((value) => value === "signer") && (
               <TableCell>
-                {shortenHash(extrinsic.signature?.address.value)}
+                <Link to={`/account/${extrinsic.signature?.address}`}>
+                  {shortenHash(extrinsic.signature?.address)}
+                </Link>
+                {extrinsic.signature?.address && (
+                  <span style={{ marginLeft: 8 }}>
+                    <CopyToClipboardButton
+                      value={extrinsic.signature?.address}
+                    />
+                  </span>
+                )}
               </TableCell>
             )}
             {columns.find((value) => value === "time") && (
