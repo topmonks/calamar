@@ -18,11 +18,9 @@ export type ExtrinsicsFilter = any; /*Filter<{
 
 const unifyExtrinsics = (extrinsics: any) => {
   return extrinsics.map((extrinsic: any) => {
-    if (
-      typeof extrinsic.signature.address === "object" &&
-      extrinsic.signature.address.value
-    ) {
-      extrinsic.signature.address = extrinsic.signature.address.value;
+    const address = extrinsic.signature?.address;
+    if (typeof address === "object" && address.value) {
+      extrinsic.signature.address = address.value;
     }
     return extrinsic;
   });
@@ -46,7 +44,7 @@ export async function getExtrinsics(
 
   const response = await fetchGraphql(
     `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput) {
-      extrinsics(limit: $limit, offset: $offset, where: $filter) {
+      extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: id_DESC) {
         id
         hash
         call {
