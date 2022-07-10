@@ -15,7 +15,7 @@ export function useExtrinsics(
   options?: FetchOptions
 ) {
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const pagination = usePagination();
 

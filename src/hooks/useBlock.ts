@@ -5,7 +5,7 @@ import { BlocksFilter, getBlock } from "../services/blocksService";
 
 export function useBlock(filter: BlocksFilter, options?: FetchOptions) {
   const [block, setBlock] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
     if (options?.skip) {

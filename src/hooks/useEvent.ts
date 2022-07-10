@@ -5,7 +5,7 @@ import { EventsFilter, getEvent } from "../services/eventsService";
 
 export function useEvent(filter: EventsFilter, options?: FetchOptions) {
   const [event, setEvent] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
     if (options?.skip) {

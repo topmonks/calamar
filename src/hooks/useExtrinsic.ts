@@ -5,7 +5,7 @@ import { ExtrinsicsFilter, getExtrinsic } from "../services/extrinsicsService";
 
 export function useExtrinsic(filter: ExtrinsicsFilter, options?: FetchOptions) {
   const [extrinsic, setExtrinsic] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
     if (options?.skip) {
