@@ -17,9 +17,23 @@ function HomePage() {
         margin: 0,
       }}
     >
-      <Logo style={{ width: "500px", margin: "auto", display: "block" }} />
-      <div style={{ margin: "auto", width: "fit-content" }}>
-        <SearchInput />
+      <Logo
+        style={{
+          width: "500px",
+          margin: "auto",
+          display: "block",
+          maxWidth: "100%",
+        }}
+      />
+      <div
+        style={{
+          margin: "auto",
+          maxWidth: 1000,
+          paddingLeft: 16,
+          paddingRight: 16,
+        }}
+      >
+        <SearchInput showNetworkSelect />
       </div>
       <div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
         <Link to="/latest-extrinsics">Show latest extrinsics</Link>

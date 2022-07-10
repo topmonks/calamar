@@ -8,17 +8,20 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
 import archivesJSON from "../archives.json";
+import NetworkSelect from "./NetworkSelect";
 
 const StyledTextField = styled(TextField)`
-  min-width: 720px !important;
+  max-width: 720px !important;
   background-color: #f5f5f5;
 
   .MuiInputBase-root {
     font-family: "Open Sans", sans-serif !important;
-    border-radius: 0px !important;
+    border-radius: 8px 0 0 8px !important;
   }
+
   & label.Mui-focused {
     color: #14a1c0;
   }
@@ -31,104 +34,89 @@ const StyledTextField = styled(TextField)`
 
 const StyledButton = styled(Button)`
   border-radius: 0px 8px 8px 0px !important;
-  width: 150px !important;
   border: 1px solid #d8545c !important;
   background-color: #ff646d !important;
-`;
 
-const StyledSelect = styled(Select)`
-  border-radius: 8px 0px 0px 8px !important;
-  background-color: #61dafb !important;
-  border-color: #14a1c0;
-  text-transform: capitalize !important;
-  & .MuiOutlinedInput-root {
-    &.Mui-focused fieldset {
-      border-color: #14a1c0;
+  .text {
+    display: none;
+  }
+
+  .MuiButton-startIcon {
+    margin: 0;
+  }
+
+  @media (min-width: 720px) {
+    width: 150px !important;
+
+    .text {
+      display: inline-block;
+    }
+
+    .MuiButton-startIcon {
+      display: none;
     }
   }
 `;
 
-function SearchInput() {
+const StyledNetworkSelect = styled(NetworkSelect)`
+  border-radius: 8px 0px 0px 8px !important;
+
+  + .MuiTextField-root {
+    .MuiInputBase-root {
+      border-radius: 0px !important;
+    }
+  }
+`;
+
+export type SearchInputProps = {
+  showNetworkSelect?: boolean;
+};
+
+function SearchInput(props: SearchInputProps) {
+  const { showNetworkSelect } = props;
+
   const [qs] = useSearchParams();
   const query = qs.get("query");
   console.log(qs, query);
 
-  const archives = archivesJSON.archives || [];
-  const [archive, setArchive] = React.useState(archives[0]);
-
   const [search, setSearch] = React.useState<string>(query || "");
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let network = localStorage.getItem("network");
-    if (!network) {
-      network = archive.network;
-      localStorage.setItem("network", network);
-    }
-
-    setArchive(archives.find((a) => a.network === network) || archives[0]);
-  }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     navigate(`/search?query=${search}`);
   };
 
-  const handleArchiveChange = (e: any) => {
-    const archive = archives.find(
-      (archive: any) => archive.network === e.target.value
-    );
-    if (archive) {
-      setArchive(archive);
-      localStorage.setItem("network", e.target.value);
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} style={{ width: "fit-content" }}>
+    <form onSubmit={handleSubmit}>
       <FormGroup
         row
         style={{
+          flexDirection: "row",
           justifyContent: "center",
+          flexWrap: "nowrap",
         }}
       >
-        <Grid container>
-          <Grid item xs="auto">
-            <StyledSelect
-              className="calamar-button"
-              onChange={handleArchiveChange}
-              value={archive.network}
-            >
-              {archives.map((archive: any) => (
-                <MenuItem key={archive.network} value={archive.network}>
-                  {archive.network}
-                </MenuItem>
-              ))}
-            </StyledSelect>
-          </Grid>
-          <Grid item xs="auto">
-            <StyledTextField
-              fullWidth
-              id="search"
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
-              value={search}
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs="auto">
-            <StyledButton
-              className="calamar-button"
-              disableElevation
-              onClick={handleSubmit}
-              type="submit"
-              variant="contained"
-            >
-              Search
-            </StyledButton>
-          </Grid>
-        </Grid>
+        {showNetworkSelect && <StyledNetworkSelect />}
+        <StyledTextField
+          fullWidth
+          id="search"
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
+          value={search}
+          variant="outlined"
+        />
+        <StyledButton
+          className="calamar-button"
+          disableElevation
+          onClick={handleSubmit}
+          startIcon={<SearchIcon />}
+          type="submit"
+          variant="contained"
+        >
+          <span className="text">Search</span>
+        </StyledButton>
       </FormGroup>
     </form>
   );
