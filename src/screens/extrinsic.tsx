@@ -19,29 +19,28 @@ import ResultLayout from "../components/ResultLayout";
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import InfoTable from "../components/InfoTable";
 
 function ExtrinsicPage() {
   let { id } = useParams();
 
-  const [extrinsic] = useExtrinsic({ id_eq: id }, { skip: !id });
+  const [extrinsic, { loading }] = useExtrinsic({ id_eq: id }, { skip: !id });
   const events = useEvents({ extrinsic: { id_eq: id } }, "id_ASC", {
     skip: !id,
   });
-
-  console.log(extrinsic);
-
-  if (!extrinsic) {
-    return null;
-  }
 
   return (
     <ResultLayout>
       <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-          Extrinsic #{extrinsic.id}
+          Extrinsic #{id}
         </div>
-        <TableContainer>
-          <Table className="calamar-info-table">
+        <InfoTable
+          item={extrinsic}
+          loading={loading}
+          noItemMessage="No extrinsic found"
+        >
+          {extrinsic && (
             <TableBody>
               <TableRow>
                 <TableCell>Id</TableCell>
@@ -139,15 +138,20 @@ function ExtrinsicPage() {
                 <TableCell>{extrinsic.version}</TableCell>
               </TableRow>
             </TableBody>
-          </Table>
-        </TableContainer>
+          )}
+        </InfoTable>
       </div>
-      <div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
-        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-          Events
+      {extrinsic && (
+        <div
+          className="calamar-card"
+          style={{ marginTop: 16, marginBottom: 16 }}
+        >
+          <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+            Events
+          </div>
+          <EventsTable items={events.items} pagination={events.pagination} />
         </div>
-        <EventsTable items={events.items} pagination={events.pagination} />
-      </div>
+      )}
     </ResultLayout>
   );
 }

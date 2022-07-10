@@ -2,10 +2,9 @@ import React, { ReactComponentElement, ReactNode } from "react";
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 import SearchInput from "./SearchInput";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function ResultLayout({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
   return (
     <>
       <div

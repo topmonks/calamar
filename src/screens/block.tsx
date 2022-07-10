@@ -1,13 +1,6 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Tooltip,
-} from "@mui/material";
+import React from "react";
+import { Link, useParams } from "react-router-dom";
+import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import {
   convertTimestampToTimeFromNow,
   formatDate,
@@ -17,39 +10,29 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import ResultLayout from "../components/ResultLayout";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import { getBlock } from "../services/blocksService";
+import InfoTable from "../components/InfoTable";
 
 function BlockPage() {
   let { id } = useParams();
 
-  const [block] = useBlock({ id_eq: id }, { skip: !id });
+  const [block, { loading }] = useBlock({ id_eq: id }, { skip: !id });
+
   const extrinsics = useExtrinsics({ block: { id_eq: id } }, "id_DESC", {
     skip: !id,
   });
-  const navigate = useNavigate();
-
-  const navigateToBlockPage = async (hash: string) => {
-    const block = await getBlock({ hash_eq: hash });
-    if (block) {
-      navigate(`/block/${block.id}`);
-    }
-  };
-
-  if (!block) {
-    return null;
-  }
-
-  console.log(block);
-  console.log(extrinsics);
 
   return (
     <ResultLayout>
       <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-          Block #{block.id}
+          Block #{id}
         </div>
-        <TableContainer>
-          <Table className="calamar-info-table">
+        <InfoTable
+          item={block}
+          loading={loading}
+          noItemMessage="No block found"
+        >
+          {block && (
             <TableBody>
               <TableRow>
                 <TableCell>Id</TableCell>
@@ -67,12 +50,9 @@ function BlockPage() {
               <TableRow>
                 <TableCell>Parent hash</TableCell>
                 <TableCell>
-                  <a
-                    onClick={() => navigateToBlockPage(block.parentHash)}
-                    style={{ cursor: "pointer" }}
-                  >
+                  <Link to={`/search?query=${block.parentHash}`}>
                     {block.parentHash}
-                  </a>
+                  </Link>
                   <span style={{ marginLeft: 8 }}>
                     <CopyToClipboardButton value={block.parentHash} />
                   </span>
@@ -108,18 +88,24 @@ function BlockPage() {
                 </TableCell>
               </TableRow>
             </TableBody>
-          </Table>
-        </TableContainer>
+          )}
+        </InfoTable>
       </div>
-      <div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
-        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-          Extrinsics
+      {block && (
+        <div
+          className="calamar-card"
+          style={{ marginTop: 16, marginBottom: 16 }}
+        >
+          <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+            Extrinsics
+          </div>
+          <ExtrinsicsTable
+            items={extrinsics.items}
+            loading={extrinsics.loading}
+            pagination={extrinsics.pagination}
+          />
         </div>
-        <ExtrinsicsTable
-          items={extrinsics.items}
-          pagination={extrinsics.pagination}
-        />
-      </div>
+      )}
     </ResultLayout>
   );
 }

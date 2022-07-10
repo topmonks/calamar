@@ -1,14 +1,13 @@
 import React from "react";
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Pagination } from "../../hooks/usePagination";
 
 import EventParamsTable from "./EventParamsTable";
-import PaginatedTable from "../PaginatedTable";
+import ItemsTable from "../ItemsTable";
 import { shortenHash } from "../../utils/shortenHash";
-import { getExtrinsic } from "../../services/extrinsicsService";
 
 const HeaderTableRow = styled(TableRow)`
   th {
@@ -25,17 +24,9 @@ export type EventsTableProps = {
 
 function EventsTable(props: EventsTableProps) {
   const { items, pagination, showExtrinsic, loading } = props;
-  const navigate = useNavigate();
-
-  const navigateToExtrinsicPage = async (hash: string) => {
-    const extrinsic = await getExtrinsic({ hash_eq: hash });
-    if (extrinsic) {
-      navigate(`/extrinsic/${extrinsic.id}`);
-    }
-  };
 
   return (
-    <PaginatedTable
+    <ItemsTable
       items={items}
       loading={loading}
       noItemsMessage="No events found"
@@ -59,18 +50,15 @@ function EventsTable(props: EventsTableProps) {
             </TableCell>
             {showExtrinsic && event.extrinsic?.hash && (
               <TableCell>
-                <a
-                  onClick={() => navigateToExtrinsicPage(event.extrinsic.hash)}
-                  style={{ cursor: "pointer" }}
-                >
+                <Link to={`/search?query=${event.extrinsic.hash}`}>
                   {shortenHash(event.extrinsic.hash)}
-                </a>
+                </Link>
               </TableCell>
             )}
           </TableRow>
         ))}
       </TableBody>
-    </PaginatedTable>
+    </ItemsTable>
   );
 }
 

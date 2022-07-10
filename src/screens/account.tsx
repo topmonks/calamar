@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@mui/material";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import InfoTable from "../components/InfoTable";
 
 function AccountPage() {
   let { address } = useParams();
@@ -26,36 +27,43 @@ function AccountPage() {
     <ResultLayout>
       <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-          Account
+          Account #{address}
         </div>
-        <TableContainer>
-          <Table className="calamar-info-table">
-            <TableBody>
-              <TableRow>
-                <TableCell>Address</TableCell>
-                <TableCell>
-                  {address}
-
-                  <span style={{ marginLeft: 8 }}>
-                    <CopyToClipboardButton value={address || ""} />
-                  </span>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      <div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
-        <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-          Extrinsics
-        </div>
-        <ExtrinsicsTable
-          columns={["id", "name", "time"]}
-          items={extrinsics.items}
+        <InfoTable
+          item={extrinsics.items[0]}
           loading={extrinsics.loading}
-          pagination={extrinsics.pagination}
-        />
+          noItemMessage="No account found"
+        >
+          <TableBody>
+            <TableRow>
+              <TableCell>Address</TableCell>
+              <TableCell>
+                {address}
+
+                <span style={{ marginLeft: 8 }}>
+                  <CopyToClipboardButton value={address || ""} />
+                </span>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </InfoTable>
       </div>
+      {extrinsics.items.length > 0 && (
+        <div
+          className="calamar-card"
+          style={{ marginTop: 16, marginBottom: 16 }}
+        >
+          <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+            Extrinsics
+          </div>
+          <ExtrinsicsTable
+            columns={["id", "name", "time"]}
+            items={extrinsics.items}
+            loading={extrinsics.loading}
+            pagination={extrinsics.pagination}
+          />
+        </div>
+      )}
     </ResultLayout>
   );
 }

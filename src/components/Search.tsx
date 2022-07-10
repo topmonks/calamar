@@ -97,7 +97,7 @@ const Search = (props: SearchProps) => {
       ]);
 
       if (redirect) {
-        return navigate(redirect);
+        return navigate(redirect, { replace: true });
       }
 
       setForceLoading(false);

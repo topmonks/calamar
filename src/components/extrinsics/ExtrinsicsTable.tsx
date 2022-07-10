@@ -18,7 +18,7 @@ import {
   getExtrinsics,
 } from "../../services/extrinsicsService";
 import { Pagination, usePagination } from "../../hooks/usePagination";
-import PaginatedTable from "../PaginatedTable";
+import ItemsTable from "../ItemsTable";
 import CopyToClipboardButton from "../CopyToClipboardButton";
 
 export type ExtrinsicsTableProps = {
@@ -38,7 +38,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
   } = props;
 
   return (
-    <PaginatedTable
+    <ItemsTable
       items={items}
       loading={loading}
       noItemsMessage="No extrinsics found"
@@ -105,7 +105,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
           </TableRow>
         ))}
       </TableBody>
-    </PaginatedTable>
+    </ItemsTable>
   );
 }
 

@@ -37,5 +37,6 @@ export async function getBlocks(
       filter,
     }
   );
+
   return response.blocks;
 }
