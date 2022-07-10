@@ -1,42 +1,67 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
 
-import { EventsFilter, getEvents } from "../services/eventsService";
+import {
+  EventsFilter,
+  EventsOrder,
+  getEvents,
+} from "../services/eventsService";
 
 import { usePagination } from "./usePagination";
 
-export function useEvents(filter: EventsFilter, options?: FetchOptions) {
+export function useEvents(
+  filter: EventsFilter,
+  order?: EventsOrder,
+  options?: FetchOptions
+) {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const pagination = usePagination();
 
-  useEffect(() => {
+  const fetchItems = useCallback(async () => {
     if (options?.skip) {
       return;
     }
 
-    const fetchItems = async (limit: number, offset: number) => {
-      const extrinsics = await getEvents(limit, offset, filter);
-      const nextExtrinsics = await getEvents(limit, offset + limit, filter);
+    const events = await getEvents(
+      pagination.limit,
+      pagination.offset,
+      filter,
+      order
+    );
 
-      setItems(extrinsics);
-      pagination.setHasNext(nextExtrinsics.length > 0);
-    };
+    const nextExtrinsics = await getEvents(
+      pagination.limit,
+      pagination.offset + pagination.limit,
+      filter,
+      order
+    );
 
-    fetchItems(pagination.limit, pagination.offset);
+    setLoading(false);
+    setItems(events);
+    pagination.setHasNext(nextExtrinsics.length > 0);
+  }, [
+    JSON.stringify(filter),
+    JSON.stringify(order),
+    pagination.limit,
+    pagination.offset,
+    options?.skip,
+  ]);
 
-    const interval = setInterval(async () => {
-      await fetchItems(pagination.limit, pagination.offset);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [JSON.stringify(filter), options?.skip, pagination, setItems]);
+  useEffect(() => {
+    console.log("tatata");
+    setLoading(true);
+    fetchItems();
+  }, [fetchItems]);
 
   return useMemo(
     () => ({
       items,
+      loading,
+      refetch: fetchItems,
       pagination,
     }),
-    [items, pagination]
+    [items, loading, fetchItems, pagination]
   );
 }

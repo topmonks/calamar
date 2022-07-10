@@ -16,7 +16,10 @@ function AccountPage() {
   let { address } = useParams();
 
   const extrinsics = useExtrinsics({
-    signature_jsonContains: `{"address": { "value": "${address}"} }`,
+    OR: [
+      { signature_jsonContains: `{"address": "${address}" }` },
+      { signature_jsonContains: `{"address": { "value": "${address}"} }` },
+    ],
   });
 
   return (
@@ -49,6 +52,7 @@ function AccountPage() {
         <ExtrinsicsTable
           columns={["id", "name", "time"]}
           items={extrinsics.items}
+          loading={extrinsics.loading}
           pagination={extrinsics.pagination}
         />
       </div>

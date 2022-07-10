@@ -1,22 +1,29 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
 
 import { BlocksFilter, getBlock } from "../services/blocksService";
 
 export function useBlock(filter: BlocksFilter, options?: FetchOptions) {
   const [block, setBlock] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (options?.skip) {
       return;
     }
 
-    const fetchData = async () => {
-      const block = await getBlock(filter);
-      setBlock(block);
-    };
-    fetchData();
+    const block = await getBlock(filter);
+    setLoading(false);
+    setBlock(block);
   }, [JSON.stringify(filter), options?.skip]);
 
-  return block;
+  useEffect(() => {
+    setLoading(true);
+    fetchData();
+  }, [fetchData]);
+
+  return useMemo(
+    () => [block, { loading, refetch: fetchData }] as const,
+    [block, loading, fetchData]
+  );
 }

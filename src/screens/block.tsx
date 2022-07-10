@@ -22,8 +22,10 @@ import { getBlock } from "../services/blocksService";
 function BlockPage() {
   let { id } = useParams();
 
-  const block = useBlock({ id_eq: id }, { skip: !id });
-  const extrinsics = useExtrinsics({ block: { id_eq: id } }, {}, { skip: !id });
+  const [block] = useBlock({ id_eq: id }, { skip: !id });
+  const extrinsics = useExtrinsics({ block: { id_eq: id } }, "id_DESC", {
+    skip: !id,
+  });
   const navigate = useNavigate();
 
   const navigateToBlockPage = async (hash: string) => {

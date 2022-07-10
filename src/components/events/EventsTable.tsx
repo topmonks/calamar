@@ -20,10 +20,11 @@ export type EventsTableProps = {
   items: any[];
   pagination: Pagination;
   showExtrinsic?: boolean;
+  loading?: boolean;
 };
 
 function EventsTable(props: EventsTableProps) {
-  const { items, pagination, showExtrinsic } = props;
+  const { items, pagination, showExtrinsic, loading } = props;
   const navigate = useNavigate();
 
   const navigateToExtrinsicPage = async (hash: string) => {
@@ -34,13 +35,16 @@ function EventsTable(props: EventsTableProps) {
   };
 
   return (
-    <PaginatedTable pagination={pagination}>
+    <PaginatedTable
+      items={items}
+      loading={loading}
+      noItemsMessage="No events found"
+      pagination={pagination}
+    >
       <TableHead>
         <HeaderTableRow>
           <TableCell>Id</TableCell>
           <TableCell>Name</TableCell>
-          <TableCell>Pos</TableCell>
-          <TableCell>Index in block</TableCell>
           <TableCell>Parameters</TableCell>
           {showExtrinsic && <TableCell>Extrinsic</TableCell>}
         </HeaderTableRow>
@@ -50,8 +54,6 @@ function EventsTable(props: EventsTableProps) {
           <TableRow key={event.id}>
             <TableCell>{event.id}</TableCell>
             <TableCell>{event.name}</TableCell>
-            <TableCell>{event.pos}</TableCell>
-            <TableCell>{event.indexInBlock}</TableCell>
             <TableCell>
               <EventParamsTable args={event.args} />
             </TableCell>

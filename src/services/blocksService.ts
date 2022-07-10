@@ -21,7 +21,7 @@ export async function getBlocks(
   const response = await fetchGraphql(
     `
       query ($limit: Int!, $offset: Int!, $filter: BlockWhereInput) {
-        blocks(limit: $limit, offset: $offset, where: $filter) {
+        blocks(limit: $limit, offset: $offset, where: $filter, orderBy: id_DESC) {
           id
           hash
           height

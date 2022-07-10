@@ -23,8 +23,10 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 function ExtrinsicPage() {
   let { id } = useParams();
 
-  const extrinsic = useExtrinsic({ id_eq: id }, { skip: !id });
-  const events = useEvents({ extrinsic: { id_eq: id } }, { skip: !id });
+  const [extrinsic] = useExtrinsic({ id_eq: id }, { skip: !id });
+  const events = useEvents({ extrinsic: { id_eq: id } }, "id_ASC", {
+    skip: !id,
+  });
 
   console.log(extrinsic);
 
@@ -114,19 +116,19 @@ function ExtrinsicPage() {
                   <img src={extrinsic.success ? CheckIcon : CrossIcon} />
                 </TableCell>
               </TableRow>
-              {extrinsic.tip && (
+              {extrinsic.tip !== null && (
                 <TableRow>
                   <TableCell>Tip</TableCell>
                   <TableCell>{extrinsic.tip}</TableCell>
                 </TableRow>
               )}
-              {extrinsic.fee && (
+              {extrinsic.fee !== null && (
                 <TableRow>
                   <TableCell>Fee</TableCell>
                   <TableCell>{extrinsic.fee}</TableCell>
                 </TableRow>
               )}
-              {extrinsic.error && (
+              {extrinsic.error !== null && (
                 <TableRow>
                   <TableCell>Error</TableCell>
                   <TableCell>{JSON.stringify(extrinsic.error)}</TableCell>

@@ -19,7 +19,6 @@ import {
 } from "../../services/extrinsicsService";
 import { Pagination, usePagination } from "../../hooks/usePagination";
 import PaginatedTable from "../PaginatedTable";
-import { Order } from "../../model/order";
 import CopyToClipboardButton from "../CopyToClipboardButton";
 
 export type ExtrinsicsTableProps = {
@@ -27,15 +26,24 @@ export type ExtrinsicsTableProps = {
   pagination: Pagination;
   title?: ReactNode;
   columns?: string[];
+  loading?: boolean;
 };
 
-function ExtrinsicsTable({
-  items,
-  pagination,
-  columns = ["id", "name", "signer", "time"],
-}: ExtrinsicsTableProps) {
+function ExtrinsicsTable(props: ExtrinsicsTableProps) {
+  const {
+    items,
+    pagination,
+    columns = ["id", "name", "signer", "time"],
+    loading,
+  } = props;
+
   return (
-    <PaginatedTable pagination={pagination}>
+    <PaginatedTable
+      items={items}
+      loading={loading}
+      noItemsMessage="No extrinsics found"
+      pagination={pagination}
+    >
       <TableHead>
         <TableRow>
           {columns.find((value) => value === "id") && <TableCell>Id</TableCell>}

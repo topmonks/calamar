@@ -3,10 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormGroup, Grid, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 
-import { getExtrinsic, getExtrinsics } from "../services/extrinsicsService";
-import { getBlock, getBlocks } from "../services/blocksService";
-import { getEvents } from "../services/eventsService";
-
 const StyledTextField = styled(TextField)`
   min-width: 800px !important;
   background-color: #f5f5f5;
@@ -40,10 +36,6 @@ const StyledButton = styled(Button)`
   height: 56px;
 `;
 
-function isNumber(str: string) {
-  return /^\+?(0|[1-9]\d*)$/.test(str);
-}
-
 function SearchInput() {
   const [qs] = useSearchParams();
   const query = qs.get("query");
@@ -55,47 +47,7 @@ function SearchInput() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    let extrinsic = await getExtrinsic({ hash_eq: search });
-
-    if (extrinsic) {
-      return navigate(`/extrinsic/${extrinsic.id}`);
-    }
-
-    const block = await getBlock({ hash_eq: search });
-    if (block) {
-      return navigate(`/block/${block.id}`);
-    }
-
-    extrinsic = await getExtrinsic({
-      signature_jsonContains: `{"address": { "value": "${search}"} }`,
-    });
-
-    if (extrinsic) {
-      return navigate(`/account/${search}`);
-    }
-
-    if (isNumber(search)) {
-      const block = await getBlock({ height_eq: parseInt(search) });
-
-      if (block) {
-        return navigate(`/block/${block.id}`);
-      }
-    } else {
-      extrinsic = await getExtrinsic({
-        call: { name_eq: search },
-      });
-
-      const events = await getEvents(1, 0, {
-        name_eq: search,
-      });
-
-      if (extrinsic || events.length > 0) {
-        return navigate(`/search-by-name/${search}`);
-      }
-    }
-
-    return navigate(`/not-found?query=${search}`);
+    navigate(`/search?query=${search}`);
   };
 
   return (

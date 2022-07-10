@@ -1,20 +1,7 @@
-import { Order } from "../model/order";
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { filterToWhere } from "../utils/filterToWhere";
 
-export type ExtrinsicsFilter = any; /*Filter<{
-  id: string;
-  blockId: string;
-  hash: string;
-  isSigned: boolean;
-  signer: string;
-  name: string;
-  section: string;
-  method: string;
-  substrate_events: Filter<{
-    name: string;
-  }>;
-}>;*/
+export type ExtrinsicsFilter = any;
+export type ExtrinsicsOrder = string | string[];
 
 const unifyExtrinsics = (extrinsics: any) => {
   return (
@@ -38,16 +25,11 @@ export async function getExtrinsics(
   limit: Number,
   offset: Number,
   filter?: ExtrinsicsFilter,
-  order?: Order
+  order: ExtrinsicsOrder = "id_DESC"
 ) {
-  const where = filterToWhere(filter);
-  const orderBy = Object.entries(order || {})
-    .map((e) => `${e[0]}: ${e[1]}`)
-    .join(", ");
-
   const response = await fetchGraphql(
-    `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput) {
-      extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: id_DESC) {
+    `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput]) {
+      extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
         id
         hash
         call {
@@ -72,6 +54,7 @@ export async function getExtrinsics(
       limit,
       offset,
       filter,
+      order,
     }
   );
 

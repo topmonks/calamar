@@ -1,22 +1,29 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
 
 import { EventsFilter, getEvent } from "../services/eventsService";
 
 export function useEvent(filter: EventsFilter, options?: FetchOptions) {
   const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (options?.skip) {
       return;
     }
 
-    const fetchData = async () => {
-      const extrinsic = await getEvent(filter);
-      setEvent(extrinsic);
-    };
-    fetchData();
+    const extrinsic = await getEvent(filter);
+    setLoading(false);
+    setEvent(extrinsic);
   }, [JSON.stringify(filter), options?.skip]);
 
-  return event;
+  useEffect(() => {
+    setLoading(true);
+    fetchData();
+  }, [fetchData]);
+
+  return useMemo(
+    () => [event, { loading, refetch: fetchData }] as const,
+    [event, loading, fetchData]
+  );
 }
