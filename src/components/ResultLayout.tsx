@@ -14,6 +14,7 @@ const StyledTopBar = styled.div`
   min-height: 130px;
   box-sizing: border-box;
   background-color: white;
+  z-index: 1000;
 
   > .top-bar-content {
     max-width: 1500px;
