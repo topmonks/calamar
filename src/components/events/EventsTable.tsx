@@ -55,7 +55,7 @@ function EventsTable(props: EventsTableProps) {
             <TableCell>
               <EventParamsTable args={event.args} />
             </TableCell>
-            {showExtrinsic && (
+            {showExtrinsic && event.extrinsic?.hash && (
               <TableCell>
                 <a
                   onClick={() => navigateToExtrinsicPage(event.extrinsic.hash)}

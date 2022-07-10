@@ -114,7 +114,7 @@ function ExtrinsicPage() {
                   <img src={extrinsic.success ? CheckIcon : CrossIcon} />
                 </TableCell>
               </TableRow>
-              {extrinsic.tip && (
+              {extrinsic.tip > 0 && (
                 <TableRow>
                   <TableCell>Tip</TableCell>
                   <TableCell>{extrinsic.tip}</TableCell>
