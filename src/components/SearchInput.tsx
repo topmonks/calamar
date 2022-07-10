@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { FormHTMLAttributes, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -6,7 +6,6 @@ import styled from "@emotion/styled";
 import NetworkSelect from "./NetworkSelect";
 
 const StyledTextField = styled(TextField)`
-  max-width: 720px !important;
   background-color: #f5f5f5;
 
   .MuiInputBase-root {
@@ -50,23 +49,9 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const StyledNetworkSelect = styled(NetworkSelect)`
-  border-radius: 8px 0px 0px 8px !important;
-
-  + .MuiTextField-root {
-    .MuiInputBase-root {
-      border-radius: 0px !important;
-    }
-  }
-`;
-
-export type SearchInputProps = {
-  showNetworkSelect?: boolean;
-};
+export type SearchInputProps = FormHTMLAttributes<HTMLFormElement>;
 
 function SearchInput(props: SearchInputProps) {
-  const { showNetworkSelect } = props;
-
   const [qs] = useSearchParams();
   const query = qs.get("query");
   console.log(qs, query);
@@ -81,7 +66,7 @@ function SearchInput(props: SearchInputProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form {...props} onSubmit={handleSubmit}>
       <FormGroup
         row
         style={{
@@ -90,7 +75,6 @@ function SearchInput(props: SearchInputProps) {
           flexWrap: "nowrap",
         }}
       >
-        {showNetworkSelect && <StyledNetworkSelect />}
         <StyledTextField
           fullWidth
           id="search"
