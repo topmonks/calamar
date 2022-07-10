@@ -9,10 +9,7 @@ import NetworkSelect from "./NetworkSelect";
 const StyledTopBar = styled.div`
   position: fixed;
   top: 0;
-  padding-left: 32px;
-  padding-right: 32px;
-  padding-top: 12px;
-  padding-bottom: 16px;
+  padding: 16px;
   width: 100vw;
   min-height: 130px;
   box-sizing: border-box;
@@ -44,7 +41,7 @@ const StyledTopBar = styled.div`
   }
 
   @media (min-width: 900px) {
-    padding-top: 24px;
+    padding: 24px 32px;
     padding-bottom: 0;
 
     > .top-bar-content {
@@ -71,9 +68,13 @@ const StyledTopBar = styled.div`
 const StyledContent = styled.div`
   position: absolute;
   top: 170px;
-  padding: 0 32px;
+  padding: 0 16px;
   width: 100vw;
   box-sizing: border-box;
+
+  @media (min-width: 900px) {
+    padding: 0 32px;
+  }
 `;
 
 const StyledNetworkSelect = styled(NetworkSelect)`

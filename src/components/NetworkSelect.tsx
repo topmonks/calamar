@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const StyledSelect = styled(Select)`
   border-radius: 8px !important;
+  overflow: hidden;
 
   background-color: #61dafb !important;
   border-color: #14a1c0;
