@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import {
@@ -15,11 +15,16 @@ import InfoTable from "../components/InfoTable";
 function BlockPage() {
   let { id } = useParams();
 
-  const [block, { loading }] = useBlock({ id_eq: id }, { skip: !id });
+  const [block, { loading }] = useBlock({ id_eq: id });
 
-  const extrinsics = useExtrinsics({ block: { id_eq: id } }, "id_DESC", {
-    skip: !id,
-  });
+  const extrinsics = useExtrinsics({ block: { id_eq: id } }, "id_DESC");
+
+  useEffect(() => {
+    if (extrinsics.pagination.offset === 0) {
+      const interval = setInterval(extrinsics.refetch, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [extrinsics]);
 
   return (
     <ResultLayout>

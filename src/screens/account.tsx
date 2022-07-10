@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import ResultLayout from "../components/ResultLayout";
@@ -26,6 +26,13 @@ function AccountPage() {
 
   const [accountCheck, { loading }] = useExtrinsic(filter);
   const extrinsics = useExtrinsics(filter);
+
+  useEffect(() => {
+    if (extrinsics.pagination.offset === 0) {
+      const interval = setInterval(extrinsics.refetch, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [extrinsics]);
 
   return (
     <ResultLayout>

@@ -53,15 +53,7 @@ export function useExtrinsics(
   useEffect(() => {
     setLoading(true);
     fetchItems();
-
-    if (pagination.offset === 0) {
-      const interval = setInterval(() => {
-        fetchItems();
-      }, 3000);
-
-      return () => clearInterval(interval);
-    }
-  }, [fetchItems, pagination.offset]);
+  }, [fetchItems]);
 
   return useMemo(
     () => ({

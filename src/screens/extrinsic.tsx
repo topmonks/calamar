@@ -24,10 +24,8 @@ import InfoTable from "../components/InfoTable";
 function ExtrinsicPage() {
   let { id } = useParams();
 
-  const [extrinsic, { loading }] = useExtrinsic({ id_eq: id }, { skip: !id });
-  const events = useEvents({ extrinsic: { id_eq: id } }, "id_ASC", {
-    skip: !id,
-  });
+  const [extrinsic, { loading }] = useExtrinsic({ id_eq: id });
+  const events = useEvents({ extrinsic: { id_eq: id } }, "id_ASC");
 
   return (
     <ResultLayout>
