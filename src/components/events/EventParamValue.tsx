@@ -25,11 +25,13 @@ const ParamNameCell = styled(TableCell)({
 
 const ParamName = styled.div({
   fontWeight: "bold",
+  minWidth: 100,
   wordBreak: "break-all",
 });
 
 const ParamValue = styled.div({
   wordBreak: "break-all",
+  minWidth: 100,
   maxWidth: 550,
 });
 
