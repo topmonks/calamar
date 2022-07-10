@@ -1,16 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Button,
-  FormGroup,
-  Grid,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
-import archivesJSON from "../archives.json";
 import NetworkSelect from "./NetworkSelect";
 
 const StyledTextField = styled(TextField)`
