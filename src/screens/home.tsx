@@ -2,6 +2,7 @@ import React from "react";
 import SearchInput from "../components/SearchInput";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
 import Background from "../assets/main-screen-bgr.svg";
+import { Link } from "react-router-dom";
 
 function HomePage() {
   return (
@@ -19,6 +20,9 @@ function HomePage() {
       <Logo style={{ width: "500px", margin: "auto", display: "block" }} />
       <div style={{ margin: "auto", width: "fit-content" }}>
         <SearchInput />
+      </div>
+      <div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
+        <Link to="/latest-extrinsics">Show latest extrinsics</Link>
       </div>
     </div>
   );
