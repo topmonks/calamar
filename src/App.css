@@ -81,8 +81,14 @@ table td {
 }
 
 .calamar-info-table td:first-child {
+  padding-left: 0;
+  vertical-align: top;
+}
+
+.calamar-info-table > tbody > tr > td:first-child {
   font-weight: 700!important;
   padding-left: 0;
+  vertical-align: top;
 }
 
 .calamar-info-table td:not(:first-child) {

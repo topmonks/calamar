@@ -20,6 +20,7 @@ import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
+import EventParamsTable from "../components/events/EventParamsTable";
 
 function ExtrinsicPage() {
   let { id } = useParams();
@@ -135,6 +136,14 @@ function ExtrinsicPage() {
                 <TableCell>Version</TableCell>
                 <TableCell>{extrinsic.version}</TableCell>
               </TableRow>
+              {extrinsic.call.args && (
+                <TableRow>
+                  <TableCell>Args</TableCell>
+                  <TableCell>
+                    <EventParamsTable args={extrinsic.call.args} />
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           )}
         </InfoTable>

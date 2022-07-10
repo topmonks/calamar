@@ -3,19 +3,13 @@ import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
 
 const ValueTable = styled(Table)`
-  margin: -6px -16px;
+  margin: -6px 0px;
   width: auto;
   word-break: initial;
   td:first-of-type {
     font-weight: 400;
     font-size: 16px;
     line-height: 22px;
-  }
-
-  tr:last-child {
-    td {
-      border-bottom: none;
-    }
   }
 `;
 
