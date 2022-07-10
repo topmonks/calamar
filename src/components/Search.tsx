@@ -27,57 +27,51 @@ const Search = (props: SearchProps) => {
 
   const navigate = useNavigate();
 
+  const [forceLoading, setForceLoading] = useState<boolean>(false);
   const [searchByName, setSearchByName] = useState<boolean>(false);
-  const [singleNotFound, setSingleNotFound] = useState<boolean>(false);
+  const [notFound, setNotFound] = useState<boolean>(false);
   const [showResultsByName, setShowResultsByName] = useState<boolean>(false);
 
-  const search = useCallback(
-    async (query: string | null) => {
-      if (!query) {
-        return;
+  const searchSingle = useCallback(async (query: string) => {
+    if (query.startsWith("0x")) {
+      const extrinsicByHash = await getExtrinsic({ hash_eq: query });
+
+      if (extrinsicByHash) {
+        return `/extrinsic/${extrinsicByHash.id}`;
       }
 
-      if (query.startsWith("0x")) {
-        const extrinsicByHash = await getExtrinsic({ hash_eq: query });
+      const blockByHash = await getBlock({ hash_eq: query });
 
-        if (extrinsicByHash) {
-          return navigate(`/extrinsic/${extrinsicByHash.id}`);
-        }
-
-        const blockByHash = await getBlock({ hash_eq: query });
-
-        if (blockByHash) {
-          return navigate(`/block/${blockByHash.id}`);
-        }
-
-        const extrinsicByAccount = await getExtrinsic({
-          OR: [
-            { signature_jsonContains: `{"address": "${query}" }` },
-            { signature_jsonContains: `{"address": { "value": "${query}"} }` },
-          ],
-        });
-
-        if (extrinsicByAccount) {
-          return navigate(`/account/${query}`);
-        }
-
-        setSingleNotFound(true);
+      if (blockByHash) {
+        return `/block/${blockByHash.id}`;
       }
 
-      if (query.match(/^\d+$/)) {
-        const blockByHeight = await getBlock({ height_eq: parseInt(query) });
+      const extrinsicByAccount = await getExtrinsic({
+        OR: [
+          { signature_jsonContains: `{"address": "${query}" }` },
+          { signature_jsonContains: `{"address": { "value": "${query}"} }` },
+        ],
+      });
 
-        if (blockByHeight) {
-          return navigate(`/block/${blockByHeight.id}`);
-        }
-
-        setSingleNotFound(true);
+      if (extrinsicByAccount) {
+        return `/account/${query}`;
       }
 
-      setSearchByName(true);
-    },
-    [navigate]
-  );
+      setNotFound(true);
+    }
+
+    if (query.match(/^\d+$/)) {
+      const blockByHeight = await getBlock({ height_eq: parseInt(query) });
+
+      if (blockByHeight) {
+        return `/block/${blockByHeight.id}`;
+      }
+
+      setNotFound(true);
+    }
+
+    setSearchByName(true);
+  }, []);
 
   const extrinsicsByName = useExtrinsics(
     {
@@ -94,34 +88,40 @@ const Search = (props: SearchProps) => {
   });
 
   useEffect(() => {
-    search(query);
-  }, [query, search]);
+    const search = async () => {
+      setForceLoading(true);
+
+      const [redirect] = await Promise.all([
+        searchSingle(query),
+        new Promise((resolve) => setTimeout(resolve, 1000)), // slow down search to show the spinner for a while (prevent flickering when the query is fast)
+      ]);
+
+      if (redirect) {
+        return navigate(redirect);
+      }
+
+      setForceLoading(false);
+    };
+
+    search();
+  }, [query, searchSingle, navigate]);
 
   useEffect(() => {
     if (extrinsicsByName.items.length > 0 || eventsByName.items.length > 0) {
       setShowResultsByName(true);
+    } else if (!extrinsicsByName.loading && !eventsByName.loading) {
+      setNotFound(true);
     }
   }, [extrinsicsByName, eventsByName]);
 
-  const loadingByName = useMemo(
-    () => extrinsicsByName.loading || eventsByName.loading,
-    [extrinsicsByName, eventsByName]
+  const showLoading = useMemo(
+    () => forceLoading || (!showResultsByName && !notFound),
+    [forceLoading, showResultsByName, notFound]
   );
-
-  const notFound = useMemo(
-    () =>
-      singleNotFound ||
-      (!loadingByName &&
-        extrinsicsByName.items.length === 0 &&
-        eventsByName.items.length === 0),
-    [singleNotFound, loadingByName, extrinsicsByName, eventsByName]
-  );
-
-  console.log("EBN", eventsByName);
 
   return (
     <>
-      {loadingByName && !showResultsByName && (
+      {showLoading && (
         <div
           className="calamar-card"
           style={{ marginTop: 16, marginBottom: 16 }}
@@ -137,7 +137,7 @@ const Search = (props: SearchProps) => {
           </StyledSearchBox>
         </div>
       )}
-      {notFound && (
+      {!showLoading && notFound && (
         <>
           <div className="calamar-card">
             <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
@@ -150,7 +150,7 @@ const Search = (props: SearchProps) => {
           </div>
         </>
       )}
-      {showResultsByName && (
+      {!showLoading && showResultsByName && (
         <SearchByNameResults
           events={eventsByName}
           extrinsics={extrinsicsByName}
