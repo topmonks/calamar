@@ -1,6 +1,6 @@
 # Calamar block explorer of the Subsquid Archives
 
-Web application allowing you to explore block, extrinsics and accounts from the [https://github.com/subsquid/archive-registry](Subsquid Archives).
+Web application allowing you to explore block, extrinsics and accounts from the [Subsquid Archives](https://github.com/subsquid/archive-registry).
 
 This app is based on [Create React App](https://facebook.github.io/create-react-app/docs/getting-started).
 
