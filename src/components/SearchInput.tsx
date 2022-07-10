@@ -68,12 +68,7 @@ function SearchInput() {
     }
 
     extrinsic = await getExtrinsic({
-      OR: [
-        { signature_jsonContains: `{\\"address\\": \\"${search}\\"}` },
-        {
-          signature_jsonContains: `{\\"address\\": { \\"value\\": \\"${search}\\"} }`,
-        },
-      ],
+      signature_jsonContains: `{"address": { "value": "${search}"} }`,
     });
 
     if (extrinsic) {
