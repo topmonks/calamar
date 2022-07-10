@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button, FormGroup, Grid, TextField } from "@mui/material";
+import {
+  Button,
+  FormGroup,
+  Grid,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import styled from "@emotion/styled";
+import archivesJSON from "../archives.json";
 
 const StyledTextField = styled(TextField)`
-  min-width: 800px !important;
+  min-width: 720px !important;
   background-color: #f5f5f5;
 
   .MuiInputBase-root {
     font-family: "Open Sans", sans-serif !important;
-    border-radius: 8px 0px 0px 8px !important;
+    border-radius: 0px !important;
   }
   & label.Mui-focused {
     color: #14a1c0;
@@ -22,18 +30,12 @@ const StyledTextField = styled(TextField)`
 `;
 
 const StyledButton = styled(Button)`
-  text-transform: none !important;
-  font-family: "Open Sans" !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  font-size: 20px !important;
-  line-height: 27px !important;
-  background-color: #ff646d !important;
-  border: 1px solid #d8545c !important;
-  color: #ffffff !important;
   border-radius: 0px 8px 8px 0px !important;
   width: 150px !important;
-  height: 56px;
+`;
+
+const StyledSelect = styled(Select)`
+  border-radius: 8px 0px 0px 8px !important;
 `;
 
 function SearchInput() {
@@ -41,13 +43,36 @@ function SearchInput() {
   const query = qs.get("query");
   console.log(qs, query);
 
+  const archives = archivesJSON.archives || [];
+  const [archive, setArchive] = React.useState(archives[0]);
+
   const [search, setSearch] = React.useState<string>(query || "");
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    let network = localStorage.getItem("network");
+    if (!network) {
+      network = archive.network;
+      localStorage.setItem("network", network);
+    }
+
+    setArchive(archives.find((a) => a.network === network) || archives[0]);
+  }, []);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     navigate(`/search?query=${search}`);
+  };
+
+  const handleArchiveChange = (e: any) => {
+    const archive = archives.find(
+      (archive: any) => archive.network === e.target.value
+    );
+    if (archive) {
+      setArchive(archive);
+      localStorage.setItem("network", e.target.value);
+    }
   };
 
   return (
@@ -59,6 +84,19 @@ function SearchInput() {
         }}
       >
         <Grid container>
+          <Grid item xs="auto">
+            <StyledSelect
+              className="calamar-button"
+              onChange={handleArchiveChange}
+              value={archive.network}
+            >
+              {archives.map((archive: any) => (
+                <MenuItem key={archive.network} value={archive.network}>
+                  {archive.network}
+                </MenuItem>
+              ))}
+            </StyledSelect>
+          </Grid>
           <Grid item xs="auto">
             <StyledTextField
               fullWidth

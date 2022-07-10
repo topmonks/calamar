@@ -1,26 +1,28 @@
-import config from "../calamar-config";
+import archivesJSON from "../archives.json";
 
 export async function fetchGraphql(query: string, variables: object = {}) {
-  let results = await fetch(
-    // TODO: change when launch
-    //`https://polkadot.indexer.gc.subsquid.io/v4/graphql`,
-    //`https://kusama.indexer.gc.subsquid.io/v4/graphql`,
-    config.apiEndpoint || "https://kusama.explorer.subsquid.io/graphql",
-    // `https://kusama.explorer.subsquid.io/graphql`,
-    // `https://${getSubdomain()}.indexer.gc.subsquid.io/v4/graphql`,
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        query,
-        variables,
-      }),
-    }
+  const network = localStorage.getItem("network");
+  let archive = archivesJSON.archives.find(
+    (archive) => archive.network === network
   );
+
+  if (!archive) {
+    archive = archivesJSON.archives[0];
+    localStorage.setItem("network", archivesJSON.archives[0].network);
+  }
+
+  let results = await fetch(archive.providers[0].dataSourceUrl, {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  });
 
   let jsonResult = await results.json();
   return jsonResult.data;
