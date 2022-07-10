@@ -12,16 +12,20 @@ import {
 } from "@mui/material";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
+import { useExtrinsic } from "../hooks/useExtrinsic";
 
 function AccountPage() {
   let { address } = useParams();
 
-  const extrinsics = useExtrinsics({
+  const filter = {
     OR: [
       { signature_jsonContains: `{"address": "${address}" }` },
       { signature_jsonContains: `{"address": { "value": "${address}"} }` },
     ],
-  });
+  };
+
+  const [accountCheck, { loading }] = useExtrinsic(filter);
+  const extrinsics = useExtrinsics(filter);
 
   return (
     <ResultLayout>
@@ -30,8 +34,8 @@ function AccountPage() {
           Account #{address}
         </div>
         <InfoTable
-          item={extrinsics.items[0]}
-          loading={extrinsics.loading}
+          item={accountCheck}
+          loading={loading}
           noItemMessage="No account found"
         >
           <TableBody>
