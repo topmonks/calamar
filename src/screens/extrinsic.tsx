@@ -136,14 +136,6 @@ function ExtrinsicPage() {
                 <TableCell>Version</TableCell>
                 <TableCell>{extrinsic.version}</TableCell>
               </TableRow>
-              {extrinsic.call.args && (
-                <TableRow>
-                  <TableCell>Args</TableCell>
-                  <TableCell>
-                    <EventParamsTable args={extrinsic.call.args} />
-                  </TableCell>
-                </TableRow>
-              )}
             </TableBody>
           )}
         </InfoTable>
