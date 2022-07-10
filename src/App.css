@@ -124,3 +124,16 @@ a {
 
   background-color: black!important;
 }
+
+.calamar-button {
+  text-transform: none !important;
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  line-height: 27px !important;
+  background-color: #ff646d !important;
+  border: 1px solid #d8545c !important;
+  color: #ffffff !important;
+  height: 56px;
+}
