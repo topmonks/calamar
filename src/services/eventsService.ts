@@ -1,14 +1,7 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { filterToWhere } from "../utils/filterToWhere";
 
-export type EventsFilter = any; /*Filter<{
-  id: string;
-  name: string;
-  section: string;
-  method: string;
-  signer: string;
-  extrinsic: ExtrinsicsFilter;
-}>;*/
+export type EventsFilter = any;
+export type EventsOrder = string | string[];
 
 export async function getEvent(filter: EventsFilter) {
   const events = await getEvents(1, 0, filter);
@@ -18,12 +11,13 @@ export async function getEvent(filter: EventsFilter) {
 export async function getEvents(
   limit: Number,
   offset: Number,
-  filter: EventsFilter
+  filter: EventsFilter,
+  order: EventsOrder = "id_DESC"
 ) {
   const response = await fetchGraphql(
     `
-      query ($limit: Int!, $offset: Int!, $filter: EventWhereInput) {
-        events(limit: $limit, offset: $offset, where: $filter) {
+      query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput]) {
+        events(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
           id
           name
           args
@@ -34,6 +28,7 @@ export async function getEvents(
       limit,
       offset,
       filter,
+      order,
     }
   );
 

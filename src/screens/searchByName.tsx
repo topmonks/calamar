@@ -47,7 +47,7 @@ function SearchByNamePage() {
     { skip: !name }
   );
 
-  const events = useEvents({ name_eq: name });
+  const events = useEvents({ name_containsInsensitive: name });
 
   return (
     <ResultLayout>

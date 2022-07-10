@@ -25,7 +25,9 @@ function ExtrinsicPage() {
   let { id } = useParams();
 
   const extrinsic = useExtrinsic({ id_eq: id }, { skip: !id });
-  const events = useEvents({ extrinsic: { id_eq: id } }, { skip: !id });
+  const events = useEvents({ extrinsic: { id_eq: id } }, "id_ASC", {
+    skip: !id,
+  });
 
   console.log(extrinsic);
 

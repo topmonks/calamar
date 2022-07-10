@@ -8,6 +8,7 @@ import BlockPage from "./screens/block";
 import AccountPage from "./screens/account";
 import NotFoundPage from "./screens/notFound";
 import SearchByNamePage from "./screens/searchByName";
+import SearchPage from "./screens/search";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route element={<ExtrinsicPage />} path="/extrinsic/:id" />
           <Route element={<SearchByNamePage />} path="/search-by-name/:name" />
+          <Route element={<SearchPage />} path="/search" />
           <Route element={<BlockPage />} path="/block/:id" />
           <Route element={<AccountPage />} path="/account/:address" />
           <Route element={<HomePage />} path="/" />

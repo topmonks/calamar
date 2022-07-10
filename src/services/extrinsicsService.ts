@@ -34,7 +34,7 @@ export async function getExtrinsics(
 
   const response = await fetchGraphql(
     `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput) {
-      extrinsics(limit: $limit, offset: $offset, where: $filter) {
+      extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: id_DESC) {
         id
         hash
         call {
