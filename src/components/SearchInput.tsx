@@ -82,6 +82,7 @@ function SearchInput() {
     if (archive) {
       setArchive(archive);
       localStorage.setItem("network", e.target.value);
+      navigate("/");
     }
   };
 
