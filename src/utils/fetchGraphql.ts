@@ -11,7 +11,7 @@ export async function fetchGraphql(query: string, variables: object = {}) {
     localStorage.setItem("network", archivesJSON.archives[0].network);
   }
 
-  let results = await fetch(archive.providers[0].dataSourceUrl, {
+  let results = await fetch(archive.providers[0].explorerUrl, {
     method: "POST",
 
     headers: {

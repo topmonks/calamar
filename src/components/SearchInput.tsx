@@ -32,10 +32,20 @@ const StyledTextField = styled(TextField)`
 const StyledButton = styled(Button)`
   border-radius: 0px 8px 8px 0px !important;
   width: 150px !important;
+  border: 1px solid #d8545c !important;
+  background-color: #ff646d !important;
 `;
 
 const StyledSelect = styled(Select)`
   border-radius: 8px 0px 0px 8px !important;
+  background-color: #61dafb !important;
+  border-color: #14a1c0;
+  text-transform: capitalize !important;
+  & .MuiOutlinedInput-root {
+    &.Mui-focused fieldset {
+      border-color: #14a1c0;
+    }
+  }
 `;
 
 function SearchInput() {
