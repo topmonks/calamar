@@ -12,5 +12,5 @@ WORKDIR /app
 
 COPY --from=builder /build .
 
-CMD serve
+CMD serve -s
 
