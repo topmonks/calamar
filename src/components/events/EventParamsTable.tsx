@@ -2,8 +2,6 @@ import React, { useMemo } from "react";
 import { Paper, Table, TableBody, TableContainer } from "@mui/material";
 import styled from "@emotion/styled";
 
-import { EventParam } from "../../model/eventParam";
-
 import EventParamRows from "./EventParamRows";
 
 const ParamsTable = styled(Table)`
