@@ -6,20 +6,16 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { shortenHash } from "../../utils/shortenHash";
 import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../../utils/convertTimestampToTimeFromNow";
 import { Link } from "react-router-dom";
-import {
-  ExtrinsicsFilter,
-  getExtrinsics,
-} from "../../services/extrinsicsService";
-import { Pagination, usePagination } from "../../hooks/usePagination";
+import { Pagination } from "../../hooks/usePagination";
 import ItemsTable from "../ItemsTable";
 import CopyToClipboardButton from "../CopyToClipboardButton";
+import { encodeAddress } from "../../utils/formatAddress";
 
 export type ExtrinsicsTableProps = {
   items: any[];
@@ -78,12 +74,18 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
             {columns.find((value) => value === "signer") && (
               <TableCell>
                 <Link to={`/account/${extrinsic.signature?.address}`}>
-                  {shortenHash(extrinsic.signature?.address)}
+                  {shortenHash(
+                    encodeAddress(extrinsic.signature?.address) ||
+                      extrinsic.signature?.address
+                  )}
                 </Link>
                 {extrinsic.signature?.address && (
                   <span style={{ marginLeft: 8 }}>
                     <CopyToClipboardButton
-                      value={extrinsic.signature?.address}
+                      value={
+                        encodeAddress(extrinsic.signature?.address) ||
+                        extrinsic.signature?.address
+                      }
                     />
                   </span>
                 )}

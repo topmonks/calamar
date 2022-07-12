@@ -10,6 +10,7 @@ import { getExtrinsic } from "../services/extrinsicsService";
 
 import Spinner from "./Spinner";
 import SearchByNameResults from "./SearchByNameResults";
+import { decodeAddress } from "../utils/formatAddress";
 
 const StyledSearchBox = styled.div`
   padding: 32px 0;
@@ -68,6 +69,11 @@ const Search = (props: SearchProps) => {
       }
 
       setNotFound(true);
+    }
+
+    const decodedAddress = decodeAddress(query);
+    if (decodedAddress) {
+      return `/account/${decodedAddress}`;
     }
 
     setSearchByName(true);

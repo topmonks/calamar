@@ -1,13 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Tooltip,
-} from "@mui/material";
+import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import {
   convertTimestampToTimeFromNow,
   formatDate,
@@ -20,7 +13,7 @@ import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
-import EventParamsTable from "../components/events/EventParamsTable";
+import { encodeAddress } from "../utils/formatAddress";
 
 function ExtrinsicPage() {
   let { id } = useParams();
@@ -94,11 +87,15 @@ function ExtrinsicPage() {
                   <TableCell>Account</TableCell>
                   <TableCell>
                     <Link to={`/account/${extrinsic.signature.address}`}>
-                      {extrinsic.signature.address}
+                      {encodeAddress(extrinsic.signature?.address) ||
+                        extrinsic.signature?.address}
                     </Link>
                     <span style={{ marginLeft: 8 }}>
                       <CopyToClipboardButton
-                        value={extrinsic.signature.address}
+                        value={
+                          encodeAddress(extrinsic.signature?.address) ||
+                          extrinsic.signature?.address
+                        }
                       />
                     </span>
                   </TableCell>
