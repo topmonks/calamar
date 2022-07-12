@@ -34,6 +34,7 @@ const Search = (props: SearchProps) => {
   const [showResultsByName, setShowResultsByName] = useState<boolean>(false);
 
   const searchSingle = useCallback(async (query: string) => {
+    query = query.replace(/\s/g, "");
     if (query.startsWith("0x")) {
       const extrinsicByHash = await getExtrinsic({ hash_eq: query });
 
