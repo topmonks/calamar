@@ -10,7 +10,7 @@ const StyledTopBar = styled.div`
   position: fixed;
   top: 0;
   padding: 16px;
-  width: 100vw;
+  width: 100%;
   min-height: 130px;
   box-sizing: border-box;
   background-color: white;
@@ -69,7 +69,7 @@ const StyledContent = styled.div`
   position: absolute;
   top: 170px;
   padding: 0 16px;
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
 
   @media (min-width: 900px) {
