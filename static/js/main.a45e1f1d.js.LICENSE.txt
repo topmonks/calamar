@@ -6,6 +6,8 @@
 
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
 
+/*! scure-base - MIT License (c) 2022 Paul Miller (paulmillr.com) */
+
 /**
  * @license React
  * react-dom.production.min.js
