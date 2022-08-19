@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 
@@ -51,6 +51,17 @@ const StyledSearchInput = styled(SearchInput)`
 function HomePage() {
   const [network, setNetwork] = useState<string | undefined>();
 
+  const handleNetworkSelect = useCallback(
+    (network: string, isUserAction: boolean) => {
+      if (isUserAction) {
+        localStorage.setItem("network", network);
+      }
+
+      setNetwork(network);
+    },
+    []
+  );
+
   useEffect(() => {
     let network = localStorage.getItem("network");
     network && setNetwork(network);
@@ -77,7 +88,7 @@ function HomePage() {
         }}
       />
       <StyledSearchBox>
-        <StyledNetworkSelect onChange={setNetwork} value={network} />
+        <StyledNetworkSelect onChange={handleNetworkSelect} value={network} />
         <StyledSearchInput network={network} />
       </StyledSearchBox>
       <div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>

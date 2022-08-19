@@ -22,7 +22,7 @@ const StyledSelect = styled(Select)`
 
 type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: string, isUserAction: boolean) => void;
 };
 
 const NetworkSelect = (props: NetworkSelectProps) => {
@@ -34,13 +34,13 @@ const NetworkSelect = (props: NetworkSelectProps) => {
     const archive = archives.find((it) => it.network === value);
 
     if (!archive && onChange && archives.length > 0) {
-      onChange(archives[0].network);
+      onChange(archives[0].network, false);
     }
   }, [value, onChange, archives]);
 
   const handleArchiveChange = useCallback(
     (e: any) => {
-      onChange && onChange(e.target.value);
+      onChange && onChange(e.target.value, true);
     },
     [onChange]
   );
