@@ -11,13 +11,14 @@ import {
   convertTimestampToTimeFromNow,
   formatDate,
 } from "../../utils/convertTimestampToTimeFromNow";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Pagination } from "../../hooks/usePagination";
 import ItemsTable from "../ItemsTable";
 import CopyToClipboardButton from "../CopyToClipboardButton";
 import { encodeAddress } from "../../utils/formatAddress";
 
 export type ExtrinsicsTableProps = {
+  network: string;
   items: any[];
   pagination: Pagination;
   title?: ReactNode;
@@ -27,6 +28,7 @@ export type ExtrinsicsTableProps = {
 
 function ExtrinsicsTable(props: ExtrinsicsTableProps) {
   const {
+    network,
     items,
     pagination,
     columns = ["id", "name", "signer", "time"],
@@ -62,7 +64,9 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
           <TableRow key={extrinsic.id}>
             {columns.find((value) => value === "id") && (
               <TableCell>
-                <Link to={`/extrinsic/${extrinsic.id}`}>{extrinsic.id}</Link>
+                <Link to={`/${network}/extrinsic/${extrinsic.id}`}>
+                  {extrinsic.id}
+                </Link>
               </TableCell>
             )}
             {columns.find((value) => value === "hash") && (
@@ -73,9 +77,12 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
             )}
             {columns.find((value) => value === "signer") && (
               <TableCell>
-                <Link to={`/account/${extrinsic.signature?.address}`}>
+                <Link
+                  to={`/${network}/account/${extrinsic.signature?.address}`}
+                >
                   {shortenHash(
-                    encodeAddress(extrinsic.signature?.address) ||
+                    (network &&
+                      encodeAddress(network, extrinsic.signature?.address)) ||
                       extrinsic.signature?.address
                   )}
                 </Link>
@@ -83,7 +90,11 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
                   <span style={{ marginLeft: 8 }}>
                     <CopyToClipboardButton
                       value={
-                        encodeAddress(extrinsic.signature?.address) ||
+                        (network &&
+                          encodeAddress(
+                            network,
+                            extrinsic.signature?.address
+                          )) ||
                         extrinsic.signature?.address
                       }
                     />

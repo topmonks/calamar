@@ -3,19 +3,23 @@ import { FetchOptions } from "../model/fetchOptions";
 
 import { BlocksFilter, getBlock } from "../services/blocksService";
 
-export function useBlock(filter: BlocksFilter, options?: FetchOptions) {
+export function useBlock(
+  network: string | undefined,
+  filter: BlocksFilter,
+  options?: FetchOptions
+) {
   const [block, setBlock] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
-    if (options?.skip) {
+    if (!network || options?.skip) {
       return;
     }
 
-    const block = await getBlock(filter);
+    const block = await getBlock(network, filter);
     setLoading(false);
     setBlock(block);
-  }, [JSON.stringify(filter), options?.skip]);
+  }, [network, JSON.stringify(filter), options?.skip]);
 
   useEffect(() => {
     setLoading(true);

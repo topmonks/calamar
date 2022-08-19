@@ -3,19 +3,23 @@ import { FetchOptions } from "../model/fetchOptions";
 
 import { EventsFilter, getEvent } from "../services/eventsService";
 
-export function useEvent(filter: EventsFilter, options?: FetchOptions) {
+export function useEvent(
+  network: string | undefined,
+  filter: EventsFilter,
+  options?: FetchOptions
+) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
-    if (options?.skip) {
+    if (!network || options?.skip) {
       return;
     }
 
-    const extrinsic = await getEvent(filter);
+    const extrinsic = await getEvent(network, filter);
     setLoading(false);
     setEvent(extrinsic);
-  }, [JSON.stringify(filter), options?.skip]);
+  }, [network, JSON.stringify(filter), options?.skip]);
 
   useEffect(() => {
     setLoading(true);

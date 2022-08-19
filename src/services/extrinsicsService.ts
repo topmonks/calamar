@@ -16,18 +16,20 @@ const unifyExtrinsics = (extrinsics: any) => {
   );
 };
 
-export async function getExtrinsic(filter?: ExtrinsicsFilter) {
-  const extrinsics = await getExtrinsics(1, 0, filter);
+export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
+  const extrinsics = await getExtrinsics(network, 1, 0, filter);
   return extrinsics?.[0];
 }
 
 export async function getExtrinsics(
+  network: string,
   limit: Number,
   offset: Number,
   filter?: ExtrinsicsFilter,
   order: ExtrinsicsOrder = "id_DESC"
 ) {
   const response = await fetchGraphql(
+    network,
     `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput]) {
       extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
         id

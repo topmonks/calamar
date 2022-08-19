@@ -1,9 +1,15 @@
 import React from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate, useParams, useSearchParams } from "react-router-dom";
 import ResultLayout from "../components/ResultLayout";
 import Search from "../components/Search";
 
+type SearchPageParams = {
+  network: string;
+};
+
 function SearchPage() {
+  const { network } = useParams() as SearchPageParams;
+
   const [qs] = useSearchParams();
   const query = qs.get("query");
   console.log(qs, query);
@@ -12,11 +18,7 @@ function SearchPage() {
     return <Navigate to="/" />;
   }
 
-  return (
-    <ResultLayout>
-      <Search key={query} query={query} />
-    </ResultLayout>
-  );
+  return <Search key={`${network}-${query}`} network={network} query={query} />;
 }
 
 export default SearchPage;

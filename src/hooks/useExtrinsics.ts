@@ -10,6 +10,7 @@ import {
 import { usePagination } from "./usePagination";
 
 export function useExtrinsics(
+  network: string | undefined,
   filter: ExtrinsicsFilter,
   order?: ExtrinsicsOrder,
   options?: FetchOptions
@@ -20,17 +21,19 @@ export function useExtrinsics(
   const pagination = usePagination();
 
   const fetchItems = useCallback(async () => {
-    if (options?.skip) {
+    if (!network || options?.skip) {
       return;
     }
 
     const extrinsics = await getExtrinsics(
+      network,
       pagination.limit,
       pagination.offset,
       filter,
       order
     );
     const nextExtrinsics = await getExtrinsics(
+      network,
       pagination.limit,
       pagination.offset + pagination.limit,
       filter,
@@ -43,6 +46,7 @@ export function useExtrinsics(
     setItems(extrinsics);
     pagination.setHasNext(nextExtrinsics.length > 0);
   }, [
+    network,
     JSON.stringify(filter),
     JSON.stringify(order),
     pagination.limit,

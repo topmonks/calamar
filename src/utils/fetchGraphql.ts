@@ -1,21 +1,15 @@
-import archivesJSON from "../archives.json";
+import { getArchive } from "../services/archivesService";
 
-export function getArchive() {
-  const network = localStorage.getItem("network");
-  let archive = archivesJSON.archives.find(
-    (archive) => archive.network === network
-  );
+export async function fetchGraphql(
+  network: string,
+  query: string,
+  variables: object = {}
+) {
+  const archive = getArchive(network);
 
   if (!archive) {
-    archive = archivesJSON.archives[0];
-    localStorage.setItem("network", archivesJSON.archives[0].network);
+    throw new Error(`Archive for network '${network} not found`);
   }
-
-  return archive;
-}
-
-export async function fetchGraphql(query: string, variables: object = {}) {
-  const archive = getArchive();
 
   let results = await fetch(archive.providers[0].explorerUrl, {
     method: "POST",

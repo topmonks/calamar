@@ -1,10 +1,15 @@
-import React, { ReactComponentElement, ReactNode } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, Outlet, useParams } from "react-router-dom";
+import styled from "@emotion/styled";
+
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
-import SearchInput from "./SearchInput";
-import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
+
+import { getArchive } from "../services/archivesService";
+import NotFoundPage from "../screens/notFound";
+
 import NetworkSelect from "./NetworkSelect";
+import SearchInput from "./SearchInput";
 
 const StyledTopBar = styled.div`
   position: fixed;
@@ -91,7 +96,26 @@ const StyledNetworkSelect = styled(NetworkSelect)`
   }
 `;
 
-function ResultLayout({ children }: { children: ReactNode }) {
+type ResultLayoutParams = {
+  network: string;
+};
+
+function ResultLayout() {
+  const { network: networkParam } = useParams() as ResultLayoutParams;
+
+  const [network, setNetwork] = useState<string | undefined>(networkParam);
+
+  const networkIsValid = useMemo(
+    () => Boolean(getArchive(networkParam)),
+    [networkParam]
+  );
+
+  useEffect(() => {
+    setNetwork(networkParam);
+  }, [networkParam]);
+
+  console.log("NNN", network);
+
   return (
     <>
       <div
@@ -107,7 +131,10 @@ function ResultLayout({ children }: { children: ReactNode }) {
         }}
       />
       <StyledContent>
-        <div style={{ maxWidth: "1500px", margin: "auto" }}>{children}</div>
+        <div style={{ maxWidth: "1500px", margin: "auto" }}>
+          {networkIsValid && <Outlet />}
+          {!networkIsValid && <NotFoundPage />}
+        </div>
       </StyledContent>
       <StyledTopBar>
         <div className="top-bar-content">
@@ -115,10 +142,10 @@ function ResultLayout({ children }: { children: ReactNode }) {
             <Link className="logo" to="/">
               <Logo />
             </Link>
-            <StyledNetworkSelect />
+            <StyledNetworkSelect onChange={setNetwork} value={network} />
           </div>
           <div className="top-bar-second-row">
-            <SearchInput />
+            <SearchInput network={network} />
           </div>
         </div>
       </StyledTopBar>

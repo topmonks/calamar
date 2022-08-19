@@ -20,11 +20,12 @@ const StyledSearchBox = styled.div`
 `;
 
 type SearchProps = {
+  network: string;
   query: string;
 };
 
 const Search = (props: SearchProps) => {
-  const { query } = props;
+  const { network, query } = props;
 
   const navigate = useNavigate();
 
@@ -33,54 +34,60 @@ const Search = (props: SearchProps) => {
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showResultsByName, setShowResultsByName] = useState<boolean>(false);
 
-  const searchSingle = useCallback(async (query: string) => {
-    query = query.replace(/\s/g, "");
-    if (query.startsWith("0x")) {
-      const extrinsicByHash = await getExtrinsic({ hash_eq: query });
+  const searchSingle = useCallback(
+    async (query: string) => {
+      query = query.replace(/\s/g, "");
+      if (query.startsWith("0x")) {
+        const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
 
-      if (extrinsicByHash) {
-        return `/extrinsic/${extrinsicByHash.id}`;
+        if (extrinsicByHash) {
+          return `/${network}/extrinsic/${extrinsicByHash.id}`;
+        }
+
+        const blockByHash = await getBlock(network, { hash_eq: query });
+
+        if (blockByHash) {
+          return `/${network}/block/${blockByHash.id}`;
+        }
+
+        const extrinsicByAccount = await getExtrinsic(network, {
+          OR: [
+            { signature_jsonContains: `{"address": "${query}" }` },
+            { signature_jsonContains: `{"address": { "value": "${query}"} }` },
+          ],
+        });
+
+        if (extrinsicByAccount) {
+          return `/${network}/account/${query}`;
+        }
+
+        setNotFound(true);
       }
 
-      const blockByHash = await getBlock({ hash_eq: query });
+      if (query.match(/^\d+$/)) {
+        const blockByHeight = await getBlock(network, {
+          height_eq: parseInt(query),
+        });
 
-      if (blockByHash) {
-        return `/block/${blockByHash.id}`;
+        if (blockByHeight) {
+          return `/${network}/block/${blockByHeight.id}`;
+        }
+
+        setNotFound(true);
       }
 
-      const extrinsicByAccount = await getExtrinsic({
-        OR: [
-          { signature_jsonContains: `{"address": "${query}" }` },
-          { signature_jsonContains: `{"address": { "value": "${query}"} }` },
-        ],
-      });
-
-      if (extrinsicByAccount) {
-        return `/account/${query}`;
+      const decodedAddress = decodeAddress(query);
+      if (decodedAddress) {
+        return `/${network}/account/${decodedAddress}`;
       }
 
-      setNotFound(true);
-    }
-
-    if (query.match(/^\d+$/)) {
-      const blockByHeight = await getBlock({ height_eq: parseInt(query) });
-
-      if (blockByHeight) {
-        return `/block/${blockByHeight.id}`;
-      }
-
-      setNotFound(true);
-    }
-
-    const decodedAddress = decodeAddress(query);
-    if (decodedAddress) {
-      return `/account/${decodedAddress}`;
-    }
-
-    setSearchByName(true);
-  }, []);
+      setSearchByName(true);
+    },
+    [network]
+  );
 
   const extrinsicsByName = useExtrinsics(
+    network,
     {
       call: {
         name_eq: query,
@@ -90,7 +97,7 @@ const Search = (props: SearchProps) => {
     { skip: !searchByName }
   );
 
-  const eventsByName = useEvents({ name_eq: query }, "id_DESC", {
+  const eventsByName = useEvents(network, { name_eq: query }, "id_DESC", {
     skip: !searchByName,
   });
 
@@ -162,6 +169,7 @@ const Search = (props: SearchProps) => {
           events={eventsByName}
           extrinsics={extrinsicsByName}
           name={query!}
+          network={network}
         />
       )}
     </>

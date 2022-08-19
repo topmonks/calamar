@@ -12,12 +12,21 @@ import ResultLayout from "../components/ResultLayout";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
 
+type BlockPageParams = {
+  network: string;
+  id: string;
+};
+
 function BlockPage() {
-  let { id } = useParams();
+  let { network, id } = useParams() as BlockPageParams;
 
-  const [block, { loading }] = useBlock({ id_eq: id });
+  const [block, { loading }] = useBlock(network, { id_eq: id });
 
-  const extrinsics = useExtrinsics({ block: { id_eq: id } }, "id_DESC");
+  const extrinsics = useExtrinsics(
+    network,
+    { block: { id_eq: id } },
+    "id_DESC"
+  );
 
   useEffect(() => {
     if (extrinsics.pagination.offset === 0) {
@@ -27,7 +36,7 @@ function BlockPage() {
   }, [extrinsics]);
 
   return (
-    <ResultLayout>
+    <>
       <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
           Block #{id}
@@ -55,7 +64,7 @@ function BlockPage() {
               <TableRow>
                 <TableCell>Parent hash</TableCell>
                 <TableCell>
-                  <Link to={`/search?query=${block.parentHash}`}>
+                  <Link to={`/${network}/search?query=${block.parentHash}`}>
                     {block.parentHash}
                   </Link>
                   <span style={{ marginLeft: 8 }}>
@@ -107,11 +116,12 @@ function BlockPage() {
           <ExtrinsicsTable
             items={extrinsics.items}
             loading={extrinsics.loading}
+            network={network}
             pagination={extrinsics.pagination}
           />
         </div>
       )}
-    </ResultLayout>
+    </>
   );
 }
 

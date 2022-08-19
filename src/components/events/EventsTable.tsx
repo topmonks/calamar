@@ -16,6 +16,7 @@ const HeaderTableRow = styled(TableRow)`
 `;
 
 export type EventsTableProps = {
+  network: string;
   items: any[];
   pagination: Pagination;
   showExtrinsic?: boolean;
@@ -23,7 +24,7 @@ export type EventsTableProps = {
 };
 
 function EventsTable(props: EventsTableProps) {
-  const { items, pagination, showExtrinsic, loading } = props;
+  const { network, items, pagination, showExtrinsic, loading } = props;
 
   return (
     <ItemsTable
@@ -50,7 +51,7 @@ function EventsTable(props: EventsTableProps) {
             </TableCell>
             {showExtrinsic && event.extrinsic?.hash && (
               <TableCell>
-                <Link to={`/search?query=${event.extrinsic.hash}`}>
+                <Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
                   {shortenHash(event.extrinsic.hash)}
                 </Link>
               </TableCell>
