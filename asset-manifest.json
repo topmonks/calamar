@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.0666b70b.css",
-    "main.js": "/static/js/main.2e03670a.js",
+    "main.js": "/static/js/main.9187ffda.js",
     "static/js/787.6ca8b8e3.chunk.js": "/static/js/787.6ca8b8e3.chunk.js",
     "static/media/calamar-logo-export-05.svg": "/static/media/calamar-logo-export-05.90aee75cd50751973c7c905b4591cdb3.svg",
     "static/media/calamar-logo-export-02.svg": "/static/media/calamar-logo-export-02.6a59d7f0f58901b186e6d85251814e7d.svg",
@@ -9,11 +9,11 @@
     "static/media/detail-page-bgr.svg": "/static/media/detail-page-bgr.2832135d10deec35d85b89f5be71a200.svg",
     "index.html": "/index.html",
     "main.0666b70b.css.map": "/static/css/main.0666b70b.css.map",
-    "main.2e03670a.js.map": "/static/js/main.2e03670a.js.map",
+    "main.9187ffda.js.map": "/static/js/main.9187ffda.js.map",
     "787.6ca8b8e3.chunk.js.map": "/static/js/787.6ca8b8e3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0666b70b.css",
-    "static/js/main.2e03670a.js"
+    "static/js/main.9187ffda.js"
   ]
 }
