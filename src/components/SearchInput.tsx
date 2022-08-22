@@ -1,4 +1,4 @@
-import React, { FormHTMLAttributes, useEffect } from "react";
+import React, { FormHTMLAttributes, useCallback, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -49,9 +49,13 @@ const StyledButton = styled(Button)`
   }
 `;
 
-export type SearchInputProps = FormHTMLAttributes<HTMLFormElement>;
+export type SearchInputProps = FormHTMLAttributes<HTMLFormElement> & {
+  network: string | undefined;
+};
 
 function SearchInput(props: SearchInputProps) {
+  const { network } = props;
+
   const [qs] = useSearchParams();
   const query = qs.get("query");
   console.log(qs, query);
@@ -60,10 +64,18 @@ function SearchInput(props: SearchInputProps) {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    navigate(`/search?query=${search}`);
-  };
+  const handleSubmit = useCallback(
+    (e: any) => {
+      if (!network) {
+        return;
+      }
+
+      e.preventDefault();
+      localStorage.setItem("network", network);
+      navigate(`/${network}/search?query=${search}`);
+    },
+    [navigate, network, search]
+  );
 
   return (
     <form {...props} onSubmit={handleSubmit}>

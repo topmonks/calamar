@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
-import SearchInput from "../components/SearchInput";
+
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
 import Background from "../assets/main-screen-bgr.svg";
-import { Link } from "react-router-dom";
+
 import NetworkSelect from "../components/NetworkSelect";
+import SearchInput from "../components/SearchInput";
 
 const StyledSearchBox = styled.div`
   margin: auto;
@@ -47,6 +49,24 @@ const StyledSearchInput = styled(SearchInput)`
 `;
 
 function HomePage() {
+  const [network, setNetwork] = useState<string | undefined>();
+
+  const handleNetworkSelect = useCallback(
+    (network: string, isUserAction: boolean) => {
+      if (isUserAction) {
+        localStorage.setItem("network", network);
+      }
+
+      setNetwork(network);
+    },
+    []
+  );
+
+  useEffect(() => {
+    let network = localStorage.getItem("network");
+    network && setNetwork(network);
+  }, []);
+
   return (
     <div
       style={{
@@ -68,11 +88,11 @@ function HomePage() {
         }}
       />
       <StyledSearchBox>
-        <StyledNetworkSelect />
-        <StyledSearchInput />
+        <StyledNetworkSelect onChange={handleNetworkSelect} value={network} />
+        <StyledSearchInput network={network} />
       </StyledSearchBox>
       <div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
-        <Link to="/latest-extrinsics">Show latest extrinsics</Link>
+        <Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>
       </div>
     </div>
   );

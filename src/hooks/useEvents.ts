@@ -10,6 +10,7 @@ import {
 import { usePagination } from "./usePagination";
 
 export function useEvents(
+  network: string | undefined,
   filter: EventsFilter,
   order?: EventsOrder,
   options?: FetchOptions
@@ -20,11 +21,12 @@ export function useEvents(
   const pagination = usePagination();
 
   const fetchItems = useCallback(async () => {
-    if (options?.skip) {
+    if (!network || options?.skip) {
       return;
     }
 
     const events = await getEvents(
+      network,
       pagination.limit,
       pagination.offset,
       filter,
@@ -32,6 +34,7 @@ export function useEvents(
     );
 
     const nextExtrinsics = await getEvents(
+      network,
       pagination.limit,
       pagination.offset + pagination.limit,
       filter,
@@ -42,6 +45,7 @@ export function useEvents(
     setItems(events);
     pagination.setHasNext(nextExtrinsics.length > 0);
   }, [
+    network,
     JSON.stringify(filter),
     JSON.stringify(order),
     pagination.limit,

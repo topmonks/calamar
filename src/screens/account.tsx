@@ -9,8 +9,13 @@ import InfoTable from "../components/InfoTable";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { encodeAddress } from "../utils/formatAddress";
 
+type AccountPageParams = {
+  network: string;
+  address: string;
+};
+
 function AccountPage() {
-  let { address } = useParams();
+  let { network, address } = useParams() as AccountPageParams;
 
   const filter = {
     OR: [
@@ -19,20 +24,18 @@ function AccountPage() {
     ],
   };
 
-  const [accountCheck, { loading }] = useExtrinsic(filter);
-  const extrinsics = useExtrinsics(filter);
+  const [accountCheck, { loading }] = useExtrinsic(network, filter);
+  const extrinsics = useExtrinsics(network, filter);
 
-  const encodedAddress = useMemo(() => {
-    if (address) {
-      return encodeAddress(address);
-    }
-  }, [address]);
+  const encodedAddress = useMemo(
+    () => encodeAddress(network, address),
+    [network, address]
+  );
 
-  const encoded42Address = useMemo(() => {
-    if (address) {
-      return encodeAddress(address, 42);
-    }
-  }, [address]);
+  const encoded42Address = useMemo(
+    () => encodeAddress(network, address, 42),
+    [network, address]
+  );
 
   useEffect(() => {
     if (extrinsics.pagination.offset === 0) {
@@ -42,7 +45,7 @@ function AccountPage() {
   }, [extrinsics]);
 
   return (
-    <ResultLayout>
+    <>
       <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
           Account #{address}
@@ -99,11 +102,12 @@ function AccountPage() {
             columns={["id", "name", "time"]}
             items={extrinsics.items}
             loading={extrinsics.loading}
+            network={network}
             pagination={extrinsics.pagination}
           />
         </div>
       )}
-    </ResultLayout>
+    </>
   );
 }
 

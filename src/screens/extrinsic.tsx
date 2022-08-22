@@ -15,14 +15,19 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
 import { encodeAddress } from "../utils/formatAddress";
 
-function ExtrinsicPage() {
-  let { id } = useParams();
+type ExtrinsicPageParams = {
+  network: string;
+  id: string;
+};
 
-  const [extrinsic, { loading }] = useExtrinsic({ id_eq: id });
-  const events = useEvents({ extrinsic: { id_eq: id } }, "id_ASC");
+function ExtrinsicPage() {
+  let { network, id } = useParams() as ExtrinsicPageParams;
+
+  const [extrinsic, { loading }] = useExtrinsic(network, { id_eq: id });
+  const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
 
   return (
-    <ResultLayout>
+    <>
       <div className="calamar-card">
         <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
           Extrinsic #{id}
@@ -64,7 +69,7 @@ function ExtrinsicPage() {
               <TableRow>
                 <TableCell>Block hash</TableCell>
                 <TableCell>
-                  <Link to={`/block/${extrinsic.block.id}`}>
+                  <Link to={`/${network}/block/${extrinsic.block.id}`}>
                     {extrinsic.block.hash}
                   </Link>
                   <span style={{ marginLeft: 8 }}>
@@ -86,15 +91,19 @@ function ExtrinsicPage() {
                 <TableRow>
                   <TableCell>Account</TableCell>
                   <TableCell>
-                    <Link to={`/account/${extrinsic.signature.address}`}>
-                      {encodeAddress(extrinsic.signature?.address) ||
+                    <Link
+                      to={`/${network}/account/${extrinsic.signature.address}`}
+                    >
+                      {encodeAddress(network, extrinsic.signature?.address) ||
                         extrinsic.signature?.address}
                     </Link>
                     <span style={{ marginLeft: 8 }}>
                       <CopyToClipboardButton
                         value={
-                          encodeAddress(extrinsic.signature?.address) ||
-                          extrinsic.signature?.address
+                          encodeAddress(
+                            network,
+                            extrinsic.signature?.address
+                          ) || extrinsic.signature?.address
                         }
                       />
                     </span>
@@ -145,10 +154,14 @@ function ExtrinsicPage() {
           <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
             Events
           </div>
-          <EventsTable items={events.items} pagination={events.pagination} />
+          <EventsTable
+            items={events.items}
+            network={network}
+            pagination={events.pagination}
+          />
         </div>
       )}
-    </ResultLayout>
+    </>
   );
 }
 

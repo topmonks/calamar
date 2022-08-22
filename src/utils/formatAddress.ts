@@ -1,12 +1,9 @@
-import { getArchive } from "./fetchGraphql";
 import ss58Registry from "../ss58-registry.json";
 import Keyring from "@polkadot/keyring";
 import arrayBufferToHex from "array-buffer-to-hex";
 
-const getPrefix = () => {
-  const archive = getArchive();
-  return ss58Registry.registry.find((r) => r.network === archive.network)
-    ?.prefix;
+const getPrefix = (network: string) => {
+  return ss58Registry.registry.find((r) => r.network === network)?.prefix;
 };
 
 export function decodeAddress(address: string) {
@@ -19,7 +16,13 @@ export function decodeAddress(address: string) {
   }
 }
 
-export function encodeAddress(address: string, prefix = getPrefix()) {
+export function encodeAddress(
+  network: string,
+  address: string,
+  prefix?: number
+) {
+  prefix = prefix || getPrefix(network);
+
   if (prefix !== undefined) {
     try {
       const keyring = new Keyring();

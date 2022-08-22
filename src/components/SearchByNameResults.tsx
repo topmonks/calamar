@@ -44,13 +44,14 @@ const StyledTab = styled(Tab)`
 `;
 
 type SearchByNameResultsProps = {
+  network: string;
   name: string;
   extrinsics: ReturnType<typeof useExtrinsics>;
   events: ReturnType<typeof useEvents>;
 };
 
 function SearchByNameResults(props: SearchByNameResultsProps) {
-  const { name, extrinsics, events } = props;
+  const { network, name, extrinsics, events } = props;
 
   const [tab, setTab] = useState<string | undefined>(undefined);
 
@@ -76,6 +77,7 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
         items={extrinsics.items}
         key="extrinsics"
         loading={extrinsics.loading}
+        network={network}
         pagination={extrinsics.pagination}
       />
     );
@@ -100,6 +102,7 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
         items={events.items}
         key="events"
         loading={events.loading}
+        network={network}
         pagination={events.pagination}
         showExtrinsic
       />
