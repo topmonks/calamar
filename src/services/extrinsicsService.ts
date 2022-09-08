@@ -30,7 +30,7 @@ export async function getExtrinsics(
 ) {
   const response = await fetchGraphql(
     network,
-    `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput]) {
+    `query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
       extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
         id
         hash

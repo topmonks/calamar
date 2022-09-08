@@ -18,7 +18,7 @@ export async function getEvents(
   const response = await fetchGraphql(
     network,
     `
-      query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput]) {
+      query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
         events(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
           id
           name
