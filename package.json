@@ -35,7 +35,6 @@
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-react": "7.30.0",
     "eslint-plugin-react-hooks": "4.6.0",
-    "gh-pages": "^4.0.0",
     "prettier": "2.7.1"
   },
   "scripts": {
@@ -43,9 +42,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "lint": "prettier --write \"**/*.{js,jsx,ts,tsx}\""
   },
   "eslintConfig": {
     "extends": [
