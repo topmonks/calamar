@@ -238,5 +238,19 @@
         }
       ]
     }
+    {
+      "network": "Tinkernet",
+      "genesisHash": "0xd42e9606a995dfe433dc7955dc2a70f495f350f373daa200098ae84437816ad2",
+      "providers": [
+        {
+          "provider": "subsquid",
+          "dataSourceUrl": "https://invarch-tinkernet.archive.subsquid.io/graphql",
+          "explorerUrl": "https://invarch-tinkernet.explorer.subsquid.io/graphql",
+          "release": "FireSquid",
+          "image": "substrate-ingest",
+          "gateway": "archive-gateway"
+        }
+      ]
+    }
   ]
 }
