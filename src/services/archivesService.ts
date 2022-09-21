@@ -1,8 +1,8 @@
-import archivesJSON from "../archives.json";
-import { Archive } from "../model/archive";
+import { ArchiveEntry } from "@subsquid/archive-registry";
+import archivesJson from "@subsquid/archive-registry/archives.json";
 
 export function getArchives() {
-  return archivesJSON.archives as Archive[];
+  return archivesJson.archives as ArchiveEntry[];
 }
 
 export function getArchive(network: string) {
