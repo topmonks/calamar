@@ -1,3 +1,3 @@
 export type FetchOptions = {
-  skip?: boolean;
+	skip?: boolean;
 };

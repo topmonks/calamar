@@ -9,93 +9,93 @@ import NetworkSelect from "../components/NetworkSelect";
 import SearchInput from "../components/SearchInput";
 
 const StyledSearchBox = styled.div`
-  margin: auto;
-  max-width: 1000px;
-  padding-left: 16px;
-  padding-right: 16px;
-  text-align: center;
+	margin: auto;
+	max-width: 1000px;
+	padding-left: 16px;
+	padding-right: 16px;
+	text-align: center;
 
-  @media (min-width: 900px) {
-    display: flex;
-    justify-content: center;
-  }
+	@media (min-width: 900px) {
+		display: flex;
+		justify-content: center;
+	}
 `;
 
 const StyledNetworkSelect = styled(NetworkSelect)`
-  height: auto;
-  font-size: 16px !important;
-  margin-bottom: 16px;
+	height: auto;
+	font-size: 16px !important;
+	margin-bottom: 16px;
 
-  .MuiSelect-select {
-    padding: 8.5px 14px;
-  }
+	.MuiSelect-select {
+		padding: 8.5px 14px;
+	}
 
-  @media (min-width: 900px) {
-    height: 56px;
-    border-radius: 8px 0px 0px 8px !important;
-  }
+	@media (min-width: 900px) {
+		height: 56px;
+		border-radius: 8px 0px 0px 8px !important;
+	}
 `;
 
 const StyledSearchInput = styled(SearchInput)`
-  @media (min-width: 900px) {
-    flex: 1 1 auto;
+	@media (min-width: 900px) {
+		flex: 1 1 auto;
 
-    .MuiTextField-root {
-      .MuiInputBase-root {
-        border-radius: 0px !important;
-      }
-    }
-  }
+		.MuiTextField-root {
+			.MuiInputBase-root {
+				border-radius: 0px !important;
+			}
+		}
+	}
 `;
 
 function HomePage() {
-  const [network, setNetwork] = useState<string | undefined>();
+	const [network, setNetwork] = useState<string | undefined>();
 
-  const handleNetworkSelect = useCallback(
-    (network: string, isUserAction: boolean) => {
-      if (isUserAction) {
-        localStorage.setItem("network", network);
-      }
+	const handleNetworkSelect = useCallback(
+		(network: string, isUserAction: boolean) => {
+			if (isUserAction) {
+				localStorage.setItem("network", network);
+			}
 
-      setNetwork(network);
-    },
-    []
-  );
+			setNetwork(network);
+		},
+		[]
+	);
 
-  useEffect(() => {
-    let network = localStorage.getItem("network");
-    network && setNetwork(network);
-  }, []);
+	useEffect(() => {
+		const network = localStorage.getItem("network");
+		network && setNetwork(network);
+	}, []);
 
-  return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        backgroundPosition: "center bottom",
-        backgroundSize: "contain",
-        backgroundRepeat: "no-repeat",
-        backgroundImage: `url(${Background})`,
-        margin: 0,
-      }}
-    >
-      <Logo
-        style={{
-          width: "500px",
-          margin: "auto",
-          display: "block",
-          maxWidth: "100%",
-        }}
-      />
-      <StyledSearchBox>
-        <StyledNetworkSelect onChange={handleNetworkSelect} value={network} />
-        <StyledSearchInput network={network} />
-      </StyledSearchBox>
-      <div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
-        <Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>
-      </div>
-    </div>
-  );
+	return (
+		<div
+			style={{
+				width: "100vw",
+				height: "100vh",
+				backgroundPosition: "center bottom",
+				backgroundSize: "contain",
+				backgroundRepeat: "no-repeat",
+				backgroundImage: `url(${Background})`,
+				margin: 0,
+			}}
+		>
+			<Logo
+				style={{
+					width: "500px",
+					margin: "auto",
+					display: "block",
+					maxWidth: "100%",
+				}}
+			/>
+			<StyledSearchBox>
+				<StyledNetworkSelect onChange={handleNetworkSelect} value={network} />
+				<StyledSearchInput network={network} />
+			</StyledSearchBox>
+			<div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
+				<Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>
+			</div>
+		</div>
+	);
 }
 
 export default HomePage;

@@ -4,21 +4,21 @@ import ResultLayout from "../components/ResultLayout";
 import Search from "../components/Search";
 
 type SearchPageParams = {
-  network: string;
+	network: string;
 };
 
 function SearchPage() {
-  const { network } = useParams() as SearchPageParams;
+	const { network } = useParams() as SearchPageParams;
 
-  const [qs] = useSearchParams();
-  const query = qs.get("query");
-  console.log(qs, query);
+	const [qs] = useSearchParams();
+	const query = qs.get("query");
+	console.log(qs, query);
 
-  if (!query) {
-    return <Navigate to="/" />;
-  }
+	if (!query) {
+		return <Navigate to="/" />;
+	}
 
-  return <Search key={`${network}-${query}`} network={network} query={query} />;
+	return <Search key={`${network}-${query}`} network={network} query={query} />;
 }
 
 export default SearchPage;
