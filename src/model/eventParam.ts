@@ -1,5 +1,5 @@
 export type EventParam = {
-  name: string;
-  type: string;
-  value: any;
+	name: string;
+	type: string;
+	value: any;
 };

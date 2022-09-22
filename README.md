@@ -26,17 +26,15 @@ The application will start in development mode and will automatically open in th
 
 ## Deploy to Github pages
 
-You can deploy the app very easily to Github pages.
+The repository contains the Github Actions workflow to deploy the pages automatically after push. All you need is to setup the pages in your Github repo's settings.
 
-Update `homepage` property in `package.json` to match your GH pages url. Then run deploy script.
-
-```
-$ npm run deploy
-```
+And update `homepage` property in `package.json` to match your GH pages url. Then run deploy script.
 
 ## Custom deploy
 
 You can of course deploy the app on any web server. You need to create the production build which you will upload to the web server to folder from where the web server serves the files to the public.
+
+> Ensure your webserver serves index.html on 404 HTTP errors to make the routing to work.
 
 ```
 $ npm run build

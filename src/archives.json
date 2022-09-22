@@ -155,18 +155,18 @@
       "genesisHash": "0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019"
     },
     {
-      "network": "hydradx-snakenet",
+      "network": "hydradx",
       "providers": [
         {
           "provider": "subsquid",
-          "dataSourceUrl": "https://hydradx-snakenet.archive.subsquid.io/graphql",
-          "explorerUrl": "https://hydradx-snakenet.explorer.subsquid.io/graphql",
+          "dataSourceUrl": "https://hydradx.archive.subsquid.io/graphql",
+          "explorerUrl": "https://hydradx.explorer.subsquid.io/graphql",
           "release": "FireSquid",
           "image": "substrate-ingest",
           "gateway": "archive-gateway"
         }
       ],
-      "genesisHash": "0xd2a620c27ec5cbc5621ff9a522689895074f7cca0d08e7134a7804e1a3ba86fc"
+      "genesisHash": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d"
     },
     {
       "network": "subsocial-solochain",
@@ -218,6 +218,20 @@
           "provider": "subsquid",
           "dataSourceUrl": "https://phala.archive.subsquid.io/graphql",
           "explorerUrl": "https://phala.explorer.subsquid.io/graphql",
+          "release": "FireSquid",
+          "image": "substrate-ingest",
+          "gateway": "archive-gateway"
+        }
+      ]
+    },
+    {
+      "network": "GM",
+      "genesisHash": "0x19a3733beb9cb8a970a308d835599e9005e02dc007a35440e461a451466776f8",
+      "providers": [
+        {
+          "provider": "subsquid",
+          "dataSourceUrl": "https://gmordie.archive.subsquid.io/graphql",
+          "explorerUrl": "https://gmordie.explorer.subsquid.io/graphql",
           "release": "FireSquid",
           "image": "substrate-ingest",
           "gateway": "archive-gateway"
