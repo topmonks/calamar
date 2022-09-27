@@ -14,7 +14,7 @@ import CheckIcon from "../assets/check-icon.png";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
 import { encodeAddress } from "../utils/formatAddress";
-import EventParamsTable from "../components/events/EventParamsTable";
+import ParamsTable from "../components/ParamsTable";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -145,9 +145,9 @@ function ExtrinsicPage() {
 							</TableRow>
 							{extrinsic.call.args && (
 								<TableRow>
-									<TableCell>Args</TableCell>
+									<TableCell>Parameters</TableCell>
 									<TableCell>
-										<EventParamsTable args={extrinsic.call.args} />
+										<ParamsTable args={extrinsic.call.args} />
 									</TableCell>
 								</TableRow>
 							)}

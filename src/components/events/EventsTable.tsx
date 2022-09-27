@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { Pagination } from "../../hooks/usePagination";
 
-import EventParamsTable from "./EventParamsTable";
+import ParamsTable from "../ParamsTable";
 import ItemsTable from "../ItemsTable";
 import { shortenHash } from "../../utils/shortenHash";
 
@@ -33,6 +33,10 @@ function EventsTable(props: EventsTableProps) {
 			noItemsMessage="No events found"
 			pagination={pagination}
 		>
+			<col />
+			<col />
+			<col width="60%" />
+			{showExtrinsic && <col />}
 			<TableHead>
 				<HeaderTableRow>
 					<TableCell>Id</TableCell>
@@ -47,7 +51,7 @@ function EventsTable(props: EventsTableProps) {
 						<TableCell>{event.id}</TableCell>
 						<TableCell>{event.name}</TableCell>
 						<TableCell>
-							<EventParamsTable args={event.args} />
+							<ParamsTable args={event.args} />
 						</TableCell>
 						{showExtrinsic && event.extrinsic?.hash && (
 							<TableCell>

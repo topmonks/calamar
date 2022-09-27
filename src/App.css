@@ -78,13 +78,19 @@ table td {
 
 .calamar-info-table td, th {
 	font-family: "Open Sans", sans-serif;
+	vertical-align: top;
 }
 
 .calamar-info-table td:first-child {
 	padding-left: 0;
 }
 
+.calamar-info-table td:last-child {
+	padding-right: 0;
+}
+
 .calamar-info-table > tbody > tr > td:first-child {
+	width: 200px;
 	font-weight: 700!important;
 	padding-left: 0;
 }
@@ -93,12 +99,22 @@ table td {
 	word-break: break-all;
 }
 
+.calamar-table {
+	table-layout: fixed;
+	min-width: 860px;
+}
+
 .calamar-table td:first-child, th:first-child {
 	padding-left: 0;
 }
 
+.calamar-table td:last-child, th:last-child {
+	padding-right: 0;
+}
+
 .calamar-table td, th {
 	font-family: "Open Sans", sans-serif!important;
+	word-break: break-all;
 }
 
 .calamar-table th {
