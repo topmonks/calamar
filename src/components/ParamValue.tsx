@@ -1,8 +1,10 @@
+/** @jsxImportSource @emotion/react */
+
 import React from "react";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
-const ValueTable = styled(Table)`
+const valueTableStyle = css`
 	width: 100%;
 	word-break: initial;
 
@@ -22,15 +24,15 @@ const ValueTable = styled(Table)`
 	}
 `;
 
-const ParamIndexCell = styled(TableCell)`
+const paramIndexCellStyle = css`
 	width: 60px;
 `;
 
-const ParamNameCell = styled(TableCell)`
+const paramNameCellStyle = css`
 	width: 180px;
 `;
 
-const ParamIndex = styled.div`
+const paramIndexStyle = css`
 	font-weight: 300;
 	word-break: break-all;
 	box-sizing: border-box;
@@ -39,7 +41,7 @@ const ParamIndex = styled.div`
 	padding-right: 16px;
 `;
 
-const ParamName = styled.div`
+const paramNameStyle = css`
 	font-weight: 700;
 	word-break: break-all;
 	box-sizing: border-box;
@@ -48,7 +50,7 @@ const ParamName = styled.div`
 	padding-right: 32px;
 `;
 
-const ParamValue = styled.div`
+const paramValueStyle = css`
 	word-break: break-all;
 	min-width: 100px;
 	max-width: 550px;
@@ -64,20 +66,20 @@ function ParamsValue(props: EventParamValueProps) {
 
 	if (Array.isArray(value) && value.length > 0) {
 		return (
-			<ValueTable size="small">
+			<Table size="small" css={valueTableStyle}>
 				<TableBody>
 					{value.map((item, index) => (
 						<TableRow key={index}>
-							<ParamIndexCell>
-								<ParamIndex>{index}</ParamIndex>
-							</ParamIndexCell>
+							<TableCell css={paramIndexCellStyle}>
+								<div css={paramIndexStyle}>{index}</div>
+							</TableCell>
 							<TableCell>
 								<ParamsValue value={item} />
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
-			</ValueTable>
+			</Table>
 		);
 	} else if (Array.isArray(value) && value.length === 0) {
 		value = "[ ]";
@@ -86,26 +88,26 @@ function ParamsValue(props: EventParamValueProps) {
 		keys.sort();
 
 		return (
-			<ValueTable size="small">
+			<Table size="small" css={valueTableStyle}>
 				<TableBody>
 					{keys.map((key) => (
 						<TableRow key={key}>
-							<ParamNameCell>
-								<ParamName>{key}</ParamName>
-							</ParamNameCell>
+							<TableCell css={paramNameCellStyle}>
+								<div css={paramNameStyle}>{key}</div>
+							</TableCell>
 							<TableCell>
 								<ParamsValue value={value[key]} />
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
-			</ValueTable>
+			</Table>
 		);
 	} else if (typeof value === "boolean") {
 		value = value ? "true" : "false";
 	}
 
-	return <ParamValue>{value}</ParamValue>;
+	return <div css={paramValueStyle}>{value}</div>;
 }
 
 export default ParamsValue;

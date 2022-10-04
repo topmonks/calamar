@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Paper, Table, TableBody, TableContainer } from "@mui/material";
-import styled from "@emotion/styled";
+/** @jsxImportSource @emotion/react */
+
+import React, { useMemo, useState } from "react";
+import { css } from "@emotion/react";
 
 import ParamsValue from "./ParamValue";
 
-const Params = styled.div`
+const paramsStyle = css`
 	display: inline-block;
 	box-sizing: border-box;
 	background-color: #f5f5f5;
@@ -25,9 +26,6 @@ export type EventParamsTableProps = {
 function ParamsTable(props: EventParamsTableProps) {
 	const { args } = props;
 
-	const [showExpand, setShowExpand] = useState<boolean>(false);
-	const [expand, setExpand] = useState<boolean>(false);
-
 	console.log(args);
 	const argsArray: any[] = useMemo(
 		() => (Array.isArray(args) ? args : [args]),
@@ -36,7 +34,7 @@ function ParamsTable(props: EventParamsTableProps) {
 
 	return (
 		<>
-			<Params>
+			<div css={paramsStyle}>
 				<div
 					style={{
 						maxHeight: 500,
@@ -46,7 +44,7 @@ function ParamsTable(props: EventParamsTableProps) {
 				>
 					<ParamsValue value={argsArray} />
 				</div>
-			</Params>
+			</div>
 		</>
 	);
 }
