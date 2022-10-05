@@ -17,7 +17,8 @@ module.exports = {
 	},
 	"plugins": [
 		"react",
-		"@typescript-eslint"
+		"@typescript-eslint",
+		"@emotion"
 	],
 	"rules": {
 		"indent": [
@@ -39,6 +40,11 @@ module.exports = {
 		"react/no-unknown-property": [
 			"error", {
 				"ignore": ["css"]
+			}
+		],
+		"@emotion/jsx-import": [
+			"error", {
+				"runtime": "automatic"
 			}
 		]
 	}
