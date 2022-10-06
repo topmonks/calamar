@@ -1,12 +1,12 @@
-import React, { FormHTMLAttributes, useCallback, useEffect } from "react";
+/** @jsxImportSource @emotion/react */
+import { FormHTMLAttributes, useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import styled from "@emotion/styled";
-import NetworkSelect from "./NetworkSelect";
+import { css, Theme } from "@emotion/react";
 
-const StyledTextField = styled(TextField)`
-	background-color: #f5f5f5;
+const textFieldStyle = css`
+	/*background-color: #f5f5f5;
 
 	.MuiInputBase-root {
 		font-family: "Open Sans", sans-serif !important;
@@ -20,13 +20,14 @@ const StyledTextField = styled(TextField)`
 		&.Mui-focused fieldset {
 			border-color: #14a1c0;
 		}
-	}
+	}*/
 `;
 
-const StyledButton = styled(Button)`
+const buttonStyle = (theme: Theme) => css`
 	border-radius: 0px 8px 8px 0px !important;
-	border: 1px solid #d8545c !important;
-	background-color: #ff646d !important;
+	//border: 1px solid #d8545c !important;
+	border: 1px solid ${theme.palette.primary.dark} !important;
+	//background-color: #ff646d !important;
 
 	.text {
 		display: none;
@@ -60,7 +61,7 @@ function SearchInput(props: SearchInputProps) {
 	const query = qs.get("query");
 	console.log(qs, query);
 
-	const [search, setSearch] = React.useState<string>(query || "");
+	const [search, setSearch] = useState<string>(query || "");
 
 	const navigate = useNavigate();
 
@@ -87,24 +88,26 @@ function SearchInput(props: SearchInputProps) {
 					flexWrap: "nowrap",
 				}}
 			>
-				<StyledTextField
+				<TextField
+					css={textFieldStyle}
 					fullWidth
 					id="search"
 					onChange={(e) => setSearch(e.target.value)}
 					placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
 					value={search}
-					variant="outlined"
 				/>
-				<StyledButton
+				<Button
+					css={buttonStyle}
 					className="calamar-button"
 					disableElevation
 					onClick={handleSubmit}
 					startIcon={<SearchIcon />}
 					type="submit"
 					variant="contained"
+					color="primary"
 				>
 					<span className="text">Search</span>
-				</StyledButton>
+				</Button>
 			</FormGroup>
 		</form>
 	);

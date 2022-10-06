@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { MenuItem, Select, SelectProps } from "@mui/material";
 import styled from "@emotion/styled";
 import cx from "classnames";
@@ -6,18 +6,19 @@ import cx from "classnames";
 import { useArchives } from "../hooks/useArchives";
 
 const StyledSelect = styled(Select)`
-	border-radius: 8px !important;
+	/*border-radius: 8px !important;
 	overflow: hidden;
 
 	background-color: #61dafb !important;
 	border-color: #14a1c0;
+	border-color: green;
 	text-transform: capitalize !important;
 
 	& .MuiOutlinedInput-root {
 		&.Mui-focused fieldset {
-			border-color: #14a1c0;
+			border-color: green;
 		}
-	}
+	}*/
 `;
 
 type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
@@ -48,7 +49,7 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 	return (
 		<StyledSelect
 			{...selectProps}
-			className={cx("calamar-button", props.className)}
+			//className={cx("calamar-button", props.className)}
 			onChange={handleArchiveChange}
 			//size="small"
 			value={value || ""}

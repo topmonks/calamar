@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 import { Table, TableContainer } from "@mui/material";
 
 import Loading from "./Loading";

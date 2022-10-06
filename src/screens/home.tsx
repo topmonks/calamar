@@ -9,7 +9,7 @@ import NetworkSelect from "../components/NetworkSelect";
 import SearchInput from "../components/SearchInput";
 
 const StyledSearchBox = styled.div`
-	margin: auto;
+	/*margin: auto;
 	max-width: 1000px;
 	padding-left: 16px;
 	padding-right: 16px;
@@ -18,11 +18,11 @@ const StyledSearchBox = styled.div`
 	@media (min-width: 900px) {
 		display: flex;
 		justify-content: center;
-	}
+	}*/
 `;
 
 const StyledNetworkSelect = styled(NetworkSelect)`
-	height: auto;
+	/*height: auto;
 	font-size: 16px !important;
 	margin-bottom: 16px;
 
@@ -33,7 +33,7 @@ const StyledNetworkSelect = styled(NetworkSelect)`
 	@media (min-width: 900px) {
 		height: 56px;
 		border-radius: 8px 0px 0px 8px !important;
-	}
+	}*/
 `;
 
 const StyledSearchInput = styled(SearchInput)`
@@ -42,7 +42,7 @@ const StyledSearchInput = styled(SearchInput)`
 
 		.MuiTextField-root {
 			.MuiInputBase-root {
-				border-radius: 0px !important;
+				//border-radius: 0px !important;
 			}
 		}
 	}

@@ -23,31 +23,16 @@ module.exports = {
 		"@emotion"
 	],
 	"rules": {
-		"indent": [
-			"error",
-			"tab"
-		],
-		"linebreak-style": [
-			"error",
-			"unix"
-		],
-		"quotes": [
-			"error",
-			"double"
-		],
-		"semi": [
-			"error",
-			"always"
-		],
-		"react/no-unknown-property": [
-			"error", {
-				"ignore": ["css"]
-			}
-		],
-		"@emotion/jsx-import": [
-			"error", {
-				"runtime": "automatic"
-			}
-		]
+		"indent": ["error", "tab"],
+		"linebreak-style": ["error", "unix"],
+		"quotes": ["error", "double"],
+		"semi": ["error", "always"],
+		"react/no-unknown-property": ["error", {
+			"ignore": ["css"]
+		}],
+		"@emotion/jsx-import": [ "error", {
+			"runtime": "automatic"
+		}],
+		"@typescript-eslint/no-empty-interface": ["none"]
 	}
 };
