@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+/** @jsxImportSource @emotion/react */
+import { useEffect, useMemo, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 
@@ -10,6 +11,7 @@ import NotFoundPage from "../screens/notFound";
 
 import NetworkSelect from "./NetworkSelect";
 import SearchInput from "./SearchInput";
+import { css, Theme } from "@emotion/react";
 
 const StyledTopBar = styled.div`
 	position: fixed;
@@ -53,14 +55,6 @@ const StyledTopBar = styled.div`
 		> .top-bar-content {
 			flex-direction: row;
 			align-items: center;
-
-			> .top-bar-second-row {
-				.MuiTextField-root {
-					.MuiInputBase-root {
-						border-radius: 0px !important;
-					}
-				}
-			}
 		}
 
 		.logo {
@@ -83,17 +77,37 @@ const StyledContent = styled.div`
 	}
 `;
 
-const StyledNetworkSelect = styled(NetworkSelect)`
-	height: auto;
-	font-size: 16px !important;
+const networkSelectStyle = (theme: Theme) => css`
+	& .MuiInputBase-input {
+		color: white;
+		background-color: #61dafb;
+		font-size: 16px;
+		font-weight: 600;
+	}
 
-	.MuiSelect-select {
-		padding: 8.5px 14px;
+	& .MuiOutlinedInput-notchedOutline,
+	&:hover .MuiOutlinedInput-notchedOutline,
+	&.Mui-focused .MuiOutlinedInput-notchedOutline {
+		border-color: ${theme.palette.secondary.main};
 	}
 
 	@media (min-width: 900px) {
-		height: 56px;
-		border-radius: 8px 0px 0px 8px !important;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+`;
+
+const searchInputStyle = () => css`
+	@media (min-width: 900px) {
+		flex: 1 1 auto;
+
+		.MuiInputBase-root {
+			border-radius: 0px;
+		}
+
+		.MuiOutlinedInput-notchedOutline {
+			border-left: none;
+		}
 	}
 `;
 
@@ -143,10 +157,10 @@ function ResultLayout() {
 						<Link className="logo" to="/">
 							<Logo />
 						</Link>
-						<StyledNetworkSelect onChange={setNetwork} value={network} />
+						<NetworkSelect css={networkSelectStyle} onChange={setNetwork} value={network} />
 					</div>
 					<div className="top-bar-second-row">
-						<SearchInput network={network} />
+						<SearchInput css={searchInputStyle} network={network} />
 					</div>
 				</div>
 			</StyledTopBar>

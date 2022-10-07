@@ -155,17 +155,6 @@ a {
 	background-color: black!important;
 }
 
-.calamar-button {
-	text-transform: capitalize !important;
-	font-family: "Open Sans" !important;
-	font-style: normal !important;
-	font-weight: 700 !important;
-	font-size: 20px !important;
-	line-height: 27px !important;
-	color: #ffffff !important;
-	height: 56px;
-}
-
 li.MuiMenuItem-root {
 		text-transform: capitalize !important;
 	}

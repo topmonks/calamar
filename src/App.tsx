@@ -14,6 +14,8 @@ import { theme } from "./theme";
 
 import "./App.css";
 
+console.log(theme);
+
 function App() {
 	return (
 		<ThemeProvider theme={theme}>

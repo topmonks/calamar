@@ -30,9 +30,10 @@ module.exports = {
 		"react/no-unknown-property": ["error", {
 			"ignore": ["css"]
 		}],
-		"@emotion/jsx-import": [ "error", {
+		"@emotion/jsx-import": ["error", {
 			"runtime": "automatic"
 		}],
-		"@typescript-eslint/no-empty-interface": ["none"]
+		"@typescript-eslint/no-empty-interface": ["off"],
+		"@typescript-eslint/no-empty-function": ["off"]
 	}
 };

@@ -6,28 +6,28 @@ import SearchIcon from "@mui/icons-material/Search";
 import { css, Theme } from "@emotion/react";
 
 const textFieldStyle = css`
-	/*background-color: #f5f5f5;
-
 	.MuiInputBase-root {
-		font-family: "Open Sans", sans-serif !important;
-		border-radius: 8px 0 0 8px !important;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
 	}
 
-	& label.Mui-focused {
-		color: #14a1c0;
+	.MuiOutlinedInput-notchedOutline {
+		border-color: #c4cdd5;
+		border-right: none;
 	}
-	& .MuiOutlinedInput-root {
-		&.Mui-focused fieldset {
-			border-color: #14a1c0;
-		}
-	}*/
+
+	.MuiOutlinedInput-notchedOutline,
+	&:hover .MuiOutlinedInput-notchedOutline,
+	.Mui-focused .MuiOutlinedInput-notchedOutline {
+		border-color: #c4cdd5;
+	}
 `;
 
 const buttonStyle = (theme: Theme) => css`
-	border-radius: 0px 8px 8px 0px !important;
-	//border: 1px solid #d8545c !important;
-	border: 1px solid ${theme.palette.primary.dark} !important;
-	//background-color: #ff646d !important;
+	border-radius: 8px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border: 1px solid ${theme.palette.primary.dark};
 
 	.text {
 		display: none;
@@ -35,11 +35,13 @@ const buttonStyle = (theme: Theme) => css`
 
 	.MuiButton-startIcon {
 		margin: 0;
+
+		svg {
+			font-size: 28px;
+		}
 	}
 
 	@media (min-width: 720px) {
-		width: 150px !important;
-
 		.text {
 			display: inline-block;
 		}
@@ -98,8 +100,6 @@ function SearchInput(props: SearchInputProps) {
 				/>
 				<Button
 					css={buttonStyle}
-					className="calamar-button"
-					disableElevation
 					onClick={handleSubmit}
 					startIcon={<SearchIcon />}
 					type="submit"
