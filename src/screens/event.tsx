@@ -24,7 +24,7 @@ export const EventPage: React.FC = () => {
             <InfoTable
                 item={event}
                 loading={loading}
-                noItemMessage="No extrinsic found"
+                noItemMessage="No event found"
             >
                 {event && (
                     <TableBody>
