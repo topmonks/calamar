@@ -19,6 +19,21 @@ export async function getCalls(
 			calls(limit: $limit, offset: $offset, where: $filter) {
 				id
 				name
+				success
+				origin
+				args
+				block {
+					timestamp
+					id
+				}
+				parent {
+					id
+					name
+				}
+				extrinsic {
+					id
+					version
+				}
 			}
 		}`,
 		{
