@@ -10,6 +10,7 @@ import NotFoundPage from "./screens/notFound";
 import SearchPage from "./screens/search";
 import LatestExtrinsicsPage from "./screens/latestExtrinsics";
 import ResultLayout from "./components/ResultLayout";
+import { EventPage } from "./screens/event";
 
 function App() {
 	return (
@@ -28,6 +29,7 @@ function App() {
 						<Route element={<SearchPage />} path="search" />
 						<Route element={<BlockPage />} path="block/:id" />
 						<Route element={<AccountPage />} path="account/:address" />
+						<Route element={<EventPage />} path="event/:id" />
 						<Route
 							element={<LatestExtrinsicsPage />}
 							path="latest-extrinsics"

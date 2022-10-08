@@ -3,9 +3,35 @@ import { fetchGraphql } from "../utils/fetchGraphql";
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
 
-export async function getEvent(network: string, filter: EventsFilter) {
-	const events = await getEvents(network, 1, 0, filter);
-	return events?.[0];
+export async function getEvent(network: string, id: string) {
+	const response = await fetchGraphql(
+		network,
+		`
+			query ($id: String!) {
+				eventById(id: $id) {
+					id
+					name
+					block {
+						id
+						timestamp
+					}
+					extrinsic {
+						id
+						version
+					}
+					call {
+						id
+					}
+					args
+				}
+			}
+		`,
+		{
+			id,
+		}
+	);
+	console.log(response)
+	return response.eventById;
 }
 
 export async function getEvents(
