@@ -97,5 +97,24 @@ export const theme = createTheme({
 				`,
 			}
 		},
+		MuiTableRow: {
+			styleOverrides: {
+				root: css`
+					&:last-child {
+						> .MuiTableCell-body {
+							border-bottom: none;
+						}
+					}
+				`
+			}
+		},
+		MuiTableCell: {
+			styleOverrides: {
+				root: css`
+					font-size: 16px;
+					line-height: 22px;
+				`
+			}
+		}
 	}
 });
