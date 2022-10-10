@@ -15,6 +15,7 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import InfoTable from "../components/InfoTable";
 import { encodeAddress } from "../utils/formatAddress";
 import ParamsTable from "../components/ParamsTable";
+import Card from "../components/Card";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -29,7 +30,7 @@ function ExtrinsicPage() {
 
 	return (
 		<>
-			<div className="calamar-card">
+			<Card>
 				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 					Extrinsic #{id}
 				</div>
@@ -154,12 +155,9 @@ function ExtrinsicPage() {
 						</TableBody>
 					)}
 				</InfoTable>
-			</div>
+			</Card>
 			{extrinsic && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
+				<Card>
 					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 						Events
 					</div>
@@ -168,7 +166,7 @@ function ExtrinsicPage() {
 						network={network}
 						pagination={events.pagination}
 					/>
-				</div>
+				</Card>
 			)}
 		</>
 	);

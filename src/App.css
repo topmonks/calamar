@@ -57,19 +57,6 @@ table td {
 	line-height: 22px!important;
 }
 
-.calamar-card {
-	border-radius: 8px;
-	box-shadow: 0px 0px 64px rgba(98, 151, 163, 0.13);
-	padding: 24px;
-	background-color: white;
-}
-
-@media (min-width: 900px) {
-	.calamar-card {
-		padding: 48px;
-	}
-}
-
 .calamar-table-header {
 	font-weight: 700!important;
 	font-size: 24px!important;

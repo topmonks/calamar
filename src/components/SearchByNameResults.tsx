@@ -1,14 +1,13 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ReactElement, useEffect, useState } from "react";
 import { CircularProgress, Tab, Tabs } from "@mui/material";
 import styled from "@emotion/styled";
 
-import EventsTable from "./events/EventsTable";
-import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
-import ResultLayout from "./ResultLayout";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import Spinner from "./Spinner";
+
+import Card from "./Card";
+import EventsTable from "./events/EventsTable";
+import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
 
 const TabsBox = styled.div`
 	border-bottom: solid 1px rgba(0, 0, 0, 0.12);
@@ -118,7 +117,7 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 	}, [extrinsics, events]);
 
 	return (
-		<div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
+		<Card>
 			<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 				Results for name <span style={{ fontWeight: "normal" }}>{name}</span>
 			</div>
@@ -133,7 +132,7 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 				</StyledTabs>
 			</TabsBox>
 			{tab ? tabPanes.find((it) => it.key === tab) : tabPanes[0]}
-		</div>
+		</Card>
 	);
 }
 

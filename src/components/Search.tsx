@@ -1,4 +1,3 @@
-import React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -8,9 +7,11 @@ import { useEvents } from "../hooks/useEvents";
 import { getBlock } from "../services/blocksService";
 import { getExtrinsic } from "../services/extrinsicsService";
 
-import Spinner from "./Spinner";
 import SearchByNameResults from "./SearchByNameResults";
 import { decodeAddress } from "../utils/formatAddress";
+
+import Card from "./Card";
+import Spinner from "./Spinner";
 
 const StyledSearchBox = styled.div`
 	padding: 32px 0;
@@ -136,10 +137,7 @@ const Search = (props: SearchProps) => {
 	return (
 		<>
 			{showLoading && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
+				<Card>
 					<StyledSearchBox>
 						<div style={{ marginBottom: 40 }}>
 							<strong>Searching for</strong>{" "}
@@ -149,11 +147,11 @@ const Search = (props: SearchProps) => {
 						</div>
 						<Spinner />
 					</StyledSearchBox>
-				</div>
+				</Card>
 			)}
 			{!showLoading && notFound && (
 				<>
-					<div className="calamar-card">
+					<Card>
 						<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 							Not found
 						</div>
@@ -161,7 +159,7 @@ const Search = (props: SearchProps) => {
 							Nothing was found{" "}
 							{query && <span>for query &quot;{query}&quot;</span>}
 						</div>
-					</div>
+					</Card>
 				</>
 			)}
 			{!showLoading && showResultsByName && (

@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+
+import Card from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import { useBlock } from "../hooks/useBlock";
+import { useExtrinsics } from "../hooks/useExtrinsics";
+import InfoTable from "../components/InfoTable";
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import { useBlock } from "../hooks/useBlock";
-import { useExtrinsics } from "../hooks/useExtrinsics";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import ResultLayout from "../components/ResultLayout";
-import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import InfoTable from "../components/InfoTable";
 
 type BlockPageParams = {
 	network: string;
@@ -37,7 +38,7 @@ function BlockPage() {
 
 	return (
 		<>
-			<div className="calamar-card">
+			<Card>
 				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 					Block #{id}
 				</div>
@@ -104,12 +105,9 @@ function BlockPage() {
 						</TableBody>
 					)}
 				</InfoTable>
-			</div>
+			</Card>
 			{block && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
+				<Card>
 					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 						Extrinsics
 					</div>
@@ -119,7 +117,7 @@ function BlockPage() {
 						network={network}
 						pagination={extrinsics.pagination}
 					/>
-				</div>
+				</Card>
 			)}
 		</>
 	);

@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import ResultLayout from "../components/ResultLayout";
-import { useParams } from "react-router-dom";
+
+import Card from "../components/Card";
 
 type LatestExtrinsicsPageParams = {
 	network: string;
@@ -21,7 +23,7 @@ function LatestExtrinsicsPage() {
 
 	return (
 		<>
-			<div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
+			<Card>
 				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
 					Latest extrinsics
 				</div>
@@ -31,7 +33,7 @@ function LatestExtrinsicsPage() {
 					network={network}
 					pagination={extrinsics.pagination}
 				/>
-			</div>
+			</Card>
 		</>
 	);
 }
