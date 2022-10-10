@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
-import Card from "../components/Card";
+import { Card, CardHeader } from "../components/Card";
 
 type LatestExtrinsicsPageParams = {
 	network: string;
@@ -24,9 +24,7 @@ function LatestExtrinsicsPage() {
 	return (
 		<>
 			<Card>
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-					Latest extrinsics
-				</div>
+				<CardHeader>Latest extrinsics</CardHeader>
 				<ExtrinsicsTable
 					items={extrinsics.items}
 					loading={extrinsics.loading}

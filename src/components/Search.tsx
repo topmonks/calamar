@@ -10,7 +10,7 @@ import { getExtrinsic } from "../services/extrinsicsService";
 import SearchByNameResults from "./SearchByNameResults";
 import { decodeAddress } from "../utils/formatAddress";
 
-import Card from "./Card";
+import { Card, CardHeader } from "./Card";
 import Spinner from "./Spinner";
 
 const StyledSearchBox = styled.div`
@@ -152,9 +152,7 @@ const Search = (props: SearchProps) => {
 			{!showLoading && notFound && (
 				<>
 					<Card>
-						<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-							Not found
-						</div>
+						<CardHeader>Not found</CardHeader>
 						<div>
 							Nothing was found{" "}
 							{query && <span>for query &quot;{query}&quot;</span>}

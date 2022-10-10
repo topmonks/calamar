@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
-import Card from "../components/Card";
+import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { useBlock } from "../hooks/useBlock";
@@ -39,9 +39,7 @@ function BlockPage() {
 	return (
 		<>
 			<Card>
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-					Block #{id}
-				</div>
+				<CardHeader>Block #{id}</CardHeader>
 				<InfoTable
 					item={block}
 					loading={loading}
@@ -108,9 +106,7 @@ function BlockPage() {
 			</Card>
 			{block && (
 				<Card>
-					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-						Extrinsics
-					</div>
+					<CardHeader>Extrinsics</CardHeader>
 					<ExtrinsicsTable
 						items={extrinsics.items}
 						loading={extrinsics.loading}

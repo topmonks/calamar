@@ -1,12 +1,10 @@
-import Card from "../components/Card";
+import { Card, CardHeader } from "../components/Card";
 
 function NotFoundPage() {
 	return (
 		<>
 			<Card>
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-					Page not found
-				</div>
+				<CardHeader>Page not found</CardHeader>
 				<div>This page doesn&apos;t exist</div>
 			</Card>
 		</>

@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 
-import Card from "./Card";
+import { Card, CardHeader } from "./Card";
 import EventsTable from "./events/EventsTable";
 import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
 
@@ -118,9 +118,9 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 
 	return (
 		<Card>
-			<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+			<CardHeader>
 				Results for name <span style={{ fontWeight: "normal" }}>{name}</span>
-			</div>
+			</CardHeader>
 			<TabsBox style={{ marginTop: -16, marginBottom: 16 }}>
 				<StyledTabs
 					aria-label="basic tabs example"

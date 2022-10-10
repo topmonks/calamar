@@ -1,21 +1,23 @@
-import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+
+import CrossIcon from "../assets/cross-icon.png";
+import CheckIcon from "../assets/check-icon.png";
+
+import { Card, CardHeader } from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import EventsTable from "../components/events/EventsTable";
+import InfoTable from "../components/InfoTable";
+import ParamsTable from "../components/ParamsTable";
+
+import { useExtrinsic } from "../hooks/useExtrinsic";
+import { useEvents } from "../hooks/useEvents";
+
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import EventsTable from "../components/events/EventsTable";
-import { useExtrinsic } from "../hooks/useExtrinsic";
-import { useEvents } from "../hooks/useEvents";
-import ResultLayout from "../components/ResultLayout";
-import CrossIcon from "../assets/cross-icon.png";
-import CheckIcon from "../assets/check-icon.png";
-import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import InfoTable from "../components/InfoTable";
 import { encodeAddress } from "../utils/formatAddress";
-import ParamsTable from "../components/ParamsTable";
-import Card from "../components/Card";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -31,9 +33,7 @@ function ExtrinsicPage() {
 	return (
 		<>
 			<Card>
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-					Extrinsic #{id}
-				</div>
+				<CardHeader>Extrinsic #{id}</CardHeader>
 				<InfoTable
 					item={extrinsic}
 					loading={loading}
@@ -158,9 +158,7 @@ function ExtrinsicPage() {
 			</Card>
 			{extrinsic && (
 				<Card>
-					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-						Events
-					</div>
+					<CardHeader>Events</CardHeader>
 					<EventsTable
 						items={events.items}
 						network={network}

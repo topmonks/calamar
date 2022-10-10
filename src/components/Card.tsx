@@ -1,8 +1,6 @@
-/** @jsxImportSource @emotion/react */
-import { HTMLAttributes, PropsWithChildren } from "react";
-import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 
-const cardStyle = css`
+export const Card = styled.div`
 	border-radius: 8px;
 	box-shadow: 0px 0px 64px rgba(98, 151, 163, 0.13);
 	padding: 24px;
@@ -14,12 +12,10 @@ const cardStyle = css`
 	}
 `;
 
-export type CardProps = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
+export const CardHeader = styled.div`
+	padding-bottom: 48px;
 
-const Card = (props: CardProps) => {
-	const {children, ...restProps} = props;
-
-	return <div css={cardStyle} {...restProps}>{children}</div>;
-};
-
-export default Card;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 33px;
+`;

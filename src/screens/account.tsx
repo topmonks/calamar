@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow } from "@mui/material";
 
-import Card from "../components/Card";
+import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
@@ -48,9 +48,9 @@ function AccountPage() {
 	return (
 		<>
 			<Card>
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+				<CardHeader>
 					Account #{address}
-				</div>
+				</CardHeader>
 				<InfoTable
 					item={accountCheck}
 					loading={loading}
@@ -93,9 +93,7 @@ function AccountPage() {
 			</Card>
 			{extrinsics.items.length > 0 && (
 				<Card>
-					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-						Extrinsics
-					</div>
+					<CardHeader>Extrinsics</CardHeader>
 					<ExtrinsicsTable
 						columns={["id", "name", "time"]}
 						items={extrinsics.items}
