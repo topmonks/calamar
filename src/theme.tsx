@@ -122,6 +122,24 @@ export const theme = createTheme({
 				root: css`
 					font-size: 16px;
 					line-height: 22px;
+				`,
+				head: css`
+					font-weight: 700;
+				`
+			}
+		},
+		MuiTooltip: {
+			styleOverrides: {
+				tooltip: css`
+					line-height: 20px;
+					padding: 8px 16px;
+
+					font-size: 16px;
+					color: white;
+					background-color: black;
+				`,
+				arrow: css`
+					color: black!important;
 				`
 			}
 		}
