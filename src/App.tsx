@@ -12,8 +12,6 @@ import ResultLayout from "./components/ResultLayout";
 
 import { theme } from "./theme";
 
-import "./App.css";
-
 console.log(theme);
 
 function App() {
