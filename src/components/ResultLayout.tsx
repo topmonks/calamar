@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useMemo, useState } from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
+import { css, Theme } from "@emotion/react";
 
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
@@ -11,7 +12,7 @@ import NotFoundPage from "../screens/notFound";
 
 import NetworkSelect from "./NetworkSelect";
 import SearchInput from "./SearchInput";
-import { css, Theme } from "@emotion/react";
+import { Link } from "./Link";
 
 const StyledTopBar = styled.div`
 	position: fixed;

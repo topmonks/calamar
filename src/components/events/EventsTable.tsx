@@ -1,13 +1,12 @@
-import React from "react";
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
 
 import { Pagination } from "../../hooks/usePagination";
-
-import ParamsTable from "../ParamsTable";
-import ItemsTable from "../ItemsTable";
 import { shortenHash } from "../../utils/shortenHash";
+
+import ItemsTable from "../ItemsTable";
+import { Link } from "../Link";
+import ParamsTable from "../ParamsTable";
 
 const HeaderTableRow = styled(TableRow)`
 	th {

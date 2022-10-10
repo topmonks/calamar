@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { css, Theme } from "@emotion/react";
 
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
 import Background from "../assets/main-screen-bgr.svg";
 
+import { Link } from "../components/Link";
 import NetworkSelect from "../components/NetworkSelect";
 import SearchInput from "../components/SearchInput";
-import { css, Theme } from "@emotion/react";
 
 const containerStyle = css`
 	width: 100vw;

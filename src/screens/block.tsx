@@ -1,13 +1,14 @@
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import InfoTable from "../components/InfoTable";
+import { Link } from "../components/Link";
 import { useBlock } from "../hooks/useBlock";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import InfoTable from "../components/InfoTable";
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,

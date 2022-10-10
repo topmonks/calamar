@@ -11,7 +11,7 @@ export const theme = createTheme({
 		secondary: {
 			main: "#14a1c0",
 			contrastText: "#ffffff"
-		}
+		},
 	},
 	typography: {
 		fontFamily: "\"Open Sans\", sans-serif",
@@ -19,12 +19,21 @@ export const theme = createTheme({
 			fontSize: 18,
 			fontWeight: 700,
 			textTransform: "none"
-		}
+		},
 	},
 	components: {
+		MuiLink: {
+			styleOverrides: {
+				root: ({theme}) => css`
+					font-weight: 700;
+					font-family: "Google Sans", sans-serif;
+					color: ${theme.palette.secondary.main}
+				`
+			}
+		},
 		MuiButton: {
 			defaultProps: {
-				disableElevation: true
+				disableElevation: true,
 			},
 			styleOverrides: {
 				root: css`

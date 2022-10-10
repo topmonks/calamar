@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import CrossIcon from "../assets/cross-icon.png";
@@ -18,6 +18,7 @@ import {
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
 import { encodeAddress } from "../utils/formatAddress";
+import { Link } from "../components/Link";
 
 type ExtrinsicPageParams = {
 	network: string;
