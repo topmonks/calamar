@@ -30,7 +30,7 @@ export async function getEvent(network: string, id: string) {
 			id,
 		}
 	);
-	console.log(response)
+	console.log(response);
 	return response.eventById;
 }
 

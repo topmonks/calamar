@@ -40,7 +40,11 @@ function EventsTable(props: EventsTableProps) {
 			<TableBody>
 				{items.map((event: any) => (
 					<TableRow key={event.id}>
-						<TableCell>{event.id}</TableCell>
+						<TableCell>
+							<Link to={`/${network}/event/${event.id}`}>
+								{event.id}
+							</Link>
+						</TableCell>
 						<TableCell>{event.name}</TableCell>
 						<TableCell>
 							<ParamsTable args={event.args} />

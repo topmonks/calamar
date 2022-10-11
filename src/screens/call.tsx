@@ -2,12 +2,14 @@ import EventsTable from "../components/events/EventsTable";
 import InfoTable from "../components/InfoTable";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCall } from "../hooks/useCall";
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
 import { convertTimestampToTimeFromNow, formatDate } from "../utils/convertTimestampToTimeFromNow";
 import ParamsTable from "../components/ParamsTable";
+import { Card, CardHeader } from "../components/Card";
+import { Link } from "../components/Link";
 
 type CallPageParams = {
 	network: string;
@@ -20,10 +22,10 @@ export const CallPage: React.FC = () => {
 	const [call, { loading }] = useCall(network, { id_eq: id });
 
 	return (<>
-		<div className="calamar-card">
-			<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+		<Card>
+			<CardHeader style={{ paddingBottom: 48 }}>
                 Call #{id}
-			</div>
+			</CardHeader>
 			<InfoTable
 				item={call}
 				loading={loading}
@@ -86,9 +88,7 @@ export const CallPage: React.FC = () => {
 								<Link to={`/${network}/xx/${call.block.id}`}> {/* fill in later */}
 									{call.parrent.id}
 								</Link>
-								<span style={{ marginLeft: 8 }}>
-									<CopyToClipboardButton value={call.parrent.id} />
-								</span>
+								<CopyToClipboardButton value={call.parrent.id} />
 							</TableCell>
 						</TableRow>
 						<TableRow>
@@ -97,9 +97,7 @@ export const CallPage: React.FC = () => {
 								<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
 									{call.extrinsic.id}
 								</Link>
-								<span style={{ marginLeft: 8 }}>
-									<CopyToClipboardButton value={call.extrinsic.id} />
-								</span>
+								<CopyToClipboardButton value={call.extrinsic.id} />
 							</TableCell>
 						</TableRow>
 						<TableRow>
@@ -108,14 +106,12 @@ export const CallPage: React.FC = () => {
 								<Link to={`/${network}/block/${call.block.id}`}>
 									{call.block.id}
 								</Link>
-								<span style={{ marginLeft: 8 }}>
-									<CopyToClipboardButton value={call.block.id} />
-								</span>
+								<CopyToClipboardButton value={call.block.id} />
 							</TableCell>
 						</TableRow>
 					</TableBody>
 				)}
 			</InfoTable>
-		</div>
+		</Card>
 	</>);
 };
