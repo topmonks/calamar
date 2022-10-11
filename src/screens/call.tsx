@@ -10,8 +10,8 @@ import { convertTimestampToTimeFromNow, formatDate } from "../utils/convertTimes
 import ParamsTable from "../components/ParamsTable";
 
 type CallPageParams = {
-    network: string;
-    id: string;
+	network: string;
+	id: string;
 };
 
 export const CallPage: React.FC = () => {
