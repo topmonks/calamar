@@ -24,7 +24,7 @@ export const CallPage: React.FC = () => {
 	return (<>
 		<Card>
 			<CardHeader style={{ paddingBottom: 48 }}>
-                Call #{id}
+				Call #{id}
 			</CardHeader>
 			<InfoTable
 				item={call}
