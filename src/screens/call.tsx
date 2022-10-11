@@ -1,5 +1,5 @@
-import EventsTable from "../components/events/EventsTable"
-import InfoTable from "../components/InfoTable"
+import EventsTable from "../components/events/EventsTable";
+import InfoTable from "../components/InfoTable";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import { Link, useParams } from "react-router-dom";
@@ -15,107 +15,107 @@ type CallPageParams = {
 };
 
 export const CallPage: React.FC = () => {
-    const { network, id } = useParams() as CallPageParams;
+	const { network, id } = useParams() as CallPageParams;
 
-    const [call, { loading }] = useCall(network, { id_eq: id });
+	const [call, { loading }] = useCall(network, { id_eq: id });
 
-    return (<>
-        <div className="calamar-card">
-            <div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+	return (<>
+		<div className="calamar-card">
+			<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
                 Call #{id}
-            </div>
-            <InfoTable
-                item={call}
-                loading={loading}
-                noItemMessage="No call found"
-            >
-                {call && (
-                    <TableBody>
-                        <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell>{call.id}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>{call.name}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Block time</TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    arrow
-                                    placement="top"
-                                    title={formatDate(call.block.timestamp)}
-                                >
-                                    <span>
-                                        {convertTimestampToTimeFromNow(call.block.timestamp)}
-                                    </span>
-                                </Tooltip>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Success</TableCell>
-                            <TableCell>
-                                <img src={call.success ? CheckIcon : CrossIcon} />
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Metadata docs</TableCell>
-                            <TableCell>To be filled in later</TableCell>
-                        </TableRow>
-                        {call.args && (
-                            <TableRow>
-                                <TableCell>Parameters</TableCell>
-                                <TableCell>
-                                    <ParamsTable args={call.args} />
-                                </TableCell>
-                            </TableRow>
-                        )}
-                        <TableRow>
-                            <TableCell>Version</TableCell>
-                            <TableCell>{call.extrinsic.version}</TableCell>
-                        </TableRow>
+			</div>
+			<InfoTable
+				item={call}
+				loading={loading}
+				noItemMessage="No call found"
+			>
+				{call && (
+					<TableBody>
+						<TableRow>
+							<TableCell>Id</TableCell>
+							<TableCell>{call.id}</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Name</TableCell>
+							<TableCell>{call.name}</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Block time</TableCell>
+							<TableCell>
+								<Tooltip
+									arrow
+									placement="top"
+									title={formatDate(call.block.timestamp)}
+								>
+									<span>
+										{convertTimestampToTimeFromNow(call.block.timestamp)}
+									</span>
+								</Tooltip>
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Success</TableCell>
+							<TableCell>
+								<img src={call.success ? CheckIcon : CrossIcon} />
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Metadata docs</TableCell>
+							<TableCell>To be filled in later</TableCell>
+						</TableRow>
+						{call.args && (
+							<TableRow>
+								<TableCell>Parameters</TableCell>
+								<TableCell>
+									<ParamsTable args={call.args} />
+								</TableCell>
+							</TableRow>
+						)}
+						<TableRow>
+							<TableCell>Version</TableCell>
+							<TableCell>{call.extrinsic.version}</TableCell>
+						</TableRow>
 
-                        <TableRow>
-                            <TableCell>Origin</TableCell>
-                            <TableCell>{call.origin}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Parrent</TableCell>
-                            <TableCell>
-                                <Link to={`/${network}/xx/${call.block.id}`}> {/* fill in later */}
-                                    {call.parrent.id}
-                                </Link>
-                                <span style={{ marginLeft: 8 }}>
-                                    <CopyToClipboardButton value={call.parrent.id} />
-                                </span>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Extrinsic id</TableCell>
-                            <TableCell>
-                                <Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-                                    {call.extrinsic.id}
-                                </Link>
-                                <span style={{ marginLeft: 8 }}>
-                                    <CopyToClipboardButton value={call.extrinsic.id} />
-                                </span>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Block number</TableCell>
-                            <TableCell>
-                                <Link to={`/${network}/block/${call.block.id}`}>
-                                    {call.block.id}
-                                </Link>
-                                <span style={{ marginLeft: 8 }}>
-                                    <CopyToClipboardButton value={call.block.id} />
-                                </span>
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                )}
-            </InfoTable>
-        </div>
-    </>)
-}
+						<TableRow>
+							<TableCell>Origin</TableCell>
+							<TableCell>{call.origin}</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Parrent</TableCell>
+							<TableCell>
+								<Link to={`/${network}/xx/${call.block.id}`}> {/* fill in later */}
+									{call.parrent.id}
+								</Link>
+								<span style={{ marginLeft: 8 }}>
+									<CopyToClipboardButton value={call.parrent.id} />
+								</span>
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Extrinsic id</TableCell>
+							<TableCell>
+								<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
+									{call.extrinsic.id}
+								</Link>
+								<span style={{ marginLeft: 8 }}>
+									<CopyToClipboardButton value={call.extrinsic.id} />
+								</span>
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Block number</TableCell>
+							<TableCell>
+								<Link to={`/${network}/block/${call.block.id}`}>
+									{call.block.id}
+								</Link>
+								<span style={{ marginLeft: 8 }}>
+									<CopyToClipboardButton value={call.block.id} />
+								</span>
+							</TableCell>
+						</TableRow>
+					</TableBody>
+				)}
+			</InfoTable>
+		</div>
+	</>);
+};
