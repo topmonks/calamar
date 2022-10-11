@@ -1,8 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { css, IconButton, Toolbar } from "@mui/material";
+import { css, IconButton } from "@mui/material";
 
 import { Theme } from "@emotion/react";
+
+const paginationStyle = css`
+	display: flex;
+	justify-content: right;
+	margin-top: 16px;
+`;
 
 const buttonStyle = (theme: Theme) => css`
 	padding: 4px;
@@ -12,10 +18,6 @@ const buttonStyle = (theme: Theme) => css`
 	background-color: ${theme.palette.secondary.main};
 
 	margin-left: 8px;
-
-	&:first-child {
-		margin-left: auto;
-	}
 
 	&:hover {
 		background-color: ${theme.palette.secondary.dark};
@@ -53,15 +55,13 @@ export function TablePagination(props: TablePaginationProps) {
 	}
 
 	return (
-		<>
-			<Toolbar disableGutters>
-				<IconButton css={buttonStyle} disabled={offset === 0} onClick={() => setPreviousPage()}>
-					<ChevronLeft />
-				</IconButton>
-				<IconButton css={buttonStyle} disabled={!hasNext} onClick={() => setNextPage()}>
-					<ChevronRight />
-				</IconButton>
-			</Toolbar>
-		</>
+		<div css={paginationStyle}>
+			<IconButton css={buttonStyle} disabled={offset === 0} onClick={() => setPreviousPage()}>
+				<ChevronLeft />
+			</IconButton>
+			<IconButton css={buttonStyle} disabled={!hasNext} onClick={() => setNextPage()}>
+				<ChevronRight />
+			</IconButton>
+		</div>
 	);
 }
