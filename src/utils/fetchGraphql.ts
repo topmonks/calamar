@@ -1,4 +1,4 @@
-import { getArchive } from "../services/archivesService";
+import { getArchive } from "../services/archiveRegistryService";
 
 export async function fetchGraphql(
 	network: string,

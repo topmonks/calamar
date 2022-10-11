@@ -1,14 +1,32 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
+/** @jsxImportSource @emotion/react */
+import { useCallback, useEffect, useState } from "react";
+import { css, Theme } from "@emotion/react";
 
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
 import Background from "../assets/main-screen-bgr.svg";
 
+import { Link } from "../components/Link";
 import NetworkSelect from "../components/NetworkSelect";
 import SearchInput from "../components/SearchInput";
 
-const StyledSearchBox = styled.div`
+const containerStyle = css`
+	width: 100vw;
+	height: 100vh;
+	background-position: center bottom;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url(${Background});
+	margin: 0;
+`;
+
+const logoStyle = css`
+	width: 500px;
+	margin: auto;
+	display: block;
+	max-width: 100%;
+`;
+
+const searchBoxStyle = css`
 	margin: auto;
 	max-width: 1000px;
 	padding-left: 16px;
@@ -21,29 +39,51 @@ const StyledSearchBox = styled.div`
 	}
 `;
 
-const StyledNetworkSelect = styled(NetworkSelect)`
-	height: auto;
-	font-size: 16px !important;
+const networkSelectStyle = (theme: Theme) => css`
 	margin-bottom: 16px;
 
-	.MuiSelect-select {
-		padding: 8.5px 14px;
+	& .MuiInputBase-input {
+		color: white;
+		background-color: #61dafb;
+		font-size: 16px;
+		font-weight: 600;
+
+		&.MuiSelect-select {
+			padding: 16px 24px;
+		}
+	}
+
+	& .MuiOutlinedInput-notchedOutline,
+	&:hover .MuiOutlinedInput-notchedOutline,
+	&.Mui-focused .MuiOutlinedInput-notchedOutline {
+		border-color: ${theme.palette.secondary.main};
 	}
 
 	@media (min-width: 900px) {
-		height: 56px;
-		border-radius: 8px 0px 0px 8px !important;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
 	}
 `;
 
-const StyledSearchInput = styled(SearchInput)`
+const searchInputStyle = css`
+	.MuiInputBase-input {
+		padding: 16px 24px;
+	}
+
 	@media (min-width: 900px) {
 		flex: 1 1 auto;
 
-		.MuiTextField-root {
-			.MuiInputBase-root {
-				border-radius: 0px !important;
-			}
+		.MuiButton-root {
+			padding-left: 52px;
+			padding-right: 52px;
+		}
+
+		.MuiInputBase-root {
+			border-radius: 0px;
+		}
+
+		.MuiOutlinedInput-notchedOutline {
+			border-left: none;
 		}
 	}
 `;
@@ -68,29 +108,12 @@ function HomePage() {
 	}, []);
 
 	return (
-		<div
-			style={{
-				width: "100vw",
-				height: "100vh",
-				backgroundPosition: "center bottom",
-				backgroundSize: "contain",
-				backgroundRepeat: "no-repeat",
-				backgroundImage: `url(${Background})`,
-				margin: 0,
-			}}
-		>
-			<Logo
-				style={{
-					width: "500px",
-					margin: "auto",
-					display: "block",
-					maxWidth: "100%",
-				}}
-			/>
-			<StyledSearchBox>
-				<StyledNetworkSelect onChange={handleNetworkSelect} value={network} />
-				<StyledSearchInput network={network} />
-			</StyledSearchBox>
+		<div css={containerStyle}>
+			<Logo css={logoStyle} />
+			<div css={searchBoxStyle}>
+				<NetworkSelect css={networkSelectStyle} onChange={handleNetworkSelect} value={network} />
+				<SearchInput css={searchInputStyle} network={network} />
+			</div>
 			<div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
 				<Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>
 			</div>

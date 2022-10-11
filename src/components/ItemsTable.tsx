@@ -1,11 +1,30 @@
-import React, { PropsWithChildren } from "react";
+/** @jsxImportSource @emotion/react */
+import { PropsWithChildren } from "react";
 import { Table, TableContainer } from "@mui/material";
+import { css } from "@emotion/react";
 
 import { Pagination } from "../hooks/usePagination";
 
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 import { TablePagination } from "./TablePagination";
+
+const tableStyle = css`
+	table-layout: fixed;
+	min-width: 860px;
+
+	td, th {
+		word-break: break-all;
+
+		&:first-child, &:first-child {
+			padding-left: 0;
+		}
+
+		&:last-child, &:last-child {
+			padding-right: 0;
+		}
+	}
+`;
 
 export type ItemsTableProps = PropsWithChildren<{
 	pagination: Pagination;
@@ -34,7 +53,7 @@ function ItemsTable(props: ItemsTableProps) {
 	return (
 		<>
 			<TableContainer>
-				<Table className="calamar-table">{children}</Table>
+				<Table css={tableStyle}>{children}</Table>
 			</TableContainer>
 			<TablePagination {...pagination} />
 		</>

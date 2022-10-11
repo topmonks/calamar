@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Paper, Table, TableBody, TableContainer } from "@mui/material";
-import styled from "@emotion/styled";
+/** @jsxImportSource @emotion/react */
+import { useMemo } from "react";
+import { css } from "@emotion/react";
 
 import ParamsValue from "./ParamValue";
 
-const Params = styled.div`
+const paramsStyle = css`
 	display: inline-block;
 	box-sizing: border-box;
 	background-color: #f5f5f5;
@@ -18,15 +18,18 @@ const Params = styled.div`
 	}
 `;
 
+const paramsScrollAreaStyle = css`
+	position: relative;
+	max-height: 500px;
+	overflow: auto;
+`;
+
 export type EventParamsTableProps = {
 	args: any;
 };
 
 function ParamsTable(props: EventParamsTableProps) {
 	const { args } = props;
-
-	const [showExpand, setShowExpand] = useState<boolean>(false);
-	const [expand, setExpand] = useState<boolean>(false);
 
 	console.log(args);
 	const argsArray: any[] = useMemo(
@@ -35,19 +38,11 @@ function ParamsTable(props: EventParamsTableProps) {
 	);
 
 	return (
-		<>
-			<Params>
-				<div
-					style={{
-						maxHeight: 500,
-						overflow: "auto",
-						position: "relative",
-					}}
-				>
-					<ParamsValue value={argsArray} />
-				</div>
-			</Params>
-		</>
+		<div css={paramsStyle}>
+			<div css={paramsScrollAreaStyle}>
+				<ParamsValue value={argsArray} />
+			</div>
+		</div>
 	);
 }
 

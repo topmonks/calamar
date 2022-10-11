@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import {
 	TableBody,
 	TableCell,
@@ -6,16 +6,18 @@ import {
 	TableRow,
 	Tooltip,
 } from "@mui/material";
-import { shortenHash } from "../../utils/shortenHash";
+
+import { Pagination } from "../../hooks/usePagination";
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../../utils/convertTimestampToTimeFromNow";
-import { Link, useParams } from "react-router-dom";
-import { Pagination } from "../../hooks/usePagination";
-import ItemsTable from "../ItemsTable";
-import CopyToClipboardButton from "../CopyToClipboardButton";
 import { encodeAddress } from "../../utils/formatAddress";
+import { shortenHash } from "../../utils/shortenHash";
+
+import CopyToClipboardButton from "../CopyToClipboardButton";
+import ItemsTable from "../ItemsTable";
+import { Link } from "../Link";
 
 export type ExtrinsicsTableProps = {
 	network: string;

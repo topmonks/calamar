@@ -1,32 +1,39 @@
-import React, { FormHTMLAttributes, useCallback, useEffect } from "react";
+/** @jsxImportSource @emotion/react */
+import { FormHTMLAttributes, useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import styled from "@emotion/styled";
-import NetworkSelect from "./NetworkSelect";
+import { css, Theme } from "@emotion/react";
 
-const StyledTextField = styled(TextField)`
-	background-color: #f5f5f5;
+const formGroupStyle = css`
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: nowrap;
+`;
 
+const textFieldStyle = css`
 	.MuiInputBase-root {
-		font-family: "Open Sans", sans-serif !important;
-		border-radius: 8px 0 0 8px !important;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
 	}
 
-	& label.Mui-focused {
-		color: #14a1c0;
+	.MuiOutlinedInput-notchedOutline {
+		border-color: #c4cdd5;
+		border-right: none;
 	}
-	& .MuiOutlinedInput-root {
-		&.Mui-focused fieldset {
-			border-color: #14a1c0;
-		}
+
+	.MuiOutlinedInput-notchedOutline,
+	&:hover .MuiOutlinedInput-notchedOutline,
+	.Mui-focused .MuiOutlinedInput-notchedOutline {
+		border-color: #c4cdd5;
 	}
 `;
 
-const StyledButton = styled(Button)`
-	border-radius: 0px 8px 8px 0px !important;
-	border: 1px solid #d8545c !important;
-	background-color: #ff646d !important;
+const buttonStyle = (theme: Theme) => css`
+	border-radius: 8px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border: 1px solid ${theme.palette.primary.dark};
 
 	.text {
 		display: none;
@@ -34,11 +41,13 @@ const StyledButton = styled(Button)`
 
 	.MuiButton-startIcon {
 		margin: 0;
+
+		svg {
+			font-size: 28px;
+		}
 	}
 
 	@media (min-width: 720px) {
-		width: 150px !important;
-
 		.text {
 			display: inline-block;
 		}
@@ -60,7 +69,7 @@ function SearchInput(props: SearchInputProps) {
 	const query = qs.get("query");
 	console.log(qs, query);
 
-	const [search, setSearch] = React.useState<string>(query || "");
+	const [search, setSearch] = useState<string>(query || "");
 
 	const navigate = useNavigate();
 
@@ -79,32 +88,25 @@ function SearchInput(props: SearchInputProps) {
 
 	return (
 		<form {...props} onSubmit={handleSubmit}>
-			<FormGroup
-				row
-				style={{
-					flexDirection: "row",
-					justifyContent: "center",
-					flexWrap: "nowrap",
-				}}
-			>
-				<StyledTextField
+			<FormGroup row css={formGroupStyle}>
+				<TextField
+					css={textFieldStyle}
 					fullWidth
 					id="search"
 					onChange={(e) => setSearch(e.target.value)}
 					placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
 					value={search}
-					variant="outlined"
 				/>
-				<StyledButton
-					className="calamar-button"
-					disableElevation
+				<Button
+					css={buttonStyle}
 					onClick={handleSubmit}
 					startIcon={<SearchIcon />}
 					type="submit"
 					variant="contained"
+					color="primary"
 				>
 					<span className="text">Search</span>
-				</StyledButton>
+				</Button>
 			</FormGroup>
 		</form>
 	);
