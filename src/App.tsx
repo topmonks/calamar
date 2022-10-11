@@ -10,10 +10,8 @@ import SearchPage from "./screens/search";
 import LatestExtrinsicsPage from "./screens/latestExtrinsics";
 import ResultLayout from "./components/ResultLayout";
 import { CallPage } from "./screens/call";
-
+import { EventPage } from "./screens/event";
 import { theme } from "./theme";
-
-console.log(theme);
 
 function App() {
 	return (
@@ -33,6 +31,7 @@ function App() {
 						<Route element={<BlockPage />} path="block/:id" />
 						<Route element={<CallPage />} path="call/:id" />
 						<Route element={<AccountPage />} path="account/:address" />
+						<Route element={<EventPage />} path="event/:id" />
 						<Route
 							element={<LatestExtrinsicsPage />}
 							path="latest-extrinsics"
