@@ -23,7 +23,8 @@ module.exports = {
 		"@emotion"
 	],
 	"rules": {
-		"indent": ["error", "tab"],
+		"indent": "off",
+		"@typescript-eslint/indent": ["error", "tab"],
 		"linebreak-style": ["error", "unix"],
 		"quotes": ["error", "double"],
 		"semi": ["error", "always"],
