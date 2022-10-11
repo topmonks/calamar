@@ -50,9 +50,7 @@ function ExtrinsicPage() {
 								<TableCell>Hash</TableCell>
 								<TableCell>
 									{extrinsic.hash}
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={extrinsic.hash} />
-									</span>
+									<CopyToClipboardButton value={extrinsic.hash} />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -75,9 +73,7 @@ function ExtrinsicPage() {
 									<Link to={`/${network}/block/${extrinsic.block.id}`}>
 										{extrinsic.block.hash}
 									</Link>
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={extrinsic.block.hash} />
-									</span>
+									<CopyToClipboardButton value={extrinsic.block.hash} />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -100,16 +96,14 @@ function ExtrinsicPage() {
 											{encodeAddress(network, extrinsic.signature?.address) ||
 												extrinsic.signature?.address}
 										</Link>
-										<span style={{ marginLeft: 8 }}>
-											<CopyToClipboardButton
-												value={
-													encodeAddress(
-														network,
-														extrinsic.signature?.address
-													) || extrinsic.signature?.address
-												}
-											/>
-										</span>
+										<CopyToClipboardButton
+											value={
+												encodeAddress(
+													network,
+													extrinsic.signature?.address
+												) || extrinsic.signature?.address
+											}
+										/>
 									</TableCell>
 								</TableRow>
 							)}

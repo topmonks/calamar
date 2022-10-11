@@ -56,9 +56,7 @@ function BlockPage() {
 								<TableCell>Hash</TableCell>
 								<TableCell>
 									{block.hash}
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={block.hash} />
-									</span>
+									<CopyToClipboardButton value={block.hash} />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -67,9 +65,7 @@ function BlockPage() {
 									<Link to={`/${network}/search?query=${block.parentHash}`}>
 										{block.parentHash}
 									</Link>
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={block.parentHash} />
-									</span>
+									<CopyToClipboardButton value={block.parentHash} />
 								</TableCell>
 							</TableRow>
 							{block.validator && (
@@ -77,9 +73,7 @@ function BlockPage() {
 									<TableCell>Validator</TableCell>
 									<TableCell>
 										{block.validator}
-										<span style={{ marginLeft: 8 }}>
-											<CopyToClipboardButton value={block.validator} />
-										</span>
+										<CopyToClipboardButton value={block.validator} />
 									</TableCell>
 								</TableRow>
 							)}

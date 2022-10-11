@@ -9,6 +9,7 @@ import NotFound from "./NotFound";
 const tableStyles = css`
 	td, th {
 		vertical-align: top;
+		line-height: 24px;
 	}
 
 	td {
@@ -22,6 +23,12 @@ const tableStyles = css`
 
 		&:not(:first-child) {
 			word-break: break-all;
+		}
+
+		> img {
+			&:only-child {
+				display: block;
+			}
 		}
 	}
 

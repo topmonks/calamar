@@ -5,6 +5,12 @@ import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { css, Theme } from "@emotion/react";
 
+const formGroupStyle = css`
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: nowrap;
+`;
+
 const textFieldStyle = css`
 	.MuiInputBase-root {
 		border-top-right-radius: 0;
@@ -82,14 +88,7 @@ function SearchInput(props: SearchInputProps) {
 
 	return (
 		<form {...props} onSubmit={handleSubmit}>
-			<FormGroup
-				row
-				style={{
-					flexDirection: "row",
-					justifyContent: "center",
-					flexWrap: "nowrap",
-				}}
-			>
+			<FormGroup row css={formGroupStyle}>
 				<TextField
 					css={textFieldStyle}
 					fullWidth
