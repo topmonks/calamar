@@ -6,7 +6,7 @@ import { css, Theme } from "@emotion/react";
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 
-import { getArchive } from "../services/archivesService";
+import { getArchive } from "../services/archiveRegistryService";
 import NotFoundPage from "../screens/notFound";
 
 import NetworkSelect from "./NetworkSelect";
