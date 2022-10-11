@@ -20,8 +20,10 @@ export const CallPage: React.FC = () => {
 	const { network, id } = useParams() as CallPageParams;
 
 	const [call, { loading }] = useCall(network, { id_eq: id });
-
-	return (<>
+	console.log("This is a call");
+	console.log(call);
+	
+	return (
 		<Card>
 			<CardHeader style={{ paddingBottom: 48 }}>
 				Call #{id}
@@ -61,10 +63,10 @@ export const CallPage: React.FC = () => {
 								<img src={call.success ? CheckIcon : CrossIcon} />
 							</TableCell>
 						</TableRow>
-						<TableRow>
+						{/*<TableRow>
 							<TableCell>Metadata docs</TableCell>
 							<TableCell>To be filled in later</TableCell>
-						</TableRow>
+				</TableRow>*/}
 						{call.args && (
 							<TableRow>
 								<TableCell>Parameters</TableCell>
@@ -74,23 +76,23 @@ export const CallPage: React.FC = () => {
 							</TableRow>
 						)}
 						<TableRow>
-							<TableCell>Version</TableCell>
-							<TableCell>{call.extrinsic.version}</TableCell>
+							<TableCell>Spec version</TableCell>
+							<TableCell>{call.block.spec.specVersion}</TableCell>
 						</TableRow>
 
 						<TableRow>
-							<TableCell>Origin</TableCell>
-							<TableCell>{call.origin}</TableCell>
+							<TableCell>Sender</TableCell>
+							<TableCell>{call.origin.value.__kind === "none" ? "None" : call.origin.value.value}</TableCell>
 						</TableRow>
-						<TableRow>
-							<TableCell>Parrent</TableCell>
+						{/*<TableRow>
+							<TableCell>Parent</TableCell>
 							<TableCell>
-								<Link to={`/${network}/xx/${call.block.id}`}> {/* fill in later */}
-									{call.parrent.id}
+								<Link to={`/${network}/xx/${call.block.id}`}>
+									{call.parent.id}
 								</Link>
-								<CopyToClipboardButton value={call.parrent.id} />
+								<CopyToClipboardButton value={call.parent.id} />
 							</TableCell>
-						</TableRow>
+						</TableRow>*/}
 						<TableRow>
 							<TableCell>Extrinsic id</TableCell>
 							<TableCell>
@@ -101,17 +103,17 @@ export const CallPage: React.FC = () => {
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell>Block number</TableCell>
+							<TableCell>Block height</TableCell>
 							<TableCell>
 								<Link to={`/${network}/block/${call.block.id}`}>
-									{call.block.id}
+									{call.block.height}
 								</Link>
-								<CopyToClipboardButton value={call.block.id} />
+								<CopyToClipboardButton value={call.block.height} />
 							</TableCell>
 						</TableRow>
 					</TableBody>
 				)}
 			</InfoTable>
 		</Card>
-	</>);
+	);
 };

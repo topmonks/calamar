@@ -52,12 +52,12 @@ export const EventPage: React.FC = () => {
 								</Tooltip>
 							</TableCell>
 						</TableRow>
-						<TableRow>
+						{/*<TableRow>
 							<TableCell>Metadata docs</TableCell>
 							<TableCell>
 								To be filled in later
 							</TableCell>
-						</TableRow>
+				</TableRow>*/}
 						<TableRow>
 							<TableCell>Parameters</TableCell>
 							<TableCell>
@@ -65,21 +65,23 @@ export const EventPage: React.FC = () => {
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell>Version</TableCell>
+							<TableCell>Spec version</TableCell>
 							<TableCell>
-								{event.extrinsic.version}
+								{event.block.spec.specVersion}
 							</TableCell>
 						</TableRow>
 						{event.call && <TableRow>
 							<TableCell>Call id</TableCell>
-							<Link
-								to={`/${network}/call/${event.call.id}`}
-							>
-								{event.call.id}
-							</Link>
-							<CopyToClipboardButton
-								value={event.call.id}
-							/>
+							<TableCell>
+								<Link
+									to={`/${network}/call/${event.call.id}`}
+								>
+									{event.call.id}
+								</Link>
+								<CopyToClipboardButton
+									value={event.call.id}
+								/>
+							</TableCell>
 						</TableRow>}
 						<TableRow>
 							<TableCell>Extrinsic id</TableCell>
@@ -95,15 +97,15 @@ export const EventPage: React.FC = () => {
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell>Block number</TableCell>
+							<TableCell>Block height</TableCell>
 							<TableCell>
 								<Link
 									to={`/${network}/block/${event.block.id}`}
 								>
-									{event.block.id}
+									{event.block.height}
 								</Link>
 								<CopyToClipboardButton
-									value={event.block.id}
+									value={event.block.height}
 								/>
 							</TableCell>
 						</TableRow>

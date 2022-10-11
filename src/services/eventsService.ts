@@ -13,11 +13,14 @@ export async function getEvent(network: string, id: string) {
 					name
 					block {
 						id
+						height
 						timestamp
+						spec {
+							specVersion
+						}
 					}
 					extrinsic {
 						id
-						version
 					}
 					call {
 						id
