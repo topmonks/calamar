@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
 

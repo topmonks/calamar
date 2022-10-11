@@ -1,6 +1,7 @@
+/** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useEvents } from "../hooks/useEvents";
@@ -13,11 +14,15 @@ import { decodeAddress } from "../utils/formatAddress";
 import { Card, CardHeader } from "./Card";
 import Spinner from "./Spinner";
 
-const StyledSearchBox = styled.div`
+const loadingStyle = css`
 	padding: 32px 0;
 	text-align: center;
 	font-size: 24px;
 	word-break: break-all;
+`;
+
+const loadingMessageStyle = css`
+	margin-bottom: 40px;
 `;
 
 type SearchProps = {
@@ -138,15 +143,15 @@ const Search = (props: SearchProps) => {
 		<>
 			{showLoading && (
 				<Card>
-					<StyledSearchBox>
-						<div style={{ marginBottom: 40 }}>
+					<div css={loadingStyle}>
+						<div css={loadingMessageStyle}>
 							<strong>Searching for</strong>{" "}
 							<span style={{ fontWeight: "normal" }}>
 								<q lang="en">{query}</q>
 							</span>
 						</div>
 						<Spinner />
-					</StyledSearchBox>
+					</div>
 				</Card>
 			)}
 			{!showLoading && notFound && (

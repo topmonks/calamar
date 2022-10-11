@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React, { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { css } from "@emotion/react";
 
 import ParamsValue from "./ParamValue";
@@ -18,6 +18,12 @@ const paramsStyle = css`
 	}
 `;
 
+const paramsScrollAreaStyle = css`
+	position: relative;
+	max-height: 500px;
+	overflow: auto;
+`;
+
 export type EventParamsTableProps = {
 	args: any;
 };
@@ -32,19 +38,11 @@ function ParamsTable(props: EventParamsTableProps) {
 	);
 
 	return (
-		<>
-			<div css={paramsStyle}>
-				<div
-					style={{
-						maxHeight: 500,
-						overflow: "auto",
-						position: "relative",
-					}}
-				>
-					<ParamsValue value={argsArray} />
-				</div>
+		<div css={paramsStyle}>
+			<div css={paramsScrollAreaStyle}>
+				<ParamsValue value={argsArray} />
 			</div>
-		</>
+		</div>
 	);
 }
 

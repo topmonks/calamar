@@ -1,13 +1,13 @@
-import React from "react";
+/** @jsxImportSource @emotion/react */
 import { CircularProgress } from "@mui/material";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
-const StyledCircularProgress = styled(CircularProgress)`
+const spinnerStyle = css`
 	color: #9af0f7;
 `;
 
 const Spinner = () => {
-	return <StyledCircularProgress size={54} thickness={6} />;
+	return <CircularProgress css={spinnerStyle} size={54} thickness={6} />;
 };
 
 export default Spinner;

@@ -1,10 +1,18 @@
 import { IconButton, Tooltip } from "@mui/material";
-import React from "react";
+import { useState } from "react";
 
-const CopyToClipboardButton = ({ value }: { value: string }) => {
-	const [copied, setCopied] = React.useState(false);
+export type CopyToClipboardButtonProps = {
+	value: string;
+}
+
+const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
+	const {value} = props;
+
+	const [copied, setCopied] = useState(false);
+
 	const copyToClipboard = async () => {
 		await navigator.clipboard.writeText(value);
+
 		setCopied(true);
 		setTimeout(() => {
 			setCopied(false);
