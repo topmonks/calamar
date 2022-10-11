@@ -1,44 +1,47 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+/** @jsxImportSource @emotion/react */
+import { ReactElement, useEffect, useState } from "react";
 import { CircularProgress, Tab, Tabs } from "@mui/material";
-import styled from "@emotion/styled";
+import { Theme, css } from "@emotion/react";
 
-import EventsTable from "./events/EventsTable";
-import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
-import ResultLayout from "./ResultLayout";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import Spinner from "./Spinner";
 
-const TabsBox = styled.div`
+import { Card, CardHeader } from "./Card";
+import EventsTable from "./events/EventsTable";
+import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
+
+const tabsWrapperStyle = css`
+	margin-top: -16px;
+	margin-bottom: 16px;
 	border-bottom: solid 1px rgba(0, 0, 0, 0.12);
 `;
 
-const StyledTabs = styled(Tabs)`
+const tabsStyle = (theme: Theme) => css`
+	margin-bottom: -1px;
+
 	.MuiTabs-indicator {
 		height: 3px;
-		background-color: #14a1c0;
+		background-color: ${theme.palette.secondary.main};
 	}
 `;
 
-const StyledTab = styled(Tab)`
+const tabStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 
 	&.Mui-selected {
-		color: #14a1c0;
+		color: ${theme.palette.secondary.main};
 		font-weight: 700;
 		background-color: #f5f5f5;
 
 		.MuiCircularProgress-root {
-			color: #14a1c0;
+			color: #${theme.palette.secondary.main};
 		}
 	}
 
 	.MuiCircularProgress-root {
 		color: rgba(0, 0, 0, 0.6);
-		margin-top: -3px;
 		margin-left: 8px;
 	}
 `;
@@ -60,8 +63,9 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 
 	if (extrinsics.loading || extrinsics.items.length > 0) {
 		tabHandles.push(
-			<StyledTab
+			<Tab
 				key="extrinsics"
+				css={tabStyle}
 				label={
 					<>
 						<span>Extrinsics</span>
@@ -85,8 +89,9 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 
 	if (events.loading || events.items.length > 0) {
 		tabHandles.push(
-			<StyledTab
+			<Tab
 				key="events"
+				css={tabStyle}
 				label={
 					<>
 						<span>Events</span>
@@ -118,22 +123,21 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 	}, [extrinsics, events]);
 
 	return (
-		<div className="calamar-card" style={{ marginTop: 16, marginBottom: 16 }}>
-			<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+		<Card>
+			<CardHeader>
 				Results for name <span style={{ fontWeight: "normal" }}>{name}</span>
-			</div>
-			<TabsBox style={{ marginTop: -16, marginBottom: 16 }}>
-				<StyledTabs
-					aria-label="basic tabs example"
+			</CardHeader>
+			<div css={tabsWrapperStyle}>
+				<Tabs
+					css={tabsStyle}
 					onChange={(event, tab) => setTab(tab)}
-					style={{ marginBottom: -1 }}
 					value={tab || tabHandles[0]!.props.value}
 				>
 					{tabHandles}
-				</StyledTabs>
-			</TabsBox>
+				</Tabs>
+			</div>
 			{tab ? tabPanes.find((it) => it.key === tab) : tabPanes[0]}
-		</div>
+		</Card>
 	);
 }
 

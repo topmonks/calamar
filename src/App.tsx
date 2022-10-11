@@ -1,7 +1,6 @@
-import React from "react";
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { RecoilRoot } from "recoil";
+import { ThemeProvider } from "@mui/material";
+
 import HomePage from "./screens/home";
 import ExtrinsicPage from "./screens/extrinsic";
 import BlockPage from "./screens/block";
@@ -12,9 +11,13 @@ import LatestExtrinsicsPage from "./screens/latestExtrinsics";
 import ResultLayout from "./components/ResultLayout";
 import { CallPage } from "./screens/call";
 
+import { theme } from "./theme";
+
+console.log(theme);
+
 function App() {
 	return (
-		<RecoilRoot>
+		<ThemeProvider theme={theme}>
 			<BrowserRouter
 				basename={
 					window.location.hostname === "localhost"
@@ -39,7 +42,7 @@ function App() {
 					</Route>
 				</Routes>
 			</BrowserRouter>
-		</RecoilRoot>
+		</ThemeProvider>
 	);
 }
 

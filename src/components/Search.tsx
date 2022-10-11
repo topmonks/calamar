@@ -1,22 +1,28 @@
-import React from "react";
+/** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useEvents } from "../hooks/useEvents";
 import { getBlock } from "../services/blocksService";
 import { getExtrinsic } from "../services/extrinsicsService";
 
-import Spinner from "./Spinner";
 import SearchByNameResults from "./SearchByNameResults";
 import { decodeAddress } from "../utils/formatAddress";
 
-const StyledSearchBox = styled.div`
+import { Card, CardHeader } from "./Card";
+import Spinner from "./Spinner";
+
+const loadingStyle = css`
 	padding: 32px 0;
 	text-align: center;
 	font-size: 24px;
 	word-break: break-all;
+`;
+
+const loadingMessageStyle = css`
+	margin-bottom: 40px;
 `;
 
 type SearchProps = {
@@ -136,32 +142,27 @@ const Search = (props: SearchProps) => {
 	return (
 		<>
 			{showLoading && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
-					<StyledSearchBox>
-						<div style={{ marginBottom: 40 }}>
+				<Card>
+					<div css={loadingStyle}>
+						<div css={loadingMessageStyle}>
 							<strong>Searching for</strong>{" "}
 							<span style={{ fontWeight: "normal" }}>
 								<q lang="en">{query}</q>
 							</span>
 						</div>
 						<Spinner />
-					</StyledSearchBox>
-				</div>
+					</div>
+				</Card>
 			)}
 			{!showLoading && notFound && (
 				<>
-					<div className="calamar-card">
-						<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-							Not found
-						</div>
+					<Card>
+						<CardHeader>Not found</CardHeader>
 						<div>
 							Nothing was found{" "}
 							{query && <span>for query &quot;{query}&quot;</span>}
 						</div>
-					</div>
+					</Card>
 				</>
 			)}
 			{!showLoading && showResultsByName && (

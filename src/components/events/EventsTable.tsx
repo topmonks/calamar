@@ -1,19 +1,11 @@
-import React from "react";
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
 
 import { Pagination } from "../../hooks/usePagination";
-
-import ParamsTable from "../ParamsTable";
-import ItemsTable from "../ItemsTable";
 import { shortenHash } from "../../utils/shortenHash";
 
-const HeaderTableRow = styled(TableRow)`
-	th {
-		font-weight: bold !important;
-	}
-`;
+import ItemsTable from "../ItemsTable";
+import { Link } from "../Link";
+import ParamsTable from "../ParamsTable";
 
 export type EventsTableProps = {
 	network: string;
@@ -38,12 +30,12 @@ function EventsTable(props: EventsTableProps) {
 			<col width="60%" />
 			{showExtrinsic && <col />}
 			<TableHead>
-				<HeaderTableRow>
+				<TableRow>
 					<TableCell>Id</TableCell>
 					<TableCell>Name</TableCell>
 					<TableCell>Parameters</TableCell>
 					{showExtrinsic && <TableCell>Extrinsic</TableCell>}
-				</HeaderTableRow>
+				</TableRow>
 			</TableHead>
 			<TableBody>
 				{items.map((event: any) => (

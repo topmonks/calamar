@@ -1,20 +1,24 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+
+import CrossIcon from "../assets/cross-icon.png";
+import CheckIcon from "../assets/check-icon.png";
+
+import { Card, CardHeader } from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import EventsTable from "../components/events/EventsTable";
+import InfoTable from "../components/InfoTable";
+import ParamsTable from "../components/ParamsTable";
+
+import { useExtrinsic } from "../hooks/useExtrinsic";
+import { useEvents } from "../hooks/useEvents";
+
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import EventsTable from "../components/events/EventsTable";
-import { useExtrinsic } from "../hooks/useExtrinsic";
-import { useEvents } from "../hooks/useEvents";
-import ResultLayout from "../components/ResultLayout";
-import CrossIcon from "../assets/cross-icon.png";
-import CheckIcon from "../assets/check-icon.png";
-import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import InfoTable from "../components/InfoTable";
 import { encodeAddress } from "../utils/formatAddress";
-import ParamsTable from "../components/ParamsTable";
+import { Link } from "../components/Link";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -29,10 +33,8 @@ function ExtrinsicPage() {
 
 	return (
 		<>
-			<div className="calamar-card">
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-					Extrinsic #{id}
-				</div>
+			<Card>
+				<CardHeader>Extrinsic #{id}</CardHeader>
 				<InfoTable
 					item={extrinsic}
 					loading={loading}
@@ -48,9 +50,7 @@ function ExtrinsicPage() {
 								<TableCell>Hash</TableCell>
 								<TableCell>
 									{extrinsic.hash}
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={extrinsic.hash} />
-									</span>
+									<CopyToClipboardButton value={extrinsic.hash} />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -73,9 +73,7 @@ function ExtrinsicPage() {
 									<Link to={`/${network}/block/${extrinsic.block.id}`}>
 										{extrinsic.block.hash}
 									</Link>
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={extrinsic.block.hash} />
-									</span>
+									<CopyToClipboardButton value={extrinsic.block.hash} />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -98,16 +96,14 @@ function ExtrinsicPage() {
 											{encodeAddress(network, extrinsic.signature?.address) ||
 												extrinsic.signature?.address}
 										</Link>
-										<span style={{ marginLeft: 8 }}>
-											<CopyToClipboardButton
-												value={
-													encodeAddress(
-														network,
-														extrinsic.signature?.address
-													) || extrinsic.signature?.address
-												}
-											/>
-										</span>
+										<CopyToClipboardButton
+											value={
+												encodeAddress(
+													network,
+													extrinsic.signature?.address
+												) || extrinsic.signature?.address
+											}
+										/>
 									</TableCell>
 								</TableRow>
 							)}
@@ -154,21 +150,16 @@ function ExtrinsicPage() {
 						</TableBody>
 					)}
 				</InfoTable>
-			</div>
+			</Card>
 			{extrinsic && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
-					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-						Events
-					</div>
+				<Card>
+					<CardHeader>Events</CardHeader>
 					<EventsTable
 						items={events.items}
 						network={network}
 						pagination={events.pagination}
 					/>
-				</div>
+				</Card>
 			)}
 		</>
 	);

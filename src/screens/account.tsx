@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import ResultLayout from "../components/ResultLayout";
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import { TableBody, TableCell, TableRow } from "@mui/material";
+
+import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
 import { useExtrinsic } from "../hooks/useExtrinsic";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 import { encodeAddress } from "../utils/formatAddress";
 
 type AccountPageParams = {
@@ -46,10 +47,10 @@ function AccountPage() {
 
 	return (
 		<>
-			<div className="calamar-card">
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
+			<Card>
+				<CardHeader>
 					Account #{address}
-				</div>
+				</CardHeader>
 				<InfoTable
 					item={accountCheck}
 					loading={loading}
@@ -89,15 +90,10 @@ function AccountPage() {
 						</TableRow>
 					</TableBody>
 				</InfoTable>
-			</div>
+			</Card>
 			{extrinsics.items.length > 0 && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
-					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-						Extrinsics
-					</div>
+				<Card>
+					<CardHeader>Extrinsics</CardHeader>
 					<ExtrinsicsTable
 						columns={["id", "name", "time"]}
 						items={extrinsics.items}
@@ -105,7 +101,7 @@ function AccountPage() {
 						network={network}
 						pagination={extrinsics.pagination}
 					/>
-				</div>
+				</Card>
 			)}
 		</>
 	);

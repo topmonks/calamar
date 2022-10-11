@@ -1,16 +1,18 @@
-import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+
+import { Card, CardHeader } from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import InfoTable from "../components/InfoTable";
+import { Link } from "../components/Link";
+import { useBlock } from "../hooks/useBlock";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
-import { useBlock } from "../hooks/useBlock";
-import { useExtrinsics } from "../hooks/useExtrinsics";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import ResultLayout from "../components/ResultLayout";
-import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import InfoTable from "../components/InfoTable";
 
 type BlockPageParams = {
 	network: string;
@@ -37,10 +39,8 @@ function BlockPage() {
 
 	return (
 		<>
-			<div className="calamar-card">
-				<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-					Block #{id}
-				</div>
+			<Card>
+				<CardHeader>Block #{id}</CardHeader>
 				<InfoTable
 					item={block}
 					loading={loading}
@@ -56,9 +56,7 @@ function BlockPage() {
 								<TableCell>Hash</TableCell>
 								<TableCell>
 									{block.hash}
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={block.hash} />
-									</span>
+									<CopyToClipboardButton value={block.hash} />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -67,9 +65,7 @@ function BlockPage() {
 									<Link to={`/${network}/search?query=${block.parentHash}`}>
 										{block.parentHash}
 									</Link>
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={block.parentHash} />
-									</span>
+									<CopyToClipboardButton value={block.parentHash} />
 								</TableCell>
 							</TableRow>
 							{block.validator && (
@@ -77,9 +73,7 @@ function BlockPage() {
 									<TableCell>Validator</TableCell>
 									<TableCell>
 										{block.validator}
-										<span style={{ marginLeft: 8 }}>
-											<CopyToClipboardButton value={block.validator} />
-										</span>
+										<CopyToClipboardButton value={block.validator} />
 									</TableCell>
 								</TableRow>
 							)}
@@ -104,22 +98,17 @@ function BlockPage() {
 						</TableBody>
 					)}
 				</InfoTable>
-			</div>
+			</Card>
 			{block && (
-				<div
-					className="calamar-card"
-					style={{ marginTop: 16, marginBottom: 16 }}
-				>
-					<div className="calamar-table-header" style={{ paddingBottom: 48 }}>
-						Extrinsics
-					</div>
+				<Card>
+					<CardHeader>Extrinsics</CardHeader>
 					<ExtrinsicsTable
 						items={extrinsics.items}
 						loading={extrinsics.loading}
 						network={network}
 						pagination={extrinsics.pagination}
 					/>
-				</div>
+				</Card>
 			)}
 		</>
 	);
