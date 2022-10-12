@@ -10,6 +10,7 @@ import { convertTimestampToTimeFromNow, formatDate } from "../utils/convertTimes
 import ParamsTable from "../components/ParamsTable";
 import { Card, CardHeader } from "../components/Card";
 import { Link } from "../components/Link";
+import { useEvents } from "../hooks/useEvents";
 
 type CallPageParams = {
 	network: string;
@@ -20,71 +21,75 @@ export const CallPage: React.FC = () => {
 	const { network, id } = useParams() as CallPageParams;
 
 	const [call, { loading }] = useCall(network, { id_eq: id });
+	const events = useEvents(network, { call: { id_eq: id } }, "id_ASC");
+
 	console.log("This is a call");
 	console.log(call);
-	
+	console.log(events);
+
 	return (
-		<Card>
-			<CardHeader style={{ paddingBottom: 48 }}>
-				Call #{id}
-			</CardHeader>
-			<InfoTable
-				item={call}
-				loading={loading}
-				noItemMessage="No call found"
-			>
-				{call && (
-					<TableBody>
-						<TableRow>
-							<TableCell>Id</TableCell>
-							<TableCell>{call.id}</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Name</TableCell>
-							<TableCell>{call.name}</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Block time</TableCell>
-							<TableCell>
-								<Tooltip
-									arrow
-									placement="top"
-									title={formatDate(call.block.timestamp)}
-								>
-									<span>
-										{convertTimestampToTimeFromNow(call.block.timestamp)}
-									</span>
-								</Tooltip>
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Success</TableCell>
-							<TableCell>
-								<img src={call.success ? CheckIcon : CrossIcon} />
-							</TableCell>
-						</TableRow>
-						{/*<TableRow>
+		<>
+			<Card>
+				<CardHeader style={{ paddingBottom: 48 }}>
+					Call #{id}
+				</CardHeader>
+				<InfoTable
+					item={call}
+					loading={loading}
+					noItemMessage="No call found"
+				>
+					{call && (
+						<TableBody>
+							<TableRow>
+								<TableCell>Id</TableCell>
+								<TableCell>{call.id}</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>Name</TableCell>
+								<TableCell>{call.name}</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>Block time</TableCell>
+								<TableCell>
+									<Tooltip
+										arrow
+										placement="top"
+										title={formatDate(call.block.timestamp)}
+									>
+										<span>
+											{convertTimestampToTimeFromNow(call.block.timestamp)}
+										</span>
+									</Tooltip>
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>Success</TableCell>
+								<TableCell>
+									<img src={call.success ? CheckIcon : CrossIcon} />
+								</TableCell>
+							</TableRow>
+							{/*<TableRow>
 							<TableCell>Metadata docs</TableCell>
 							<TableCell>To be filled in later</TableCell>
 				</TableRow>*/}
-						{call.args && (
+							{call.args && (
+								<TableRow>
+									<TableCell>Parameters</TableCell>
+									<TableCell>
+										<ParamsTable args={call.args} />
+									</TableCell>
+								</TableRow>
+							)}
 							<TableRow>
-								<TableCell>Parameters</TableCell>
-								<TableCell>
-									<ParamsTable args={call.args} />
-								</TableCell>
+								<TableCell>Spec version</TableCell>
+								<TableCell>{call.block.spec.specVersion}</TableCell>
 							</TableRow>
-						)}
-						<TableRow>
-							<TableCell>Spec version</TableCell>
-							<TableCell>{call.block.spec.specVersion}</TableCell>
-						</TableRow>
 
-						<TableRow>
-							<TableCell>Sender</TableCell>
-							<TableCell>{call.origin.value.__kind === "none" ? "None" : call.origin.value.value}</TableCell>
-						</TableRow>
-						{/*<TableRow>
+							<TableRow>
+								<TableCell>Sender</TableCell>
+								<TableCell>{call.origin.value.__kind === "None" ? "None" : call.origin.value.value}</TableCell>
+							</TableRow>
+							{/*<TableRow>
 							<TableCell>Parent</TableCell>
 							<TableCell>
 								<Link to={`/${network}/xx/${call.block.id}`}>
@@ -93,27 +98,36 @@ export const CallPage: React.FC = () => {
 								<CopyToClipboardButton value={call.parent.id} />
 							</TableCell>
 						</TableRow>*/}
-						<TableRow>
-							<TableCell>Extrinsic id</TableCell>
-							<TableCell>
-								<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-									{call.extrinsic.id}
-								</Link>
-								<CopyToClipboardButton value={call.extrinsic.id} />
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Block height</TableCell>
-							<TableCell>
-								<Link to={`/${network}/block/${call.block.id}`}>
-									{call.block.height}
-								</Link>
-								<CopyToClipboardButton value={call.block.height} />
-							</TableCell>
-						</TableRow>
-					</TableBody>
-				)}
-			</InfoTable>
-		</Card>
+							<TableRow>
+								<TableCell>Extrinsic id</TableCell>
+								<TableCell>
+									<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
+										{call.extrinsic.id}
+									</Link>
+									<CopyToClipboardButton value={call.extrinsic.id} />
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>Block height</TableCell>
+								<TableCell>
+									<Link to={`/${network}/block/${call.block.id}`}>
+										{call.block.height}
+									</Link>
+									<CopyToClipboardButton value={call.block.height} />
+								</TableCell>
+							</TableRow>
+						</TableBody>
+					)}
+				</InfoTable>
+			</Card>
+			<Card>
+				<CardHeader>Events</CardHeader>
+				<EventsTable
+					items={events.items}
+					network={network}
+					pagination={events.pagination}
+				/>
+			</Card>
+		</>
 	);
 };

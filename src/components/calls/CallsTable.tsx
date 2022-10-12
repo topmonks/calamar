@@ -68,7 +68,7 @@ export const CallsTable = (props: CallsTableProps) => {
 								</span>
 							</Tooltip>
 						</TableCell>
-						<TableCell>{call.origin.value.__kind === "none" ? "None" : call.origin.value.value}</TableCell>
+						<TableCell>{call.origin.value.__kind === "None" ? "None" : call.origin.value.value}</TableCell>
 						<TableCell>
 							<ParamsTable args={call.args} />
 						</TableCell>
