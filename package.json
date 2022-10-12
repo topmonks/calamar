@@ -31,8 +31,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:test": "http-server ./build -p 3000",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "cypress run",
     "eject": "react-scripts eject",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
@@ -64,6 +65,7 @@
     "cypress": "^10.9.0",
     "eslint": "^8.23.1",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-react": "^7.31.8"
+    "eslint-plugin-react": "^7.31.8",
+    "http-server": "^14.1.1"
   }
 }
