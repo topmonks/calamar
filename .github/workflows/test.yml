@@ -12,9 +12,5 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install-command: npm ci
-          build: env
+          build: npm run build
           start: npm start:test
-          env: CI=0,CYPRESS_CI=0
-        env:
-          CI: 0
-          CYPRESS_CI: 0
