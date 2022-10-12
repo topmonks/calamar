@@ -13,4 +13,4 @@ jobs:
         with:
           install-command: npm ci
           build: npm run build
-          start: npm start:test
+          start: npm run start:test
