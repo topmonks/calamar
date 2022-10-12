@@ -12,6 +12,6 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install-command: npm ci
-          build: npm run build
+          build: env
           start: npm start:test
           env: CI=false # do not treat eslint warnings as errors
