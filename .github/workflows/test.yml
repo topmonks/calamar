@@ -14,4 +14,7 @@ jobs:
           install-command: npm ci
           build: env
           start: npm start:test
-          env: CI=0 # do not treat eslint warnings as errors
+          env: CI=0,CYPRESS_CI=0
+        env:
+          CI: 0
+          CYPRESS_CI: 0
