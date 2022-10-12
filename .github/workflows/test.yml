@@ -14,5 +14,4 @@ jobs:
           install-command: npm ci
           build: npm run build
           start: npm start:test
-        env:
-          CI: false # do not treat eslint warnings as errors
+          env: CI=false # do not treat eslint warnings as errors
