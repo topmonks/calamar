@@ -89,15 +89,15 @@ export const CallPage: React.FC = () => {
 								<TableCell>Sender</TableCell>
 								<TableCell>{call.origin.value.__kind === "None" ? "None" : call.origin.value.value}</TableCell>
 							</TableRow>}
-							{/*<TableRow>
-							<TableCell>Parent</TableCell>
-							<TableCell>
-								<Link to={`/${network}/xx/${call.block.id}`}>
-									{call.parent.id}
-								</Link>
-								<CopyToClipboardButton value={call.parent.id} />
-							</TableCell>
-						</TableRow>*/}
+							{call.parrent && <TableRow>
+								<TableCell>Parent</TableCell>
+								<TableCell>
+									<Link to={`/${network}/call/${call.parent.id}`}>
+										{call.parent.id}
+									</Link>
+									<CopyToClipboardButton value={call.parent.id} />
+								</TableCell>
+							</TableRow>}
 							<TableRow>
 								<TableCell>Extrinsic id</TableCell>
 								<TableCell>
