@@ -11,6 +11,7 @@ import ParamsTable from "../components/ParamsTable";
 import { Card, CardHeader } from "../components/Card";
 import { Link } from "../components/Link";
 import { useEvents } from "../hooks/useEvents";
+import { shortenHash } from "../utils/shortenHash";
 
 type CallPageParams = {
 	network: string;
@@ -85,10 +86,10 @@ export const CallPage: React.FC = () => {
 								<TableCell>{call.block.spec.specVersion}</TableCell>
 							</TableRow>
 
-							{call.origin && <TableRow>
+							<TableRow>
 								<TableCell>Sender</TableCell>
-								<TableCell>{call.origin.value.__kind === "None" ? "None" : call.origin.value.value}</TableCell>
-							</TableRow>}
+								<TableCell>{(call.origin && call.origin.value.__kind !== "None") ? shortenHash(call.origin.value.value) : "None"}</TableCell>
+							</TableRow>
 							{call.parrent && <TableRow>
 								<TableCell>Parent</TableCell>
 								<TableCell>
