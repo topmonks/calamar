@@ -19,8 +19,8 @@ import {
 } from "../utils/convertTimestampToTimeFromNow";
 import { encodeAddress } from "../utils/formatAddress";
 import { Link } from "../components/Link";
-import { useCallsForExtrinsic } from "../hooks/useCallsForExtrinsic";
 import { CallsTable } from "../components/calls/CallsTable";
+import { useCalls } from "../hooks/useCalls";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -32,7 +32,7 @@ function ExtrinsicPage() {
 
 	const [extrinsic, { loading }] = useExtrinsic(network, { id_eq: id });
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
-	const calls = useCallsForExtrinsic(network, id);
+	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
 
 	return (
 		<>

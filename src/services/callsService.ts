@@ -49,35 +49,3 @@ export async function getCalls(
 
 	return response?.calls;
 }
-
-export async function getCallsForExtrinsic(
-	network: string,
-	id: string
-) {
-	const response = await fetchGraphql(
-		network,
-		`query ($id: String!) {
-			extrinsicById(id: $id) {
-				call {
-					block {
-						timestamp
-						id
-						height
-					}
-					id
-					name
-					origin
-					extrinsic {
-						id
-					}
-					args
-				}
-			}
-		}`,
-		{
-			id,
-		}
-	);
-
-	return [response.extrinsicById.call];
-}
