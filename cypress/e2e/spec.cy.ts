@@ -1,6 +1,6 @@
 describe("test spec", () => {
 	it("contains search button", () => {
 		cy.visit("/");
-		cy.contains("button", "Search");
+		cy.contains("button", "Search!");
 	});
 });
