@@ -7,6 +7,9 @@ import Loading from "./Loading";
 import NotFound from "./NotFound";
 
 const tableStyles = css`
+	table-layout: fixed;
+	min-width: 860px;
+
 	td, th {
 		vertical-align: top;
 		line-height: 24px;
