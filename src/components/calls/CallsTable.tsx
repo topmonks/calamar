@@ -45,7 +45,7 @@ export const CallsTable = (props: CallsTableProps) => {
 							</Link>
 						</TableCell>
 						<TableCell>{call.name}</TableCell>
-						<TableCell>{call.origin.value.__kind === "None" ? "None" : shortenHash(call.origin.value.value)}</TableCell>
+						<TableCell>{call.origin ? (call.origin.value.__kind === "None" ? "None" : shortenHash(call.origin.value.value)) : "None"}</TableCell>
 						<TableCell>
 							<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
 								{call.extrinsic.id}
