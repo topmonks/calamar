@@ -5,7 +5,6 @@ import { getCalls } from "../services/callsService";
 import {
 	EventsFilter,
 	EventsOrder,
-	getEvents,
 } from "../services/eventsService";
 
 import { usePagination } from "./usePagination";
@@ -33,7 +32,7 @@ export function useCalls(
 			filter,
 		);
 
-		const nextExtrinsics = await getCalls(
+		const nextEvents = await getCalls(
 			network,
 			pagination.limit,
 			pagination.offset + pagination.limit,
@@ -42,7 +41,7 @@ export function useCalls(
 
 		setLoading(false);
 		setItems(events);
-		pagination.setHasNext(nextExtrinsics.length > 0);
+		pagination.setHasNext(nextEvents.length > 0);
 	}, [
 		network,
 		JSON.stringify(filter),

@@ -85,10 +85,10 @@ export const CallPage: React.FC = () => {
 								<TableCell>{call.block.spec.specVersion}</TableCell>
 							</TableRow>
 
-							<TableRow>
+							{call.origin && <TableRow>
 								<TableCell>Sender</TableCell>
 								<TableCell>{call.origin.value.__kind === "None" ? "None" : call.origin.value.value}</TableCell>
-							</TableRow>
+							</TableRow>}
 							{/*<TableRow>
 							<TableCell>Parent</TableCell>
 							<TableCell>

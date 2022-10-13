@@ -29,23 +29,18 @@ export const CallsTable = (props: CallsTableProps) => {
 			<col />
 			<col />
 			<col />
-			<col />
-			<col width="30%" />
-			<col />
+			{/* <col width="30%" /> */}
 			<col />
 
 			<TableHead>
 				<TableRow>
 					<TableCell>Id</TableCell>
 					<TableCell>Name</TableCell>
-					<TableCell>Timestamp</TableCell>
+					{/* <TableCell>Timestamp</TableCell> */}
 					<TableCell>Sender</TableCell>
-					<TableCell>Parameters</TableCell>
-					<TableCell>Block height</TableCell>
+					{/* <TableCell>Parameters</TableCell> */}
+					{/* <TableCell>Block height</TableCell> */}
 					<TableCell>Extrinsic id</TableCell>
-
-
-					{showCalls && <TableCell>Calls</TableCell>}
 				</TableRow>
 			</TableHead>
 			<TableBody>
@@ -57,7 +52,7 @@ export const CallsTable = (props: CallsTableProps) => {
 							</Link>
 						</TableCell>
 						<TableCell>{call.name}</TableCell>
-						<TableCell>
+						{/*<TableCell>
 							<Tooltip
 								arrow
 								placement="top"
@@ -67,17 +62,17 @@ export const CallsTable = (props: CallsTableProps) => {
 									{convertTimestampToTimeFromNow(call.block.timestamp)}
 								</span>
 							</Tooltip>
-						</TableCell>
-						<TableCell>{call.origin.value.__kind === "None" ? "None" : call.origin.value.value}</TableCell>
-						<TableCell>
+				</TableCell> */}
+						<TableCell>{call.origin.value.__kind === "None" ? "None" : shortenHash(call.origin.value.value)}</TableCell>
+						{/*<TableCell>
 							<ParamsTable args={call.args} />
-						</TableCell>
+			</TableCell> */}
 
-						<TableCell>
+						{/* <TableCell>
 							<Link to={`/${network}/block/${call.block.id}`}>
 								{call.block.height}
 							</Link>
-						</TableCell>
+		</TableCell> */}
 						<TableCell>
 							<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
 								{call.extrinsic.id}
