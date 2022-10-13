@@ -16,9 +16,9 @@ export function useEvent(
 			return;
 		}
 
-		const extrinsic = await getEvent(network, id);
+		const event = await getEvent(network, { id_eq: id });
 		setLoading(false);
-		setEvent(extrinsic);
+		setEvent(event);
 	}, [network, id, options?.skip]);
 
 	useEffect(() => {
