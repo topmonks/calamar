@@ -1,23 +1,20 @@
-import { TableBody, TableCell, TableHead, TableRow, Tooltip } from "@mui/material";
+import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 
 import { Pagination } from "../../hooks/usePagination";
-import { convertTimestampToTimeFromNow, formatDate } from "../../utils/convertTimestampToTimeFromNow";
 import { shortenHash } from "../../utils/shortenHash";
 
 import ItemsTable from "../ItemsTable";
 import { Link } from "../Link";
-import ParamsTable from "../ParamsTable";
 
 export type CallsTableProps = {
 	network: string;
 	items: any[];
 	pagination: Pagination;
-	showCalls?: boolean;
 	loading?: boolean;
 };
 
 export const CallsTable = (props: CallsTableProps) => {
-	const { network, items, pagination, showCalls, loading } = props;
+	const { network, items, pagination, loading } = props;
 
 	return (
 		<ItemsTable
