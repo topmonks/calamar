@@ -1,5 +1,6 @@
+/** @jsxImportSource @emotion/react */
 import { useParams } from "react-router-dom";
-import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+import { CircularProgress, Tab, TableBody, TableCell, TableRow, Tabs, Tooltip } from "@mui/material";
 
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
@@ -21,6 +22,8 @@ import { encodeAddress } from "../utils/formatAddress";
 import { Link } from "../components/Link";
 import { CallsTable } from "../components/calls/CallsTable";
 import { useCalls } from "../hooks/useCalls";
+import { tabsStyle, tabStyle, tabsWrapperStyle } from "../styled/tabs";
+import { ReactElement, useEffect, useState } from "react";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -29,10 +32,74 @@ type ExtrinsicPageParams = {
 
 function ExtrinsicPage() {
 	const { network, id } = useParams() as ExtrinsicPageParams;
+	const [tab, setTab] = useState<string | undefined>(undefined);
 
 	const [extrinsic, { loading }] = useExtrinsic(network, { id_eq: id });
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
 	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
+
+	const tabHandles: ReactElement[] = [];
+	const tabPanes: ReactElement[] = [];
+
+	if (events.loading || events.items.length > 0) {
+		tabHandles.push(
+			<Tab
+				key="events"
+				css={tabStyle}
+				label={
+					<>
+						<span>Events</span>
+						{events.loading && <CircularProgress size={14} />}
+					</>
+				}
+				value="events"
+			/>
+		);
+
+		tabPanes.push(
+			<EventsTable
+				key="events"
+				loading={events.loading}
+				items={events.items}
+				network={network}
+				pagination={events.pagination}
+			/>
+		);
+	}
+
+	if (calls.loading || calls.items.length > 0) {
+		tabHandles.push(
+			<Tab
+				key="calls"
+				css={tabStyle}
+				label={
+					<>
+						<span>Calls</span>
+						{calls.loading && <CircularProgress size={14} />}
+					</>
+				}
+				value="calls"
+			/>
+		);
+
+		tabPanes.push(
+			<CallsTable
+				key="calls"
+				loading={calls.loading}
+				items={calls.items}
+				network={network}
+				pagination={calls.pagination}
+			/>
+		);
+	}
+
+	useEffect(() => {
+		if (events.items.length > 0) {
+			setTab("events");
+		} else if (calls.items.length > 0) {
+			setTab("calls");
+		}
+	}, [events, calls]);
 
 	return (
 		<>
@@ -155,25 +222,20 @@ function ExtrinsicPage() {
 				</InfoTable>
 			</Card>
 			{extrinsic && (
-				<>
-					<Card>
-						<CardHeader>Events</CardHeader>
-						<EventsTable
-							items={events.items}
-							network={network}
-							pagination={events.pagination}
-						/>
-					</Card>
+				<Card>
 
-					<Card>
-						<CardHeader>Calls</CardHeader>
-						<CallsTable
-							items={calls.items}
-							network={network}
-							pagination={calls.pagination}
-						/>
-					</Card>
-				</>
+					<div css={tabsWrapperStyle}>
+						<Tabs
+							css={tabsStyle}
+							onChange={(_, tab) => setTab(tab)}
+							value={tab || tabHandles[0]!.props.value}
+						>
+							{tabHandles}
+						</Tabs>
+						{tab ? tabPanes.find((it) => it.key === tab) : tabPanes[0]}
+					</div>
+				</Card>
+
 			)}
 		</>
 	);
