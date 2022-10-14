@@ -14,6 +14,10 @@ jobs:
           install-command: npm ci
           build: npm run build
           start: npm run start:test
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Argos screenshots
         continue-on-error: true
         env:
