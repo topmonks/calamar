@@ -11,6 +11,7 @@ describe("Home page", () => {
 		cy.contains(".MuiMenuItem-root", /^Kusama$/).click();
 
 		cy.argosScreenshot("home", {overwrite: true});
+		cy.argosScreenshot("xx", {overwrite: true});
 	});
 
 	it("keeps last selected network after reload", () => {
