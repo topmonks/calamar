@@ -115,7 +115,7 @@ function HomePage() {
 				<SearchInput css={searchInputStyle} network={network} />
 			</div>
 			<div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
-				<Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>
+				<Link to={`/${network}/latest-extrinsics`}>Show latest transfers</Link>
 			</div>
 		</div>
 	);
