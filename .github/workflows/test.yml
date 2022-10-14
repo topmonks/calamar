@@ -14,3 +14,8 @@ jobs:
           install-command: npm ci
           build: npm run build
           start: npm run start:test
+      - name: Upload Argos screenshots
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        run: npx argos upload screenshots/samples

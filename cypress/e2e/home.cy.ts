@@ -10,7 +10,7 @@ describe("Home page", () => {
 		cy.get(".MuiSelect-select").click();
 		cy.contains(".MuiMenuItem-root", /^Kusama$/).click();
 
-		cy.argosScreenshot("home");
+		cy.argosScreenshot("home", {overwrite: true});
 	});
 
 	it("keeps last selected network after reload", () => {
