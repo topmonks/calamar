@@ -18,6 +18,6 @@ describe("Home page", () => {
 		cy.get(".MuiSelect-select").click();
 		cy.contains(".MuiMenuItem-root", /^Kusama$/).click();
 		cy.reload();
-		cy.contains(".MuiSelect-select", "Kusama");
+		cy.contains(".MuiSelect-select", "Kusama!");
 	});
 });
