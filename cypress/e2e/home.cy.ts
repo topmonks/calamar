@@ -1,5 +1,3 @@
-import { getArchives, getNetwork } from "../../src/services/archiveRegistryService";
-
 describe("Home page", () => {
 	beforeEach(() => {
 		cy.clearCookies();
@@ -14,10 +12,9 @@ describe("Home page", () => {
 	});
 
 	it("keeps last selected network after reload", () => {
-		//cy.visit("/");
 		cy.get(".MuiSelect-select").click();
 		cy.contains(".MuiMenuItem-root", /^Kusama$/).click();
 		cy.reload();
-		cy.contains(".MuiSelect-select", "Kusama!");
+		cy.contains(".MuiSelect-select", "Kusama");
 	});
 });
