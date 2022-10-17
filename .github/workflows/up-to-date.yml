@@ -13,6 +13,9 @@ jobs:
       - name: Check if up to date
         run: |
           env | sort
+          pwd
+          ls
+          ls ${{ github.action_path }}
           git branch
           BEHIND=$(git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF} | cut -f1)
           git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF}
