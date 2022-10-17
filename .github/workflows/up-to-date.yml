@@ -15,14 +15,6 @@ jobs:
       - name: Check if up to date
         run: |
           env | sort
-          pwd
-          ls -la
-          ls -la ${{ github.action_path }}
-          git status
-          git fetch
-          git status
-          git branch
           BEHIND=$(git rev-list --left-right --count origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF} | cut -f1)
-          git rev-list --left-right --count origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}
           echo $BEHIND
           test $BEHIND -eq 0
