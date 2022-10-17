@@ -16,6 +16,9 @@ jobs:
           pwd
           ls -la
           ls -la ${{ github.action_path }}
+          git status
+          git fetch
+          git status
           git branch
           BEHIND=$(git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF} | cut -f1)
           git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF}
