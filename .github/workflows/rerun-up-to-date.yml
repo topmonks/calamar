@@ -1,0 +1,15 @@
+name: Up to date
+
+on:
+  push:
+
+jobs:
+  rerun-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rerun
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          env
+          gh pr list --base ${GITHUB_REF_NAME}
