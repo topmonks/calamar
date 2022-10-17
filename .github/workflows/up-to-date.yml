@@ -2,6 +2,8 @@ name: Up to date
 
 on:
   pull_request:
+    branches:
+      - master
 
 jobs:
   up-to-date:
