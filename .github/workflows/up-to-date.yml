@@ -13,3 +13,5 @@ jobs:
       - name: Check if up to date
         run: |
           env | sort
+          BEHIND=$(git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF} | cut -f1)
+          test $BEHIND -eq 0
