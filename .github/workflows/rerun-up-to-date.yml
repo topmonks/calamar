@@ -24,7 +24,7 @@ jobs:
           RUNS=$(for i in $BRANCHES; do gh run list -b $i -w up-to-date.yml -L 1 --json databaseId --jq '.[].databaseId'; done)
           echo $RUNS
           for i in $RUNS; do \
-            gh run cancel $i > /dev/null || true; \
+            gh run cancel $i 2> /dev/null || true; \
             gh run watch $i > /dev/null; \
             gh run rerun $i; \
             echo "$i re-runned"; \
