@@ -27,5 +27,5 @@ jobs:
             gh run cancel $i > /dev/null || true; \
             gh run watch $i > /dev/null; \
             gh run rerun $i; \
-            echo "$i re-runed" \
+            echo "$i re-runed"; \
           done
