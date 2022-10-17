@@ -25,5 +25,6 @@ jobs:
           echo $RUNS
           for i in $RUNS; do \
             gh run cancel $i; \
+            gh run watch $i; \
             gh run rerun $i; \
           done
