@@ -1,4 +1,4 @@
-name: Check if up to date
+name: Is up to date with base branch
 
 on:
   pull_request:
