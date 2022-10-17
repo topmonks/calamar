@@ -14,9 +14,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Rerun
+      - name: Re-run checks
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           env
-          gh pr list --base ${GITHUB_REF_NAME}
+          gh pr list --base master
