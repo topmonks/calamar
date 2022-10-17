@@ -2,6 +2,8 @@ name: Up to date
 
 on:
   push:
+    branches:
+      - wip-up-to-date
 
 jobs:
   rerun-up-to-date:
