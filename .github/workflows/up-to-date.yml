@@ -22,7 +22,7 @@ jobs:
           git fetch
           git status
           git branch
-          BEHIND=$(git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF} | cut -f1)
-          git rev-list --left-right --count ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF}
+          BEHIND=$(git rev-list --left-right --count origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF} | cut -f1)
+          git rev-list --left-right --count origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}
           echo $BEHIND
           test $BEHIND -eq 0
