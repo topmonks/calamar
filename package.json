@@ -34,7 +34,7 @@
     "start:test": "http-server ./build -p 3000",
     "build": "cross-env CI=false react-scripts build",
     "test": "cypress run --project test",
-    "eject": "react-scripts eject",
+    "test:dev": "cypress open --project test",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
   },
