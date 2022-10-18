@@ -15,6 +15,7 @@ jobs:
           install-command: npm ci
           build: npm run build
           start: npm run start:test
+          project: test
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
