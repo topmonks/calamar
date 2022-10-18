@@ -13,8 +13,8 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install-command: npm ci
-          start: npm run start
-          wait-on: 'http://localhost:3000'
+          build: npm run build
+          start: npm run start:test
           project: test
           record: true
         env:
