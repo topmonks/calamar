@@ -33,7 +33,7 @@
     "start": "cross-env BROWSER=none react-scripts start",
     "start:test": "http-server ./build -p 3000",
     "build": "cross-env CI=false react-scripts build",
-    "test": "cypress run",
+    "test": "cypress run --project test",
     "eject": "react-scripts eject",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"

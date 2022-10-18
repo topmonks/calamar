@@ -24,6 +24,6 @@ yarn-error.log*
 
 .idea
 
-/cypress/downloads
-/cypress/screenshots
-/cypress/videos
+/test/cypress/downloads
+/test/cypress/screenshots
+/test/cypress/videos
