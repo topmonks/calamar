@@ -43,6 +43,13 @@ const Search = (props: SearchProps) => {
 	const searchSingle = useCallback(
 		async (query: string) => {
 			query = query.replace(/\s/g, "");
+
+			// if the query is encoded account address, decode it
+			const decodedAddress = decodeAddress(query);
+			if (decodedAddress) {
+				query = decodedAddress;
+			}
+
 			if (query.startsWith("0x")) {
 				const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
 
@@ -80,11 +87,6 @@ const Search = (props: SearchProps) => {
 				}
 
 				setNotFound(true);
-			}
-
-			const decodedAddress = decodeAddress(query);
-			if (decodedAddress) {
-				return `/${network}/account/${decodedAddress}`;
 			}
 
 			setSearchByName(true);

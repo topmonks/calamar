@@ -1,0 +1,22 @@
+name: Up to date
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  up-to-date:
+    name: Is up to date with base branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check if up to date
+        run: |
+          env | sort
+          BEHIND=$(git rev-list --left-right --count origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF} | cut -f1)
+          echo $BEHIND
+          test $BEHIND -eq 0
