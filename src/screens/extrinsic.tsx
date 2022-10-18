@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useParams } from "react-router-dom";
-import { CircularProgress, Tab, TableBody, TableCell, TableRow, Tabs, Tooltip } from "@mui/material";
+import { CircularProgress, Tab, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
@@ -22,8 +22,8 @@ import { encodeAddress } from "../utils/formatAddress";
 import { Link } from "../components/Link";
 import { CallsTable } from "../components/calls/CallsTable";
 import { useCalls } from "../hooks/useCalls";
-import { tabsStyle, tabStyle, tabsWrapperStyle } from "../styled/tabs";
-import { ReactElement, useEffect, useState } from "react";
+import { Tabs, tabStyle } from "../components/tabs";
+import { ReactElement } from "react";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -32,7 +32,6 @@ type ExtrinsicPageParams = {
 
 function ExtrinsicPage() {
 	const { network, id } = useParams() as ExtrinsicPageParams;
-	const [tab, setTab] = useState<string | undefined>(undefined);
 
 	const [extrinsic, { loading }] = useExtrinsic(network, { id_eq: id });
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
@@ -92,14 +91,6 @@ function ExtrinsicPage() {
 			/>
 		);
 	}
-
-	useEffect(() => {
-		if (events.items.length > 0) {
-			setTab("events");
-		} else if (calls.items.length > 0) {
-			setTab("calls");
-		}
-	}, [events, calls]);
 
 	return (
 		<>
@@ -223,17 +214,9 @@ function ExtrinsicPage() {
 			</Card>
 			{extrinsic && (
 				<Card>
-
-					<div css={tabsWrapperStyle}>
-						<Tabs
-							css={tabsStyle}
-							onChange={(_, tab) => setTab(tab)}
-							value={tab || tabHandles[0]!.props.value}
-						>
-							{tabHandles}
-						</Tabs>
-						{tab ? tabPanes.find((it) => it.key === tab) : tabPanes[0]}
-					</div>
+					<Tabs
+						tabHandles={tabHandles}
+						tabPanes={tabPanes} />
 				</Card>
 
 			)}
