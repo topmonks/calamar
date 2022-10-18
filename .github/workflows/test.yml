@@ -14,6 +14,7 @@ jobs:
         with:
           install-command: npm ci
           start: npm run start
+          wait-on: 'http://localhost:3000'
           project: test
           record: true
         env:
