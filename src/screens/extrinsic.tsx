@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useParams } from "react-router-dom";
-import { CircularProgress, Tab, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+import { CircularProgress, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
@@ -10,6 +10,7 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import EventsTable from "../components/events/EventsTable";
 import InfoTable from "../components/InfoTable";
 import ParamsTable from "../components/ParamsTable";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
 
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useEvents } from "../hooks/useEvents";
@@ -22,8 +23,6 @@ import { encodeAddress } from "../utils/formatAddress";
 import { Link } from "../components/Link";
 import { CallsTable } from "../components/calls/CallsTable";
 import { useCalls } from "../hooks/useCalls";
-import { Tabs, tabStyle } from "../components/tabs";
-import { ReactElement } from "react";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -36,61 +35,6 @@ function ExtrinsicPage() {
 	const [extrinsic, { loading }] = useExtrinsic(network, { id_eq: id });
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
 	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
-
-	const tabHandles: ReactElement[] = [];
-	const tabPanes: ReactElement[] = [];
-
-	if (events.loading || events.items.length > 0) {
-		tabHandles.push(
-			<Tab
-				key="events"
-				css={tabStyle}
-				label={
-					<>
-						<span>Events</span>
-						{events.loading && <CircularProgress size={14} />}
-					</>
-				}
-				value="events"
-			/>
-		);
-
-		tabPanes.push(
-			<EventsTable
-				key="events"
-				loading={events.loading}
-				items={events.items}
-				network={network}
-				pagination={events.pagination}
-			/>
-		);
-	}
-
-	if (calls.loading || calls.items.length > 0) {
-		tabHandles.push(
-			<Tab
-				key="calls"
-				css={tabStyle}
-				label={
-					<>
-						<span>Calls</span>
-						{calls.loading && <CircularProgress size={14} />}
-					</>
-				}
-				value="calls"
-			/>
-		);
-
-		tabPanes.push(
-			<CallsTable
-				key="calls"
-				loading={calls.loading}
-				items={calls.items}
-				network={network}
-				pagination={calls.pagination}
-			/>
-		);
-	}
 
 	return (
 		<>
@@ -214,11 +158,45 @@ function ExtrinsicPage() {
 			</Card>
 			{extrinsic && (
 				<Card>
-					<Tabs
-						tabHandles={tabHandles}
-						tabPanes={tabPanes} />
+					<TabbedContent>
+						{(events.loading || events.items.length > 0) &&
+							<TabPane
+								label={
+									<>
+										<span>Events</span>
+										{events.loading && <CircularProgress size={14} />}
+									</>
+								}
+								value="events"
+							>
+								<EventsTable
+									loading={events.loading}
+									items={events.items}
+									network={network}
+									pagination={events.pagination}
+								/>
+							</TabPane>
+						}
+						{(calls.loading || calls.items.length > 0) &&
+							<TabPane
+								label={
+									<>
+										<span>Calls</span>
+										{calls.loading && <CircularProgress size={14} />}
+									</>
+								}
+								value="calls"
+							>
+								<CallsTable
+									loading={calls.loading}
+									items={calls.items}
+									network={network}
+									pagination={calls.pagination}
+								/>
+							</TabPane>
+						}
+					</TabbedContent>
 				</Card>
-
 			)}
 		</>
 	);
