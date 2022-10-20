@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
 
 import { CallsFilter, getCall } from "../services/callsService";
@@ -9,18 +9,27 @@ export function useCall(
 	options?: FetchOptions
 ) {
 	const [call, setCall] = useState<any>(null);
+	const [loading, setLoading] = useState<boolean>(true);
 
-	useEffect(() => {
+	const fetchData = useCallback(async () => {
 		if (!network || options?.skip) {
 			return;
 		}
 
-		const fetchData = async () => {
-			const extrinsic = await getCall(network, filter);
-			setCall(extrinsic);
-		};
-		fetchData();
+		const call = await getCall(network, filter);
+		console.log("XX");
+		console.log(call);
+		setLoading(false);
+		setCall(call);
 	}, [network, JSON.stringify(filter), options?.skip]);
 
-	return call;
+	useEffect(() => {
+		setLoading(true);
+		fetchData();
+	}, [fetchData]);
+
+	return useMemo(
+		() => [call, { loading, refetch: fetchData }] as const,
+		[call, loading, fetchData]
+	);
 }
