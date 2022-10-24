@@ -8,6 +8,7 @@ export const rollbarConfig: Configuration = {
 		environment: process.env.REACT_APP_ENV || process.env.NODE_ENV,
 		client: {
 			javascript: {
+				code_version: process.env.REACT_APP_VERSION,
 				source_map_enabled: true
 			}
 		}
