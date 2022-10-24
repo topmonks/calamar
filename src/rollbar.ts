@@ -6,10 +6,14 @@ export const rollbarConfig: Configuration = {
 	captureUnhandledRejections: true,
 	payload: {
 		environment: process.env.REACT_APP_ENV || process.env.NODE_ENV,
+		server: {
+			branch: process.env.REACT_APP_BRANCH
+		},
 		client: {
 			javascript: {
 				code_version: process.env.REACT_APP_VERSION,
-				source_map_enabled: true
+				source_map_enabled: true,
+				guess_uncaught_frames: true
 			}
 		}
 	}
