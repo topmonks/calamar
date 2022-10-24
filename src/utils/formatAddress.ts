@@ -7,13 +7,13 @@ const getPrefix = (network: string) => {
 };
 
 export function decodeAddress(address: string) {
-	try {
-		const keyring = new Keyring();
-		const decodedAccountAddressArray = keyring.decodeAddress(address);
-		return "0x" + arrayBufferToHex(decodedAccountAddressArray);
-	} catch (e) {
-		console.log(e);
-	}
+	//try {
+	const keyring = new Keyring();
+	const decodedAccountAddressArray = keyring.decodeAddress(address);
+	return "0x" + arrayBufferToHex(decodedAccountAddressArray);
+	//} catch (e) {
+	//console.log(e);
+	//}
 }
 
 export function encodeAddress(
@@ -24,11 +24,11 @@ export function encodeAddress(
 	prefix = prefix || getPrefix(network);
 
 	if (prefix !== undefined) {
-		try {
-			const keyring = new Keyring();
-			return keyring.encodeAddress(address, prefix);
-		} catch (e) {
-			console.log(e);
-		}
+		//try {
+		const keyring = new Keyring();
+		return keyring.encodeAddress(address, prefix);
+		//} catch (e) {
+		//console.log(e);
+		//}
 	}
 }

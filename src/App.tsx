@@ -15,7 +15,8 @@ import { theme } from "./theme";
 import { rollbarConfig } from "./rollbar";
 
 console.log("NODE_ENV", process.env.NODE_ENV);
-console.log("NODE_ENV", process.env);
+console.log("CF ENV", process.env.CF_PAGES_COMMIT_SHA);
+console.log("ENV", process.env);
 
 function App() {
 	return (
