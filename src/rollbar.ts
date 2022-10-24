@@ -7,6 +7,7 @@ export const rollbarConfig: Configuration = {
 	payload: {
 		environment: process.env.REACT_APP_ENV || process.env.NODE_ENV,
 		server: {
+			root: "src/",
 			branch: process.env.REACT_APP_BRANCH
 		},
 		client: {
@@ -15,6 +16,7 @@ export const rollbarConfig: Configuration = {
 				source_map_enabled: true,
 				guess_uncaught_frames: true
 			}
-		}
-	}
+		},
+	},
+	enabled: window.location.hostname !== "localhost"
 };
