@@ -99,7 +99,12 @@ jobs:
       #   with:
       #     name: build
       #     path: build
-      - run: npx wrangler pages deployment list --project-name=calamar | js -r '.result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") | .url'
+      - run: |
+          curl 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
+            --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+            | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url'
+
+
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
