@@ -111,4 +111,4 @@ jobs:
           projectName: calamar
           directory: build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
+          branch: test #${{ github.ref_name }}
