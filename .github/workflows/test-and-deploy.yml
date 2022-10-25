@@ -95,11 +95,14 @@ jobs:
     environment: development
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@master
-        with:
-          name: build
-          path: build
+      # - name: Download build artifact
+      #   uses: actions/download-artifact@master
+      #   with:
+      #     name: build
+      #     path: build
+      - run: |
+          mkdir build
+          echo "test" >> build/index.html
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
@@ -108,4 +111,4 @@ jobs:
           projectName: calamar
           directory: build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          branch: ${{ github.ref_name }}
