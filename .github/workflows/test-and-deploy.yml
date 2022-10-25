@@ -7,28 +7,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - run: env
-      - run: echo "${{ github.ref_name }}"
-      - run: adsfasd
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: |
-            ~/.cache/Cypress
-            node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Install dependencies
-        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
-        run: npm ci
+        uses: ./.github/actions/cache-node-modules
       - name: Build
         run: npm run build
       - name: Upload build artifact
@@ -44,19 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
+        uses: ./.github/actions/cache-node-modules
         with:
-          path: |
-            ~/.cache/Cypress
-            node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          install: false
       # - name: Download build artifact
       #   uses: actions/download-artifact@master
       #   with:
