@@ -156,9 +156,16 @@ jobs:
       #     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
       #     branch: ${{ github.ref_name }}
 
-  deploy:
+  deploy-development:
     name: Deploy
     uses: ./.github/workflows/deploy-cloudflare-pages.yml
     with:
       environment: development
+    secrets: inherit
+
+  deploy-production:
+    name: Deploy
+    uses: ./.github/workflows/deploy-cloudflare-pages.yml
+    with:
+      environment: production
     secrets: inherit
