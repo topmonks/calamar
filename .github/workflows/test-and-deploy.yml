@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - run: cat package.json | jq -r '.homepage'
+      - run: asdfas
       - name: Cache node modules
         uses: ./.github/actions/cache-node-modules
       - name: Build
