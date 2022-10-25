@@ -6,6 +6,6 @@ describe("Extrinsic detail page", () => {
 	});
 
 	it("shows extrinsic detail page", () => {
-		cy.argosScreenshot("extrinsic", { overwrite: true });
+		//cy.argosScreenshot("extrinsic", { overwrite: true });
 	});
 });

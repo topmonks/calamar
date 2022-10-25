@@ -6,6 +6,6 @@ describe("Block detail page", () => {
 	});
 
 	it("shows block detail page", () => {
-		cy.argosScreenshot("block", { overwrite: true });
+		//cy.argosScreenshot("block", { overwrite: true });
 	});
 });

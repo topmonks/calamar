@@ -7,6 +7,6 @@ describe("Account detail page", () => {
 
 	it("shows account detail page", () => {
 		cy.get("[data-test=extrinsics-table] tr").invoke("css", "visibility", "hidden");
-		cy.argosScreenshot("account", { overwrite: true });
+		//cy.argosScreenshot("account", { overwrite: true });
 	});
 });

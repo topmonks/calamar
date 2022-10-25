@@ -9,7 +9,7 @@ describe("Home page", () => {
 		cy.get(".MuiSelect-select").click();
 		cy.contains(".MuiMenuItem-root", /^Polkadot$/).click();
 
-		cy.argosScreenshot("home", {overwrite: true});
+		//cy.argosScreenshot("home", {overwrite: true});
 	});
 
 	it("keeps last selected network after reload", () => {

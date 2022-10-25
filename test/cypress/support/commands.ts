@@ -2,7 +2,7 @@
 
 import "@argos-ci/cypress/support";
 
-Cypress.Commands.overwrite<"screenshot", Cypress.PrevSubject>("screenshot", (originalFn, prevSubject, name, options) => {
+/*Cypress.Commands.overwrite<"screenshot", Cypress.PrevSubject>("screenshot", (originalFn, prevSubject, name, options) => {
 	cy.document().then((doc) =>
 		doc.querySelector("[data-test=top-bar]")
 			&& cy.get("[data-test=top-bar]").invoke("css", "position", "relative")
@@ -24,4 +24,4 @@ Cypress.Commands.overwrite<"screenshot", Cypress.PrevSubject>("screenshot", (ori
 		doc.querySelector("[data-test=top-bar]")
 			&& cy.get("[data-test=top-bar]").invoke("css", "position", "sticky")
 	);
-});
+});*/
