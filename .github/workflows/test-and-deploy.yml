@@ -87,6 +87,7 @@ jobs:
     steps:
       - name: Upload release to Rollup
         run: echo "TODO"
+      - run: asdf
   deploy:
     name: Deploy pages
     needs: rollup
