@@ -82,14 +82,14 @@ jobs:
       #   env:
       #     ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
       #   run: npx argos upload test/cypress/screenshots
-  rollup:
-    name: Rollup release
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload release to Rollup
-        run: echo "TODO"
-      - run: asdf
+  # rollup:
+  #   name: Rollup release
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Upload release to Rollup
+  #       run: echo "TODO"
+  #     - run: asdf
   # xxx:
   #   name: XXX
   #   runs-on: ubuntu-latest
@@ -156,11 +156,11 @@ jobs:
       #     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
       #     branch: ${{ github.ref_name }}
 
-  deploy-production:
-    name: Deploy / production
-    if: github.ref_name == 'master'
+  preview:
+    name: Deploy / Preview
+    needs: test
     environment:
-      name: production
+      name: development
       url: ${{ steps.pages.outputs.url }}
     runs-on: ubuntu-latest
     steps:
@@ -173,11 +173,12 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-
-  deploy-development:
-    name: Deploy / development
+  deploy:
+    name: Deploy / Production
+    needs: test
+    if: github.ref_name == 'master'
     environment:
-      name: development
+      name: production
       url: ${{ steps.pages.outputs.url }}
     runs-on: ubuntu-latest
     steps:
