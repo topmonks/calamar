@@ -33,8 +33,8 @@ jobs:
         with:
           name: build
           path: build/
-  tests:
-    name: E2E Tests
+  test:
+    name: Test
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -46,7 +46,9 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: node_modules
+          path: |
+            ~/.cache/Cypress
+            node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
@@ -80,7 +82,7 @@ jobs:
   rollup:
     name: Rollup release
     runs-on: ubuntu-latest
-    needs: tests
+    needs: test
     steps:
       - name: Upload release to Rollup
         run: echo "TODO"
