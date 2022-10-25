@@ -1,4 +1,4 @@
-name: Tests & Deploy
+name: Test & Deploy
 
 on: [push]
 
@@ -15,7 +15,9 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: node_modules
+          path: |
+            ~/.cache/Cypress
+            node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
@@ -75,11 +77,18 @@ jobs:
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
         run: npx argos upload test/cypress/screenshots
+  rollup:
+    name: Rollup release
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: Upload release to Rollup
+        run: echo "TODO"
   deploy:
-    name: Deploy
+    name: Deploy pages
     runs-on: ubuntu-latest
     environment: development
-    needs: tests
+    needs: rollup
     steps:
       - name: Deploy
         run: echo "TODO"
