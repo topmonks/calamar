@@ -35,8 +35,8 @@ jobs:
           path: build/
   test:
     name: Test
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -82,16 +82,17 @@ jobs:
   rollup:
     name: Rollup release
     if: false
-    runs-on: ubuntu-latest
     needs: test
+    runs-on: ubuntu-latest
     steps:
       - name: Upload release to Rollup
         run: echo "TODO"
   deploy:
     name: Deploy pages
-    runs-on: ubuntu-latest
-    environment: development
     needs: rollup
+    if: always() && (needs.rollup.result == 'success' || needs.rollup.result == 'skipped')
+    environment: development
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy
         run: echo "TODO"
