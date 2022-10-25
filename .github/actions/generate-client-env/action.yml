@@ -11,6 +11,6 @@ runs:
     - name: Generate client env
       shell: bash
       run: |
-        ENV=jq -n env | jq -r '. | with_entries(select(.key | startswith("REACT_APP_")))'
+        ENV=$(jq -n env | jq -r '. | with_entries(select(.key | startswith("REACT_APP_")))')
         echo "window.env = $ENV"
         echo "window.env = $ENV" >> ${{ inputs.file }}
