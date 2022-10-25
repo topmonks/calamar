@@ -31,105 +31,26 @@ jobs:
         uses: ./.github/actions/cache-node-modules
         with:
           install: false
-      # - name: Download build artifact
-      #   uses: actions/download-artifact@master
-      #   with:
-      #     name: build
-      #     path: build
-      # - name: Test
-      #   run: |
-      #     ls -la .
-      #     ls -la node_modules
-      #     ls -la build
-      # - name: Run Cypress
-      #   uses: cypress-io/github-action@v4
-      #   with:
-      #     install: false
-      #     start: npm run start:test
-      #     project: test
-      #     record: true
-      #   env:
-      #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Upload Argos screenshots
-      #   continue-on-error: true
-      #   env:
-      #     ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-      #   run: npx argos upload test/cypress/screenshots
-  # rollup:
-  #   name: Rollup release
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Upload release to Rollup
-  #       run: echo "TODO"
-  #     - run: asdf
-  # xxx:
-  #   name: XXX
-  #   runs-on: ubuntu-latest
-  #   steps:
-      # - name: Download build artifact
-      #   uses: actions/download-artifact@master
-      #   with:
-      #     name: build
-      #     path: build
-      # - run: |
-      #     URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
-      #       --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-      #       | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
-      #     echo "url: ${URL}"
-      #     echo "url=${URL}" >> $GITHUB_OUTPUT
-      #   env:
-      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      # - name: Deploy to Cloudflare Pages
-      #   uses: cloudflare/pages-action@1
-      #   id: pages
-      #   with:
-      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #     accountId: 777be075f33a54823297bac0af8e1c6c
-      #     projectName: calamar
-      #     directory: build
-      #     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: ${{ github.ref_name }}
-
-  # deploy:
-  #   name: Deploy
-  #   environment:
-  #     name: development
-  #     url: ${{ steps.pages.outputs.url }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-      # - name: Download build artifact
-      #   uses: actions/download-artifact@master
-      #   with:
-      #     name: build
-      #     path: build
-      # - run: |
-      #     mkdir build
-      #     echo "test" >> build/index.html
-      # - name: Deploy to Cloudflare Pages
-      #   id: pages
-      #   run: |
-      #     npx wrangler pages publish build --project-name=calamar --branch="${{ github.ref_name }}"
-      #     URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
-      #       --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-      #       | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
-      #     echo "url=${URL}" >> $GITHUB_OUTPUT
-      #   env:
-      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      # - name: Deploy to Cloudflare Pages
-      #   uses: cloudflare/pages-action@1
-      #   id: pages
-      #   with:
-      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #     accountId: 777be075f33a54823297bac0af8e1c6c
-      #     projectName: calamar
-      #     directory: build
-      #     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: ${{ github.ref_name }}
-
+      - name: Download build artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+      - name: Run Cypress
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: npm run start:test
+          project: test
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Argos screenshots
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        run: npx argos upload test/cypress/screenshots
   preview:
     name: Deploy / Preview
     needs: test
@@ -145,7 +66,7 @@ jobs:
         with:
           name: build
           path: build
-      - name: Generate environment
+      - name: Generate client environment
         uses: './.github/actions/generate-client-env'
         env:
           REACT_APP_VERSION: ${{ github.sha }}
@@ -160,7 +81,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           path: build
-
   deploy:
     name: Deploy / Production
     needs: test
