@@ -9,11 +9,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - run: cat package.json | jq -r '.homepage'
-      - run: asdfas
+      - name: Generate environment
+        uses: './.github/actions/generate-client-env'
+        env:
+          REACT_APP_VERSION: ${{ github.sha }}
+          REACT_APP_ROLLBAR_ENV: development
+          REACT_APP_ROLLBAR_ENABLED: true
+        with:
+          file: public/env.js
+      - run: cat public/env.js
+      - run: asdfasf
       - name: Cache node modules
         uses: ./.github/actions/cache-node-modules
       - name: Build
+        env:
+          REACT_APP_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
         run: npm run build
       - name: Upload build artifact
         uses: actions/upload-artifact@master
@@ -140,12 +150,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+      - name: Generate environment
+        uses: './.github/actions/generate-client-env'
+        env:
+          REACT_APP_VERSION: ${{ github.sha }}
+          REACT_APP_ROLLBAR_ENV: development
+          REACT_APP_ROLLBAR_ENABLED: true
+        with:
+          file: build/env.js
       - name: Deploy to Cloudflare Pages
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          path: build
 
   deploy:
     name: Deploy / Production
@@ -164,3 +188,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          path: build
