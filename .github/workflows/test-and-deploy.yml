@@ -136,7 +136,7 @@ jobs:
       - name: Deploy to Cloudflare Pages
         run: |
           npx wrangler pages publish build --project-name=calamar --branch="${{ github.ref_name }}"
-          URL=$(curl 'https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/calamar/deployments' \
+          URL=$(curl 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
             --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
             | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
           echo "url=${URL}" >> $GITHUB_OUTPUT
