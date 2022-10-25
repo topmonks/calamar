@@ -166,7 +166,7 @@ jobs:
 
   deploy-production:
     name: Deploy
-    if: github.ref_name == "master"
+    if: github.ref_name == 'master'
     needs: test
     uses: ./.github/workflows/deploy-cloudflare-pages.yml
     with:
