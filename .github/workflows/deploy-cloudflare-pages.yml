@@ -10,9 +10,9 @@ on:
 jobs:
   deploy:
     name: ${{ inputs.environment }}
-    environment:
-      name: ${{ inputs.environment }}
-      url: ${{ steps.pages.outputs.url }}
+    environment: ${{ inputs.environment }}
+      #name: ${{ inputs.environment }}
+      #url: ${{ steps.pages.outputs.url }}
     runs-on: ubuntu-latest
     steps:
       - run: |
