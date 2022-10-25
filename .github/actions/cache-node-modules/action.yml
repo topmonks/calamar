@@ -25,4 +25,5 @@ runs:
           ${{ runner.os }}-
     - name: Install dependencies
       if: steps.cache-nodemodules.outputs.cache-hit != 'true' && inputs.install == 'true'
+      shell: bash
       run: npm ci
