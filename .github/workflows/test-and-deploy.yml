@@ -92,7 +92,9 @@ jobs:
       - run: asdf
   deploy:
     name: Deploy
-    environment: development
+    environment:
+      name: development
+      url: ${{ steps.pages.outputs.url }}
     runs-on: ubuntu-latest
     steps:
       # - name: Download build artifact
@@ -105,10 +107,11 @@ jobs:
           echo "test" >> build/index.html
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@1
+        id: pages
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 777be075f33a54823297bac0af8e1c6c
           projectName: calamar
           directory: build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: test #${{ github.ref_name }}
+          branch: ${{ github.ref_name }}
