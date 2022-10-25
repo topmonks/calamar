@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: env
-      - run: echo "${{ github.ref }}"
+      - run: echo "${{ github.ref_name }}"
       - run: adsfasd
       - name: Checkout
         uses: actions/checkout@v3
