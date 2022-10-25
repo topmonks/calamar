@@ -157,16 +157,31 @@ jobs:
       #     branch: ${{ github.ref_name }}
 
   deploy-production:
-    name: Deploy
+    name: Deploy / production
     if: github.ref_name == 'master'
-    uses: ./.github/workflows/deploy-cloudflare-pages.yml
-    with:
-      environment: production
-    secrets: inherit
+    environment:
+      name: production
+      url: ${{ steps.pages.outputs.url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Cloudflare Pages
+        id: pages
+        uses: ./.github/actions/deploy-cloudflare-pages
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
 
   deploy-development:
-    name: Deploy
-    uses: ./.github/workflows/deploy-cloudflare-pages.yml
-    with:
-      environment: development
-    secrets: inherit
+    name: Deploy / development
+    environment:
+      name: development
+      url: ${{ steps.pages.outputs.url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Cloudflare Pages
+        id: pages
+        uses: ./.github/actions/deploy-cloudflare-pages
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
