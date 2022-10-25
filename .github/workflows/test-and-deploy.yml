@@ -99,7 +99,7 @@ jobs:
       #   with:
       #     name: build
       #     path: build
-      - run: npx wrangler pages deployment list --project-name=calamar2
+      - run: npx wrangler pages deployment list --project-name=calamar | js -r '.result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") | .url'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -130,7 +130,7 @@ jobs:
           mkdir build
           echo "test" >> build/index.html
       - name: Deploy to Cloudflare Pages
-        run: npx wrangler pages publish build --project-name=calamar2
+        run: npx wrangler pages publish build --project-name=calamar --branch="${{ github.ref_name }}"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
