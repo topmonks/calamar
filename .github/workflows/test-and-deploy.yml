@@ -100,10 +100,10 @@ jobs:
       #     name: build
       #     path: build
       - run: |
-          URL=$(curl 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
+          URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
             --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
             | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
-          echo "${URL}"
+          echo "url: ${URL}"
           echo "url=${URL}" >> $GITHUB_OUTPUT
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
