@@ -1,4 +1,4 @@
-name: Deploy CloudFlare pages
+name: Deploy to Cloudflare pages
 
 on:
   workflow_call:
