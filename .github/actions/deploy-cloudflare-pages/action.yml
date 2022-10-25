@@ -7,6 +7,9 @@ inputs:
   accountId:
     required: true
     type: string
+  path:
+    required: true
+    type: string
 
 outputs:
   url:
@@ -15,15 +18,11 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - shell: bash
-      run: |
-        mkdir build
-        echo "test" >> build/index.html
     - name: Deploy to Cloudflare Pages
       id: pages
       shell: bash
       run: |
-        npx wrangler pages publish build --project-name=calamar --branch="${{ github.ref_name }}"
+        npx wrangler pages publish "${{ inputs.path }}" --project-name=calamar --branch="${{ github.ref_name }}"
         URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/calamar/deployments' \
           --header 'Authorization: Bearer ${{ inputs.apiToken }}' \
           | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
