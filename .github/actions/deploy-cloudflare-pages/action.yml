@@ -13,6 +13,7 @@ outputs:
     value: ${{ steps.pages.outputs.url }}
 
 runs:
+  using: "composite"
   steps:
     - shell: bash
       run: |
