@@ -1,4 +1,4 @@
-name: Tests
+name: Tests & Deploy
 
 on: [push]
 
@@ -25,3 +25,10 @@ jobs:
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
         run: npx argos upload test/cypress/screenshots
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Deploy
+        run: echo "TODO"
