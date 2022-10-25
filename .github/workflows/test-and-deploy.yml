@@ -7,6 +7,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - run: env
       - run: echo "${{ github.ref }}"
       - run: adsfasd
       - name: Checkout
