@@ -22,6 +22,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
+        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build
         run: npm run build
@@ -59,22 +60,21 @@ jobs:
           ls -la .
           ls -la node_modules
           ls -la build
-      #- name: Cypress run
-        #uses: cypress-io/github-action@v4
-        #with:
-          #install-command: npm ci
-          #build: npm run build
-          #start: npm run start:test
-          #project: test
-          #record: true
-        #env:
-          #CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #- name: Upload Argos screenshots
-        #continue-on-error: true
-        #env:
-          #ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        #run: npx argos upload test/cypress/screenshots
+      - name: Run Cypress
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: npm run start:test
+          project: test
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Argos screenshots
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        run: npx argos upload test/cypress/screenshots
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
