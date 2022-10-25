@@ -106,12 +106,17 @@ jobs:
           mkdir build
           echo "test" >> build/index.html
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@1
-        id: pages
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 777be075f33a54823297bac0af8e1c6c
-          projectName: calamar
-          directory: build
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
+        run: npx wrangler pages publish build --project-name=calamar --branch="${{ github.ref_name }}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # - name: Deploy to Cloudflare Pages
+      #   uses: cloudflare/pages-action@1
+      #   id: pages
+      #   with:
+      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     accountId: 777be075f33a54823297bac0af8e1c6c
+      #     projectName: calamar
+      #     directory: build
+      #     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: ${{ github.ref_name }}
