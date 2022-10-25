@@ -157,6 +157,7 @@ jobs:
       #     branch: ${{ github.ref_name }}
 
   deploy:
+    name: Deploy
     uses: ./.github/workflows/deploy-cloudflare-pages.yml
     with:
       environment: development

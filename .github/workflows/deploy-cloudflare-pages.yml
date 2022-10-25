@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy / ${{ inputs.environment }}
+    name: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
