@@ -7,6 +7,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - run: echo "${{ github.ref }}"
+      - run: adsfasd
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cache node modules
@@ -26,20 +28,20 @@ jobs:
       - name: Install dependencies
         if: steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: npm ci
-      # - name: Build
-      #   run: npm run build
-      # - name: Upload build artifact
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #     name: build
-      #     path: build/
+      - name: Build
+        run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: build/
   test:
     name: Test
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache node modules
         id: cache-nodemodules
         uses: actions/cache@v3
@@ -88,11 +90,21 @@ jobs:
         run: echo "TODO"
       - run: asdf
   deploy:
-    name: Deploy pages
-    needs: rollup
-    if: always() && (needs.rollup.result == 'success' || needs.rollup.result == 'skipped')
+    name: Deploy
     environment: development
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
-        run: echo "TODO"
+      - name: Download build artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 777be075f33a54823297bac0af8e1c6c
+          projectName: calamar
+          directory: build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
