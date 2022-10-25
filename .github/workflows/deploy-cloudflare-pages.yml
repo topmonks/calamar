@@ -9,8 +9,8 @@ on:
 
 jobs:
   deploy:
-    name: Deploy / ${{ input.environment }}
-    environment: ${{ input.environment }}
+    name: Deploy / ${{ inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - run: |
