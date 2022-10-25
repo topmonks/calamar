@@ -8,14 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build
+        uses: actions/checkout@v3
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v3
         env:
-          CI: false
-        run: |
-          npm install
-          npm run build
-      - uses: actions/upload-artifact@master
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@master
         with:
           name: build
           path: build/
@@ -24,13 +35,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@master
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download build artifact
+        uses: actions/download-artifact@master
         with:
           name: build
           path: build
       - name: Test
-        run: ls -la build
+        run: |
+          ls -la .
+          ls -la node_modules
+          ls -la build
       #- name: Cypress run
         #uses: cypress-io/github-action@v4
         #with:
