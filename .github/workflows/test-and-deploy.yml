@@ -159,7 +159,6 @@ jobs:
   deploy-development:
     name: Deploy
     uses: ./.github/workflows/deploy-cloudflare-pages.yml
-    needs: test
     with:
       environment: development
     secrets: inherit
@@ -167,7 +166,6 @@ jobs:
   deploy-production:
     name: Deploy
     if: github.ref_name == 'master'
-    needs: test
     uses: ./.github/workflows/deploy-cloudflare-pages.yml
     with:
       environment: production
