@@ -135,6 +135,7 @@ jobs:
           mkdir build
           echo "test" >> build/index.html
       - name: Deploy to Cloudflare Pages
+        id: pages
         run: |
           npx wrangler pages publish build --project-name=calamar --branch="${{ github.ref_name }}"
           URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/calamar/deployments' \
