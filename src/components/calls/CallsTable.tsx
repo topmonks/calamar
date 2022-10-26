@@ -37,22 +37,25 @@ export const CallsTable = (props: CallsTableProps) => {
 				</TableRow>
 			</TableHead>
 			<TableBody>
-				{items.map((call: any) => (
-					<TableRow key={call.id}>
-						<TableCell>
-							<Link to={`/${network}/call/${call.id}`}>
-								{call.id}
-							</Link>
-						</TableCell>
-						<TableCell>{call.name}</TableCell>
-						<TableCell>{(call.origin && call.origin.value.__kind !== "None") ? shortenHash(call.origin.value.value) : "None"}</TableCell>
-						<TableCell>
-							<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-								{call.extrinsic.id}
-							</Link>
-						</TableCell>
-					</TableRow>
-				))}
+				{items.map((item: any) => {
+					const call = item.node;
+					return (
+						<TableRow key={call.id}>
+							<TableCell>
+								<Link to={`/${network}/call/${call.id}`}>
+									{call.id}
+								</Link>
+							</TableCell>
+							<TableCell>{call.name}</TableCell>
+							<TableCell>{(call.origin && call.origin.value.__kind !== "None") ? shortenHash(call.origin.value.value) : "None"}</TableCell>
+							<TableCell>
+								<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
+									{call.extrinsic.id}
+								</Link>
+							</TableCell>
+						</TableRow>
+					);
+				})}
 			</TableBody>
 		</ItemsTable>
 	);

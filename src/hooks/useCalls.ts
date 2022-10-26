@@ -25,23 +25,22 @@ export function useCalls(
 			return;
 		}
 
-		const events = await getCalls(
+		const calls = await getCalls(
 			network,
 			pagination.limit,
 			pagination.offset,
 			filter,
 		);
 
-		const nextEvents = await getCalls(
-			network,
-			pagination.limit,
-			pagination.offset + pagination.limit,
-			filter,
-		);
-
 		setLoading(false);
-		setItems(events);
-		pagination.setHasNext(nextEvents.length > 0);
+		setItems(calls.edges);
+		pagination.setPagination(
+			{
+				...pagination,
+				hasNext: pagination.offset + pagination.limit < calls.totalCount,
+				totalCount: calls.totalCount,
+			}
+		);
 	}, [
 		network,
 		JSON.stringify(filter),

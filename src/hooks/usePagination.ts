@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 export type PaginationState = {
 	limit: number;
 	offset: number;
+	totalCount?: number
 	hasNext: boolean;
 };
 
@@ -10,6 +11,8 @@ export type Pagination = PaginationState & {
 	setPreviousPage: () => void;
 	setNextPage: () => void;
 	setHasNext: (hasNext: boolean) => void;
+	setTotalCount: (totalCount: number) => void;
+	setPagination: (pagination: Pagination) => void;
 };
 
 export type UsePaginationProps = {
@@ -17,7 +20,7 @@ export type UsePaginationProps = {
 };
 
 export function usePagination(limit = 10, hasNext = false) {
-	const [pagination, setPagination] = useState<PaginationState>({
+	const [pagination, setPaginationState] = useState<PaginationState>({
 		limit,
 		offset: 0,
 		hasNext,
@@ -27,14 +30,14 @@ export function usePagination(limit = 10, hasNext = false) {
 		if (pagination.offset === 0) {
 			return;
 		}
-		setPagination({
+		setPaginationState({
 			...pagination,
 			offset: pagination.offset - pagination.limit,
 		});
 	}, [pagination]);
 
 	const setNextPage = useCallback(() => {
-		setPagination({
+		setPaginationState({
 			...pagination,
 			offset: pagination.offset + pagination.limit,
 		});
@@ -43,12 +46,32 @@ export function usePagination(limit = 10, hasNext = false) {
 	const setHasNext = useCallback(
 		(hasNext: boolean) => {
 			hasNext !== pagination.hasNext &&
-				setPagination({
+				setPaginationState({
 					...pagination,
 					hasNext,
 				});
 		},
 		[pagination]
+	);
+
+	const setTotalCount = useCallback(
+		(totalCount: number) => {
+			console.warn("total count");
+			console.warn(totalCount);
+
+			console.log(pagination);
+			setPaginationState({
+				...pagination,
+				totalCount: totalCount,
+			});
+		},
+		[pagination]
+	);
+
+	const setPagination = useCallback(
+		(pagination: Pagination) => {
+			setPaginationState(pagination);
+		}, []
 	);
 
 	return useMemo(
@@ -58,7 +81,9 @@ export function usePagination(limit = 10, hasNext = false) {
 				setPreviousPage,
 				setNextPage,
 				setHasNext,
+				setTotalCount,
+				setPagination,
 			} as Pagination),
-		[pagination, setPreviousPage, setNextPage, setHasNext]
+		[pagination, setPreviousPage, setNextPage, setHasNext, setTotalCount, setPagination]
 	);
 }

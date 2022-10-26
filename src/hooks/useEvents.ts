@@ -33,17 +33,17 @@ export function useEvents(
 			order
 		);
 
-		const nextExtrinsics = await getEvents(
-			network,
-			pagination.limit,
-			pagination.offset + pagination.limit,
-			filter,
-			order
-		);
-
 		setLoading(false);
-		setItems(events);
-		pagination.setHasNext(nextExtrinsics.length > 0);
+		setItems(events.edges);
+		console.warn(events.totalCount);
+
+		pagination.setPagination(
+			{
+				...pagination,
+				hasNext: pagination.offset + pagination.limit < events.totalCount,
+				totalCount: events.totalCount,
+			}
+		);
 	}, [
 		network,
 		JSON.stringify(filter),

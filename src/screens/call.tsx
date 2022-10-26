@@ -1,6 +1,6 @@
 import EventsTable from "../components/events/EventsTable";
 import InfoTable from "../components/InfoTable";
-import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+import { CircularProgress, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import { useParams } from "react-router-dom";
 import { useCall } from "../hooks/useCall";
@@ -12,6 +12,7 @@ import { Card, CardHeader } from "../components/Card";
 import { Link } from "../components/Link";
 import { useEvents } from "../hooks/useEvents";
 import { shortenHash } from "../utils/shortenHash";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
 
 type CallPageParams = {
 	network: string;
@@ -21,12 +22,8 @@ type CallPageParams = {
 export const CallPage: React.FC = () => {
 	const { network, id } = useParams() as CallPageParams;
 
-	const [call, { loading }] = useCall(network, { id_eq: id });
+	const [call, { loading }] = useCall(network, id);
 	const events = useEvents(network, { call: { id_eq: id } }, "id_ASC");
-
-	console.log("This is a call");
-	console.log(call);
-	console.log(events);
 
 	return (
 		<>
@@ -122,6 +119,28 @@ export const CallPage: React.FC = () => {
 				</InfoTable>
 			</Card>
 			<Card>
+				<TabbedContent>
+					{(events.loading || events.items.length > 0) &&
+							<TabPane
+								label={
+									<>
+										<span>Events ({events.pagination.totalCount?.toString() || "0"})</span>
+										{events.loading && <CircularProgress size={14} />}
+									</>
+								}
+								value="events"
+							>
+								<EventsTable
+									loading={events.loading}
+									items={events.items}
+									network={network}
+									pagination={events.pagination}
+								/>
+							</TabPane>
+					}
+					{<></>}
+				</TabbedContent>
+
 				<CardHeader>Events</CardHeader>
 				<EventsTable
 					items={events.items}

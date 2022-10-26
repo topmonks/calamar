@@ -38,26 +38,29 @@ function EventsTable(props: EventsTableProps) {
 				</TableRow>
 			</TableHead>
 			<TableBody>
-				{items.map((event: any) => (
-					<TableRow key={event.id}>
-						<TableCell>
-							<Link to={`/${network}/event/${event.id}`}>
-								{event.id}
-							</Link>
-						</TableCell>
-						<TableCell>{event.name}</TableCell>
-						<TableCell>
-							<ParamsTable args={event.args} />
-						</TableCell>
-						{showExtrinsic && event.extrinsic?.hash && (
+				{items.map((item: any) => {
+					const event = item.node;
+					return (
+						<TableRow key={event.id}>
 							<TableCell>
-								<Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
-									{shortenHash(event.extrinsic.hash)}
+								<Link to={`/${network}/event/${event.id}`}>
+									{event.id}
 								</Link>
 							</TableCell>
-						)}
-					</TableRow>
-				))}
+							<TableCell>{event.name}</TableCell>
+							<TableCell>
+								<ParamsTable args={event.args} />
+							</TableCell>
+							{showExtrinsic && event.extrinsic?.hash && (
+								<TableCell>
+									<Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
+										{shortenHash(event.extrinsic.hash)}
+									</Link>
+								</TableCell>
+							)}
+						</TableRow>
+					);
+				})}
 			</TableBody>
 		</ItemsTable>
 	);

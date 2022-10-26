@@ -12,7 +12,7 @@ type LatestExtrinsicsPageParams = {
 
 function LatestExtrinsicsPage() {
 	const { network } = useParams() as LatestExtrinsicsPageParams;
-	const extrinsics = useExtrinsics(network, {}, "id_DESC");
+	const extrinsics = useExtrinsics(network, undefined, "id_DESC");
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
