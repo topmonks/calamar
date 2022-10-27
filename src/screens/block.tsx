@@ -82,7 +82,7 @@ function BlockPage() {
 								<TableCell>Block height</TableCell>
 								<TableCell>{block.height}</TableCell>
 							</TableRow>
-							<TableRow>
+							{block.height !== 0 && <TableRow>
 								<TableCell>Date</TableCell>
 								<TableCell>
 									<Tooltip
@@ -96,6 +96,7 @@ function BlockPage() {
 									</Tooltip>
 								</TableCell>
 							</TableRow>
+							}
 						</TableBody>
 					)}
 				</InfoTable>
