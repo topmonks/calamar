@@ -24,38 +24,38 @@ jobs:
         with:
           name: build
           path: build/
+  # test:
+  #   name: Test
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Cache node modules
+  #       uses: ./.github/actions/cache-node-modules
+  #       with:
+  #         install: false
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@master
+  #       with:
+  #         name: build
+  #         path: build
+  #     - name: Run Cypress
+  #       uses: cypress-io/github-action@v4
+  #       with:
+  #         install: false
+  #         start: npm run start:test
+  #         project: test
+  #         record: true
+  #       env:
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Upload Argos screenshots
+  #       continue-on-error: true
+  #       env:
+  #         ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+  #       run: npx argos upload test/cypress/screenshots
   test:
-    name: Test
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Cache node modules
-        uses: ./.github/actions/cache-node-modules
-        with:
-          install: false
-      - name: Download build artifact
-        uses: actions/download-artifact@master
-        with:
-          name: build
-          path: build
-      - name: Run Cypress
-        uses: cypress-io/github-action@v4
-        with:
-          install: false
-          start: npm run start:test
-          project: test
-          record: true
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload Argos screenshots
-        continue-on-error: true
-        env:
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: npx argos upload test/cypress/screenshots
-  playwright:
     name: Playwright Test
     needs: build
     environment:
