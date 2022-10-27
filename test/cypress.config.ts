@@ -6,6 +6,7 @@ export default defineConfig({
 		baseUrl: "http://localhost:3000",
 		viewportWidth: 1920,
 		viewportHeight: 1080,
+		video: false,
 		setupNodeEvents(on, config) {
 			// let's increase the browser window size when running headlessly
 			// this will produce higher resolution images and videos
