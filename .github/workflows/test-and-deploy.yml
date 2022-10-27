@@ -16,7 +16,7 @@ jobs:
       - name: Build
         env:
           REACT_APP_COMMIT_SHA: ${{ github.sha }}
-          REACT_APP_BUILD_TIMESTAMP: $NOW
+          REACT_APP_BUILD_TIMESTAMP: ${{ env.NOW }}
           REACT_APP_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
         run: npm run build
       - name: Upload build artifact
@@ -75,7 +75,7 @@ jobs:
       - name: Generate client environment
         uses: ./.github/actions/generate-client-env
         env:
-          REACT_APP_PUBLISH_TIMESTAMP: $NOW
+          REACT_APP_PUBLISH_TIMESTAMP: ${{ env.NOW }}
           REACT_APP_ROLLBAR_ENV: development
           REACT_APP_ROLLBAR_ENABLED: true
         with:
@@ -108,7 +108,7 @@ jobs:
       - name: Generate client environment
         uses: ./.github/actions/generate-client-env
         env:
-          REACT_APP_PUBLISH_TIMESTAMP: $NOW
+          REACT_APP_PUBLISH_TIMESTAMP: ${{ env.NOW }}
           REACT_APP_ROLLBAR_ENV: production
           REACT_APP_ROLLBAR_ENABLED: true
         with:
