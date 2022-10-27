@@ -73,7 +73,9 @@ function BlockPage() {
 								<TableRow>
 									<TableCell>Validator</TableCell>
 									<TableCell>
-										{block.validator}
+										<Link to={`/${network}/account/${block.validator}`}>
+											{block.validator}
+										</Link>
 										<CopyToClipboardButton value={block.validator} />
 									</TableCell>
 								</TableRow>
