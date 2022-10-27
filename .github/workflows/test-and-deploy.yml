@@ -88,6 +88,7 @@ jobs:
           path: playwright-report/
           retention-days: 14
       - name: Deploy Report to Cloudflare Pages
+        if: always()
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
         with:
