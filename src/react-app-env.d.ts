@@ -9,6 +9,8 @@ declare module "@emotion/react" {
 
 declare global {
 	declare interface Window {
-		env: {[key: string]: string};
+		env: {
+			[key: string]: string|undefined
+		};
 	}
 }

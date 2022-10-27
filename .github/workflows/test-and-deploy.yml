@@ -18,7 +18,7 @@ jobs:
       - name: Build
         env:
           REACT_APP_COMMIT_SHA: ${{ github.sha }}
-          REACT_APP_BUILD_TIME: $NOW
+          REACT_APP_BUILD_TIMESTAMP: $NOW
           REACT_APP_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
         run: npm run build
       - name: Upload build artifact
@@ -72,9 +72,12 @@ jobs:
         with:
           name: build
           path: build
+      - name: Current timestamp
+        uses: ./.github/actions/now
       - name: Generate client environment
-        uses: './.github/actions/generate-client-env'
+        uses: ./.github/actions/generate-client-env
         env:
+          REACT_APP_PUBLISH_TIMESTAMP: $NOW
           REACT_APP_ROLLBAR_ENV: development
           REACT_APP_ROLLBAR_ENABLED: true
         with:
@@ -97,6 +100,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+      - name: Current timestamp
+        uses: ./.github/actions/now
+      - name: Generate client environment
+        uses: ./.github/actions/generate-client-env
+        env:
+          REACT_APP_PUBLISH_TIMESTAMP: $NOW
+          REACT_APP_ROLLBAR_ENV: production
+          REACT_APP_ROLLBAR_ENABLED: true
+        with:
+          file: build/env.js
       - name: Deploy to Cloudflare Pages
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
