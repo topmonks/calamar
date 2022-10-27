@@ -118,36 +118,29 @@ export const CallPage: React.FC = () => {
 					)}
 				</InfoTable>
 			</Card>
-			<Card>
-				<TabbedContent>
-					{(events.loading || events.items.length > 0) &&
-							<TabPane
-								label={
-									<>
-										<span>Events ({events.pagination.totalCount?.toString() || "0"})</span>
-										{events.loading && <CircularProgress size={14} />}
-									</>
-								}
-								value="events"
-							>
-								<EventsTable
-									loading={events.loading}
-									items={events.items}
-									network={network}
-									pagination={events.pagination}
-								/>
-							</TabPane>
-					}
-					{<></>}
-				</TabbedContent>
-
-				<CardHeader>Events</CardHeader>
-				<EventsTable
-					items={events.items}
-					network={network}
-					pagination={events.pagination}
-				/>
-			</Card>
+			{(events.loading || events.items.length > 0) &&
+				<Card>
+					<TabbedContent>
+						<TabPane
+							label={
+								<>
+									<span>Events ({events.pagination.totalCount?.toString() || "0"})</span>
+									{events.loading && <CircularProgress size={14} />}
+								</>
+							}
+							value="events"
+						>
+							<EventsTable
+								loading={events.loading}
+								items={events.items}
+								network={network}
+								pagination={events.pagination}
+							/>
+						</TabPane>
+						<></>
+					</TabbedContent>
+				</Card>
+			}
 		</>
 	);
 };
