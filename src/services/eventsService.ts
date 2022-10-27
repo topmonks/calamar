@@ -38,6 +38,49 @@ export async function getEvent(network: string, id: string) {
 	return response.eventById;
 }
 
+export async function getEventsWithoutTotalCount(
+	network: string,
+	limit: number,
+	offset: number,
+	filter: EventsFilter,
+	order: EventsOrder = "id_DESC"
+) {
+	const response = await fetchGraphql(
+		network,
+		`
+			query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
+				events(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
+					id
+					name
+					block {
+						id
+						height
+						timestamp
+						spec {
+							specVersion
+						}
+					}
+					extrinsic {
+						id
+					}
+					call {
+						id
+					}
+					args
+				}
+			}
+		`,
+		{
+			limit,
+			offset,
+			filter,
+			order,
+		}
+	);
+
+	return response?.events;
+}
+
 export async function getEvents(
 	network: string,
 	first: number,
@@ -90,7 +133,6 @@ export async function getEvents(
 			order,
 		}
 	);
-	console.warn(unifyConnection(response?.eventsConnection));
 
 	return unifyConnection(response?.eventsConnection);
 }

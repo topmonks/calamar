@@ -30,10 +30,7 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 					<TabPane
 						label={
 							<>
-								{extrinsics.pagination.totalCount ?
-									<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
-									<span>Extrinsics</span>
-								}
+								<span>Extrinsics</span>
 								{extrinsics.loading && <CircularProgress size={14} />}
 							</>
 						}
@@ -51,7 +48,7 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 					<TabPane
 						label={
 							<>
-								<span>Events ({events.pagination.totalCount})</span>
+								<span>Events</span>
 								{events.loading && <CircularProgress size={14} />}
 							</>
 						}

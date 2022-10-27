@@ -12,6 +12,7 @@ import { decodeAddress } from "../utils/formatAddress";
 import { Card, CardHeader } from "./Card";
 import Spinner from "./Spinner";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { useEventsWithoutTotal } from "../hooks/useEventsWithoutTotalCount";
 
 const loadingStyle = css`
 	padding: 32px 0;
@@ -106,7 +107,7 @@ const Search = (props: SearchProps) => {
 		{ skip: !searchByName }
 	);
 
-	const eventsByName = useEvents(network, { name_eq: query }, "id_DESC", {
+	const eventsByName = useEventsWithoutTotal(network, { name_eq: query }, "id_DESC", {
 		skip: !searchByName,
 	});
 
