@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { TableBody, TableCell, TableRow } from "@mui/material";
+import { CircularProgress, TableBody, TableCell, TableRow } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
@@ -9,6 +9,7 @@ import InfoTable from "../components/InfoTable";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { encodeAddress } from "../utils/formatAddress";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
 
 type AccountPageParams = {
 	network: string;
@@ -25,6 +26,7 @@ function AccountPage() {
 		],
 	};
 
+	console.log(filter);
 	const [accountCheck, { loading }] = useExtrinsic(network, filter);
 	const extrinsics = useExtrinsics(network, filter);
 
@@ -91,16 +93,30 @@ function AccountPage() {
 					</TableBody>
 				</InfoTable>
 			</Card>
-			{extrinsics.items.length > 0 && (
+			{(accountCheck && (extrinsics.loading || extrinsics.items.length > 0)) && (
 				<Card>
-					<CardHeader>Extrinsics</CardHeader>
-					<ExtrinsicsTable
-						columns={["id", "name", "time"]}
-						items={extrinsics.items}
-						loading={extrinsics.loading}
-						network={network}
-						pagination={extrinsics.pagination}
-					/>
+					<TabbedContent>
+						<TabPane
+							label={
+								<>
+									{extrinsics.pagination.totalCount ?
+										<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
+										<span>Extrinsics</span>
+									}
+									{extrinsics.loading && <CircularProgress size={14} />}
+								</>
+							}
+							value="events"
+						>
+							<ExtrinsicsTable
+								items={extrinsics.items}
+								loading={extrinsics.loading}
+								network={network}
+								pagination={extrinsics.pagination}
+							/>
+						</TabPane>
+						<></>
+					</TabbedContent>
 				</Card>
 			)}
 		</>

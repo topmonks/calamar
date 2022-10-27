@@ -36,7 +36,10 @@ export function useExtrinsics(
 
 		let totalCount;
 
-		if (filter?.block?.id_eq) {
+		if (
+			filter?.block?.id_eq ||
+			filter?.OR?.length === 2
+		) {
 			totalCount = await getTotalCount(
 				network,
 				filter,
