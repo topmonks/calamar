@@ -13,8 +13,6 @@ jobs:
         uses: ./.github/actions/cache-node-modules
       - name: Current timestamp
         uses: ./.github/actions/now
-      - run: echo "$NOW"
-      - run: adafd
       - name: Build
         env:
           REACT_APP_COMMIT_SHA: ${{ github.sha }}
