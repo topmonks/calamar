@@ -17,8 +17,6 @@ export function useCall(
 		}
 
 		const call = await getCall(network, filter);
-		console.log("XX");
-		console.log(call);
 		setLoading(false);
 		setCall(call);
 	}, [network, JSON.stringify(filter), options?.skip]);

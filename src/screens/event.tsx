@@ -17,7 +17,7 @@ export const EventPage: React.FC = () => {
 	const { network, id } = useParams() as EventPageParams;
 
 	const [event, { loading }] = useEvent(network, id);
-	console.log(event);
+	
 	return (<>
 		<Card>
 			<CardHeader style={{ paddingBottom: 48 }}>

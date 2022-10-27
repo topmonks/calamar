@@ -56,10 +56,6 @@ export function usePagination(limit = 10, hasNext = false) {
 
 	const setTotalCount = useCallback(
 		(totalCount: number) => {
-			console.warn("total count");
-			console.warn(totalCount);
-
-			console.log(pagination);
 			setPaginationState({
 				...pagination,
 				totalCount: totalCount,
