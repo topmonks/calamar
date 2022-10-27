@@ -2,8 +2,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { css } from "@emotion/react";
-
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useEvents } from "../hooks/useEvents";
 import { getBlock } from "../services/blocksService";
 import { getExtrinsic } from "../services/extrinsicsService";
@@ -13,6 +11,7 @@ import { decodeAddress } from "../utils/formatAddress";
 
 import { Card, CardHeader } from "./Card";
 import Spinner from "./Spinner";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 
 const loadingStyle = css`
 	padding: 32px 0;
@@ -96,7 +95,7 @@ const Search = (props: SearchProps) => {
 		[network]
 	);
 
-	const extrinsicsByName = useExtrinsics(
+	const extrinsicsByName = useExtrinsicsWithoutTotalCount(
 		network,
 		{
 			call: {

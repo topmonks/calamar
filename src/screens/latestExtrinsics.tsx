@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
 import { Card, CardHeader } from "../components/Card";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 
 type LatestExtrinsicsPageParams = {
 	network: string;
@@ -12,7 +12,7 @@ type LatestExtrinsicsPageParams = {
 
 function LatestExtrinsicsPage() {
 	const { network } = useParams() as LatestExtrinsicsPageParams;
-	const extrinsics = useExtrinsics(network, undefined, "id_DESC");
+	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {

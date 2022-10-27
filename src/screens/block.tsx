@@ -8,12 +8,12 @@ import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
 import { Link } from "../components/Link";
 import { useBlock } from "../hooks/useBlock";
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 
 type BlockPageParams = {
 	network: string;

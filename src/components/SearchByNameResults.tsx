@@ -2,18 +2,18 @@
 import { CircularProgress } from "@mui/material";
 
 import { useEvents } from "../hooks/useEvents";
-import { useExtrinsics } from "../hooks/useExtrinsics";
 
 import EventsTable from "./events/EventsTable";
 import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
 
 import { Card, CardHeader } from "./Card";
 import { TabbedContent, TabPane } from "./TabbedContent";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 
 type SearchByNameResultsProps = {
 	network: string;
 	name: string;
-	extrinsics: ReturnType<typeof useExtrinsics>;
+	extrinsics: ReturnType<typeof useExtrinsicsWithoutTotalCount>;
 	events: ReturnType<typeof useEvents>;
 };
 

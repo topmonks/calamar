@@ -7,9 +7,9 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
 import { useExtrinsic } from "../hooks/useExtrinsic";
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import { encodeAddress } from "../utils/formatAddress";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 
 type AccountPageParams = {
 	network: string;

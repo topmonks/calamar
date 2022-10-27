@@ -1,4 +1,5 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { unifyConnection } from "../utils/unifyConnection";
 
 export type CallsFilter = any;
 export type CallsOrder = string | string[];
@@ -94,7 +95,5 @@ export async function getCalls(
 		}
 	);
 
-	return response?.callsConnection;
+	return unifyConnection(response?.callsConnection);
 }
-
-

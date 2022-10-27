@@ -5,7 +5,6 @@ import {
 	ExtrinsicsFilter,
 	ExtrinsicsOrder,
 	getExtrinsics,
-	getTotalCount,
 } from "../services/extrinsicsService";
 
 import { usePagination } from "./usePagination";
@@ -33,30 +32,17 @@ export function useExtrinsics(
 			filter,
 			order
 		);
-
-		let totalCount;
-
-		if (
-			filter?.block?.id_eq ||
-			filter?.OR?.length === 2
-		) {
-			totalCount = await getTotalCount(
-				network,
-				filter,
-				order
-			);
-		}
+		
 		setLoading(false);
 
-		setItems(extrinsics.edges);
-		if (totalCount) pagination.setPagination(
+		setItems(extrinsics.items);
+		pagination.setPagination(
 			{
 				...pagination,
-				hasNext: pagination.offset + pagination.limit < totalCount,
-				totalCount: totalCount,
+				hasNext: extrinsics.pageInfo.hasNextPage,
+				totalCount: extrinsics.totalCount,
 			}
 		);
-		else pagination.setHasNext(true);
 	}, [
 		network,
 		JSON.stringify(filter),

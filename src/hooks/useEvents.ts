@@ -34,13 +34,12 @@ export function useEvents(
 		);
 
 		setLoading(false);
-		setItems(events.edges);
-		console.warn(events.totalCount);
+		setItems(events.items);
 
 		pagination.setPagination(
 			{
 				...pagination,
-				hasNext: pagination.offset + pagination.limit < events.totalCount,
+				hasNext: events.pageInfo.hasNextPage,
 				totalCount: events.totalCount,
 			}
 		);

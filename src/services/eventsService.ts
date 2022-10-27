@@ -1,4 +1,5 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { unifyConnection } from "../utils/unifyConnection";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
@@ -89,6 +90,7 @@ export async function getEvents(
 			order,
 		}
 	);
+	console.warn(unifyConnection(response?.eventsConnection));
 
-	return response?.eventsConnection;
+	return unifyConnection(response?.eventsConnection);
 }

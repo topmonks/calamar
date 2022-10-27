@@ -1,26 +1,68 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { unifyConnection } from "../utils/unifyConnection";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
 
 const unifyExtrinsics = (extrinsics: any) => {
-	return (
-		extrinsics &&
-		extrinsics.edges.map((item: any) => {
-			const extrinsic = item.node;
+	return {
+		...extrinsics,
+		items: extrinsics.items.map((extrinsic: any) => {
 			const address = extrinsic.signature?.address;
 			if (typeof address === "object" && address.value) {
-				item.node.signature.address = address.value;
+				extrinsic.signature.address = address.value;
 			}
-			return item;
+			return extrinsic;
 		})
-	);
+	};
 };
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
-	const extrinsics = await getExtrinsics(network, 1, 0, filter);
-	if (extrinsics?.edges.length > 0) return extrinsics.edges?.[0].node;
-	return undefined;
+	const extrinsics = await getExtrinsicsWithoutTotalCount(network, 1, 0, filter);
+	return extrinsics?.items?.[0];
+}
+
+export async function getExtrinsicsWithoutTotalCount(
+	network: string,
+	limit: number,
+	offset: number,
+	filter?: ExtrinsicsFilter,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+	const response = await fetchGraphql(
+		network,
+		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
+			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
+				id
+				hash
+				call {
+					name
+					args
+				}
+				block {
+					id
+					hash
+					timestamp
+				}
+				signature
+				indexInBlock
+				success
+				tip
+				fee
+				error
+				version
+			}
+		}`,
+		{
+			limit,
+			offset,
+			filter,
+			order,
+		}
+	);
+
+	console.log(unifyExtrinsics({ items: response?.extrinsics }));
+	return unifyExtrinsics({ items: response?.extrinsics });
 }
 
 export async function getExtrinsics(
@@ -31,8 +73,6 @@ export async function getExtrinsics(
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
 	const after = offset === 0 ? null : offset.toString();
-
-	console.warn(filter);
 
 	const response = await fetchGraphql(
 		network,
@@ -66,6 +106,7 @@ export async function getExtrinsics(
 					hasPreviousPage
 					startCursor
 				  }
+				  totalCount
 				}
 		}`,
 		{
@@ -76,33 +117,6 @@ export async function getExtrinsics(
 		}
 	);
 
-	return {
-		...response.extrinsicsConnection,
-		edges: unifyExtrinsics(response?.extrinsicsConnection),
-	};
+	return unifyExtrinsics(unifyConnection(response?.extrinsicsConnection));
 }
-
-export async function getTotalCount(
-	network: string,
-	filter?: ExtrinsicsFilter,
-	order: ExtrinsicsOrder = "id_DESC"
-) {
-
-	const response = await fetchGraphql(
-		network,
-		`query ($filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
-			extrinsicsConnection(orderBy: $order, where: $filter) {
-				totalCount
-			}
-		}`,
-		{
-			filter,
-			order,
-		}
-	);
-
-	if (response?.extrinsicsConnection) return response.extrinsicsConnection?.totalCount;
-	return undefined;
-}
-
 
