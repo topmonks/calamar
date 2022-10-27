@@ -19,7 +19,8 @@ const unifyExtrinsics = (extrinsics: any) => {
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	const extrinsics = await getExtrinsics(network, 1, 0, filter);
-	return extrinsics.edges?.[0].node;
+	if (extrinsics?.edges.length > 0) return extrinsics.edges?.[0].node;
+	return undefined;
 }
 
 export async function getExtrinsics(
@@ -30,6 +31,8 @@ export async function getExtrinsics(
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
 	const after = offset === 0 ? null : offset.toString();
+
+	console.warn(filter);
 
 	const response = await fetchGraphql(
 		network,
@@ -78,3 +81,28 @@ export async function getExtrinsics(
 		edges: unifyExtrinsics(response?.extrinsicsConnection),
 	};
 }
+
+export async function getTotalCount(
+	network: string,
+	filter?: ExtrinsicsFilter,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+
+	const response = await fetchGraphql(
+		network,
+		`query ($filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
+			extrinsicsConnection(orderBy: $order, where: $filter) {
+				totalCount
+			}
+		}`,
+		{
+			filter,
+			order,
+		}
+	);
+
+	if (response?.extrinsicsConnection) return response.extrinsicsConnection?.totalCount;
+	return undefined;
+}
+
+

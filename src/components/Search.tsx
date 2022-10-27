@@ -46,13 +46,20 @@ const Search = (props: SearchProps) => {
 
 			// if the query is encoded account address, decode it
 			const decodedAddress = decodeAddress(query);
+
+			console.log(decodedAddress);
+			console.log(query);
 			if (decodedAddress) {
 				query = decodedAddress;
 			}
 
 			if (query.startsWith("0x")) {
-				const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
+				
 
+				const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
+				console.log("TRUEE");
+
+				console.log(extrinsicByHash);
 				if (extrinsicByHash) {
 					return `/${network}/extrinsic/${extrinsicByHash.id}`;
 				}
