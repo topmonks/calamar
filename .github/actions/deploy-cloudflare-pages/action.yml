@@ -29,12 +29,11 @@ runs:
       id: pages
       shell: bash
       run: |
-        echo ${{ inputs.branch }}
-        #npx wrangler pages publish "${{ inputs.path }}" --project-name="${{ inputs.project }}" --branch="${{ inputs.branch }}"
-        #URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/calamar/deployments' \
-          #--header 'Authorization: Bearer ${{ inputs.apiToken }}' \
-          #| jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
-        #echo "url=${URL}" >> $GITHUB_OUTPUT
+        npx wrangler pages publish "${{ inputs.path }}" --project-name="${{ inputs.project }}" --branch="${{ inputs.branch }}"
+        URL=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/calamar/deployments' \
+          --header 'Authorization: Bearer ${{ inputs.apiToken }}' \
+          | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ github.ref_name }}") ] | .[0].url')
+        echo "url=${URL}" >> $GITHUB_OUTPUT
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.apiToken }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.accountId }}
