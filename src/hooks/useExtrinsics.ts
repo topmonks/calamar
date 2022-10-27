@@ -36,9 +36,7 @@ export function useExtrinsics(
 
 		let totalCount;
 
-		if (filter.block?.id_eq) {
-			console.log(filter.block.id_eq);
-
+		if (filter?.block?.id_eq) {
 			totalCount = await getTotalCount(
 				network,
 				filter,
