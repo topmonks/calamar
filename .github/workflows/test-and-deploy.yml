@@ -55,6 +55,46 @@ jobs:
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
         run: npx argos upload test/cypress/screenshots
+  playwright:
+    name: Playwright Test
+    needs: build
+    environment:
+      name: test-report
+      url: ${{ steps.pages.outputs.url }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache node modules
+        uses: ./.github/actions/cache-node-modules
+        with:
+          install: false
+      - name: Download build artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Start app
+        run: npm run start:test
+      - name: Run Playwright
+        run: npx playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+      - name: Deploy Report to Cloudflare Pages
+        id: pages
+        uses: ./.github/actions/deploy-cloudflare-pages
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          project: calamar-test-reports
+          path: playwright-report
   preview:
     name: Deploy / Preview
     needs: test
@@ -86,6 +126,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          project: calamar
           path: build
   deploy:
     name: Deploy / Production
@@ -119,4 +160,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          project: calamar
           path: build

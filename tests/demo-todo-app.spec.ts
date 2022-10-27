@@ -168,7 +168,7 @@ test.describe("Item", () => {
 		const secondTodo = todoItems.nth(1);
 		await secondTodo.dblclick();
 		await expect(secondTodo.locator(".edit")).toHaveValue(TODO_ITEMS[1]);
-		await secondTodo.locator(".edit").fill("buy some sausages");
+		await secondTodo.locator(".edit").fill("buy some sausage!");
 		await secondTodo.locator(".edit").press("Enter");
 
 		// Explicitly assert the new text value.
@@ -248,7 +248,7 @@ test.describe("Counter", () => {
 	test("should display the current number of todo items", async ({ page }) => {
 		await page.locator(".new-todo").fill(TODO_ITEMS[0]);
 		await page.locator(".new-todo").press("Enter");
-		await expect(page.locator(".todo-count")).toContainText("1");
+		await expect(page.locator(".todo-count")).toContainText("10");
 
 		await page.locator(".new-todo").fill(TODO_ITEMS[1]);
 		await page.locator(".new-todo").press("Enter");
