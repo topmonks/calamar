@@ -36,14 +36,15 @@ export function useExtrinsics(
 
 		let totalCount;
 
-		// may come in handy later when the totalCount will work for extrinsics
-		/*if (filter) {
+		if (filter.block?.id_eq) {
+			console.log(filter.block.id_eq);
+
 			totalCount = await getTotalCount(
 				network,
 				filter,
 				order
 			);
-		}*/
+		}
 		setLoading(false);
 
 		setItems(extrinsics.edges);

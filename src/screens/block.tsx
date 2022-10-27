@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+import { CircularProgress, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
@@ -13,6 +13,7 @@ import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
 
 type BlockPageParams = {
 	network: string;
@@ -99,15 +100,30 @@ function BlockPage() {
 					)}
 				</InfoTable>
 			</Card>
-			{block && (
+			{(block && (extrinsics.loading || extrinsics.items.length > 0)) && (
 				<Card>
-					<CardHeader>Extrinsics</CardHeader>
-					<ExtrinsicsTable
-						items={extrinsics.items}
-						loading={extrinsics.loading}
-						network={network}
-						pagination={extrinsics.pagination}
-					/>
+					<TabbedContent>
+						<TabPane
+							label={
+								<>
+									{extrinsics.pagination.totalCount ?
+										<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
+										<span>Extrinsics</span>
+									}
+									{extrinsics.loading && <CircularProgress size={14} />}
+								</>
+							}
+							value="events"
+						>
+							<ExtrinsicsTable
+								items={extrinsics.items}
+								loading={extrinsics.loading}
+								network={network}
+								pagination={extrinsics.pagination}
+							/>
+						</TabPane>
+						<></>
+					</TabbedContent>
 				</Card>
 			)}
 		</>
