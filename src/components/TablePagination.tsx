@@ -48,8 +48,6 @@ export function TablePagination(props: TablePaginationProps) {
 		setNextPage,
 	} = props;
 
-	console.log("HN", hasNext);
-
 	if (hideOnSinglePage && offset === 0 && !hasNext) {
 		return null;
 	}

@@ -1,3 +1,11 @@
+# This workflow is used to check if the branch is up-to-date with master branch.
+#
+# The reason why this is used instead of protecting master branch and require
+# other branches to be up to date before merging by setting in github settings,
+# is because this setting also requires at least one status check which prevents
+# direct pushes to the master branch so every push needs to be done to a separate
+# branch first which is very inconvenient.
+
 name: Up to date
 
 on:

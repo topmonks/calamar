@@ -14,18 +14,19 @@ import SearchInput from "./SearchInput";
 import { Link } from "./Link";
 
 const backgroundStyle = css`
-	width: 100vw;
+	position: fixed;
+	bottom: 0;
+	margin: 0;
+	width: 100%;
 	height: 100vh;
 	background-position: center bottom;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-image: url(${Background});
-	margin: 0;
-	position: fixed;
 `;
 
 const topBarStyle = css`
-	position: fixed;
+	position: sticky;
 	top: 0;
 	padding: 16px;
 	width: 100%;
@@ -58,10 +59,30 @@ const topBarRowStyle = css`
 	flex: 1 1 auto;
 `;
 
+const contentStyle = css`
+	position: relative;
+	padding: 0 16px;
+	padding-top: 40px;
+	padding-bottom: 20px;
+	width: 100%;
+	box-sizing: border-box;
+
+	@media (min-width: 900px) {
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+`;
+
+const contentInnerStyle = css`
+	max-width: 1500px;
+	margin: auto;
+`;
+
 const logoStyle = css`
 	margin-right: auto;
 
 	> svg {
+		display: block;
 		width: 160px;
 	}
 
@@ -108,23 +129,6 @@ const searchInputStyle = () => css`
 	}
 `;
 
-const contentStyle = css`
-	position: absolute;
-	top: 170px;
-	padding: 0 16px;
-	width: 100%;
-	box-sizing: border-box;
-
-	@media (min-width: 900px) {
-		padding: 0 32px;
-	}
-`;
-
-const contentInnerStyle = css`
-	max-width: 1500px;
-	margin: auto
-`;
-
 type ResultLayoutParams = {
 	network: string;
 };
@@ -143,12 +147,10 @@ function ResultLayout() {
 		setNetwork(networkParam);
 	}, [networkParam]);
 
-	console.log("NNN", network);
-
 	return (
 		<>
-			<div css={backgroundStyle} />
-			<div css={topBarStyle}>
+			<div css={backgroundStyle} data-test="background" />
+			<div css={topBarStyle} data-test="top-bar">
 				<div css={topBarContentStyle}>
 					<div css={topBarRowStyle}>
 						<Link css={logoStyle} to="/">

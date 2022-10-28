@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { PropsWithChildren } from "react";
+import { HTMLAttributes, PropsWithChildren } from "react";
 import { Table, TableContainer } from "@mui/material";
 import { css } from "@emotion/react";
 
@@ -26,7 +26,7 @@ const tableStyle = css`
 	}
 `;
 
-export type ItemsTableProps = PropsWithChildren<{
+export type ItemsTableProps = PropsWithChildren<HTMLAttributes<HTMLDivElement> & {
 	pagination: Pagination;
 	loading?: boolean;
 	items?: any[];
@@ -40,6 +40,7 @@ function ItemsTable(props: ItemsTableProps) {
 		loading,
 		items,
 		noItemsMessage = "No items found",
+		...restProps
 	} = props;
 
 	if (loading) {
@@ -51,12 +52,12 @@ function ItemsTable(props: ItemsTableProps) {
 	}
 
 	return (
-		<>
+		<div {...restProps}>
 			<TableContainer>
 				<Table css={tableStyle}>{children}</Table>
 			</TableContainer>
 			<TablePagination {...pagination} />
-		</>
+		</div>
 	);
 }
 
