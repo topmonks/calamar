@@ -1,4 +1,4 @@
-name: Cache dependencies
+name: Install dependencies
 
 inputs:
   install:
@@ -16,12 +16,8 @@ runs:
         cache-name: cache-dependencies
       with:
         path: |
-          ~/.cache/ms-playwright
           node_modules
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.cache-name }}-
-          ${{ runner.os }}-
     - name: Install dependencies
       if: steps.cache-dependencies.outputs.cache-hit != 'true' && inputs.install == 'true'
       shell: bash
