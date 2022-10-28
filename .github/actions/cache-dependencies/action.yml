@@ -1,0 +1,28 @@
+name: Cache dependencies
+
+inputs:
+  install:
+    type: boolean
+    required: false
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Cache dependencies
+      id: cache-dependencies
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-dependencies
+      with:
+        path: |
+          ~/.cache/ms-playwright
+          node_modules
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.cache-name }}-
+          ${{ runner.os }}-
+    - name: Install dependencies
+      if: steps.cache-dependencies.outputs.cache-hit != 'true' && inputs.install == 'true'
+      shell: bash
+      run: npm ci

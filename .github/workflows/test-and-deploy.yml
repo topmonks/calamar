@@ -9,8 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cache node modules
-        uses: ./.github/actions/cache-node-modules
+      - name: Cache dependencies
+        uses: ./.github/actions/cache-dependencies
       - name: Current timestamp
         uses: ./.github/actions/now
       - name: Build
@@ -35,8 +35,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cache node modules
-        uses: ./.github/actions/cache-node-modules
+      - name: Cache dependencies
+        uses: ./.github/actions/cache-dependencies
         with:
           install: false
       - name: Download build artifact
