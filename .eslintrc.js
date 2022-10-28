@@ -8,8 +8,7 @@ module.exports = {
 		"eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:react/jsx-runtime",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:cypress/recommended"
+		"plugin:@typescript-eslint/recommended"
 
 	],
 	"overrides": [
