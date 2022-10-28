@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
 
-import { EventsFilter, getEvent } from "../services/eventsService";
+import { getEvent } from "../services/eventsService";
 
 export function useEvent(
 	network: string | undefined,
-	filter: EventsFilter,
+	id: string,
 	options?: FetchOptions
 ) {
 	const [event, setEvent] = useState<any>(null);
@@ -16,10 +16,10 @@ export function useEvent(
 			return;
 		}
 
-		const extrinsic = await getEvent(network, filter);
+		const event = await getEvent(network, { id_eq: id });
 		setLoading(false);
-		setEvent(extrinsic);
-	}, [network, JSON.stringify(filter), options?.skip]);
+		setEvent(event);
+	}, [network, id, options?.skip]);
 
 	useEffect(() => {
 		setLoading(true);

@@ -10,13 +10,10 @@ import NotFoundPage from "./screens/notFound";
 import SearchPage from "./screens/search";
 import LatestExtrinsicsPage from "./screens/latestExtrinsics";
 import ResultLayout from "./components/ResultLayout";
-
+import { CallPage } from "./screens/call";
+import { EventPage } from "./screens/event";
 import { theme } from "./theme";
 import { rollbarConfig } from "./rollbar";
-
-console.log("NODE_ENV", process.env.NODE_ENV);
-console.log("CF ENV", process.env.CF_PAGES_COMMIT_SHA);
-console.log("ENV", process.env);
 
 function App() {
 	return (
@@ -35,7 +32,9 @@ function App() {
 							<Route element={<ExtrinsicPage />} path="extrinsic/:id" />
 							<Route element={<SearchPage />} path="search" />
 							<Route element={<BlockPage />} path="block/:id" />
+							<Route element={<CallPage />} path="call/:id" />
 							<Route element={<AccountPage />} path="account/:address" />
+							<Route element={<EventPage />} path="event/:id" />
 							<Route
 								element={<LatestExtrinsicsPage />}
 								path="latest-extrinsics"
