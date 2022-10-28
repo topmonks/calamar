@@ -5,7 +5,7 @@ export type EventsOrder = string | string[];
 
 export async function getEvent(network: string, filter: EventsFilter) {
 	const events = await getEvents(network, 1, 0, filter);
-	return events?.[0];
+	return events[0];
 }
 
 export async function getEvents(
@@ -22,12 +22,21 @@ export async function getEvents(
 				events(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
 					id
 					name
-					args
-					pos
-					indexInBlock
-					extrinsic {
-						hash
+					block {
+						id
+						height
+						timestamp
+						spec {
+							specVersion
+						}
 					}
+					extrinsic {
+						id
+					}
+					call {
+						id
+					}
+					args
 				}
 			}
 		`,
