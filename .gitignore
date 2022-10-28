@@ -24,6 +24,7 @@ yarn-error.log*
 
 .idea
 
-/test/cypress/downloads
-/test/cypress/screenshots
-/test/cypress/videos
+/test/results/
+/test/report/
+/test/screenshots/
+/playwright/.cache/

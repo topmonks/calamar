@@ -12,7 +12,9 @@ import ResultLayout from "./components/ResultLayout";
 
 import { theme } from "./theme";
 
-console.log(theme);
+console.log("NODE_ENV", process.env.NODE_ENV);
+console.log("CF ENV", process.env.CF_PAGES_COMMIT_SHA);
+console.log("ENV", process.env);
 
 function App() {
 	return (

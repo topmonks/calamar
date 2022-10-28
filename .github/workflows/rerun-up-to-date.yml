@@ -1,3 +1,7 @@
+# Re-run up-to-date checks (up-to-date.yml) all on opened PRs
+# because it won't re-run automaticaly when the master branch
+# has changed so it the check will be incorrect.
+
 name: Up to date
 
 on:

@@ -147,8 +147,6 @@ function ResultLayout() {
 		setNetwork(networkParam);
 	}, [networkParam]);
 
-	console.log("NNN", network);
-
 	return (
 		<>
 			<div css={backgroundStyle} data-test="background" />
