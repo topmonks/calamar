@@ -9,7 +9,7 @@ import {
 
 import { usePagination } from "./usePagination";
 
-export function useEventsWithoutTotal(
+export function useEventsWithoutTotalCount(
 	network: string | undefined,
 	filter: EventsFilter,
 	order?: EventsOrder,

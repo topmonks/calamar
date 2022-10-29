@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { css } from "@emotion/react";
-import { useEvents } from "../hooks/useEvents";
 import { getBlock } from "../services/blocksService";
 import { getExtrinsic } from "../services/extrinsicsService";
 
@@ -12,7 +11,7 @@ import { decodeAddress } from "../utils/formatAddress";
 import { Card, CardHeader } from "./Card";
 import Spinner from "./Spinner";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
-import { useEventsWithoutTotal } from "../hooks/useEventsWithoutTotalCount";
+import { useEventsWithoutTotalCount } from "../hooks/useEventsWithoutTotalCount";
 
 const loadingStyle = css`
 	padding: 32px 0;
@@ -107,7 +106,7 @@ const Search = (props: SearchProps) => {
 		{ skip: !searchByName }
 	);
 
-	const eventsByName = useEventsWithoutTotal(network, { name_eq: query }, "id_DESC", {
+	const eventsByName = useEventsWithoutTotalCount(network, { name_eq: query }, "id_DESC", {
 		skip: !searchByName,
 	});
 
