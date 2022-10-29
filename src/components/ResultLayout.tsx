@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useMemo, useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import Background from "../assets/detail-page-bgr.svg";
@@ -133,7 +133,8 @@ function ResultLayout() {
 	const { network: networkParam } = useParams() as ResultLayoutParams;
 
 	const [network, setNetwork] = useState<string | undefined>(networkParam);
-
+	const navigate = useNavigate();
+	
 	const networkIsValid = useMemo(
 		() => Boolean(getArchive(networkParam)),
 		[networkParam]
@@ -144,6 +145,15 @@ function ResultLayout() {
 	}, [networkParam]);
 
 	console.log("NNN", network);
+
+	useEffect(() => {
+		if (location.pathname.length > 1) {
+			const previousPathname = location.pathname.substring(location.pathname.substring(1).indexOf("/") + 1);
+			if (previousPathname !== "/search") { // this solves a weird bug, where without this, you would not be able to search on the main dashboard
+				navigate(`/${network}${previousPathname}`);
+			}  
+		}
+	}, [network]);
 
 	return (
 		<>
