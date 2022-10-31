@@ -13,6 +13,7 @@ export function decodeAddress(address: string) {
 		return "0x" + arrayBufferToHex(decodedAccountAddressArray);
 	} catch (e) {
 		console.log(e);
+		throw e; // TODO remove
 	}
 }
 
