@@ -30,10 +30,7 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 		[onChange]
 	);
 
-	console.log(archives);
-
 	const items = useMemo(() => {
-		console.log("N", networks);
 		return archives.map((archive) => {
 			const network = networks.find((network) => network.name === archive.network);
 

@@ -31,7 +31,6 @@ export type EventParamsTableProps = {
 function ParamsTable(props: EventParamsTableProps) {
 	const { args } = props;
 
-	console.log(args);
 	const argsArray: any[] = useMemo(
 		() => (Array.isArray(args) ? args : [args]),
 		[args]

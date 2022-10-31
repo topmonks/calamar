@@ -22,7 +22,7 @@ To start the application locally, run the command
 $ npm start
 ```
 
-The application will start in development mode and will automatically open in the browser windows on the url [https://localhost:3000](https://localhost:3000).
+The application will start in development mode and will be availble on the url [https://localhost:3000](https://localhost:3000).
 
 ## Build & deploy
 

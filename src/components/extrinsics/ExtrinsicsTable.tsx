@@ -43,6 +43,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			loading={loading}
 			noItemsMessage="No extrinsics found"
 			pagination={pagination}
+			data-test="extrinsics-table"
 		>
 			<TableHead>
 				<TableRow>
