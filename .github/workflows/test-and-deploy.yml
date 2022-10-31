@@ -94,6 +94,13 @@ jobs:
           REACT_APP_ROLLBAR_ENABLED: true
         with:
           file: build/env.js
+      - name: Deploy to Rollbar
+        uses: rollbar/github-deploy-action@2
+        with:
+          environment: production
+          version: ${{ github.sha }}
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
       - name: Deploy to Cloudflare Pages
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
