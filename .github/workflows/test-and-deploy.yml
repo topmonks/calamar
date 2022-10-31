@@ -105,13 +105,15 @@ jobs:
       - name: Collect sourcemaps
         id: collect_sourcemaps
         env:
-          URLS: ${{ steps.pages.output.url }}
+          URLS: ${{ steps.pages.output.url }} ${{ steps.pages.output.aliases }}
         run: |
           cd build; \
-          for url in URLS; do \
+          for url in $URLS; do \
             for file in $(find . -name "*.js" -printf "%P "); do \
-              MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
-              SOURCE_MAPS="${SOURCE_MAPS} build/$file.map"; \
+              if -f $file.map; then \
+                MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
+                SOURCE_MAPS="${SOURCE_MAPS} build/$file.map"; \
+              fi; \
             done; \
           done; \
           echo "${MINIFIED_URLS}"; \
