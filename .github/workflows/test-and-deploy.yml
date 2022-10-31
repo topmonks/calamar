@@ -105,7 +105,7 @@ jobs:
       - name: Collect sourcemaps
         id: collect_sourcemaps
         env:
-          URLS: ${{ steps.pages.output.url }} ${{ steps.pages.output.aliases }}
+          URLS: ${{ steps.pages.outputs.url }} ${{ steps.pages.outputs.aliases }}
         run: |
           cd build; \
           for url in $URLS; do \
@@ -125,8 +125,8 @@ jobs:
         with:
           environment: development
           version: ${{ github.sha }}
-          source_maps: ${{ steps.collect_sourcemaps.output.source_maps }}
-          minified_urls: ${{ steps.collect_sourcemaps.output.minified_urls }}
+          source_maps: ${{ steps.collect_sourcemaps.outputs.source_maps }}
+          minified_urls: ${{ steps.collect_sourcemaps.outputs.minified_urls }}
         env:
           ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
   deploy:
