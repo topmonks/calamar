@@ -111,13 +111,13 @@ jobs:
           for url in URLS; do \
             for file in $(find . -name "*.js" -printf "%P "); do \
               MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
-              SOURCE_MAPS="${SOURCE_MAPS} build/$file.map" \
+              SOURCE_MAPS="${SOURCE_MAPS} build/$file.map"; \
             done; \
           done; \
-          echo "${MINIFIED_URLS}" \
-          echo "${SOURCE_MAPS}" \
-          echo "minified_urls=${MINIFIED_URLS}" >> $GITHUB_OUTPUT \
-          echo "source_maps=${SOURCE_MAPS}" >> $GITHUB_OUTPUT
+          echo "${MINIFIED_URLS}"; \
+          echo "${SOURCE_MAPS}"; \
+          echo "minified_urls=${MINIFIED_URLS}" >> $GITHUB_OUTPUT; \
+          echo "source_maps=${SOURCE_MAPS}" >> $GITHUB_OUTPUT;
       - name: Deploy to Rollbar
         uses: rollbar/github-deploy-action@2.1.1
         with:
