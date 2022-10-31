@@ -110,7 +110,7 @@ jobs:
           cd build; \
           for url in $URLS; do \
             for file in $(find . -name "*.js" -printf "%P "); do \
-              if -f $file.map; then \
+              if [ -f "$file.map" ]; then \
                 MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
                 SOURCE_MAPS="${SOURCE_MAPS} build/$file.map"; \
               fi; \
