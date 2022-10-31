@@ -74,8 +74,8 @@ const logoStyle = css`
 
 const networkSelectStyle = (theme: Theme) => css`
 	& .MuiInputBase-input {
-		color: gray;
-		background-color: ##d1d1d1;
+		color: white;
+		background-color: #61dafb;
 		font-size: 16px;
 		font-weight: 600;
 	}
