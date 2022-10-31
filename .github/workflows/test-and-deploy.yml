@@ -94,13 +94,6 @@ jobs:
           REACT_APP_ROLLBAR_ENABLED: true
         with:
           file: build/env.js
-      - name: Deploy to Rollbar
-        uses: rollbar/github-deploy-action@2.1.1
-        with:
-          environment: development
-          version: ${{ github.sha }}
-        env:
-          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
       - name: Deploy to Cloudflare Pages
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
@@ -109,6 +102,31 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar
           path: build
+      - name: Collect sourcemaps
+        id: collect_sourcemaps
+        env:
+          URLS: ${{ steps.pages.output.url }}
+        run: |
+          cd build;
+          for url in URLS; do \
+            for file in $(find . -name "*.js" -printf "%P "); do \
+              MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
+              SOURCE_MAPS="${SOURCE_MAPS} build/$file.map" \
+            done; \
+          done; \
+          echo "${MINIFIED_URLS}" \
+          echo "${SOURCE_MAPS}" \
+          echo "minified_urls=${MINIFIED_URLS}" >> $GITHUB_OUTPUT \
+          echo "source_maps=${SOURCE_MAPS}" >> $GITHUB_OUTPUT
+      - name: Deploy to Rollbar
+        uses: rollbar/github-deploy-action@2.1.1
+        with:
+          environment: development
+          version: ${{ github.sha }}
+          source_maps: ${{ steps.collect_sourcemaps.output.source_maps }}
+          minified_urls: ${{ steps.collect_sourcemaps.output.minified_urls }}
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
   deploy:
     name: Deploy / Production
     needs: test
