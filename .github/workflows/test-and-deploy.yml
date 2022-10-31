@@ -107,7 +107,7 @@ jobs:
         env:
           URLS: ${{ steps.pages.output.url }}
         run: |
-          cd build;
+          cd build; \
           for url in URLS; do \
             for file in $(find . -name "*.js" -printf "%P "); do \
               MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
