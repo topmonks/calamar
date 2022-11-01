@@ -91,7 +91,7 @@ jobs:
         env:
           REACT_APP_PUBLISH_TIMESTAMP: ${{ env.NOW }}
           REACT_APP_ROLLBAR_ENV: development
-          REACT_APP_ROLLBAR_ENABLED: true # ${{ github.ref_name == 'master' && 'true' || 'false' }}
+          REACT_APP_ROLLBAR_ENABLED: ${{ github.ref_name == 'master' && 'true' || 'false' }}
         with:
           file: build/env.js
       - name: Deploy to Cloudflare Pages
@@ -104,7 +104,7 @@ jobs:
           branch: ${{ github.ref_name }}
           path: build
       - name: Deploy to Rollbar
-        # if: github.ref_name == 'master'
+        if: github.ref_name == 'master'
         uses: ./.github/actions/deploy-rollbar
         with:
           accessToken: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
