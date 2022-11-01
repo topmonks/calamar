@@ -36,15 +36,16 @@ runs:
           JSON=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/${{ inputs.project }}/deployments' \
             --header 'Authorization: Bearer ${{ inputs.apiToken }}' | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ inputs.branch }}") ] | .[0]')
           echo $JSON
-          echo $JSON | jq -r '.latest_stage'
-          if [ "$(echo $JSON | jq -r '.latest_stage.name')" != "deploy" ] || [ "$(echo $JSON | jq -r '.latest_stage.status')" != "success" ]; then
-            sleep 1
+          STAGE_NAME=$(echo $JSON | jq -r '.latest_stage.name')
+          STAGE_STATUS=$(echo $JSON | jq -r '.latest_stage.status')
+          echo stage: $STAGE_NAME ($STAGE_STATUS)
+          if [ "$STAGE_NAME" != "deploy" ] || [ "STAGE_STATUS" != "success" ]; then
             continue
           fi
           URL=$(echo "$JSON" | jq -r '.url')
-          echo $URL
+          echo url: $URL
           ALIASES=$(echo "$JSON" | jq -r '.aliases[]')
-          echo $ALIASES
+          echo aliases: $ALIASES
           break
         done
         echo "url=${URL}" >> $GITHUB_OUTPUT
