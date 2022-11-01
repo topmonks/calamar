@@ -16,6 +16,7 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useEvents } from "../hooks/useEvents";
 import EventsTable from "../components/events/EventsTable";
+import { useCalls } from "../hooks/useCalls";
 
 type BlockPageParams = {
 	network: string;
@@ -34,6 +35,12 @@ function BlockPage() {
 	);
 
 	const events = useEvents(
+		network,
+		{ block: { id_eq: id } },
+		"id_DESC"
+	);
+
+	const calls = useCalls(
 		network,
 		{ block: { id_eq: id } },
 		"id_DESC"
@@ -117,10 +124,7 @@ function BlockPage() {
 						<TabPane
 							label={
 								<>
-									{extrinsics.pagination.totalCount ?
-										<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
-										<span>Extrinsics</span>
-									}
+									<span>Extrinsics ({extrinsics.pagination.totalCount})</span>
 									{extrinsics.loading && <CircularProgress size={14} />}
 								</>
 							}
@@ -136,8 +140,24 @@ function BlockPage() {
 						<TabPane
 							label={
 								<>
+									<span>Calls ({calls.pagination.totalCount})</span>
+									{calls.loading && <CircularProgress size={14} />}
+								</>
+							}
+							value="calls"
+						>
+							<EventsTable
+								items={calls.items}
+								loading={calls.loading}
+								network={network}
+								pagination={calls.pagination}
+							/>
+						</TabPane>
+						<TabPane
+							label={
+								<>
 									<span>Events ({events.pagination.totalCount})</span>
-									{extrinsics.loading && <CircularProgress size={14} />}
+									{events.loading && <CircularProgress size={14} />}
 								</>
 							}
 							value="events"
