@@ -137,7 +137,7 @@ function ResultLayout() {
 	const { network: networkParam } = useParams() as ResultLayoutParams;
 
 	const [network, setNetwork] = useState<string | undefined>(networkParam);
-
+	
 	const networkIsValid = useMemo(
 		() => Boolean(getArchive(networkParam)),
 		[networkParam]

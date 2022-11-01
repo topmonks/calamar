@@ -32,19 +32,17 @@ export function useExtrinsics(
 			filter,
 			order
 		);
-		const nextExtrinsics = await getExtrinsics(
-			network,
-			pagination.limit,
-			pagination.offset + pagination.limit,
-			filter,
-			order
-		);
-
-		console.log("nextE", nextExtrinsics);
-
+		
 		setLoading(false);
-		setItems(extrinsics);
-		pagination.setHasNext(nextExtrinsics.length > 0);
+
+		setItems(extrinsics.items);
+		pagination.setPagination(
+			{
+				...pagination,
+				hasNext: extrinsics.pageInfo.hasNextPage,
+				totalCount: extrinsics.totalCount,
+			}
+		);
 	}, [
 		network,
 		JSON.stringify(filter),

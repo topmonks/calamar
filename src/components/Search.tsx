@@ -2,9 +2,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { css } from "@emotion/react";
-
-import { useExtrinsics } from "../hooks/useExtrinsics";
-import { useEvents } from "../hooks/useEvents";
 import { getBlock } from "../services/blocksService";
 import { getExtrinsic } from "../services/extrinsicsService";
 
@@ -13,6 +10,8 @@ import { decodeAddress } from "../utils/formatAddress";
 
 import { Card, CardHeader } from "./Card";
 import Spinner from "./Spinner";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { useEventsWithoutTotalCount } from "../hooks/useEventsWithoutTotalCount";
 
 const loadingStyle = css`
 	padding: 32px 0;
@@ -46,13 +45,15 @@ const Search = (props: SearchProps) => {
 
 			// if the query is encoded account address, decode it
 			const decodedAddress = decodeAddress(query);
+
 			if (decodedAddress) {
 				query = decodedAddress;
 			}
 
 			if (query.startsWith("0x")) {
-				const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
 
+				const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
+				
 				if (extrinsicByHash) {
 					return `/${network}/extrinsic/${extrinsicByHash.id}`;
 				}
@@ -94,7 +95,7 @@ const Search = (props: SearchProps) => {
 		[network]
 	);
 
-	const extrinsicsByName = useExtrinsics(
+	const extrinsicsByName = useExtrinsicsWithoutTotalCount(
 		network,
 		{
 			call: {
@@ -105,7 +106,7 @@ const Search = (props: SearchProps) => {
 		{ skip: !searchByName }
 	);
 
-	const eventsByName = useEvents(network, { name_eq: query }, "id_DESC", {
+	const eventsByName = useEventsWithoutTotalCount(network, { name_eq: query }, "id_DESC", {
 		skip: !searchByName,
 	});
 

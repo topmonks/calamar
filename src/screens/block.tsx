@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
+import { CircularProgress, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
@@ -8,11 +8,12 @@ import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
 import { Link } from "../components/Link";
 import { useBlock } from "../hooks/useBlock";
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import {
 	convertTimestampToTimeFromNow,
 	formatDate,
 } from "../utils/convertTimestampToTimeFromNow";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 
 type BlockPageParams = {
 	network: string;
@@ -72,7 +73,9 @@ function BlockPage() {
 								<TableRow>
 									<TableCell>Validator</TableCell>
 									<TableCell>
-										{block.validator}
+										<Link to={`/${network}/account/${block.validator}`}>
+											{block.validator}
+										</Link>
 										<CopyToClipboardButton value={block.validator} />
 									</TableCell>
 								</TableRow>
@@ -81,7 +84,7 @@ function BlockPage() {
 								<TableCell>Block height</TableCell>
 								<TableCell>{block.height}</TableCell>
 							</TableRow>
-							<TableRow>
+							{block.height !== 0 && <TableRow>
 								<TableCell>Date</TableCell>
 								<TableCell>
 									<Tooltip
@@ -95,19 +98,35 @@ function BlockPage() {
 									</Tooltip>
 								</TableCell>
 							</TableRow>
+							}
 						</TableBody>
 					)}
 				</InfoTable>
 			</Card>
-			{block && (
+			{(block && (extrinsics.loading || extrinsics.items.length > 0)) && (
 				<Card>
-					<CardHeader>Extrinsics</CardHeader>
-					<ExtrinsicsTable
-						items={extrinsics.items}
-						loading={extrinsics.loading}
-						network={network}
-						pagination={extrinsics.pagination}
-					/>
+					<TabbedContent>
+						<TabPane
+							label={
+								<>
+									{extrinsics.pagination.totalCount ?
+										<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
+										<span>Extrinsics</span>
+									}
+									{extrinsics.loading && <CircularProgress size={14} />}
+								</>
+							}
+							value="events"
+						>
+							<ExtrinsicsTable
+								items={extrinsics.items}
+								loading={extrinsics.loading}
+								network={network}
+								pagination={extrinsics.pagination}
+							/>
+						</TabPane>
+						<></>
+					</TabbedContent>
 				</Card>
 			)}
 		</>
