@@ -38,7 +38,7 @@ runs:
           echo $JSON
           STAGE_NAME=$(echo $JSON | jq -r '.latest_stage.name')
           STAGE_STATUS=$(echo $JSON | jq -r '.latest_stage.status')
-          echo "stage: $STAGE_NAME ($STAGE_STATUS)"
+          echo "stage: '$STAGE_NAME' ('$STAGE_STATUS')"
           if [ "$STAGE_NAME" != "deploy" ] || [ "STAGE_STATUS" != "success" ]; then
             continue
           fi
