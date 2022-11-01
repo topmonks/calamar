@@ -33,8 +33,8 @@ runs:
         npx wrangler pages publish "${{ inputs.path }}" --project-name="${{ inputs.project }}" --branch="${{ inputs.branch }}"
         NOW=$(date +%s)
         while :; do
-          if [ $(expr $(date +%s) - $NOW) -gt 60 ]; then # if it cannot complete in 1 minute, something is wrong
-            echo "cannot get deployment status"
+          if [ $(expr $(date +%s) - $NOW) -gt 30 ]; then # if it cannot complete in 30s, something is wrong
+            echo "ERROR: cannot get deployment status"
             exit 1
           fi
           JSON=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/${{ inputs.project }}/deployments' \
