@@ -28,11 +28,15 @@ runs:
   steps:
     - name: Deploy to Cloudflare Pages
       id: pages
-      timeout-minutes: 1 # if it cannot complete in 1 minute, something is wrong
       shell: bash
       run: |
         npx wrangler pages publish "${{ inputs.path }}" --project-name="${{ inputs.project }}" --branch="${{ inputs.branch }}"
+        NOW=$(date +%s)
         while :; do
+          if [ $(expr $(date +%s) - $NOW) -gt 60 ]; then # if it cannot complete in 1 minute, something is wrong
+            echo "cannot get deployment status"
+            exit 1
+          fi
           JSON=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/${{ inputs.project }}/deployments' \
             --header 'Authorization: Bearer ${{ inputs.apiToken }}' | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ inputs.branch }}") ] | .[0]')
           STAGE_NAME=$(echo $JSON | jq -r '.latest_stage.name')
