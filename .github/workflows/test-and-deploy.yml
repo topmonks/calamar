@@ -102,33 +102,13 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar
           path: build
-      - name: Collect sourcemaps
-        id: collect_sourcemaps
-        env:
-          URLS: ${{ steps.pages.outputs.url }} ${{ steps.pages.outputs.aliases }}
-        run: |
-          cd build; \
-          for url in $URLS; do \
-            for file in $(find . -name "*.js" -printf "%P "); do \
-              if [ -f "$file.map" ]; then \
-                MINIFIED_URLS="${MINIFIED_URLS} $url/$file"; \
-                SOURCE_MAPS="${SOURCE_MAPS} build/$file.map"; \
-              fi; \
-            done; \
-          done; \
-          echo "${MINIFIED_URLS}"; \
-          echo "${SOURCE_MAPS}"; \
-          echo "minified_urls=${MINIFIED_URLS}" >> $GITHUB_OUTPUT; \
-          echo "source_maps=${SOURCE_MAPS}" >> $GITHUB_OUTPUT;
       - name: Deploy to Rollbar
-        uses: rollbar/github-deploy-action@2.1.1
+        uses: ./.github/actions/deploy-rollbar
         with:
+          accessToken: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
           environment: development
-          version: ${{ github.sha }}
-          source_maps: ${{ steps.collect_sourcemaps.outputs.source_maps }}
-          minified_urls: ${{ steps.collect_sourcemaps.outputs.minified_urls }}
-        env:
-          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
+          urls: ${{ steps.pages.outputs.url }} ${{ steps.pages.outputs.aliases }}
+          path: build
   deploy:
     name: Deploy / Production
     needs: test
