@@ -14,6 +14,8 @@ import {
 } from "../utils/convertTimestampToTimeFromNow";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { useEvents } from "../hooks/useEvents";
+import EventsTable from "../components/events/EventsTable";
 
 type BlockPageParams = {
 	network: string;
@@ -26,6 +28,12 @@ function BlockPage() {
 	const [block, { loading }] = useBlock(network, { id_eq: id });
 
 	const extrinsics = useExtrinsics(
+		network,
+		{ block: { id_eq: id } },
+		"id_DESC"
+	);
+
+	const events = useEvents(
 		network,
 		{ block: { id_eq: id } },
 		"id_DESC"
@@ -116,7 +124,7 @@ function BlockPage() {
 									{extrinsics.loading && <CircularProgress size={14} />}
 								</>
 							}
-							value="events"
+							value="extrinsics"
 						>
 							<ExtrinsicsTable
 								items={extrinsics.items}
@@ -125,7 +133,22 @@ function BlockPage() {
 								pagination={extrinsics.pagination}
 							/>
 						</TabPane>
-						<></>
+						<TabPane
+							label={
+								<>
+									<span>Events ({events.pagination.totalCount})</span>
+									{extrinsics.loading && <CircularProgress size={14} />}
+								</>
+							}
+							value="events"
+						>
+							<EventsTable
+								items={events.items}
+								loading={events.loading}
+								network={network}
+								pagination={events.pagination}
+							/>
+						</TabPane>
 					</TabbedContent>
 				</Card>
 			)}

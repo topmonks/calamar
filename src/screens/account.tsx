@@ -106,7 +106,7 @@ function AccountPage() {
 									{extrinsics.loading && <CircularProgress size={14} />}
 								</>
 							}
-							value="events"
+							value="extrinsics"
 						>
 							<ExtrinsicsTable
 								items={extrinsics.items}
