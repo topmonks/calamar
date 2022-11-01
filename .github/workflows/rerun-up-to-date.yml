@@ -11,7 +11,7 @@ on:
 
 jobs:
   rerun-up-to-date:
-    name: Re-run checks
+    name: Re-run up-to-date checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
