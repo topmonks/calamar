@@ -28,6 +28,7 @@ runs:
   steps:
     - name: Deploy to Cloudflare Pages
       id: pages
+      timeout-minutes: 1 # if it cannot complete in 1 minute, something is wrong
       shell: bash
       run: |
         npx wrangler pages publish "${{ inputs.path }}" --project-name="${{ inputs.project }}" --branch="${{ inputs.branch }}"
