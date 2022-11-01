@@ -42,7 +42,6 @@ runs:
           STAGE_NAME=$(echo $JSON | jq -r '.latest_stage.name')
           STAGE_STATUS=$(echo $JSON | jq -r '.latest_stage.status')
           if [ "$STAGE_NAME" != "deploy" ] || [ "$STAGE_STATUS" != "success" ]; then
-            echo $JSON
             echo "waiting for deployment to finish (stage: $STAGE_NAME / $STAGE_STATUS)"
             continue
           fi
