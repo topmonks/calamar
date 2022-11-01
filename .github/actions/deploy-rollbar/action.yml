@@ -45,6 +45,6 @@ runs:
         version: ${{ inputs.version }}
         source_maps: ${{ steps.collect_sourcemaps.outputs.source_maps }}
         minified_urls: ${{ steps.collect_sourcemaps.outputs.minified_urls }}
-        local_username: "github actions"
+        local_username: github_actions
       env:
         ROLLBAR_ACCESS_TOKEN: ${{ inputs.accessToken }}
