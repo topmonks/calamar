@@ -91,7 +91,7 @@ jobs:
         env:
           REACT_APP_PUBLISH_TIMESTAMP: ${{ env.NOW }}
           REACT_APP_ROLLBAR_ENV: development
-          REACT_APP_ROLLBAR_ENABLED: true
+          REACT_APP_ROLLBAR_ENABLED: true # ${{ github.ref_name == 'master' && 'true' || 'false' }}
         with:
           file: build/env.js
       - name: Deploy to Cloudflare Pages
@@ -101,8 +101,10 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar
+          branch: ${{ github.ref_name }}
           path: build
       - name: Deploy to Rollbar
+        # if: github.ref_name == 'master'
         uses: ./.github/actions/deploy-rollbar
         with:
           accessToken: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
@@ -142,4 +144,12 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar
+          branch: production
+          path: build
+      - name: Deploy to Rollbar
+        uses: ./.github/actions/deploy-rollbar
+        with:
+          accessToken: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
+          environment: production
+          urls: ${{ steps.pages.outputs.url }} ${{ steps.pages.outputs.aliases }}
           path: build

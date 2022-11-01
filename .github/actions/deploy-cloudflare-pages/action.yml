@@ -11,8 +11,7 @@ inputs:
     required: true
     type: string
   branch:
-    required: false
-    default: ${{ github.ref_name }}
+    required: true
     type: string
   path:
     required: true
