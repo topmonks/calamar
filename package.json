@@ -9,6 +9,7 @@
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6",
     "@polkadot/keyring": "^10.1.8",
+    "@rollbar/react": "^0.11.1",
     "@subsquid/archive-registry": "^1.0.14",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -26,6 +27,7 @@
     "react-router-dom": "^6.4.0",
     "react-scripts": "5.0.1",
     "recoil": "^0.7.5",
+    "rollbar": "^2.25.2",
     "typescript": "^4.8.3",
     "web-vitals": "^3.0.2"
   },

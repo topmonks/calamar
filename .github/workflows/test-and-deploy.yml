@@ -17,6 +17,7 @@ jobs:
         env:
           REACT_APP_COMMIT_SHA: ${{ github.sha }}
           REACT_APP_BUILD_TIMESTAMP: ${{ env.NOW }}
+          REACT_APP_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_CLIENT_ACCESS_TOKEN }}
         run: npm run build
       - name: Upload build artifact
         uses: actions/upload-artifact@master
@@ -67,6 +68,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar-test-reports
+          branch: ${{ github.ref_name }}
           path: test/report
   preview:
     name: Deploy / Preview
@@ -89,6 +91,8 @@ jobs:
         uses: ./.github/actions/generate-client-env
         env:
           REACT_APP_PUBLISH_TIMESTAMP: ${{ env.NOW }}
+          REACT_APP_ROLLBAR_ENV: development
+          REACT_APP_ROLLBAR_ENABLED: ${{ github.ref_name == 'master' && 'true' || 'false' }}
         with:
           file: build/env.js
       - name: Deploy to Cloudflare Pages
@@ -98,6 +102,15 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar
+          branch: ${{ github.ref_name }}
+          path: build
+      - name: Deploy to Rollbar
+        if: github.ref_name == 'master'
+        uses: ./.github/actions/deploy-rollbar
+        with:
+          accessToken: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
+          environment: development
+          urls: ${{ steps.pages.outputs.url }} ${{ steps.pages.outputs.aliases }}
           path: build
   deploy:
     name: Deploy / Production
@@ -121,6 +134,8 @@ jobs:
         uses: ./.github/actions/generate-client-env
         env:
           REACT_APP_PUBLISH_TIMESTAMP: ${{ env.NOW }}
+          REACT_APP_ROLLBAR_ENV: production
+          REACT_APP_ROLLBAR_ENABLED: true
         with:
           file: build/env.js
       - name: Deploy to Cloudflare Pages
@@ -130,4 +145,12 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar
+          branch: production
+          path: build
+      - name: Deploy to Rollbar
+        uses: ./.github/actions/deploy-rollbar
+        with:
+          accessToken: ${{ secrets.ROLLBAR_SERVER_ACCESS_TOKEN }}
+          environment: production
+          urls: ${{ steps.pages.outputs.url }} ${{ steps.pages.outputs.aliases }}
           path: build
