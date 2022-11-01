@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
-import { getCalls } from "../services/callsService";
 
 import {
-	EventsFilter,
-	EventsOrder,
-} from "../services/eventsService";
+	ExtrinsicsFilter,
+	ExtrinsicsOrder,
+	getExtrinsicsWithoutTotalCount,
+} from "../services/extrinsicsService";
 
 import { usePagination } from "./usePagination";
 
-export function useCalls(
+export function useExtrinsicsWithoutTotalCount(
 	network: string | undefined,
-	filter: EventsFilter,
-	order?: EventsOrder,
-	options?: FetchOptions,
+	filter: ExtrinsicsFilter,
+	order?: ExtrinsicsOrder,
+	options?: FetchOptions
 ) {
 	const [items, setItems] = useState([]);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -25,22 +25,26 @@ export function useCalls(
 			return;
 		}
 
-		const calls = await getCalls(
+		const extrinsics = await getExtrinsicsWithoutTotalCount(
 			network,
 			pagination.limit,
 			pagination.offset,
 			filter,
+			order
+		);
+		const nextExtrinsics = await getExtrinsicsWithoutTotalCount(
+			network,
+			pagination.limit,
+			pagination.offset + pagination.limit,
+			filter,
+			order
 		);
 
+		console.log("nextE", nextExtrinsics);
+
 		setLoading(false);
-		setItems(calls.items);
-		pagination.setPagination(
-			{
-				...pagination,
-				hasNext: pagination.offset + pagination.limit < calls.totalCount,
-				totalCount: calls.totalCount,
-			}
-		);
+		setItems(extrinsics.items);
+		pagination.setHasNext(nextExtrinsics.items.length > 0);
 	}, [
 		network,
 		JSON.stringify(filter),
@@ -51,7 +55,6 @@ export function useCalls(
 	]);
 
 	useEffect(() => {
-		console.log("tatata");
 		setLoading(true);
 		fetchItems();
 	}, [fetchItems]);

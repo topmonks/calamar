@@ -16,7 +16,7 @@ export function useEvent(
 			return;
 		}
 
-		const event = await getEvent(network, { id_eq: id });
+		const event = await getEvent(network, id);
 		setLoading(false);
 		setEvent(event);
 	}, [network, id, options?.skip]);

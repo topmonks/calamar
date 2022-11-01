@@ -36,6 +36,10 @@ function ExtrinsicPage() {
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
 	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
 
+
+
+	console.warn(calls);
+	
 	return (
 		<>
 			<Card>
@@ -163,7 +167,7 @@ function ExtrinsicPage() {
 							<TabPane
 								label={
 									<>
-										<span>Events</span>
+										<span>{"Events (".concat(events.pagination.totalCount?.toString() || "0").concat(")")}</span>
 										{events.loading && <CircularProgress size={14} />}
 									</>
 								}
@@ -181,7 +185,7 @@ function ExtrinsicPage() {
 							<TabPane
 								label={
 									<>
-										<span>Calls</span>
+										<span>Calls ({calls.pagination.totalCount?.toString() || "0"})</span>
 										{calls.loading && <CircularProgress size={14} />}
 									</>
 								}

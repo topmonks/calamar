@@ -86,7 +86,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 									{shortenHash(
 										(network &&
 											encodeAddress(network, extrinsic.signature?.address)) ||
-											extrinsic.signature?.address
+										extrinsic.signature?.address
 									)}
 								</Link>
 								{extrinsic.signature?.address && (

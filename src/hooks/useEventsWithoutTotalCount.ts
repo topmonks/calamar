@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FetchOptions } from "../model/fetchOptions";
-import { getCalls } from "../services/callsService";
 
 import {
 	EventsFilter,
 	EventsOrder,
+	getEventsWithoutTotalCount,
 } from "../services/eventsService";
 
 import { usePagination } from "./usePagination";
 
-export function useCalls(
+export function useEventsWithoutTotalCount(
 	network: string | undefined,
 	filter: EventsFilter,
 	order?: EventsOrder,
-	options?: FetchOptions,
+	options?: FetchOptions
 ) {
 	const [items, setItems] = useState([]);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -25,22 +25,25 @@ export function useCalls(
 			return;
 		}
 
-		const calls = await getCalls(
+		const events = await getEventsWithoutTotalCount(
 			network,
 			pagination.limit,
 			pagination.offset,
 			filter,
+			order
+		);
+
+		const nextExtrinsics = await getEventsWithoutTotalCount(
+			network,
+			pagination.limit,
+			pagination.offset + pagination.limit,
+			filter,
+			order
 		);
 
 		setLoading(false);
-		setItems(calls.items);
-		pagination.setPagination(
-			{
-				...pagination,
-				hasNext: pagination.offset + pagination.limit < calls.totalCount,
-				totalCount: calls.totalCount,
-			}
-		);
+		setItems(events);
+		pagination.setHasNext(nextExtrinsics.length > 0);
 	}, [
 		network,
 		JSON.stringify(filter),
