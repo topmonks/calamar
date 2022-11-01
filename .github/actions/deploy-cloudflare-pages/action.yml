@@ -34,7 +34,7 @@ runs:
         npx wrangler pages publish "${{ inputs.path }}" --project-name="${{ inputs.project }}" --branch="${{ inputs.branch }}"
         while :; do
           JSON=$(curl -s 'https://api.cloudflare.com/client/v4/accounts/${{ inputs.accountId }}/pages/projects/${{ inputs.project }}/deployments' \
-            --header 'Authorization: Bearer ${{ inputs.apiToken }}' | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ inputs.branch }}") ] | .[0])
+            --header 'Authorization: Bearer ${{ inputs.apiToken }}' | jq -r '[ .result[] | select(.is_skipped == false and .deployment_trigger.metadata.branch == "${{ inputs.branch }}") ] | .[0]')
           echo $JSON
           if [ "$(echo $JSON | jq -r '.latest_stage.name')" != "deploy" ] || [ "$(echo $JSON | jq -r '.latest_stage.status')" != "success" ]; then
             sleep 1
