@@ -43,7 +43,7 @@ runs:
           STAGE_STATUS=$(echo $JSON | jq -r '.latest_stage.status')
           if [ "$STAGE_NAME" != "deploy" ] || [ "$STAGE_STATUS" != "success" ]; then
             echo $JSON
-            echo "waiting for deploy to finish (stage: $STAGE_NAME / $STAGE_STATUS)"
+            echo "waiting for deployment to finish (stage: $STAGE_NAME / $STAGE_STATUS)"
             continue
           fi
           URL=$(echo "$JSON" | jq -r '.url')

@@ -68,7 +68,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           project: calamar-test-reports
-          # branch: ${{ github.ref_name }}
+          branch: ${{ github.ref_name }}
           path: test/report
   preview:
     name: Deploy / Preview
