@@ -17,6 +17,7 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useEvents } from "../hooks/useEvents";
 import EventsTable from "../components/events/EventsTable";
 import { useCalls } from "../hooks/useCalls";
+import { CallsTable } from "../components/calls/CallsTable";
 
 type BlockPageParams = {
 	network: string;
@@ -146,7 +147,7 @@ function BlockPage() {
 							}
 							value="calls"
 						>
-							<EventsTable
+							<CallsTable
 								items={calls.items}
 								loading={calls.loading}
 								network={network}
