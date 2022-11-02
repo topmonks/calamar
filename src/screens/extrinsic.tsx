@@ -15,14 +15,11 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useEvents } from "../hooks/useEvents";
 
-import {
-	convertTimestampToTimeFromNow,
-	formatDate,
-} from "../utils/convertTimestampToTimeFromNow";
 import { encodeAddress } from "../utils/formatAddress";
 import { Link } from "../components/Link";
 import { CallsTable } from "../components/calls/CallsTable";
 import { useCalls } from "../hooks/useCalls";
+import { Time } from "../components/Time";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -65,15 +62,7 @@ function ExtrinsicPage() {
 							<TableRow>
 								<TableCell>Block time</TableCell>
 								<TableCell>
-									<Tooltip
-										arrow
-										placement="top"
-										title={formatDate(extrinsic.block.timestamp)}
-									>
-										<span>
-											{convertTimestampToTimeFromNow(extrinsic.block.timestamp)}
-										</span>
-									</Tooltip>
+									<Time time={extrinsic.block.timestamp} fromNow />
 								</TableCell>
 							</TableRow>
 							<TableRow>

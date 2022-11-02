@@ -6,13 +6,13 @@ import { useParams } from "react-router-dom";
 import { useCall } from "../hooks/useCall";
 import CrossIcon from "../assets/cross-icon.png";
 import CheckIcon from "../assets/check-icon.png";
-import { convertTimestampToTimeFromNow, formatDate } from "../utils/convertTimestampToTimeFromNow";
 import ParamsTable from "../components/ParamsTable";
 import { Card, CardHeader } from "../components/Card";
 import { Link } from "../components/Link";
 import { useEvents } from "../hooks/useEvents";
 import { shortenHash } from "../utils/shortenHash";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { Time } from "../components/Time";
 
 type CallPageParams = {
 	network: string;
@@ -49,15 +49,7 @@ export const CallPage: React.FC = () => {
 							<TableRow>
 								<TableCell>Block time</TableCell>
 								<TableCell>
-									<Tooltip
-										arrow
-										placement="top"
-										title={formatDate(call.block.timestamp)}
-									>
-										<span>
-											{convertTimestampToTimeFromNow(call.block.timestamp)}
-										</span>
-									</Tooltip>
+									<Time time={call.block.timestamp} fromNow />
 								</TableCell>
 							</TableRow>
 							<TableRow>

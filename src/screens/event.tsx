@@ -4,9 +4,9 @@ import { useEvent } from "../hooks/useEvent";
 import { TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ParamsTable from "../components/ParamsTable";
-import { convertTimestampToTimeFromNow, formatDate } from "../utils/convertTimestampToTimeFromNow";
 import { Card, CardHeader } from "../components/Card";
 import { Link } from "../components/Link";
+import { Time } from "../components/Time";
 
 type EventPageParams = {
 	network: string;
@@ -17,7 +17,7 @@ export const EventPage: React.FC = () => {
 	const { network, id } = useParams() as EventPageParams;
 
 	const [event, { loading }] = useEvent(network, id);
-	
+
 	return (<>
 		<Card>
 			<CardHeader style={{ paddingBottom: 48 }}>
@@ -41,15 +41,7 @@ export const EventPage: React.FC = () => {
 						<TableRow>
 							<TableCell>Block time</TableCell>
 							<TableCell>
-								<Tooltip
-									arrow
-									placement="top"
-									title={formatDate(event.block.timestamp)}
-								>
-									<span>
-										{convertTimestampToTimeFromNow(event.block.timestamp)}
-									</span>
-								</Tooltip>
+								<Time time={event.block.timestamp} fromNow />
 							</TableCell>
 						</TableRow>
 						{/*<TableRow>

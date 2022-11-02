@@ -8,16 +8,13 @@ import {
 } from "@mui/material";
 
 import { Pagination } from "../../hooks/usePagination";
-import {
-	convertTimestampToTimeFromNow,
-	formatDate,
-} from "../../utils/convertTimestampToTimeFromNow";
 import { encodeAddress } from "../../utils/formatAddress";
 import { shortenHash } from "../../utils/shortenHash";
 
 import CopyToClipboardButton from "../CopyToClipboardButton";
 import ItemsTable from "../ItemsTable";
 import { Link } from "../Link";
+import { Time } from "../Time";
 
 export type ExtrinsicsTableProps = {
 	network: string;
@@ -107,15 +104,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 						)}
 						{columns.find((value) => value === "time") && (
 							<TableCell>
-								<Tooltip
-									arrow
-									placement="top"
-									title={formatDate(extrinsic.block.timestamp)}
-								>
-									<span>
-										{convertTimestampToTimeFromNow(extrinsic.block.timestamp)}
-									</span>
-								</Tooltip>
+								<Time time={extrinsic.block.timestamp} fromNow />
 							</TableCell>
 						)}
 					</TableRow>

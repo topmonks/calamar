@@ -4,7 +4,8 @@ import { Page } from "@playwright/test";
 import config from "../../playwright.config";
 
 const hideSelectors = [
-	"[data-test=count]"
+	"[data-test=count]",
+	"[data-test=time]"
 ];
 
 export async function screenshot(page: Page, name: string) {
