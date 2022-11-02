@@ -124,12 +124,9 @@ function BlockPage() {
 							/>
 						</TabPane>
 						<TabPane
-							label={
-								<>
-									<span>Calls ({calls.pagination.totalCount})</span>
-									{calls.loading && <CircularProgress size={14} />}
-								</>
-							}
+							label="Calls"
+							count={calls.pagination.totalCount}
+							loading={calls.loading}
 							value="calls"
 						>
 							<CallsTable
@@ -140,12 +137,9 @@ function BlockPage() {
 							/>
 						</TabPane>
 						<TabPane
-							label={
-								<>
-									<span>Events ({events.pagination.totalCount})</span>
-									{events.loading && <CircularProgress size={14} />}
-								</>
-							}
+							label="Events"
+							count={events.pagination.totalCount}
+							loading={events.loading}
 							value="events"
 						>
 							<EventsTable
