@@ -8,12 +8,9 @@ import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
 import { Link } from "../components/Link";
 import { useBlock } from "../hooks/useBlock";
-import {
-	convertTimestampToTimeFromNow,
-	formatDate,
-} from "../utils/convertTimestampToTimeFromNow";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { Time } from "../components/Time";
 
 type BlockPageParams = {
 	network: string;
@@ -87,15 +84,7 @@ function BlockPage() {
 							{block.height !== 0 && <TableRow>
 								<TableCell>Date</TableCell>
 								<TableCell>
-									<Tooltip
-										arrow
-										placement="top"
-										title={formatDate(block.timestamp)}
-									>
-										<span>
-											{convertTimestampToTimeFromNow(block.timestamp)}
-										</span>
-									</Tooltip>
+									<Time time={block.timestamp} fromNow />
 								</TableCell>
 							</TableRow>
 							}
@@ -107,16 +96,10 @@ function BlockPage() {
 				<Card>
 					<TabbedContent>
 						<TabPane
-							label={
-								<>
-									{extrinsics.pagination.totalCount ?
-										<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
-										<span>Extrinsics</span>
-									}
-									{extrinsics.loading && <CircularProgress size={14} />}
-								</>
-							}
-							value="events"
+							label="Extrinsics"
+							count={extrinsics.pagination.totalCount}
+							loading={extrinsics.loading}
+							value="extrinsics"
 						>
 							<ExtrinsicsTable
 								items={extrinsics.items}

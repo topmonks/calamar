@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useState } from "react";
 import { Theme, css } from "@emotion/react";
-import { Tab, Tabs } from "@mui/material";
+import { CircularProgress, Tab, Tabs } from "@mui/material";
 
 const tabsWrapperStyle = css`
 	margin-bottom: 16px;
@@ -26,20 +26,28 @@ const tabStyle = (theme: Theme) => css`
 		color: ${theme.palette.secondary.main};
 		font-weight: 700;
 		background-color: #f5f5f5;
-
-		.MuiCircularProgress-root {
-			color: #${theme.palette.secondary.main};
-		}
 	}
+`;
 
-	.MuiCircularProgress-root {
-		color: rgba(0, 0, 0, 0.6);
-		margin-left: 8px;
+const tabCountStyle = css`
+	&::before {
+		content: ' ';
+	}
+`;
+
+const tabLoadingStyle = (theme: Theme) => css`
+	margin-left: 8px;
+	color: rgba(0, 0, 0, 0.6);
+
+	.Mui-selected & {
+		color: ${theme.palette.secondary.main};
 	}
 `;
 
 export type TabPaneProps = PropsWithChildren<{
 	label: ReactNode;
+	count?: number;
+	loading?: boolean;
 	value: string;
 }>
 
@@ -60,7 +68,13 @@ export const TabbedContent = (props: TabbedContentProps) => {
 		child && <Tab
 			key={child.props.value}
 			css={tabStyle}
-			label={child.props.label}
+			label={
+				<span>
+					<span>{child.props.label}</span>
+					{child.props.count && <span data-test="count" css={tabCountStyle}>({child.props.count})</span>}
+					{(child.props.loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
+				</span>
+			}
 			value={child.props.value}
 		/>
 	));

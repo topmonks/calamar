@@ -3,12 +3,26 @@ import { Page } from "@playwright/test";
 
 import config from "../../playwright.config";
 
-export async function screenshot(page: Page, name: string) {
-	const background = page.locator("[data-test=background]");
+const hideSelectors = [
+	"[data-test=count]",
+	"[data-test=time]"
+];
 
-	if (await background.isVisible({timeout: 0})) {
-		await background.evaluate(el => el.style.position = "absolute");
-	}
+export async function screenshot(page: Page, name: string) {
+	page.evaluate((hideSelectors) => {
+		const background = document.querySelector<HTMLElement>("[data-test=background]");
+		if (background) {
+			background.style.position = "absolute";
+		}
+
+		for (const selector of hideSelectors) {
+			for (const el of Array.from(document.querySelectorAll<HTMLElement>(selector))) {
+				el.style.display = "none";
+			}
+		}
+	}, hideSelectors);
+
+	await page.waitForTimeout(500); // wait for transitions
 
 	await page.screenshot({
 		path: path.join(config.testDir!, "screenshots", `${name}.png`),
@@ -16,7 +30,18 @@ export async function screenshot(page: Page, name: string) {
 		animations: "disabled"
 	});
 
-	if (await background.isVisible({timeout: 0})) {
-		await background.evaluate(el => el.style.position = "fixed");
-	}
+	page.evaluate((hideSelectors) => {
+		const background = document.querySelector<HTMLElement>("[data-test=background]");
+		if (background) {
+			background.style.position = "";
+		}
+
+		for (const selector of hideSelectors) {
+			for (const el of Array.from(document.querySelectorAll<HTMLElement>(selector))) {
+				el.style.display = "";
+			}
+		}
+	}, hideSelectors);
+
+	await page.waitForTimeout(500); // wait for transitions
 }

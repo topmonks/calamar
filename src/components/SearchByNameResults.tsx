@@ -28,12 +28,8 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 			<TabbedContent>
 				{(extrinsics.loading || extrinsics.items.length > 0) &&
 					<TabPane
-						label={
-							<>
-								<span>Extrinsics</span>
-								{extrinsics.loading && <CircularProgress size={14} />}
-							</>
-						}
+						label="Extrinsics"
+						loading={extrinsics.loading}
 						value="extrinsics"
 					>
 						<ExtrinsicsTable
@@ -46,12 +42,8 @@ function SearchByNameResults(props: SearchByNameResultsProps) {
 				}
 				{(events.loading || events.items.length > 0) &&
 					<TabPane
-						label={
-							<>
-								<span>Events</span>
-								{events.loading && <CircularProgress size={14} />}
-							</>
-						}
+						label="Events"
+						loading={events.loading}
 						value="events"
 					>
 						<EventsTable

@@ -15,14 +15,11 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useEvents } from "../hooks/useEvents";
 
-import {
-	convertTimestampToTimeFromNow,
-	formatDate,
-} from "../utils/convertTimestampToTimeFromNow";
 import { encodeAddress } from "../utils/formatAddress";
 import { Link } from "../components/Link";
 import { CallsTable } from "../components/calls/CallsTable";
 import { useCalls } from "../hooks/useCalls";
+import { Time } from "../components/Time";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -39,7 +36,7 @@ function ExtrinsicPage() {
 
 
 	console.warn(calls);
-	
+
 	return (
 		<>
 			<Card>
@@ -65,15 +62,7 @@ function ExtrinsicPage() {
 							<TableRow>
 								<TableCell>Block time</TableCell>
 								<TableCell>
-									<Tooltip
-										arrow
-										placement="top"
-										title={formatDate(extrinsic.block.timestamp)}
-									>
-										<span>
-											{convertTimestampToTimeFromNow(extrinsic.block.timestamp)}
-										</span>
-									</Tooltip>
+									<Time time={extrinsic.block.timestamp} fromNow />
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -165,12 +154,9 @@ function ExtrinsicPage() {
 					<TabbedContent>
 						{(events.loading || events.items.length > 0) &&
 							<TabPane
-								label={
-									<>
-										<span>{"Events (".concat(events.pagination.totalCount?.toString() || "0").concat(")")}</span>
-										{events.loading && <CircularProgress size={14} />}
-									</>
-								}
+								label="Events"
+								count={events.pagination.totalCount}
+								loading={events.loading}
 								value="events"
 							>
 								<EventsTable
@@ -183,12 +169,9 @@ function ExtrinsicPage() {
 						}
 						{(calls.loading || calls.items.length > 0) &&
 							<TabPane
-								label={
-									<>
-										<span>Calls ({calls.pagination.totalCount?.toString() || "0"})</span>
-										{calls.loading && <CircularProgress size={14} />}
-									</>
-								}
+								label="Calls"
+								count={calls.pagination.totalCount}
+								loading={calls.loading}
 								value="calls"
 							>
 								<CallsTable
