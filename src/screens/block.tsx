@@ -1,23 +1,19 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { CircularProgress, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
-
+import { CircularProgress, TableBody, TableCell, TableRow } from "@mui/material";
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
 import { Link } from "../components/Link";
 import { useBlock } from "../hooks/useBlock";
-import {
-	convertTimestampToTimeFromNow,
-	formatDate,
-} from "../utils/convertTimestampToTimeFromNow";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { Time } from "../components/Time";
 import { useEvents } from "../hooks/useEvents";
-import EventsTable from "../components/events/EventsTable";
 import { useCalls } from "../hooks/useCalls";
 import { CallsTable } from "../components/calls/CallsTable";
+import EventsTable from "../components/events/EventsTable";
 
 type BlockPageParams = {
 	network: string;
@@ -103,15 +99,7 @@ function BlockPage() {
 							{block.height !== 0 && <TableRow>
 								<TableCell>Date</TableCell>
 								<TableCell>
-									<Tooltip
-										arrow
-										placement="top"
-										title={formatDate(block.timestamp)}
-									>
-										<span>
-											{convertTimestampToTimeFromNow(block.timestamp)}
-										</span>
-									</Tooltip>
+									<Time time={block.timestamp} fromNow />
 								</TableCell>
 							</TableRow>
 							}
@@ -123,12 +111,9 @@ function BlockPage() {
 				<Card>
 					<TabbedContent>
 						<TabPane
-							label={
-								<>
-									<span>Extrinsics ({extrinsics.pagination.totalCount})</span>
-									{extrinsics.loading && <CircularProgress size={14} />}
-								</>
-							}
+							label="Extrinsics"
+							count={extrinsics.pagination.totalCount}
+							loading={extrinsics.loading}
 							value="extrinsics"
 						>
 							<ExtrinsicsTable
