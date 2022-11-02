@@ -29,6 +29,7 @@ export function encodeAddress(
 			return keyring.encodeAddress(address, prefix);
 		} catch (e) {
 			console.log(e);
+			throw e;
 		}
 	}
 }
