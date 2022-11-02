@@ -122,12 +122,9 @@ export const CallPage: React.FC = () => {
 				<Card>
 					<TabbedContent>
 						<TabPane
-							label={
-								<>
-									<span>Events ({events.pagination.totalCount?.toString() || "0"})</span>
-									{events.loading && <CircularProgress size={14} />}
-								</>
-							}
+							label="Events"
+							count={events.pagination.totalCount}
+							loading={events.loading}
 							value="events"
 						>
 							<EventsTable

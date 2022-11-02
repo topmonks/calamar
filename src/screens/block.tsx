@@ -107,16 +107,10 @@ function BlockPage() {
 				<Card>
 					<TabbedContent>
 						<TabPane
-							label={
-								<>
-									{extrinsics.pagination.totalCount ?
-										<span>Extrinsics ({extrinsics.pagination.totalCount})</span> :
-										<span>Extrinsics</span>
-									}
-									{extrinsics.loading && <CircularProgress size={14} />}
-								</>
-							}
-							value="events"
+							label="Extrinsics"
+							count={extrinsics.pagination.totalCount}
+							loading={extrinsics.loading}
+							value="extrinsics"
 						>
 							<ExtrinsicsTable
 								items={extrinsics.items}

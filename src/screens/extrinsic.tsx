@@ -39,7 +39,7 @@ function ExtrinsicPage() {
 
 
 	console.warn(calls);
-	
+
 	return (
 		<>
 			<Card>
@@ -165,12 +165,9 @@ function ExtrinsicPage() {
 					<TabbedContent>
 						{(events.loading || events.items.length > 0) &&
 							<TabPane
-								label={
-									<>
-										<span>{"Events (".concat(events.pagination.totalCount?.toString() || "0").concat(")")}</span>
-										{events.loading && <CircularProgress size={14} />}
-									</>
-								}
+								label="Events"
+								count={events.pagination.totalCount}
+								loading={events.loading}
 								value="events"
 							>
 								<EventsTable
@@ -183,12 +180,9 @@ function ExtrinsicPage() {
 						}
 						{(calls.loading || calls.items.length > 0) &&
 							<TabPane
-								label={
-									<>
-										<span>Calls ({calls.pagination.totalCount?.toString() || "0"})</span>
-										{calls.loading && <CircularProgress size={14} />}
-									</>
-								}
+								label="Calls"
+								count={calls.pagination.totalCount}
+								loading={calls.loading}
 								value="calls"
 							>
 								<CallsTable
