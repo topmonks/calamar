@@ -8,6 +8,9 @@ export const rollbarConfig: Configuration = {
 	captureUnhandledRejections: true,
 	payload: {
 		environment: config.rollbar.environment,
+		server: {
+			root: "/"
+		},
 		client: {
 			javascript: {
 				code_version: config.app.commitSha,
