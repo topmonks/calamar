@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { CircularProgress, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
-
+import { CircularProgress, TableBody, TableCell, TableRow } from "@mui/material";
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
@@ -11,6 +10,10 @@ import { useBlock } from "../hooks/useBlock";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { Time } from "../components/Time";
+import { useEvents } from "../hooks/useEvents";
+import { useCalls } from "../hooks/useCalls";
+import { CallsTable } from "../components/calls/CallsTable";
+import EventsTable from "../components/events/EventsTable";
 
 type BlockPageParams = {
 	network: string;
@@ -23,6 +26,18 @@ function BlockPage() {
 	const [block, { loading }] = useBlock(network, { id_eq: id });
 
 	const extrinsics = useExtrinsics(
+		network,
+		{ block: { id_eq: id } },
+		"id_DESC"
+	);
+
+	const events = useEvents(
+		network,
+		{ block: { id_eq: id } },
+		"id_DESC"
+	);
+
+	const calls = useCalls(
 		network,
 		{ block: { id_eq: id } },
 		"id_DESC"
@@ -108,7 +123,32 @@ function BlockPage() {
 								pagination={extrinsics.pagination}
 							/>
 						</TabPane>
-						<></>
+						<TabPane
+							label="Calls"
+							count={calls.pagination.totalCount}
+							loading={calls.loading}
+							value="calls"
+						>
+							<CallsTable
+								items={calls.items}
+								loading={calls.loading}
+								network={network}
+								pagination={calls.pagination}
+							/>
+						</TabPane>
+						<TabPane
+							label="Events"
+							count={events.pagination.totalCount}
+							loading={events.loading}
+							value="events"
+						>
+							<EventsTable
+								items={events.items}
+								loading={events.loading}
+								network={network}
+								pagination={events.pagination}
+							/>
+						</TabPane>
 					</TabbedContent>
 				</Card>
 			)}

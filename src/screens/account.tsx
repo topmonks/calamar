@@ -100,7 +100,7 @@ function AccountPage() {
 							label="Extrinsics"
 							count={extrinsics.pagination.totalCount}
 							loading={extrinsics.loading}
-							value="events"
+							value="extrinsics"
 						>
 							<ExtrinsicsTable
 								items={extrinsics.items}
