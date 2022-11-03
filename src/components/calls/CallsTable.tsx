@@ -22,7 +22,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			loading={loading}
 			noItemsMessage="No calls found"
 			pagination={pagination}
-			data-test="calls-table"
+			data-test="calls-info-table"
 		>
 			<col />
 			<col />
