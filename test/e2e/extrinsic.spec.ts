@@ -8,9 +8,12 @@ test.describe("Extrinsic detail page", () => {
 		await page.waitForTimeout(1000); // TODO find out better waiting until page is loaded
 	});
 
-	test("shows extrinsic detail page", async ({ page }) => {
+	test("shows extrinsic detail page with events", async ({ page }) => {
 		await screenshot(page, "extrinsicWithEvents");
+	});
 
+
+	test("shows extrinsic detail page with calls", async ({ page }) => {
 		await page.locator("[data-test=calls-tab]").click(); // Yes, .locator() was not working for some weird reason, so I left it like this.
 
 		await page.evaluate(() => { window.scroll(0,0); });
