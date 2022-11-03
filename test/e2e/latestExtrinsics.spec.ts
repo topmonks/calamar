@@ -9,7 +9,7 @@ test.describe("Latest extrinsics page", () => {
 	});
 
 	test("shows latest extrinsics page", async ({ page }) => {
-		await page.locator("[data-test=extrinsics-info-table] tr").evaluateAll((rows) =>
+		await page.locator("[data-test=extrinsics-table] tr").evaluateAll((rows) =>
 			rows.forEach((row) => row.style.visibility = "hidden")
 		);
 
