@@ -27,7 +27,6 @@ export const EventPage: React.FC = () => {
 				item={event}
 				loading={loading}
 				noItemMessage="No event found"
-				data-test="events-table"
 			>
 				{event && (
 					<TableBody>
