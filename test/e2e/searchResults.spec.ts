@@ -14,13 +14,7 @@ test.describe("Search results page", () => {
 		await page.locator("[data-test=events-table] tr").evaluateAll((rows) =>
 			rows.forEach((row) => row.style.visibility = "hidden")
 		);
-
-		await page.waitForTimeout(1000); // TODO find out better waiting until page is loaded
-
-		await page.locator("[data-test=events-table] tr").evaluateAll((rows) =>
-			rows.forEach((row) => row.style.visibility = "hidden")
-		);
-
+		
 		await screenshot(page, "searchResults");
 	});
 });

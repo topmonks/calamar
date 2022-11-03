@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, selectors } from "@playwright/test";
 
 import { screenshot } from "../utils/screenshot";
 
@@ -9,6 +9,8 @@ test.describe("Extrinsic detail page", () => {
 	});
 
 	test("shows extrinsic detail page", async ({ page }) => {
+		await page.getByText("calls").click(); // Yes, .locator() was not working for some weird reason, so I left it like this.
+
 		await screenshot(page, "extrinsic");
 	});
 });
