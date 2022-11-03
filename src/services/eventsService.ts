@@ -8,7 +8,7 @@ export async function getEvent(network: string, id: string) {
 	const response = await fetchGraphql(
 		network,
 		`
-			query ($id: String!) {
+			query ($id: ID!) {
 				eventById(id: $id) {
 					id
 					name

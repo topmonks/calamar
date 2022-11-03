@@ -8,7 +8,7 @@ export type CallsOrder = string | string[];
 export async function getCall(network: string, id: string) {
 	const response = await fetchGraphql(
 		network,
-		`query ($id: String!) {
+		`query ($id: ID!) {
 			callById(id: $id) {
 				id
 				name
