@@ -9,10 +9,12 @@ test.describe("Extrinsic detail page", () => {
 	});
 
 	test("shows extrinsic detail page", async ({ page }) => {
+		await screenshot(page, "extrinsicWithEvents");
+
 		await page.getByText("calls").click(); // Yes, .locator() was not working for some weird reason, so I left it like this.
 
 		await page.evaluate(() => { window.scroll(0,0); });
-		
-		await screenshot(page, "extrinsic");
+
+		await screenshot(page, "extrinsicWithCalls");
 	});
 });

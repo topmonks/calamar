@@ -173,9 +173,9 @@ function ExtrinsicPage() {
 								count={calls.pagination.totalCount}
 								loading={calls.loading}
 								value="calls"
-								data-testid="calls-tab"
 							>
 								<CallsTable
+									data-test="calls-tab"
 									loading={calls.loading}
 									items={calls.items}
 									network={network}
