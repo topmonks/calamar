@@ -24,6 +24,7 @@ function EventsTable(props: EventsTableProps) {
 			loading={loading}
 			noItemsMessage="No events found"
 			pagination={pagination}
+			data-test="events-table"
 		>
 			<col />
 			<col />
