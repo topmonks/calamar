@@ -5,7 +5,7 @@ import { screenshot } from "../utils/screenshot";
 test.describe("Extrinsic detail page", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto("/kusama/extrinsic/0014932897-000002-93378");
-		await page.waitForTimeout(1000); // TODO find out better waiting until page is loaded
+		await page.waitForTimeout(2000); // TODO find out better waiting until page is loaded
 	});
 
 	test("shows extrinsic detail page with events", async ({ page }) => {

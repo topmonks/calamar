@@ -4,6 +4,7 @@ import { Page } from "@playwright/test";
 import config from "../../playwright.config";
 
 const hideSelectors = [
+	".MuiTabs-indicator",
 	"[data-test=count]",
 	"[data-test=time]"
 ];
@@ -21,8 +22,6 @@ export async function screenshot(page: Page, name: string) {
 			}
 		}
 	}, hideSelectors);
-
-	await page.waitForTimeout(500); // wait for transitions
 
 	await page.screenshot({
 		path: path.join(config.testDir!, "screenshots", `${name}.png`),
@@ -42,6 +41,4 @@ export async function screenshot(page: Page, name: string) {
 			}
 		}
 	}, hideSelectors);
-
-	await page.waitForTimeout(500); // wait for transitions
 }

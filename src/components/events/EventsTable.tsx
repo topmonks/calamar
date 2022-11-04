@@ -50,13 +50,15 @@ function EventsTable(props: EventsTableProps) {
 						<TableCell>
 							<ParamsTable args={event.args} />
 						</TableCell>
-						{showExtrinsic && event.extrinsic?.hash && (
+						{showExtrinsic &&
 							<TableCell>
-								<Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
-									{shortenHash(event.extrinsic.hash)}
-								</Link>
+								{event.extrinsic?.hash &&
+									<Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
+										{shortenHash(event.extrinsic.hash)}
+									</Link>
+								}
 							</TableCell>
-						)}
+						}
 					</TableRow>
 				))}
 			</TableBody>
