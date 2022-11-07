@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useState } from "react";
 import { Theme, css } from "@emotion/react";
-import { CircularProgress, Tab, Tabs } from "@mui/material";
+import { CircularProgress, Tab, TabProps, Tabs } from "@mui/material";
 
 const tabsWrapperStyle = css`
 	margin-bottom: 16px;
@@ -44,7 +44,7 @@ const tabLoadingStyle = (theme: Theme) => css`
 	}
 `;
 
-export type TabPaneProps = PropsWithChildren<{
+export type TabPaneProps = Omit<TabProps, "children"> & PropsWithChildren<{
 	label: ReactNode;
 	count?: number;
 	loading?: boolean;
@@ -64,20 +64,37 @@ export const TabbedContent = (props: TabbedContentProps) => {
 
 	const [tab, setTab] = useState<string | undefined>(undefined);
 
-	const tabHandles = Children.map(children, (child) => (
-		child && <Tab
-			key={child.props.value}
-			css={tabStyle}
-			label={
-				<span>
-					<span>{child.props.label}</span>
-					{child.props.count && <span data-test="count" css={tabCountStyle}>({child.props.count})</span>}
-					{(child.props.loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
-				</span>
-			}
-			value={child.props.value}
-		/>
-	));
+	const tabHandles = Children.map(children, (child) => {
+		if (!child) {
+			return null;
+		}
+
+		const {
+			value,
+			label,
+			count,
+			loading,
+			children, // ignore
+			...restProps
+		} = child.props;
+
+		return (
+			<Tab
+				title=""
+				key={value}
+				css={tabStyle}
+				label={
+					<span>
+						<span>{label}</span>
+						{count && <span data-test="count" css={tabCountStyle}>({count})</span>}
+						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
+					</span>
+				}
+				value={value}
+				{...restProps}
+			/>
+		);
+	});
 
 	const tabPanes = Children.map(children, (child) => child && cloneElement(child, {key: child.props.value}));
 

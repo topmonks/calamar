@@ -173,6 +173,7 @@ function ExtrinsicPage() {
 								count={calls.pagination.totalCount}
 								loading={calls.loading}
 								value="calls"
+								data-test="calls-tab"
 							>
 								<CallsTable
 									loading={calls.loading}
