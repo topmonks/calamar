@@ -14,7 +14,7 @@ test.describe("Extrinsic detail page", () => {
 
 
 	test("shows extrinsic detail page with calls", async ({ page }) => {
-		await page.locator("[data-test=calls-tab]").click(); // Yes, .locator() was not working for some weird reason, so I left it like this.
+		await page.locator("[data-test=calls-tab]").click();
 
 		await page.evaluate(() => { window.scroll(0,0); });
 
