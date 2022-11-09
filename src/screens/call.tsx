@@ -26,20 +26,22 @@ export const CallPage: React.FC = () => {
 				</CardHeader>
 				<CallInfoTable network={network} {...call} />
 			</Card>
-			<Card>
-				<TabbedContent>
-					<TabPane
-						label="Events"
-						count={events.pagination.totalCount}
-						loading={events.loading}
-						error={events.error}
-						value="events"
-					>
-						<EventsTable network={network} {...events} />
-					</TabPane>
-					<></>
-				</TabbedContent>
-			</Card>
+			{call.data &&
+				<Card>
+					<TabbedContent>
+						<TabPane
+							label="Events"
+							count={events.pagination.totalCount}
+							loading={events.loading}
+							error={events.error}
+							value="events"
+						>
+							<EventsTable network={network} {...events} />
+						</TabPane>
+						<></>
+					</TabbedContent>
+				</Card>
+			}
 		</>
 	);
 };

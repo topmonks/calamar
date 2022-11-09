@@ -26,34 +26,33 @@ function ExtrinsicPage() {
 		<>
 			<Card>
 				<CardHeader>Extrinsic #{id}</CardHeader>
-				<ExtrinsicInfoTable
-					network={network}
-					data={extrinsic.data}
-					loading={extrinsic.loading}
-				/>
+				<ExtrinsicInfoTable network={network} {...extrinsic} />
 			</Card>
-			<Card>
-				<TabbedContent>
-					<TabPane
-						label="Events"
-						count={events.pagination.totalCount}
-						loading={events.loading}
-						error={events.error}
-						value="events"
-					>
-						<EventsTable network={network} {...events} />
-					</TabPane>
-					<TabPane
-						label="Calls"
-						count={calls.pagination.totalCount}
-						loading={calls.loading}
-						error={calls.error}
-						value="calls"
-					>
-						<CallsTable network={network} {...calls} />
-					</TabPane>
-				</TabbedContent>
-			</Card>
+			{extrinsic.data &&
+				<Card>
+					<TabbedContent>
+						<TabPane
+							label="Events"
+							count={events.pagination.totalCount}
+							loading={events.loading}
+							error={events.error}
+							value="events"
+						>
+							<EventsTable network={network} {...events} />
+						</TabPane>
+						<TabPane
+							label="Calls"
+							count={calls.pagination.totalCount}
+							loading={calls.loading}
+							error={calls.error}
+							value="calls"
+							data-test="calls-tab"
+						>
+							<CallsTable network={network} {...calls} />
+						</TabPane>
+					</TabbedContent>
+				</Card>
+			}
 		</>
 	);
 }

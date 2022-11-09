@@ -1,15 +1,12 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { TableBody, TableCell, TableRow } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
-import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import InfoTable from "../components/InfoTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { encodeAddress } from "../utils/formatAddress";
+import { AccountInfoTable } from "../components/account/AccountInfoTable";
+import { useAccount } from "../hooks/useAccount";
 
 type AccountPageParams = {
 	network: string;
@@ -19,26 +16,13 @@ type AccountPageParams = {
 function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
-	const filter = {
+	const account = useAccount(network, address);
+	const extrinsics = useExtrinsics(network, {
 		OR: [
 			{ signature_jsonContains: `{"address": "${address}" }` },
 			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
 		],
-	};
-
-	console.log(filter);
-	const accountCheck = useExtrinsic(network, filter);
-	const extrinsics = useExtrinsics(network, filter);
-
-	const encodedAddress = useMemo(
-		() => encodeAddress(network, address),
-		[network, address]
-	);
-
-	const encoded42Address = useMemo(
-		() => encodeAddress(network, address, 42),
-		[network, address]
-	);
+	});
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -53,47 +37,9 @@ function AccountPage() {
 				<CardHeader>
 					Account #{address}
 				</CardHeader>
-				<InfoTable
-					loading={accountCheck.loading}
-					notFoundMessage="No account found"
-					error={accountCheck.error}
-				>
-					<TableBody>
-						{encodedAddress && (
-							<TableRow>
-								<TableCell>Address</TableCell>
-								<TableCell>
-									{encodedAddress}
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={encodedAddress} />
-									</span>
-								</TableCell>
-							</TableRow>
-						)}
-						{encoded42Address && (
-							<TableRow>
-								<TableCell>Address (42 prefix)</TableCell>
-								<TableCell>
-									{encoded42Address}
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton value={encoded42Address} />
-									</span>
-								</TableCell>
-							</TableRow>
-						)}
-						<TableRow>
-							<TableCell>Raw address</TableCell>
-							<TableCell>
-								{address}
-								<span style={{ marginLeft: 8 }}>
-									<CopyToClipboardButton value={address || ""} />
-								</span>
-							</TableCell>
-						</TableRow>
-					</TableBody>
-				</InfoTable>
+				<AccountInfoTable network={network} {...account} />
 			</Card>
-			{accountCheck.data &&
+			{account.data &&
 				<Card>
 					<TabbedContent>
 						<TabPane
@@ -105,7 +51,6 @@ function AccountPage() {
 						>
 							<ExtrinsicsTable network={network} {...extrinsics} />
 						</TabPane>
-						<></>
 					</TabbedContent>
 				</Card>
 			}

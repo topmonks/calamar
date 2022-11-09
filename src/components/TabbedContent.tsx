@@ -63,7 +63,7 @@ export const TabPane = (props: TabPaneProps) => {
 };
 
 export type TabbedContentProps = {
-	children: (ReactElement<TabPaneProps>|false)[];
+	children: ReactElement<TabPaneProps>|(ReactElement<TabPaneProps>|false)[];
 }
 
 export const TabbedContent = (props: TabbedContentProps) => {
@@ -94,9 +94,9 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				label={
 					<>
 						<span>{label}</span>
-						{count && <span data-test="count" css={tabCountStyle}>({count})</span>}
+						{Number.isInteger(count) && <span data-test="count" css={tabCountStyle}>({count})</span>}
 						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
-						{error && <ErrorIcon css={tabErrorStyle} />}
+						{!!error && <ErrorIcon css={tabErrorStyle} />}
 					</>
 				}
 				value={value}

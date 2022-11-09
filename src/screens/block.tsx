@@ -55,37 +55,39 @@ function BlockPage() {
 				<CardHeader>Block #{id}</CardHeader>
 				<BlockInfoTable network={network} {...block} />
 			</Card>
-			<Card>
-				<TabbedContent>
-					<TabPane
-						label="Extrinsics"
-						count={extrinsics.pagination.totalCount}
-						loading={extrinsics.loading}
-						error={extrinsics.error}
-						value="extrinsics"
-					>
-						<ExtrinsicsTable network={network} {...extrinsics} />
-					</TabPane>
-					<TabPane
-						label="Calls"
-						count={calls.pagination.totalCount}
-						loading={calls.loading}
-						error={calls.error}
-						value="calls"
-					>
-						<CallsTable network={network} {...calls} />
-					</TabPane>
-					<TabPane
-						label="Events"
-						count={events.pagination.totalCount}
-						loading={events.loading}
-						error={events.error}
-						value="events"
-					>
-						<EventsTable network={network} {...events} />
-					</TabPane>
-				</TabbedContent>
-			</Card>
+			{block.data &&
+				<Card>
+					<TabbedContent>
+						<TabPane
+							label="Extrinsics"
+							count={extrinsics.pagination.totalCount}
+							loading={extrinsics.loading}
+							error={extrinsics.error}
+							value="extrinsics"
+						>
+							<ExtrinsicsTable network={network} {...extrinsics} />
+						</TabPane>
+						<TabPane
+							label="Calls"
+							count={calls.pagination.totalCount}
+							loading={calls.loading}
+							error={calls.error}
+							value="calls"
+						>
+							<CallsTable network={network} {...calls} />
+						</TabPane>
+						<TabPane
+							label="Events"
+							count={events.pagination.totalCount}
+							loading={events.loading}
+							error={events.error}
+							value="events"
+						>
+							<EventsTable network={network} {...events} />
+						</TabPane>
+					</TabbedContent>
+				</Card>
+			}
 		</>
 	);
 }
