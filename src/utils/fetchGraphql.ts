@@ -1,10 +1,18 @@
+import { CustomError } from "ts-custom-error";
+
 import { getArchive } from "../services/archiveRegistryService";
 
-export async function fetchGraphql(
+export class GraphQLError extends CustomError {
+	constructor(error: any) {
+		super(error.message);
+	}
+}
+
+export async function fetchGraphql<T = any>(
 	network: string,
 	query: string,
 	variables: object = {}
-) {
+): Promise<T> {
 	const archive = getArchive(network);
 
 	if (!archive) {
@@ -24,13 +32,14 @@ export async function fetchGraphql(
 		}),
 	});
 
-	try {
-		const jsonResult = await response.json();
-		console.log(response.status);
-		console.log("FRET", jsonResult);
-		return jsonResult.data;
-	} catch(e) {
-		console.log(e);
-		return e;
+	const jsonResult = await response.json();
+
+	if (jsonResult.errors && !jsonResult.data) {
+		const error = jsonResult.errors[0];
+		console.error(error);
+		// TODO report to Rollbar
+		throw new GraphQLError(error);
 	}
+
+	return jsonResult.data;
 }

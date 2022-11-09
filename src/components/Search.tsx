@@ -1,17 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { css } from "@emotion/react";
-import { getBlock } from "../services/blocksService";
-import { getExtrinsic } from "../services/extrinsicsService";
 
-import SearchByNameResults from "./SearchByNameResults";
-import { decodeAddress } from "../utils/formatAddress";
+import { useAccount } from "../hooks/useAccount";
+import { useBlock } from "../hooks/useBlock";
+import { useEventsWithoutTotalCount } from "../hooks/useEventsWithoutTotalCount";
+import { useExtrinsic } from "../hooks/useExtrinsic";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 
 import { Card, CardHeader } from "./Card";
+import { ErrorMessage } from "./ErrorMessage";
+import ExtrinsicsTable from "./extrinsics/ExtrinsicsTable";
+import EventsTable from "./events/EventsTable";
 import Spinner from "./Spinner";
-import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
-import { useEventsWithoutTotalCount } from "../hooks/useEventsWithoutTotalCount";
+import { TabbedContent, TabPane } from "./TabbedContent";
 
 const loadingStyle = css`
 	padding: 32px 0;
@@ -32,151 +35,119 @@ type SearchProps = {
 const Search = (props: SearchProps) => {
 	const { network, query } = props;
 
-	const navigate = useNavigate();
+	const [forceLoading, setForceLoading] = useState<boolean>(true);
 
-	const [forceLoading, setForceLoading] = useState<boolean>(false);
-	const [searchByName, setSearchByName] = useState<boolean>(false);
-	const [notFound, setNotFound] = useState<boolean>(false);
-	const [showResultsByName, setShowResultsByName] = useState<boolean>(false);
+	const maybeHash = query.startsWith("0x");
+	const maybeHeight = query.match(/^\d+$/);
+	const maybeName = !maybeHash && !maybeHeight;
 
-	const searchSingle = useCallback(
-		async (query: string) => {
-			query = query.replace(/\s/g, "");
+	const extrinsicByHash = useExtrinsic(network, { hash_eq: query }, { skip: !maybeHash });
+	const blockByHash = useBlock(network, { hash_eq: query }, { skip: !maybeHash });
+	const account = useAccount(network, query);
 
-			// if the query is encoded account address, decode it
-			const decodedAddress = decodeAddress(query);
+	const blockByHeight = useBlock(network, { height_eq: parseInt(query) }, { skip: !maybeHeight });
 
-			if (decodedAddress) {
-				query = decodedAddress;
-			}
+	const extrinsicsByName = useExtrinsicsWithoutTotalCount(network, { call: { name_eq: query }}, "id_DESC", { skip: !maybeName });
+	const eventsByName = useEventsWithoutTotalCount(network, { name_eq: query }, "id_DESC", { skip: !maybeName });
 
-			if (query.startsWith("0x")) {
-
-				const extrinsicByHash = await getExtrinsic(network, { hash_eq: query });
-				
-				if (extrinsicByHash) {
-					return `/${network}/extrinsic/${extrinsicByHash.id}`;
-				}
-
-				const blockByHash = await getBlock(network, { hash_eq: query });
-
-				if (blockByHash) {
-					return `/${network}/block/${blockByHash.id}`;
-				}
-
-				const extrinsicByAccount = await getExtrinsic(network, {
-					OR: [
-						{ signature_jsonContains: `{"address": "${query}" }` },
-						{ signature_jsonContains: `{"address": { "value": "${query}"} }` },
-					],
-				});
-
-				if (extrinsicByAccount) {
-					return `/${network}/account/${query}`;
-				}
-
-				setNotFound(true);
-			}
-
-			if (query.match(/^\d+$/)) {
-				const blockByHeight = await getBlock(network, {
-					height_eq: parseInt(query),
-				});
-
-				if (blockByHeight) {
-					return `/${network}/block/${blockByHeight.id}`;
-				}
-
-				setNotFound(true);
-			}
-
-			setSearchByName(true);
-		},
-		[network]
-	);
-
-	const extrinsicsByName = useExtrinsicsWithoutTotalCount(
-		network,
-		{
-			call: {
-				name_eq: query,
-			},
-		},
-		"id_DESC",
-		{ skip: !searchByName }
-	);
-
-	const eventsByName = useEventsWithoutTotalCount(network, { name_eq: query }, "id_DESC", {
-		skip: !searchByName,
-	});
+	const allResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
+	const multipleResultsResources = [extrinsicsByName, eventsByName];
 
 	useEffect(() => {
-		const search = async () => {
-			setForceLoading(true);
+		// show loading at least for 1s to prevent flickering
+		setTimeout(() => setForceLoading(false), 1000);
+	}, [query]);
 
-			const [redirect] = await Promise.all([
-				searchSingle(query),
-				new Promise((resolve) => setTimeout(resolve, 1000)), // slow down search to show the spinner for a while (prevent flickering when the query is fast)
-			]);
+	console.log(allResources);
 
-			if (redirect) {
-				return navigate(redirect, { replace: true });
-			}
-
-			setForceLoading(false);
-		};
-
-		search();
-	}, [query, searchSingle, navigate]);
-
-	useEffect(() => {
-		if (extrinsicsByName.items.length > 0 || eventsByName.items.length > 0) {
-			setShowResultsByName(true);
-		} else if (!extrinsicsByName.loading && !eventsByName.loading) {
-			setNotFound(true);
+	if (!forceLoading) {
+		if (extrinsicByHash.data) {
+			return <Navigate to={`/${network}/extrinsic/${extrinsicByHash.data.id}`} />;
 		}
-	}, [extrinsicsByName, eventsByName]);
 
-	const showLoading = useMemo(
-		() => forceLoading || (!showResultsByName && !notFound),
-		[forceLoading, showResultsByName, notFound]
-	);
+		if (blockByHash.data || blockByHeight.data) {
+			return <Navigate to={`/${network}/block/${blockByHash.data?.id || blockByHeight.data?.id}`} />;
+		}
 
-	return (
-		<>
-			{showLoading && (
+		if (account.data) {
+			return <Navigate to={`/${network}/account/${account.data.id}`} />;
+		}
+
+		if (multipleResultsResources.some(it => it.items?.length > 0)) {
+			return (
 				<Card>
-					<div css={loadingStyle}>
-						<div css={loadingMessageStyle}>
-							<strong>Searching for</strong>{" "}
-							<span style={{ fontWeight: "normal" }}>
-								<q lang="en">{query}</q>
-							</span>
-						</div>
-						<Spinner />
+					<CardHeader>
+						Search results for query <span style={{ fontWeight: "normal" }}>{query}</span>
+					</CardHeader>
+					<TabbedContent>
+						{!extrinsicsByName.notFound &&
+							<TabPane
+								label="Extrinsics"
+								count={extrinsicsByName.pagination.totalCount}
+								loading={extrinsicsByName.loading}
+								error={extrinsicsByName.error}
+								value="extrinsicsByName"
+							>
+								<ExtrinsicsTable network={network} {...extrinsicsByName} />
+							</TabPane>
+						}
+						{!eventsByName.notFound &&
+							<TabPane
+								label="Events"
+								count={eventsByName.pagination.totalCount}
+								loading={eventsByName.loading}
+								error={eventsByName.error}
+								value="events"
+							>
+								<EventsTable network={network} {...eventsByName} showExtrinsic />
+							</TabPane>
+						}
+					</TabbedContent>
+				</Card>
+			);
+		}
+
+		if (allResources.every(it => it.notFound)) {
+			const error = allResources.find(it => it.error)?.error;
+
+			if (error) {
+				<Card>
+					<CardHeader>
+						Search results for query <span style={{ fontWeight: "normal" }}>{query}</span>
+					</CardHeader>
+					<ErrorMessage
+						message="Unexpected error occured while searching"
+						details={error.message}
+						showReported
+					/>
+				</Card>;
+			}
+
+			return (
+				<Card>
+					<CardHeader>
+						Search results for query <span style={{ fontWeight: "normal" }}>{query}</span>
+					</CardHeader>
+					<div>
+						Nothing was found
 					</div>
 				</Card>
-			)}
-			{!showLoading && notFound && (
-				<>
-					<Card>
-						<CardHeader>Not found</CardHeader>
-						<div>
-							Nothing was found{" "}
-							{query && <span>for query &quot;{query}&quot;</span>}
-						</div>
-					</Card>
-				</>
-			)}
-			{!showLoading && showResultsByName && (
-				<SearchByNameResults
-					events={eventsByName}
-					extrinsics={extrinsicsByName}
-					name={query!}
-					network={network}
-				/>
-			)}
-		</>
+			);
+		}
+	}
+
+	return (
+		<Card>
+			<div css={loadingStyle}>
+				<div css={loadingMessageStyle}>
+					<strong>Searching for</strong>{" "}
+					<span style={{ fontWeight: "normal" }}>
+						<q lang="en">{query}</q>
+					</span>
+				</div>
+				<Spinner />
+			</div>
+		</Card>
 	);
 };
 

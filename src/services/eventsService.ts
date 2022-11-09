@@ -1,3 +1,4 @@
+import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
 
@@ -5,7 +6,7 @@ export type EventsFilter = any;
 export type EventsOrder = string | string[];
 
 export async function getEvent(network: string, id: string) {
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{eventById: any}>(
 		network,
 		`
 			query ($id: String!) {
@@ -45,7 +46,7 @@ export async function getEventsWithoutTotalCount(
 	filter: EventsFilter,
 	order: EventsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{events: any[]}>(
 		network,
 		`
 			query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
@@ -71,14 +72,29 @@ export async function getEventsWithoutTotalCount(
 			}
 		`,
 		{
-			limit,
+			limit: limit + 1, // get one item more to test if next page exists
 			offset,
 			filter,
 			order,
 		}
 	);
 
-	return response?.events;
+	const items = response.events;
+	const hasNextPage = items.length > limit;
+
+	if (hasNextPage) {
+		// remove testing item from next page
+		items.pop();
+	}
+
+	return {
+		data: items,
+		pagination: {
+			offset,
+			limit,
+			hasNextPage
+		}
+	};
 }
 
 export async function getEvents(
@@ -90,40 +106,40 @@ export async function getEvents(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{eventsConnection: ArchiveConnection<any>}>(
 		network,
 		`
 			query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
 				eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
 					edges {
-					  node {
-						id
-						name
-						block {
-						  id
-						  height
-						  timestamp
-						  spec {
-							specVersion
-						  }
+						node {
+							id
+							name
+							block {
+								id
+								height
+								timestamp
+								spec {
+									specVersion
+								}
+							}
+							extrinsic {
+								id
+							}
+							call {
+								id
+							}
+							args
 						}
-						extrinsic {
-						  id
-						}
-						call {
-						  id
-						}
-						args
-					  }
 					}
 					pageInfo {
-					  endCursor
-					  hasNextPage
-					  hasPreviousPage
-					  startCursor
+						endCursor
+						hasNextPage
+						hasPreviousPage
+						startCursor
 					}
 					totalCount
-				  }
+				}
 			}
 		`,
 		{

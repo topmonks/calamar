@@ -1,19 +1,16 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { CircularProgress, TableBody, TableCell, TableRow } from "@mui/material";
-import { Card, CardHeader } from "../components/Card";
-import CopyToClipboardButton from "../components/CopyToClipboardButton";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import InfoTable from "../components/InfoTable";
-import { Link } from "../components/Link";
-import { useBlock } from "../hooks/useBlock";
-import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useExtrinsics } from "../hooks/useExtrinsics";
-import { Time } from "../components/Time";
-import { useEvents } from "../hooks/useEvents";
-import { useCalls } from "../hooks/useCalls";
+
+import { BlockInfoTable } from "../components/blocks/BlockInfoTable";
 import { CallsTable } from "../components/calls/CallsTable";
+import { Card, CardHeader } from "../components/Card";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
 import EventsTable from "../components/events/EventsTable";
+import { useBlock } from "../hooks/useBlock";
+import { useCalls } from "../hooks/useCalls";
+import { useEvents } from "../hooks/useEvents";
+import { useExtrinsics } from "../hooks/useExtrinsics";
 
 type BlockPageParams = {
 	network: string;
@@ -23,13 +20,15 @@ type BlockPageParams = {
 function BlockPage() {
 	const { network, id } = useParams() as BlockPageParams;
 
-	const [block, { loading }] = useBlock(network, { id_eq: id });
+	const block = useBlock(network, { id_eq: id });
 
 	const extrinsics = useExtrinsics(
 		network,
 		{ block: { id_eq: id } },
 		"id_DESC"
 	);
+
+	console.log("EX", extrinsics);
 
 	const events = useEvents(
 		network,
@@ -54,104 +53,39 @@ function BlockPage() {
 		<>
 			<Card>
 				<CardHeader>Block #{id}</CardHeader>
-				<InfoTable
-					item={block}
-					loading={loading}
-					noItemMessage="No block found"
-				>
-					{block && (
-						<TableBody>
-							<TableRow>
-								<TableCell>Id</TableCell>
-								<TableCell>{block.id}</TableCell>
-							</TableRow>
-							<TableRow>
-								<TableCell>Hash</TableCell>
-								<TableCell>
-									{block.hash}
-									<CopyToClipboardButton value={block.hash} />
-								</TableCell>
-							</TableRow>
-							<TableRow>
-								<TableCell>Parent hash</TableCell>
-								<TableCell>
-									<Link to={`/${network}/search?query=${block.parentHash}`}>
-										{block.parentHash}
-									</Link>
-									<CopyToClipboardButton value={block.parentHash} />
-								</TableCell>
-							</TableRow>
-							{block.validator && (
-								<TableRow>
-									<TableCell>Validator</TableCell>
-									<TableCell>
-										<Link to={`/${network}/account/${block.validator}`}>
-											{block.validator}
-										</Link>
-										<CopyToClipboardButton value={block.validator} />
-									</TableCell>
-								</TableRow>
-							)}
-							<TableRow>
-								<TableCell>Block height</TableCell>
-								<TableCell>{block.height}</TableCell>
-							</TableRow>
-							{block.height !== 0 && <TableRow>
-								<TableCell>Date</TableCell>
-								<TableCell>
-									<Time time={block.timestamp} fromNow />
-								</TableCell>
-							</TableRow>
-							}
-						</TableBody>
-					)}
-				</InfoTable>
+				<BlockInfoTable network={network} {...block} />
 			</Card>
-			{(block && (extrinsics.loading || extrinsics.items.length > 0)) && (
-				<Card>
-					<TabbedContent>
-						<TabPane
-							label="Extrinsics"
-							count={extrinsics.pagination.totalCount}
-							loading={extrinsics.loading}
-							value="extrinsics"
-						>
-							<ExtrinsicsTable
-								items={extrinsics.items}
-								loading={extrinsics.loading}
-								network={network}
-								pagination={extrinsics.pagination}
-							/>
-						</TabPane>
-						<TabPane
-							label="Calls"
-							count={calls.pagination.totalCount}
-							loading={calls.loading}
-							value="calls"
-						>
-							<CallsTable
-								items={calls.items}
-								loading={calls.loading}
-								network={network}
-								pagination={calls.pagination}
-							/>
-						</TabPane>
-						<TabPane
-							label="Events"
-							count={events.pagination.totalCount}
-							loading={events.loading}
-							value="events"
-						>
-							<EventsTable
-								items={events.items}
-								loading={events.loading}
-								network={network}
-								pagination={events.pagination}
-							/>
-						</TabPane>
-					</TabbedContent>
-				</Card>
-			)}
+			<Card>
+				<TabbedContent>
+					<TabPane
+						label="Extrinsics"
+						count={extrinsics.pagination.totalCount}
+						loading={extrinsics.loading}
+						error={extrinsics.error}
+						value="extrinsics"
+					>
+						<ExtrinsicsTable network={network} {...extrinsics} />
+					</TabPane>
+					<TabPane
+						label="Calls"
+						count={calls.pagination.totalCount}
+						loading={calls.loading}
+						error={calls.error}
+						value="calls"
+					>
+						<CallsTable network={network} {...calls} />
+					</TabPane>
+					<TabPane
+						label="Events"
+						count={events.pagination.totalCount}
+						loading={events.loading}
+						error={events.error}
+						value="events"
+					>
+						<EventsTable network={network} {...events} />
+					</TabPane>
+				</TabbedContent>
+			</Card>
 		</>
 	);
 }

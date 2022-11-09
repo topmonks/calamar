@@ -1,3 +1,4 @@
+import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
 
@@ -49,42 +50,42 @@ export async function getCalls(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{callsConnection: ArchiveConnection<any>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
 				edges {
 					node {
-					  id
-					  name
-					  success
-					  origin
-					  args
-					  block {
-						timestamp
-						id
-						height
-						spec {
-						  specVersion
-						}
-					  }
-					  parent {
 						id
 						name
-					  }
-					  extrinsic {
-						id
-						version
-					  }
+						success
+						origin
+						args
+						block {
+							timestamp
+							id
+							height
+							spec {
+								specVersion
+							}
+						}
+						parent {
+							id
+							name
+						}
+						extrinsic {
+							id
+							version
+						}
 					}
-				  }
-				  pageInfo {
+				}
+				pageInfo {
 					endCursor
 					hasNextPage
 					hasPreviousPage
 					startCursor
-				  }
-				  totalCount
+				}
+				totalCount
 			}
 		}`,
 		{

@@ -25,12 +25,7 @@ function LatestExtrinsicsPage() {
 		<>
 			<Card>
 				<CardHeader>Latest extrinsics</CardHeader>
-				<ExtrinsicsTable
-					items={extrinsics.items}
-					loading={extrinsics.loading}
-					network={network}
-					pagination={extrinsics.pagination}
-				/>
+				<ExtrinsicsTable network={network} {...extrinsics} />
 			</Card>
 		</>
 	);

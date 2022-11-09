@@ -1,6 +1,4 @@
-import React from "react";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
-import ResultLayout from "../components/ResultLayout";
 import Search from "../components/Search";
 
 type SearchPageParams = {

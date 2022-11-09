@@ -8,6 +8,7 @@ import { Pagination } from "../hooks/usePagination";
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 import { TablePagination } from "./TablePagination";
+import { ErrorMessage } from "./ErrorMessage";
 
 const tableStyle = css`
 	table-layout: fixed;
@@ -29,8 +30,10 @@ const tableStyle = css`
 export type ItemsTableProps = PropsWithChildren<HTMLAttributes<HTMLDivElement> & {
 	pagination: Pagination;
 	loading?: boolean;
-	items?: any[];
-	noItemsMessage?: string;
+	notFound?: boolean;
+	notFoundMessage?: string;
+	error?: any;
+	errorMessage?: string;
 }>;
 
 function ItemsTable(props: ItemsTableProps) {
@@ -38,8 +41,10 @@ function ItemsTable(props: ItemsTableProps) {
 		pagination,
 		children,
 		loading,
-		items,
-		noItemsMessage = "No items found",
+		notFound,
+		notFoundMessage = "No items found",
+		error,
+		errorMessage = "Unexpected error occured while fetching items",
 		...restProps
 	} = props;
 
@@ -47,8 +52,18 @@ function ItemsTable(props: ItemsTableProps) {
 		return <Loading />;
 	}
 
-	if (items && items.length === 0) {
-		return <NotFound>{noItemsMessage}</NotFound>;
+	if (notFound) {
+		return <NotFound>{notFoundMessage}</NotFound>;
+	}
+
+	if (error) {
+		return (
+			<ErrorMessage
+				message={errorMessage}
+				details={error.stack || error.message}
+				showReported
+			/>
+		);
 	}
 
 	return (

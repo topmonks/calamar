@@ -2,6 +2,7 @@
 import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useState } from "react";
 import { Theme, css } from "@emotion/react";
 import { CircularProgress, Tab, TabProps, Tabs } from "@mui/material";
+import ErrorIcon from "@mui/icons-material/Warning";
 
 const tabsWrapperStyle = css`
 	margin-bottom: 16px;
@@ -30,9 +31,14 @@ const tabStyle = (theme: Theme) => css`
 `;
 
 const tabCountStyle = css`
-	&::before {
-		content: ' ';
-	}
+	margin-left: 4px;
+`;
+
+const tabErrorStyle = css`
+	margin-left: 8px;
+	position: relative;
+	top: 1px;
+	color: #ef5350;
 `;
 
 const tabLoadingStyle = (theme: Theme) => css`
@@ -48,6 +54,7 @@ export type TabPaneProps = Omit<TabProps, "children"> & PropsWithChildren<{
 	label: ReactNode;
 	count?: number;
 	loading?: boolean;
+	error?: boolean;
 	value: string;
 }>
 
@@ -74,6 +81,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 			label,
 			count,
 			loading,
+			error,
 			children, // ignore
 			...restProps
 		} = child.props;
@@ -84,11 +92,12 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				key={value}
 				css={tabStyle}
 				label={
-					<span>
+					<>
 						<span>{label}</span>
 						{count && <span data-test="count" css={tabCountStyle}>({count})</span>}
 						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
-					</span>
+						{error && <ErrorIcon css={tabErrorStyle} />}
+					</>
 				}
 				value={value}
 				{...restProps}

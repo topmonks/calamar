@@ -13,16 +13,19 @@ export type EventsTableProps = {
 	pagination: Pagination;
 	showExtrinsic?: boolean;
 	loading?: boolean;
+	notFound?: boolean;
+	error?: any;
 };
 
 function EventsTable(props: EventsTableProps) {
-	const { network, items, pagination, showExtrinsic, loading } = props;
+	const { network, items, pagination, showExtrinsic, loading, notFound, error } = props;
 
 	return (
 		<ItemsTable
-			items={items}
 			loading={loading}
-			noItemsMessage="No events found"
+			notFound={notFound}
+			notFoundMessage="No events found"
+			error={error}
 			pagination={pagination}
 			data-test="events-table"
 		>

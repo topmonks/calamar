@@ -1,5 +1,4 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { filterToWhere } from "../utils/filterToWhere";
 
 export type BlocksFilter = any; /*Filter<{
 	id: string;

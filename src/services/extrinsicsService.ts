@@ -1,13 +1,15 @@
+import { ArchiveConnection } from "../model/archiveConnection";
+import { ItemsResponse } from "../model/itemsResponse";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
 
-const unifyExtrinsics = (extrinsics: any) => {
+function unifyExtrinsics<T extends ItemsResponse>(response: T) {
 	return {
-		...extrinsics,
-		items: extrinsics.items.map((extrinsic: any) => {
+		...response,
+		data: response.data.map((extrinsic: any) => {
 			const address = extrinsic.signature?.address;
 			if (typeof address === "object" && address.value) {
 				extrinsic.signature.address = address.value;
@@ -15,11 +17,11 @@ const unifyExtrinsics = (extrinsics: any) => {
 			return extrinsic;
 		})
 	};
-};
+}
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	const extrinsics = await getExtrinsicsWithoutTotalCount(network, 1, 0, filter);
-	return extrinsics?.items?.[0];
+	return extrinsics.data[0];
 }
 
 export async function getExtrinsicsWithoutTotalCount(
@@ -29,7 +31,7 @@ export async function getExtrinsicsWithoutTotalCount(
 	filter?: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{extrinsics: any}>(
 		network,
 		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
 			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
@@ -54,69 +56,83 @@ export async function getExtrinsicsWithoutTotalCount(
 			}
 		}`,
 		{
-			limit,
+			limit: limit + 1, // get one item more to test if next page exists
 			offset,
 			filter,
 			order,
 		}
 	);
 
-	console.log(unifyExtrinsics({ items: response?.extrinsics }));
-	return unifyExtrinsics({ items: response?.extrinsics });
+	const items = response.extrinsics;
+	const hasNextPage = items.length > limit;
+
+	if (hasNextPage) {
+		// remove testing item from next page
+		items.pop();
+	}
+
+	return unifyExtrinsics({
+		data: items,
+		pagination: {
+			offset,
+			limit,
+			hasNextPage
+		}
+	});
 }
 
 export async function getExtrinsics(
 	network: string,
-	first: number,
+	limit: number,
 	offset: number,
 	filter?: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{extrinsicsConnection: ArchiveConnection<any>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
 				edges {
 					node {
-					  id
-					  hash
-					  call {
-						name
-						args
-					  }
-					  block {
 						id
 						hash
-						timestamp
-					  }
-					  signature
-					  indexInBlock
-					  success
-					  tip
-					  fee
-					  error
-					  version
+						call {
+							name
+							args
+						}
+						block {
+							id
+							hash
+							timestamp
+						}
+						signature
+						indexInBlock
+						success
+						tip
+						fee
+						error
+						version
 					}
-				  }
-				  pageInfo {
+				}
+				pageInfo {
 					endCursor
 					hasNextPage
 					hasPreviousPage
 					startCursor
-				  }
-				  totalCount
 				}
+				totalCount
+			}
 		}`,
 		{
-			first,
+			first: limit,
 			after,
 			filter,
 			order,
 		}
 	);
 
-	return unifyExtrinsics(unifyConnection(response?.extrinsicsConnection));
+	return unifyExtrinsics(unifyConnection(response.extrinsicsConnection));
 }
 

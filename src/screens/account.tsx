@@ -1,15 +1,15 @@
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { CircularProgress, TableBody, TableCell, TableRow } from "@mui/material";
+import { TableBody, TableCell, TableRow } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import InfoTable from "../components/InfoTable";
-import { useExtrinsic } from "../hooks/useExtrinsic";
-import { encodeAddress } from "../utils/formatAddress";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { encodeAddress } from "../utils/formatAddress";
 
 type AccountPageParams = {
 	network: string;
@@ -27,7 +27,7 @@ function AccountPage() {
 	};
 
 	console.log(filter);
-	const [accountCheck, { loading }] = useExtrinsic(network, filter);
+	const accountCheck = useExtrinsic(network, filter);
 	const extrinsics = useExtrinsics(network, filter);
 
 	const encodedAddress = useMemo(
@@ -54,9 +54,9 @@ function AccountPage() {
 					Account #{address}
 				</CardHeader>
 				<InfoTable
-					item={accountCheck}
-					loading={loading}
-					noItemMessage="No account found"
+					loading={accountCheck.loading}
+					notFoundMessage="No account found"
+					error={accountCheck.error}
 				>
 					<TableBody>
 						{encodedAddress && (
@@ -93,26 +93,22 @@ function AccountPage() {
 					</TableBody>
 				</InfoTable>
 			</Card>
-			{(accountCheck && (extrinsics.loading || extrinsics.items.length > 0)) && (
+			{accountCheck.data &&
 				<Card>
 					<TabbedContent>
 						<TabPane
 							label="Extrinsics"
 							count={extrinsics.pagination.totalCount}
 							loading={extrinsics.loading}
+							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable
-								items={extrinsics.items}
-								loading={extrinsics.loading}
-								network={network}
-								pagination={extrinsics.pagination}
-							/>
+							<ExtrinsicsTable network={network} {...extrinsics} />
 						</TabPane>
 						<></>
 					</TabbedContent>
 				</Card>
-			)}
+			}
 		</>
 	);
 }

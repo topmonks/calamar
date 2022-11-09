@@ -1,85 +1,60 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export type PaginationState = {
 	limit: number;
 	offset: number;
+	hasNextPage: boolean;
 	totalCount?: number
-	hasNext: boolean;
 };
 
 export type Pagination = PaginationState & {
+	set: (pagination: Partial<PaginationState>) => void;
 	setPreviousPage: () => void;
 	setNextPage: () => void;
-	setHasNext: (hasNext: boolean) => void;
-	setTotalCount: (totalCount: number) => void;
-	setPagination: (pagination: Pagination) => void;
 };
 
 export type UsePaginationProps = {
 	limit?: number;
 };
 
-export function usePagination(limit = 10, hasNext = false) {
-	const [pagination, setPaginationState] = useState<PaginationState>({
+export function usePagination(limit = 10) {
+	const [state, setState] = useState<PaginationState>({
 		limit,
 		offset: 0,
-		hasNext,
+		hasNextPage: false,
 	});
 
 	const setPreviousPage = useCallback(() => {
-		if (pagination.offset === 0) {
+		if (state.offset === 0) {
 			return;
 		}
-		setPaginationState({
-			...pagination,
-			offset: pagination.offset - pagination.limit,
+		setState({
+			...state,
+			offset: state.offset - state.limit,
 		});
-	}, [pagination]);
+	}, [state]);
 
 	const setNextPage = useCallback(() => {
-		setPaginationState({
-			...pagination,
-			offset: pagination.offset + pagination.limit,
+		setState({
+			...state,
+			offset: state.offset + state.limit,
 		});
-	}, [pagination]);
+	}, [state]);
 
-	const setHasNext = useCallback(
-		(hasNext: boolean) => {
-			hasNext !== pagination.hasNext &&
-				setPaginationState({
-					...pagination,
-					hasNext,
-				});
-		},
-		[pagination]
-	);
-
-	const setTotalCount = useCallback(
-		(totalCount: number) => {
-			setPaginationState({
-				...pagination,
-				totalCount: totalCount,
-			});
-		},
-		[pagination]
-	);
-
-	const setPagination = useCallback(
-		(pagination: Pagination) => {
-			setPaginationState(pagination);
-		}, []
-	);
+	const set = useCallback((newState: Partial<Pagination>) => {
+		setState({
+			...state,
+			...newState
+		});
+	}, [state]);
 
 	return useMemo(
-		() =>
-			({
-				...pagination,
-				setPreviousPage,
-				setNextPage,
-				setHasNext,
-				setTotalCount,
-				setPagination,
-			} as Pagination),
-		[pagination, setPreviousPage, setNextPage, setHasNext, setTotalCount, setPagination]
+		() => ({
+			...state,
+			set,
+			setPreviousPage,
+			setNextPage,
+		} as Pagination),
+		[state, setPreviousPage, setNextPage, setState]
 	);
 }
