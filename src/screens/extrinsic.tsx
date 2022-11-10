@@ -9,6 +9,7 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -21,6 +22,8 @@ function ExtrinsicPage() {
 	const extrinsic = useExtrinsic(network, { id_eq: id });
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
 	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
+
+	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
 
 	return (
 		<>

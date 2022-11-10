@@ -7,6 +7,7 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 type AccountPageParams = {
 	network: string;
@@ -23,6 +24,8 @@ function AccountPage() {
 			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
 		],
 	});
+
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {

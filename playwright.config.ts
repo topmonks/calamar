@@ -50,7 +50,9 @@ const config: PlaywrightTestConfig = {
 		trace: "on-first-retry",
 
 		screenshot: process.env.CI ? "only-on-failure" : "on",
-		video: process.env.CI ? "retain-on-failure" : "on"
+		video: process.env.CI ? "retain-on-failure" : "on",
+
+		testIdAttribute: "data-test"
 	},
 
 	/* Configure projects for major browsers */

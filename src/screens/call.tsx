@@ -6,6 +6,7 @@ import EventsTable from "../components/events/EventsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 type CallPageParams = {
 	network: string;
@@ -17,6 +18,8 @@ export const CallPage: React.FC = () => {
 
 	const call = useCall(network, id);
 	const events = useEvents(network, { call: { id_eq: id } }, "id_ASC");
+
+	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
 
 	return (
 		<>

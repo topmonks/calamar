@@ -33,7 +33,7 @@ export const ErrorMessage = (props: ErrorMessageProps) => {
 	const {message, details, showReported} = props;
 
 	return (
-		<Alert severity="error" css={alertStyle}>
+		<Alert severity="error" css={alertStyle} data-test="error">
 			<AlertTitle>{message}</AlertTitle>
 			{showReported &&
 				<div css={reportedStyle}>

@@ -11,6 +11,7 @@ import { useBlock } from "../hooks/useBlock";
 import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 type BlockPageParams = {
 	network: string;
@@ -42,6 +43,8 @@ function BlockPage() {
 		"id_DESC"
 	);
 
+	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
+
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
@@ -64,6 +67,7 @@ function BlockPage() {
 							loading={extrinsics.loading}
 							error={extrinsics.error}
 							value="extrinsics"
+							data-test="extrinsics-tab"
 						>
 							<ExtrinsicsTable network={network} {...extrinsics} />
 						</TabPane>
@@ -73,6 +77,7 @@ function BlockPage() {
 							loading={calls.loading}
 							error={calls.error}
 							value="calls"
+							data-test="calls-tab"
 						>
 							<CallsTable network={network} {...calls} />
 						</TabPane>
@@ -82,6 +87,7 @@ function BlockPage() {
 							loading={events.loading}
 							error={events.error}
 							value="events"
+							data-test="events-tab"
 						>
 							<EventsTable network={network} {...events} />
 						</TabPane>

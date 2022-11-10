@@ -36,6 +36,7 @@
     "start:test": "http-server ./build -p 3000 --proxy http://localhost:3000?",
     "build": "cross-env CI=false react-scripts build",
     "test": "playwright test",
+    "test:report": "playwright show-report test/report",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
   },

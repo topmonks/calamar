@@ -11,6 +11,11 @@ const hideSelectors = [
 
 export async function screenshot(page: Page, name: string) {
 	page.evaluate((hideSelectors) => {
+		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");
+		if (topBar) {
+			topBar.style.position = "relative";
+		}
+
 		const background = document.querySelector<HTMLElement>("[data-test=background]");
 		if (background) {
 			background.style.position = "absolute";
@@ -30,6 +35,11 @@ export async function screenshot(page: Page, name: string) {
 	});
 
 	page.evaluate((hideSelectors) => {
+		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");
+		if (topBar) {
+			topBar.style.position = "";
+		}
+
 		const background = document.querySelector<HTMLElement>("[data-test=background]");
 		if (background) {
 			background.style.position = "";
