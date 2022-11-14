@@ -20,6 +20,8 @@ export const CallPage: React.FC = () => {
 	const events = useEvents(network, { call: { id_eq: id } }, "id_ASC");
 
 	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
+	console.log("call.loading", call.loading);
+	console.log("events.loading", events.loading);
 
 	return (
 		<>
@@ -43,7 +45,6 @@ export const CallPage: React.FC = () => {
 						>
 							<EventsTable network={network} {...events} />
 						</TabPane>
-						<></>
 					</TabbedContent>
 				</Card>
 			}
