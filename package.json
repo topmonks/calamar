@@ -37,7 +37,7 @@
     "start": "cross-env BROWSER=none react-scripts start",
     "start:test": "http-server ./build -p 3000 --proxy http://localhost:3000?",
     "build": "cross-env CI=false react-scripts build",
-    "test": "playwright test",
+    "test": "playwright test test/e2e/call.spec.ts",
     "test:report": "playwright show-report test/report",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
