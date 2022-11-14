@@ -36,8 +36,6 @@ export async function fetchGraphql<T = any>(
 
 	if (jsonResult.errors && !jsonResult.data) {
 		const error = jsonResult.errors[0];
-		console.error(error);
-		// TODO report to Rollbar
 		throw new GraphQLError(error);
 	}
 

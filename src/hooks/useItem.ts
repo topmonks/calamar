@@ -1,3 +1,4 @@
+import { useRollbar } from "@rollbar/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FetchOptions } from "../model/fetchOptions";
@@ -9,6 +10,8 @@ export function useItem<T = any, F = any>(
 	filter: F,
 	options?: FetchOptions
 ) {
+	const rollbar = useRollbar();
+
 	const [data, setData] = useState<T>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<any>();
@@ -25,6 +28,7 @@ export function useItem<T = any, F = any>(
 				setData(data);
 			} catch(e) {
 				if (e instanceof GraphQLError) {
+					rollbar.error(e);
 					setError(e);
 				} else {
 					throw e;
