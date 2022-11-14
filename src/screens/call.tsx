@@ -23,8 +23,6 @@ export const CallPage: React.FC = () => {
 
 	return (
 		<>
-			{call.loading ? "call.loading" : "!call.loading"};
-			{events.loading ? "events.loading" : "!events.loading"};
 			<Card>
 				<CardHeader style={{ paddingBottom: 48 }}>
 					Call #{id}
@@ -43,7 +41,6 @@ export const CallPage: React.FC = () => {
 						>
 							<EventsTable network={network} {...events} />
 						</TabPane>
-						<></>
 					</TabbedContent>
 				</Card>
 			}
