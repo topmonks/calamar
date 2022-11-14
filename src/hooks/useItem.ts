@@ -36,6 +36,8 @@ export function useItem<T = any, F = any>(
 	}, [fetchItem, network, JSON.stringify(filter), options?.skip]);
 
 	useEffect(() => {
+		setData(undefined);
+		setError(undefined);
 		setLoading(true);
 		fetchData();
 	}, [fetchData]);

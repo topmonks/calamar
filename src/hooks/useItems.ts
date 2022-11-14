@@ -58,6 +58,8 @@ export function useItems<T = any, F = any>(
 	]);
 
 	useEffect(() => {
+		setData([]);
+		setError(undefined);
 		setLoading(true);
 		fetchData();
 	}, [fetchData]);

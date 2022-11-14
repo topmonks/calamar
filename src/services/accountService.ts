@@ -1,8 +1,13 @@
+import { isAddress } from "@polkadot/util-crypto";
 import { decodeAddress, encodeAddress } from "../utils/formatAddress";
 
 import { getExtrinsic } from "./extrinsicsService";
 
 export async function getAccount(network: string, address: string) {
+	if (!isAddress(address)) {
+		return null;
+	}
+
 	// if the address is encoded, decode it
 	const decodedAddress = decodeAddress(address);
 
