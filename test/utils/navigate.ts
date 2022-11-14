@@ -26,4 +26,6 @@ export async function navigate(page: Page, url: string, options: GotoOptions = {
 	if (customEvent) {
 		await waitForPageEvent(page, customEvent, {timeout: options.timeout});
 	}
+
+	await page.evaluate(() => document.fonts.ready);
 }
