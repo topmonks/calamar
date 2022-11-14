@@ -17,6 +17,18 @@ test.describe("Call detail page", () => {
 		await screenshot(page, "callWithEvents");
 	});
 
+	test("shows not found message if call was not found", async ({ page }) => {
+		const id = "111-22-3";
+
+		await navigate(page, `/kusama/call/${id}`, {waitUntil: "data-loaded"});
+
+		const errorMessage = page.getByTestId("not-found");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText("No call found");
+
+		await screenshot(page, "callNotFound");
+	});
+
 	test("show error message when call data fetch fails", async ({ page }) => {
 		mockRequest(
 			page,

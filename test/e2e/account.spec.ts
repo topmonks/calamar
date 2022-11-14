@@ -18,6 +18,18 @@ test.describe("Account detail page", () => {
 		await screenshot(page, "accountWithExtrinsics");
 	});
 
+	test("shows not found message if account was not found", async ({ page }) => {
+		const id = "0x1234567890";
+
+		await navigate(page, `/kusama/account/${id}`, {waitUntil: "data-loaded"});
+
+		const errorMessage = page.getByTestId("not-found");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText("No account found");
+
+		await screenshot(page, "accountNotFound");
+	});
+
 	test("shows error message when account data fetch fails", async ({ page }) => {
 		mockRequest(
 

@@ -15,6 +15,18 @@ test.describe("Event detail page", () => {
 		await screenshot(page, "event");
 	});
 
+	test("shows not found message if event was not found", async ({ page }) => {
+		const id = "111-22-3";
+
+		await navigate(page, `/kusama/event/${id}`, {waitUntil: "data-loaded"});
+
+		const errorMessage = page.getByTestId("not-found");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText("No event found");
+
+		await screenshot(page, "eventNotFound");
+	});
+
 	test("show error message when event data fetch fails", async ({ page }) => {
 		mockRequest(
 			page,

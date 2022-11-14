@@ -35,6 +35,18 @@ test.describe("Block detail page", () => {
 		await screenshot(page, "blockWithEvents");
 	});
 
+	test("shows not found message if block was not found", async ({ page }) => {
+		const id = "111-22-3";
+
+		await navigate(page, `/kusama/block/${id}`, {waitUntil: "data-loaded"});
+
+		const errorMessage = page.getByTestId("not-found");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText("No block found");
+
+		await screenshot(page, "blockNotFound");
+	});
+
 	test("show error message when block data fetch fails", async ({ page }) => {
 		mockRequest(
 			page,

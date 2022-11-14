@@ -18,13 +18,24 @@ test.describe("Extrinsic detail page", () => {
 		await screenshot(page, "extrinsicWithEvents");
 	});
 
-
 	test("shows extrinsic detail page with calls", async ({ page }) => {
 		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("calls-tab").click();
 
 		await screenshot(page, "extrinsicWithCalls");
+	});
+
+	test("shows not found message if extrinsic was not found", async ({ page }) => {
+		const id = "111-22-3";
+
+		await navigate(page, `/kusama/extrinsic/${id}`, {waitUntil: "data-loaded"});
+
+		const errorMessage = page.getByTestId("not-found");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText("No extrinsic found");
+
+		await screenshot(page, "extrinsicNotFound");
 	});
 
 	test("show error message when item data fetch fails", async ({ page }) => {
