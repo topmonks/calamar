@@ -44,7 +44,7 @@ export async function getCall(network: string, filter: CallsFilter) {
 
 export async function getCalls(
 	network: string,
-	first: number,
+	limit: number,
 	offset: number,
 	filter: CallsFilter,
 	order: CallsOrder = "id_DESC"
@@ -90,12 +90,12 @@ export async function getCalls(
 			}
 		}`,
 		{
-			first,
+			first: limit,
 			after,
 			filter,
 			order,
 		}
 	);
 
-	return unifyConnection(response?.callsConnection);
+	return unifyConnection(response?.callsConnection, limit, offset);
 }
