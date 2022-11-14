@@ -97,7 +97,7 @@ export async function getEventsWithoutTotalCount(
 
 export async function getEvents(
 	network: string,
-	first: number,
+	limit: number,
 	offset: number,
 	filter: EventsFilter,
 	order: EventsOrder = "id_DESC"
@@ -141,12 +141,12 @@ export async function getEvents(
 			}
 		`,
 		{
-			first,
+			first: limit,
 			after,
 			filter,
 			order,
 		}
 	);
 
-	return unifyConnection(response?.eventsConnection);
+	return unifyConnection(response?.eventsConnection, limit, offset);
 }

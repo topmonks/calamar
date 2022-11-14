@@ -133,6 +133,6 @@ export async function getExtrinsics(
 		}
 	);
 
-	return unifyExtrinsics(unifyConnection(response.extrinsicsConnection));
+	return unifyExtrinsics(unifyConnection(response.extrinsicsConnection, limit, offset));
 }
 
