@@ -7,21 +7,20 @@ import { getCalls } from "../../src/services/callsService";
 import { mockRequest } from "../utils/mockRequest";
 import { screenshot } from "../utils/screenshot";
 import { waitForPageEvent } from "../utils/waitForPageEvent";
+import { navigate } from "../utils/navigate";
 
 test.describe("Extrinsic detail page", () => {
 	const extrinsicId = "0014932897-000002-93378";
 
 	test("shows extrinsic detail page with events", async ({ page }) => {
-		await page.goto(`/kusama/extrinsic/${extrinsicId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		await screenshot(page, "extrinsicWithEvents");
 	});
 
 
 	test("shows extrinsic detail page with calls", async ({ page }) => {
-		await page.goto(`/kusama/extrinsic/${extrinsicId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("calls-tab").click();
 
@@ -42,8 +41,7 @@ test.describe("Extrinsic detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/extrinsic/${extrinsicId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
@@ -67,8 +65,7 @@ test.describe("Extrinsic detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/extrinsic/${extrinsicId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
@@ -92,8 +89,7 @@ test.describe("Extrinsic detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/extrinsic/${extrinsicId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("calls-tab").click();
 

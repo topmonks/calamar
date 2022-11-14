@@ -3,14 +3,14 @@ import { test, expect } from "@playwright/test";
 import { getEvent } from "../../src/services/eventsService";
 
 import { mockRequest } from "../utils/mockRequest";
+import { navigate } from "../utils/navigate";
 import { screenshot } from "../utils/screenshot";
 import { waitForPageEvent } from "../utils/waitForPageEvent";
 
 test.describe("Event detail page", () => {
 	const eventId = "0015163154-000040-44488";
 	test("shows event detail page", async ({ page }) => {
-		await page.goto(`/kusama/event/${eventId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/event/${eventId}`, {waitUntil: "data-loaded"});
 
 		await screenshot(page, "event");
 	});
@@ -29,8 +29,7 @@ test.describe("Event detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/event/${eventId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/event/${eventId}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();

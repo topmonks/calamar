@@ -4,6 +4,7 @@ import { getCall } from "../../src/services/callsService";
 import { getEvents } from "../../src/services/eventsService";
 
 import { mockRequest } from "../utils/mockRequest";
+import { navigate } from "../utils/navigate";
 import { screenshot } from "../utils/screenshot";
 import { waitForPageEvent } from "../utils/waitForPageEvent";
 
@@ -11,8 +12,7 @@ test.describe("Call detail page", () => {
 	const callId = "0015163154-000002-44488";
 
 	test("shows call detail page with events", async ({ page }) => {
-		await page.goto(`/kusama/call/${callId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/call/${callId}`, {waitUntil: "data-loaded"});
 
 		await screenshot(page, "callWithEvents");
 	});
@@ -31,8 +31,7 @@ test.describe("Call detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/call/${callId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/call/${callId}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
@@ -56,8 +55,7 @@ test.describe("Call detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/call/${callId}`, {waitUntil: "load"});
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/call/${callId}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();

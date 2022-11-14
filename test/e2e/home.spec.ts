@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 
+import { navigate } from "../utils/navigate";
 import { screenshot } from "../utils/screenshot";
 
 test.describe("home page", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/");
+		await navigate(page, "/");
 	});
 
 	test("shows home page", async ({ page }) => {

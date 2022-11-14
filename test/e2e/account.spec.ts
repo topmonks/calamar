@@ -4,16 +4,15 @@ import { getAccount } from "../../src/services/accountService";
 import { getExtrinsics } from "../../src/services/extrinsicsService";
 
 import { mockRequest } from "../utils/mockRequest";
+import { navigate } from "../utils/navigate";
 import { removeContent } from "../utils/removeContent";
 import { screenshot } from "../utils/screenshot";
-import { waitForPageEvent } from "../utils/waitForPageEvent";
 
 test.describe("Account detail page", () => {
 	const address = "0x885f84242d71e6e44ddbe5345d5050a9c1b4dcc908cb2b84102a27035177fe22";
 
 	test("shows account detail page with extrinsics", async ({ page }) => {
-		await page.goto(`/kusama/account/${address}`);
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
 		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
 		await screenshot(page, "accountWithExtrinsics");
@@ -34,8 +33,7 @@ test.describe("Account detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/account/${address}`);
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
@@ -64,8 +62,7 @@ test.describe("Account detail page", () => {
 			})
 		);
 
-		await page.goto(`/kusama/account/${address}`);
-		await waitForPageEvent(page, "data-loaded");
+		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();

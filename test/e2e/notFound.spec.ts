@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 
+import { navigate } from "../utils/navigate";
 import { screenshot } from "../utils/screenshot";
 
 test.describe("Not found page", () => {
 	test("shows not found page", async ({ page }) => {
-		await page.goto("/xx");
+		await navigate(page, "/xx");
 		await screenshot(page, "notFound");
 	});
 });
