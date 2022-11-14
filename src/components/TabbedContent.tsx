@@ -100,6 +100,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 					</>
 				}
 				value={value}
+				data-test={`${value}-tab`}
 				{...restProps}
 			/>
 		);

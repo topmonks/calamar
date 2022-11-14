@@ -143,7 +143,7 @@ function SearchPage() {
 						count={extrinsicsByName.pagination.totalCount}
 						loading={extrinsicsByName.loading}
 						error={extrinsicsByName.error}
-						value="extrinsicsByName"
+						value="extrinsics"
 					>
 						<ExtrinsicsTable network={network} {...extrinsicsByName} />
 					</TabPane>

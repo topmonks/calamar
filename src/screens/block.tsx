@@ -67,7 +67,6 @@ function BlockPage() {
 							loading={extrinsics.loading}
 							error={extrinsics.error}
 							value="extrinsics"
-							data-test="extrinsics-tab"
 						>
 							<ExtrinsicsTable network={network} {...extrinsics} />
 						</TabPane>
@@ -77,7 +76,6 @@ function BlockPage() {
 							loading={calls.loading}
 							error={calls.error}
 							value="calls"
-							data-test="calls-tab"
 						>
 							<CallsTable network={network} {...calls} />
 						</TabPane>
@@ -87,7 +85,6 @@ function BlockPage() {
 							loading={events.loading}
 							error={events.error}
 							value="events"
-							data-test="events-tab"
 						>
 							<EventsTable network={network} {...events} />
 						</TabPane>

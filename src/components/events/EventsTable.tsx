@@ -31,7 +31,7 @@ function EventsTable(props: EventsTableProps) {
 		>
 			<col />
 			<col />
-			<col width="60%" />
+			<col width={showExtrinsic ? "40%" : "60%" } />
 			{showExtrinsic && <col />}
 			<TableHead>
 				<TableRow>
@@ -55,9 +55,9 @@ function EventsTable(props: EventsTableProps) {
 						</TableCell>
 						{showExtrinsic &&
 							<TableCell>
-								{event.extrinsic?.hash &&
-									<Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
-										{shortenHash(event.extrinsic.hash)}
+								{event.extrinsic?.id &&
+									<Link to={`/${network}/extrinsic/${event.extrinsic.id}`}>
+										{event.extrinsic.id}
 									</Link>
 								}
 							</TableCell>

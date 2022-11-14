@@ -49,7 +49,6 @@ function ExtrinsicPage() {
 							loading={calls.loading}
 							error={calls.error}
 							value="calls"
-							data-test="calls-tab"
 						>
 							<CallsTable network={network} {...calls} />
 						</TabPane>
