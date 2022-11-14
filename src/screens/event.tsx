@@ -13,7 +13,7 @@ type EventPageParams = {
 export const EventPage: React.FC = () => {
 	const { network, id } = useParams() as EventPageParams;
 
-	const event = useEvent(network, id);
+	const event = useEvent(network, { id_eq: id });
 
 	useDOMEventTrigger("data-loaded", !event.loading);
 

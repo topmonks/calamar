@@ -18,7 +18,7 @@ test.describe("Event detail page", () => {
 	test("show error message when event data fetch fails", async ({ page }) => {
 		mockRequest(
 			page,
-			() => getEvent("kusama", eventId),
+			() => getEvent("kusama", { id_eq: eventId }),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

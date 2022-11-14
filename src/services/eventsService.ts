@@ -5,38 +5,36 @@ import { unifyConnection } from "../utils/unifyConnection";
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
 
-export async function getEvent(network: string, id: string) {
-	const response = await fetchGraphql<{eventById: any}>(
+export async function getEvent(network: string, filter: EventsFilter) {
+	const response = await fetchGraphql<{events: any}>(
 		network,
-		`
-			query ($id: String!) {
-				eventById(id: $id) {
+		`query ($filter: EventWhereInput) {
+			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
+				id
+				name
+				block {
 					id
-					name
-					block {
-						id
-						height
-						timestamp
-						spec {
-							specVersion
-						}
+					height
+					timestamp
+					spec {
+						specVersion
 					}
-					extrinsic {
-						id
-					}
-					call {
-						id
-					}
-					args
 				}
+				extrinsic {
+					id
+				}
+				call {
+					id
+				}
+				args
 			}
-		`,
+		}`,
 		{
-			id,
+			filter,
 		}
 	);
 
-	return response.eventById;
+	return response.events[0];
 }
 
 export async function getEventsWithoutTotalCount(

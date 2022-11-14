@@ -6,11 +6,11 @@ export type CallsFilter = any;
 export type CallsOrder = string | string[];
 
 
-export async function getCall(network: string, id: string) {
-	const response = await fetchGraphql(
+export async function getCall(network: string, filter: CallsFilter) {
+	const response = await fetchGraphql<{calls: any[]}>(
 		network,
-		`query ($id: String!) {
-			callById(id: $id) {
+		`query ($filter: CallWhereInput) {
+			calls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
 				id
 				name
 				success
@@ -35,10 +35,11 @@ export async function getCall(network: string, id: string) {
 			}
 		}`,
 		{
-			id,
+			filter
 		}
 	);
-	return response.callById;
+
+	return response.calls[0];
 }
 
 export async function getCalls(

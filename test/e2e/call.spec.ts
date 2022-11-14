@@ -20,7 +20,7 @@ test.describe("Call detail page", () => {
 	test("show error message when call data fetch fails", async ({ page }) => {
 		mockRequest(
 			page,
-			() => getCall("kusama", callId),
+			() => getCall("kusama", { id_eq: callId }),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

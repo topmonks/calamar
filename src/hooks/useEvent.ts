@@ -1,12 +1,12 @@
 import { FetchOptions } from "../model/fetchOptions";
-import { getEvent } from "../services/eventsService";
+import { EventsFilter, getEvent } from "../services/eventsService";
 
 import { useItem } from "./useItem";
 
 export function useEvent(
 	network: string | undefined,
-	id: string,
+	filter: EventsFilter,
 	options?: FetchOptions
 ) {
-	return useItem(getEvent, network, id, options);
+	return useItem(getEvent, network, filter, options);
 }
