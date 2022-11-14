@@ -46,7 +46,8 @@ const config: PlaywrightTestConfig = {
 
 		screenshot: process.env.CI ? "only-on-failure" : "on",
 		video: process.env.CI ? "retain-on-failure" : "on",
-		trace: process.env.CI ? "retain-on-failure" : "on",
+		//trace: process.env.CI ? "retain-on-failure" : "on",
+		trace: "on",
 
 		testIdAttribute: "data-test",
 	},
