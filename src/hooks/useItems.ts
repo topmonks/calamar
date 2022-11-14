@@ -19,6 +19,9 @@ export function useItems<T = any, F = any>(
 
 	const pagination = usePagination();
 
+	console.log("pagination.limit", pagination.limit);
+	console.log("pagination.offset", pagination.offset);
+
 	const fetchData = useCallback(async () => {
 		if (!network) {
 			// don't do anything until network is set
@@ -58,6 +61,7 @@ export function useItems<T = any, F = any>(
 	]);
 
 	useEffect(() => {
+		console.log("fetch changed");
 		setData([]);
 		setError(undefined);
 		setLoading(true);
