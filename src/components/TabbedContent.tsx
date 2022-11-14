@@ -97,6 +97,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 						{Number.isInteger(count) && <span data-test="count" css={tabCountStyle}>({count})</span>}
 						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
 						{!!error && <ErrorIcon css={tabErrorStyle} />}
+						{loading ? "loading" : "!loading"};
 					</>
 				}
 				value={value}
