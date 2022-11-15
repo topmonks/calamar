@@ -39,7 +39,7 @@ test.describe("Block detail page", () => {
 
 		const errorMessage = page.getByTestId("not-found");
 		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText("No blok found");
+		await expect(errorMessage).toHaveText("No block found");
 
 		await takeScreenshot("block-not-found");
 	});
