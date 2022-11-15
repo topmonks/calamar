@@ -4,7 +4,6 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
-	Tooltip,
 } from "@mui/material";
 
 import { Pagination } from "../../hooks/usePagination";
@@ -23,6 +22,8 @@ export type ExtrinsicsTableProps = {
 	title?: ReactNode;
 	columns?: string[];
 	loading?: boolean;
+	notFound?: boolean;
+	error?: any;
 };
 
 function ExtrinsicsTable(props: ExtrinsicsTableProps) {
@@ -32,13 +33,16 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 		pagination,
 		columns = ["id", "name", "signer", "time"],
 		loading,
+		notFound,
+		error
 	} = props;
 
 	return (
 		<ItemsTable
-			items={items}
 			loading={loading}
-			noItemsMessage="No extrinsics found"
+			notFound={notFound}
+			notFoundMessage="No extrinsics found"
+			error={error}
 			pagination={pagination}
 			data-test="extrinsics-table"
 		>

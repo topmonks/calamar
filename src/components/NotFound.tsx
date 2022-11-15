@@ -15,7 +15,7 @@ export type NotFoundProps = {
 const NotFound = (props: PropsWithChildren) => {
 	const { children } = props;
 
-	return <div css={notFoundMessageStyle}>{children}</div>;
+	return <div css={notFoundMessageStyle} data-test="not-found">{children}</div>;
 };
 
 export default NotFound;

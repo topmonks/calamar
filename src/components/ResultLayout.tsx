@@ -136,16 +136,18 @@ type ResultLayoutParams = {
 function ResultLayout() {
 	const { network: networkParam } = useParams() as ResultLayoutParams;
 
-	const [network, setNetwork] = useState<string | undefined>(networkParam);
-	
+	const [network, setNetwork] = useState<string | undefined>();
+
 	const networkIsValid = useMemo(
 		() => Boolean(getArchive(networkParam)),
 		[networkParam]
 	);
 
 	useEffect(() => {
-		setNetwork(networkParam);
-	}, [networkParam]);
+		if (networkIsValid) {
+			setNetwork(networkParam);
+		}
+	}, [networkParam, networkIsValid]);
 
 	return (
 		<>

@@ -13,22 +13,25 @@ export type EventsTableProps = {
 	pagination: Pagination;
 	showExtrinsic?: boolean;
 	loading?: boolean;
+	notFound?: boolean;
+	error?: any;
 };
 
 function EventsTable(props: EventsTableProps) {
-	const { network, items, pagination, showExtrinsic, loading } = props;
+	const { network, items, pagination, showExtrinsic, loading, notFound, error } = props;
 
 	return (
 		<ItemsTable
-			items={items}
 			loading={loading}
-			noItemsMessage="No events found"
+			notFound={notFound}
+			notFoundMessage="No events found"
+			error={error}
 			pagination={pagination}
 			data-test="events-table"
 		>
 			<col />
 			<col />
-			<col width="60%" />
+			<col width={showExtrinsic ? "40%" : "60%" } />
 			{showExtrinsic && <col />}
 			<TableHead>
 				<TableRow>
@@ -52,9 +55,9 @@ function EventsTable(props: EventsTableProps) {
 						</TableCell>
 						{showExtrinsic &&
 							<TableCell>
-								{event.extrinsic?.hash &&
-									<Link to={`/${network}/search?query=${event.extrinsic.hash}`}>
-										{shortenHash(event.extrinsic.hash)}
+								{event.extrinsic?.id &&
+									<Link to={`/${network}/extrinsic/${event.extrinsic.id}`}>
+										{event.extrinsic.id}
 									</Link>
 								}
 							</TableCell>

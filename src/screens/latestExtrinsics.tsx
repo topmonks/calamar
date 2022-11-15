@@ -5,6 +5,7 @@ import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
 import { Card, CardHeader } from "../components/Card";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 type LatestExtrinsicsPageParams = {
 	network: string;
@@ -13,6 +14,8 @@ type LatestExtrinsicsPageParams = {
 function LatestExtrinsicsPage() {
 	const { network } = useParams() as LatestExtrinsicsPageParams;
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
+
+	useDOMEventTrigger("data-loaded", !extrinsics.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -25,12 +28,7 @@ function LatestExtrinsicsPage() {
 		<>
 			<Card>
 				<CardHeader>Latest extrinsics</CardHeader>
-				<ExtrinsicsTable
-					items={extrinsics.items}
-					loading={extrinsics.loading}
-					network={network}
-					pagination={extrinsics.pagination}
-				/>
+				<ExtrinsicsTable network={network} {...extrinsics} />
 			</Card>
 		</>
 	);

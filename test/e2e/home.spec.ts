@@ -1,13 +1,12 @@
 import { test, expect } from "@playwright/test";
 
+import { navigate } from "../utils/navigate";
 import { screenshot } from "../utils/screenshot";
 
 test.describe("home page", () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto("/");
-	});
-
 	test("shows home page", async ({ page }) => {
+		await navigate(page, "/", {waitUntil: "load"});
+
 		const networkSelect = page.locator(".MuiSelect-select");
 		await networkSelect.click();
 		await page.locator(".MuiMenuItem-root", {hasText: /^Polkadot$/}).click();
@@ -16,7 +15,8 @@ test.describe("home page", () => {
 	});
 
 	test("keeps last selected network after reload", async ({ page }) => {
-		await page.waitForTimeout(5000);
+		await navigate(page, "/", {waitUntil: "load"});
+
 		const networkSelect = page.locator(".MuiSelect-select");
 		await networkSelect.click();
 

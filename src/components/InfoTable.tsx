@@ -5,6 +5,7 @@ import { css } from "@emotion/react";
 
 import Loading from "./Loading";
 import NotFound from "./NotFound";
+import { ErrorMessage } from "./ErrorMessage";
 
 const tableStyles = css`
 	table-layout: fixed;
@@ -43,20 +44,39 @@ const tableStyles = css`
 `;
 
 export type InfoTableProps = PropsWithChildren<{
-	item: any;
 	loading?: boolean;
-	noItemMessage?: string;
+	notFound?: boolean;
+	notFoundMessage?: string;
+	error?: any;
+	errorMessage?: string;
 }>;
 
 const InfoTable = (props: InfoTableProps) => {
-	const { item, loading, noItemMessage = "No item found", children } = props;
+	const {
+		loading,
+		notFound,
+		notFoundMessage = "No item found",
+		error,
+		errorMessage = "Unexpected error occured while fetching data",
+		children
+	} = props;
 
 	if (loading) {
 		return <Loading />;
 	}
 
-	if (!item) {
-		return <NotFound>{noItemMessage}</NotFound>;
+	if (notFound) {
+		return <NotFound>{notFoundMessage}</NotFound>;
+	}
+
+	if (error) {
+		return (
+			<ErrorMessage
+				message={errorMessage}
+				details={error.message}
+				showReported
+			/>
+		);
 	}
 
 	return (

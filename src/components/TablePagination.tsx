@@ -32,7 +32,7 @@ const buttonStyle = (theme: Theme) => css`
 export type TablePaginationProps = {
 	offset: number;
 	limit: number;
-	hasNext?: boolean;
+	hasNextPage?: boolean;
 	hideOnSinglePage?: boolean;
 	setPreviousPage: () => void;
 	setNextPage: () => void;
@@ -42,13 +42,13 @@ export function TablePagination(props: TablePaginationProps) {
 	const {
 		offset,
 		limit,
-		hasNext = true,
+		hasNextPage = true,
 		hideOnSinglePage = true,
 		setPreviousPage,
 		setNextPage,
 	} = props;
 
-	if (hideOnSinglePage && offset === 0 && !hasNext) {
+	if (hideOnSinglePage && offset === 0 && !hasNextPage) {
 		return null;
 	}
 
@@ -57,7 +57,7 @@ export function TablePagination(props: TablePaginationProps) {
 			<IconButton css={buttonStyle} disabled={offset === 0} onClick={() => setPreviousPage()}>
 				<ChevronLeft />
 			</IconButton>
-			<IconButton css={buttonStyle} disabled={!hasNext} onClick={() => setNextPage()}>
+			<IconButton css={buttonStyle} disabled={!hasNextPage} onClick={() => setNextPage()}>
 				<ChevronRight />
 			</IconButton>
 		</div>

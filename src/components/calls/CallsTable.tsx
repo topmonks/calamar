@@ -11,16 +11,19 @@ export type CallsTableProps = {
 	items: any[];
 	pagination: Pagination;
 	loading?: boolean;
+	notFound?: boolean;
+	error?: any;
 };
 
 export const CallsTable = (props: CallsTableProps) => {
-	const { network, items, pagination, loading } = props;
+	const { network, items, pagination, loading, notFound, error } = props;
 
 	return (
 		<ItemsTable
-			items={items}
 			loading={loading}
-			noItemsMessage="No calls found"
+			notFound={notFound}
+			notFoundMessage="No calls found"
+			error={error}
 			pagination={pagination}
 			data-test="calls-table"
 		>

@@ -47,7 +47,7 @@ jobs:
       - name: Start app
         run: npm run start:test &
       - name: Run Playwright Tests
-        run: npx playwright test
+        run: npm run test
       - name: Upload Argos screenshots
         continue-on-error: true
         env:

@@ -1,41 +1,40 @@
+import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
 
-export async function getEvent(network: string, id: string) {
-	const response = await fetchGraphql(
+export async function getEvent(network: string, filter: EventsFilter) {
+	const response = await fetchGraphql<{events: any}>(
 		network,
-		`
-			query ($id: String!) {
-				eventById(id: $id) {
+		`query ($filter: EventWhereInput) {
+			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
+				id
+				name
+				block {
 					id
-					name
-					block {
-						id
-						height
-						timestamp
-						spec {
-							specVersion
-						}
+					height
+					timestamp
+					spec {
+						specVersion
 					}
-					extrinsic {
-						id
-					}
-					call {
-						id
-					}
-					args
 				}
+				extrinsic {
+					id
+				}
+				call {
+					id
+				}
+				args
 			}
-		`,
+		}`,
 		{
-			id,
+			filter,
 		}
 	);
 
-	return response.eventById;
+	return response.events[0];
 }
 
 export async function getEventsWithoutTotalCount(
@@ -45,7 +44,7 @@ export async function getEventsWithoutTotalCount(
 	filter: EventsFilter,
 	order: EventsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{events: any[]}>(
 		network,
 		`
 			query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
@@ -71,68 +70,83 @@ export async function getEventsWithoutTotalCount(
 			}
 		`,
 		{
-			limit,
+			limit: limit + 1, // get one item more to test if next page exists
 			offset,
 			filter,
 			order,
 		}
 	);
 
-	return response?.events;
+	const items = response.events;
+	const hasNextPage = items.length > limit;
+
+	if (hasNextPage) {
+		// remove testing item from next page
+		items.pop();
+	}
+
+	return {
+		data: items,
+		pagination: {
+			offset,
+			limit,
+			hasNextPage
+		}
+	};
 }
 
 export async function getEvents(
 	network: string,
-	first: number,
+	limit: number,
 	offset: number,
 	filter: EventsFilter,
 	order: EventsOrder = "id_DESC"
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql(
+	const response = await fetchGraphql<{eventsConnection: ArchiveConnection<any>}>(
 		network,
 		`
 			query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
 				eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
 					edges {
-					  node {
-						id
-						name
-						block {
-						  id
-						  height
-						  timestamp
-						  spec {
-							specVersion
-						  }
+						node {
+							id
+							name
+							block {
+								id
+								height
+								timestamp
+								spec {
+									specVersion
+								}
+							}
+							extrinsic {
+								id
+							}
+							call {
+								id
+							}
+							args
 						}
-						extrinsic {
-						  id
-						}
-						call {
-						  id
-						}
-						args
-					  }
 					}
 					pageInfo {
-					  endCursor
-					  hasNextPage
-					  hasPreviousPage
-					  startCursor
+						endCursor
+						hasNextPage
+						hasPreviousPage
+						startCursor
 					}
 					totalCount
-				  }
+				}
 			}
 		`,
 		{
-			first,
+			first: limit,
 			after,
 			filter,
 			order,
 		}
 	);
 
-	return unifyConnection(response?.eventsConnection);
+	return unifyConnection(response?.eventsConnection, limit, offset);
 }

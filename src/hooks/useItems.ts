@@ -1,0 +1,78 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { FetchOptions } from "../model/fetchOptions";
+import { ItemsResponse } from "../model/itemsResponse";
+import { GraphQLError } from "../utils/fetchGraphql";
+
+import { usePagination } from "./usePagination";
+
+export function useItems<T = any, F = any>(
+	fetchItems: (network: string, limit: number, offset: number, filter: F, order?: string|string[]) => ItemsResponse<T>|Promise<ItemsResponse<T>>,
+	network: string | undefined,
+	filter: F,
+	order?: string|string[],
+	options?: FetchOptions
+) {
+	const [data, setData] = useState<T[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<any>();
+
+	const pagination = usePagination();
+
+	const fetchData = useCallback(async () => {
+		if (!network) {
+			// don't do anything until network is set
+			return;
+		}
+
+		if (!options?.skip) {
+			try {
+				const items = await fetchItems(
+					network,
+					pagination.limit,
+					pagination.offset,
+					filter,
+					order
+				);
+
+				setData(items.data);
+				pagination.set(items.pagination);
+			} catch(e) {
+				if (e instanceof GraphQLError) {
+					setError(e);
+				} else {
+					throw e;
+				}
+			}
+		}
+
+		setLoading(false);
+	}, [
+		fetchItems,
+		network,
+		JSON.stringify(filter),
+		JSON.stringify(order),
+		pagination.limit,
+		pagination.offset,
+		options?.skip,
+	]);
+
+	useEffect(() => {
+		setData([]);
+		setError(undefined);
+		setLoading(true);
+		fetchData();
+	}, [fetchData]);
+
+	return useMemo(
+		() => ({
+			items: data,
+			loading,
+			notFound: !loading && !error && (!data || data.length === 0),
+			refetch: fetchData,
+			pagination,
+			error
+		}),
+		[data, loading, pagination, error, fetchData]
+	);
+}
