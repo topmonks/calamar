@@ -1,7 +1,4 @@
-import path from "path";
 import { Page } from "@playwright/test";
-
-import config from "../../playwright.config";
 
 const hideSelectors = [
 	".MuiTabs-indicator",
@@ -9,7 +6,7 @@ const hideSelectors = [
 	"[data-test=time]"
 ];
 
-export async function screenshot(page: Page, name: string) {
+export async function screenshot(page: Page, path: string) {
 	page.evaluate((hideSelectors) => {
 		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");
 		if (topBar) {
@@ -28,8 +25,8 @@ export async function screenshot(page: Page, name: string) {
 		}
 	}, hideSelectors);
 
-	await page.screenshot({
-		path: path.join(config.testDir!, "screenshots", `${name}.png`),
+	const screenshot = await page.screenshot({
+		path,
 		fullPage: true,
 		animations: "disabled"
 	});
@@ -51,4 +48,6 @@ export async function screenshot(page: Page, name: string) {
 			}
 		}
 	}, hideSelectors);
+
+	return screenshot;
 }

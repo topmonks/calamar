@@ -1,4 +1,3 @@
-import { test, expect } from "@playwright/test";
 import { getAccount } from "../../src/services/accountService";
 import { getBlock } from "../../src/services/blocksService";
 import { getEventsWithoutTotalCount } from "../../src/services/eventsService";
@@ -7,53 +6,53 @@ import { mockRequest } from "../utils/mockRequest";
 
 import { navigate } from "../utils/navigate";
 import { removeContent } from "../utils/removeContent";
-import { screenshot } from "../utils/screenshot";
+import { test, expect } from "../utils/test";
 
 test.describe("Search results page", () => {
-	test("redirects to extrinsic if found by hash", async ({ page }) => {
+	test("redirects to extrinsic if found by hash", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=0x162bd24c5f19b9fee4a33d11c2908d73d5b0d6c428cf0f1eecdf568c346b26b3", {waitUntil: "data-loaded"});
 		await page.waitForURL(/\/equilibrium\/extrinsic\/0001116746-000033-e9bc2/);
 	});
 
-	test("redirects to block if found by hash", async ({ page }) => {
+	test("redirects to block if found by hash", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=0xe9bc2f7f23685d545bfcb71ea59140700f83868300123fcb04f4872b18979242", {waitUntil: "data-loaded"});
 		await page.waitForURL(/\/equilibrium\/block\/0001116746-e9bc2/);
 	});
 
-	test("redirects to block if found by height", async ({ page }) => {
+	test("redirects to block if found by height", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=1116746", {waitUntil: "data-loaded"});
 		await page.waitForURL(/\/equilibrium\/block\/0001116746-e9bc2/);
 	});
 
-	test("redirects to account if found by raw address", async ({ page }) => {
+	test("redirects to account if found by raw address", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=0x84f4045c97be387e116aad02946aa3972e06a169847cf15532a182c075818b6f", {waitUntil: "data-loaded"});
 		await page.waitForURL(/\/equilibrium\/account\/0x84f4045c97be387e116aad02946aa3972e06a169847cf15532a182c075818b6f/);
 	});
 
-	test("redirects to account if found by encoded address", async ({ page }) => {
+	test("redirects to account if found by encoded address", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=cg67PjybUeaEXyDzybvVDj6zeojYfDQGFK5YBK5HJn55MmQZG", {waitUntil: "data-loaded"});
 		await page.waitForURL(/\/equilibrium\/account\/0x84f4045c97be387e116aad02946aa3972e06a169847cf15532a182c075818b6f/);
 	});
 
-	test("shows found extrinsics by name", async ({ page }) => {
+	test("shows found extrinsics by name", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=Oracle.set_price_unsigned", {waitUntil: "data-loaded"});
 
 		await page.getByTestId("extrinsics-tab").isVisible();
 
 		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
-		await screenshot(page, "searchExtrinsicsByName");
+		await takeScreenshot("search-extrinsics-by-name");
 	});
 
-	test("shows found events by name", async ({ page }) => {
+	test("shows found events by name", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/equilibrium/search?query=Oracle.NewPrice", {waitUntil: "data-loaded"});
 
 		await page.getByTestId("events-tab").isVisible();
 
 		await removeContent(page.locator("[data-test=events-table] tr td"));
-		await screenshot(page, "searchEventsByName");
+		await takeScreenshot("search-events-by-name");
 	});
 
-	test("shows not found message if nothing was found by hash", async ({ page }) => {
+	test("shows not found message if nothing was found by hash", async ({ page, takeScreenshot }) => {
 		const query = "0x1234567890";
 
 		await navigate(page, `/equilibrium/search?query=${query}`, {waitUntil: "data-loaded"});
@@ -62,10 +61,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText(`Nothing was found for query ${query}`);
 
-		await screenshot(page, "searchNotFound");
+		await takeScreenshot("search-not-found");
 	});
 
-	test("shows not found message if nothing was found by height", async ({ page }) => {
+	test("shows not found message if nothing was found by height", async ({ page, takeScreenshot }) => {
 		const query = "999999999";
 
 		await navigate(page, `/equilibrium/search?query=${query}`, {waitUntil: "data-loaded"});
@@ -75,7 +74,7 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(`Nothing was found for query ${query}`);
 	});
 
-	test("shows not found message if nothing was found by name", async ({ page }) => {
+	test("shows not found message if nothing was found by name", async ({ page, takeScreenshot }) => {
 		const query = "dflkasdjf";
 
 		await navigate(page, `/equilibrium/search?query=${query}`, {waitUntil: "data-loaded"});
@@ -85,7 +84,7 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(`Nothing was found for query ${query}`);
 	});
 
-	test("shows error message when search for extrinsic by hash fails", async ({ page }) => {
+	test("shows error message when search for extrinsic by hash fails", async ({ page, takeScreenshot }) => {
 		const hash = "0x162bd24c5f19b9fee4a33d11c2908d73d5b0d6c428cf0f1eecdf568c346b26b3";
 
 		mockRequest(
@@ -109,10 +108,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(hash));
 		await expect(errorMessage).toHaveText(/Extrinsic search error/);
 
-		await screenshot(page, "searchExtrinsicByHashError");
+		await takeScreenshot("search-extrinsic-by-hash-error");
 	});
 
-	test("shows error message when search for block by hash fails", async ({ page }) => {
+	test("shows error message when search for block by hash fails", async ({ page, takeScreenshot }) => {
 		const hash = "0xe9bc2f7f23685d545bfcb71ea59140700f83868300123fcb04f4872b18979242";
 
 		mockRequest(
@@ -136,10 +135,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(hash));
 		await expect(errorMessage).toHaveText(/Block search error/);
 
-		await screenshot(page, "searchBlockByHashError");
+		await takeScreenshot("search-block-by-hash-error");
 	});
 
-	test("shows error message when search for block by height fails", async ({ page }) => {
+	test("shows error message when search for block by height fails", async ({ page, takeScreenshot }) => {
 		const height = 123;
 
 		mockRequest(
@@ -163,10 +162,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(height.toString()));
 		await expect(errorMessage).toHaveText(/Block search error/);
 
-		await screenshot(page, "searchBlockByHeightError");
+		await takeScreenshot("search-block-by-height-error");
 	});
 
-	test("shows error message when search for account by raw address fails", async ({ page }) => {
+	test("shows error message when search for account by raw address fails", async ({ page, takeScreenshot }) => {
 		const address = "0x84f4045c97be387e116aad02946aa3972e06a169847cf15532a182c075818b6f";
 
 		mockRequest(
@@ -190,10 +189,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(address));
 		await expect(errorMessage).toHaveText(/Account search error/);
 
-		await screenshot(page, "searchAccountByRawAddressError");
+		await takeScreenshot("search-account-by-raw-address-error");
 	});
 
-	test("shows error message when search for account by encoded address fails", async ({ page }) => {
+	test("shows error message when search for account by encoded address fails", async ({ page, takeScreenshot }) => {
 		const address = "cg67PjybUeaEXyDzybvVDj6zeojYfDQGFK5YBK5HJn55MmQZG";
 
 		mockRequest(
@@ -217,10 +216,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(address));
 		await expect(errorMessage).toHaveText(/Account search error/);
 
-		await screenshot(page, "searchAccountByEncodedAddressError");
+		await takeScreenshot("search-account-by-encoded-address-error");
 	});
 
-	test("shows error message when search for extrinsics by name fails", async ({ page }) => {
+	test("shows error message when search for extrinsics by name fails", async ({ page, takeScreenshot }) => {
 		const name = "Oracle.set_price_unsigned";
 
 		mockRequest(
@@ -244,10 +243,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(name));
 		await expect(errorMessage).toHaveText(/Extrinsics search error/);
 
-		await screenshot(page, "searchExtrinsicsByNameError");
+		await takeScreenshot("search-extrinsics-by-name-error");
 	});
 
-	test("shows error message when search for events by name fails", async ({ page }) => {
+	test("shows error message when search for events by name fails", async ({ page, takeScreenshot }) => {
 		const name = "Oracle.NewPrice";
 
 		mockRequest(
@@ -271,10 +270,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(new RegExp(name));
 		await expect(errorMessage).toHaveText(/Events search error/);
 
-		await screenshot(page, "searchEventsByNameError");
+		await takeScreenshot("search-events-by-name-error");
 	});
 
-	test("shows error message in events tab when events search by name fails while searching for extrinsics by name", async ({ page }) => {
+	test("shows error message in events tab when events search by name fails while searching for extrinsics by name", async ({ page, takeScreenshot }) => {
 		const name = "Oracle.set_price_unsigned";
 
 		mockRequest(
@@ -299,10 +298,10 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Events search error/);
 
-		await screenshot(page, "searchExtrinsicsByNameWithEventsError");
+		await takeScreenshot("search-extrinsics-by-name-with-events-error");
 	});
 
-	test("shows error message in extrinsics tab when extrinsics search by name fails while searching for events by name", async ({ page }) => {
+	test("shows error message in extrinsics tab when extrinsics search by name fails while searching for events by name", async ({ page, takeScreenshot }) => {
 		const name = "Oracle.NewPrice";
 
 		mockRequest(
@@ -327,6 +326,6 @@ test.describe("Search results page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Extrinsics search error/);
 
-		await screenshot(page, "searchEventsByNameWithExtrinsicsError");
+		await takeScreenshot("search-events-by-name-with-extrinsics-error");
 	});
 });

@@ -52,7 +52,7 @@ jobs:
         continue-on-error: true
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: npx argos upload test/screenshots
+        run: npx argos upload test/results
       - name: Upload test teport artifact
         uses: actions/upload-artifact@v3
         if: always()

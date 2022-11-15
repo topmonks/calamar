@@ -1,32 +1,29 @@
-import { test, expect } from "@playwright/test";
-
 import { getExtrinsic } from "../../src/services/extrinsicsService";
 import { getEvents } from "../../src/services/eventsService";
 import { getCalls } from "../../src/services/callsService";
 
 import { mockRequest } from "../utils/mockRequest";
-import { screenshot } from "../utils/screenshot";
-import { waitForPageEvent } from "../utils/waitForPageEvent";
 import { navigate } from "../utils/navigate";
+import { test, expect } from "../utils/test";
 
 test.describe("Extrinsic detail page", () => {
 	const extrinsicId = "0014932897-000002-93378";
 
-	test("shows extrinsic detail page with events", async ({ page }) => {
+	test("shows extrinsic detail page with events", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
-		await screenshot(page, "extrinsicWithEvents");
+		await takeScreenshot("extrinsic-with-events");
 	});
 
-	test("shows extrinsic detail page with calls", async ({ page }) => {
+	test("shows extrinsic detail page with calls", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/extrinsic/${extrinsicId}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("calls-tab").click();
 
-		await screenshot(page, "extrinsicWithCalls");
+		await takeScreenshot("extrinsic-with-calls");
 	});
 
-	test("shows not found message if extrinsic was not found", async ({ page }) => {
+	test("shows not found message if extrinsic was not found", async ({ page, takeScreenshot }) => {
 		const id = "111-22-3";
 
 		await navigate(page, `/kusama/extrinsic/${id}`, {waitUntil: "data-loaded"});
@@ -35,10 +32,10 @@ test.describe("Extrinsic detail page", () => {
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText("No extrinsic found");
 
-		await screenshot(page, "extrinsicNotFound");
+		await takeScreenshot("extrinsic-not-found");
 	});
 
-	test("show error message when item data fetch fails", async ({ page }) => {
+	test("show error message when item data fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getExtrinsic("kusama", {id_eq: extrinsicId}),
@@ -59,10 +56,10 @@ test.describe("Extrinsic detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Extrinsic error/);
 
-		await screenshot(page, "extrinsicError");
+		await takeScreenshot("extrinsic-error");
 	});
 
-	test("show error message when events items fetch fails", async ({ page }) => {
+	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getEvents("kusama", 10, 0, { extrinsic: { id_eq: extrinsicId } }, "id_ASC"),
@@ -83,10 +80,10 @@ test.describe("Extrinsic detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Events error/);
 
-		await screenshot(page, "extrinsicWithEventsError");
+		await takeScreenshot("extrinsic-with-events-error");
 	});
 
-	test("show error message when calls items fetch fails", async ({ page }) => {
+	test("show error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getCalls("kusama", 10, 0, { extrinsic: { id_eq: extrinsicId } }, "id_ASC"),
@@ -109,6 +106,6 @@ test.describe("Extrinsic detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Calls error/);
 
-		await screenshot(page, "extrinsicWithCallsError");
+		await takeScreenshot("extrinsic-with-calls-error");
 	});
 });

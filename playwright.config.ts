@@ -44,7 +44,6 @@ const config: PlaywrightTestConfig = {
 		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
 		actionTimeout: 0,
 
-		screenshot: process.env.CI ? "only-on-failure" : "on",
 		video: process.env.CI ? "retain-on-failure" : "on",
 		trace: process.env.CI ? "retain-on-failure" : "on",
 
