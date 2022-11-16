@@ -23,6 +23,11 @@ export async function screenshot(page: Page, path: string) {
 				el.style.display = "none";
 			}
 		}
+
+		// open error details
+		for (const el of Array.from(document.querySelectorAll<HTMLDetailsElement>("[data-test=error] details"))) {
+			el.open = true;
+		}
 	}, hideSelectors);
 
 	const screenshot = await page.screenshot({
@@ -46,6 +51,11 @@ export async function screenshot(page: Page, path: string) {
 			for (const el of Array.from(document.querySelectorAll<HTMLElement>(selector))) {
 				el.style.display = "";
 			}
+		}
+
+		// open error details
+		for (const el of Array.from(document.querySelectorAll<HTMLDetailsElement>("[data-test=error] details"))) {
+			el.open = false;
 		}
 	}, hideSelectors);
 

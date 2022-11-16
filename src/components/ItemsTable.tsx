@@ -60,7 +60,7 @@ function ItemsTable(props: ItemsTableProps) {
 		return (
 			<ErrorMessage
 				message={errorMessage}
-				details={error.stack || error.message}
+				details={error.message}
 				showReported
 			/>
 		);
