@@ -1,45 +1,72 @@
 /** @jsxImportSource @emotion/react */
 import { PropsWithChildren } from "react";
 import { Table, TableContainer } from "@mui/material";
-import { css } from "@emotion/react";
+import { css, Theme } from "@emotion/react";
 
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 import { ErrorMessage } from "./ErrorMessage";
 
-const tableStyles = css`
+const tableStyles = (theme: Theme) => css`
 	table-layout: fixed;
-	min-width: 860px;
+	//min-width: 860px;
 
-	td, th {
-		vertical-align: top;
-		line-height: 24px;
-	}
+	& > tbody {
+		& > tr {
+			& > td,
+			& > th {
+				position: relative;
+				vertical-align: top;
+				line-height: 24px;
 
-	td {
-		&:first-child {
-			padding-left: 0;
-		}
+				&:first-child {
+					width: 200px;
+					padding-left: 0;
+					font-weight: 700;
+				}
 
-		&:last-child {
-			padding-right: 0;
-		}
+				&:not(:first-child) {
+					word-break: break-all;
+				}
 
-		&:not(:first-child) {
-			word-break: break-all;
-		}
+				&:first-child {
+				}
 
-		> img {
-			&:only-child {
-				display: block;
+				&:last-child {
+					padding-right: 0;
+				}
+
+				> img {
+					&:only-child {
+						display: block;
+					}
+				}
 			}
 		}
 	}
 
-	& > tbody > tr > td:first-child {
-		width: 200px;
-		font-weight: 700;
-		padding-left: 0;
+	${theme.breakpoints.down("sm")} {
+		&,
+		& > tbody,
+		& > tbody > tr,
+		& > tbody > tr > td,
+		& > tbody > tr > th {
+			display: block;
+		}
+
+		& > tbody > tr > td {
+			padding-left: 0;
+			padding-right: 0;
+
+			&:first-child {
+				width: auto;
+				padding-bottom: 0;
+			}
+
+			&:not(:last-child) {
+				border-bottom: none;
+			}
+		}
 	}
 `;
 

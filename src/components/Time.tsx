@@ -39,6 +39,7 @@ export const Time = (props: TimeProps) => {
 		<Tooltip
 			arrow
 			placement="top"
+			enterTouchDelay={0}
 			title={formatTime(new Date(time), tooltipFormat)}
 		>
 			<span data-test="time">{formatted}</span>
