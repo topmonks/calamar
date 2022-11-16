@@ -25,7 +25,7 @@ const backgroundStyle = css`
 	background-image: url(${Background});
 `;
 
-const topBarStyle = css`
+const topBarStyle = (theme: Theme) => css`
 	position: sticky;
 	top: 0;
 	padding: 16px;
@@ -35,19 +35,19 @@ const topBarStyle = css`
 	background-color: white;
 	z-index: 1000;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		padding: 24px 32px;
 		padding-bottom: 0;
 	}
 `;
 
-const topBarContentStyle = css`
+const topBarContentStyle = (theme: Theme) => css`
 	max-width: 1500px;
 	margin: auto;
 	display: flex;
 	flex-direction: column;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		flex-direction: row;
 		align-items: center;
 	}
@@ -59,7 +59,7 @@ const topBarRowStyle = css`
 	flex: 1 1 auto;
 `;
 
-const contentStyle = css`
+const contentStyle = (theme: Theme) => css`
 	position: relative;
 	padding: 0 16px;
 	padding-top: 40px;
@@ -67,7 +67,7 @@ const contentStyle = css`
 	width: 100%;
 	box-sizing: border-box;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		padding-left: 32px;
 		padding-right: 32px;
 	}
@@ -78,7 +78,7 @@ const contentInnerStyle = css`
 	margin: auto;
 `;
 
-const logoStyle = css`
+const logoStyle = (theme: Theme) => css`
 	margin-right: auto;
 
 	> svg {
@@ -86,7 +86,7 @@ const logoStyle = css`
 		width: 160px;
 	}
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		> svg {
 			width: 250px;
 		}
@@ -107,16 +107,16 @@ const networkSelectStyle = (theme: Theme) => css`
 		border-color: ${theme.palette.secondary.main};
 	}
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 	}
 `;
 
-const searchInputStyle = () => css`
+const searchInputStyle = (theme: Theme) => css`
 	width: 100%;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		flex: 1 1 auto;
 
 		.MuiInputBase-root {

@@ -1,3 +1,4 @@
+import { Theme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 export const Card = styled.div`
@@ -7,7 +8,7 @@ export const Card = styled.div`
 	background-color: white;
 	margin: 16px 0;
 
-	@media (min-width: 900px) {
+	${({theme}) => theme.breakpoints.up("md")} {
 		padding: 48px;
 	}
 `;
@@ -18,4 +19,6 @@ export const CardHeader = styled.div`
 	font-weight: 700;
 	font-size: 24px;
 	line-height: 33px;
+
+	word-break: break-all;
 `;

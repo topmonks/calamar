@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const buttonStyle = (theme: Theme) => css`
 	padding: 0;
-	margin: 0 16px;
+	margin-left: 16px;
 	color: ${theme.palette.secondary.main};
 `;
 

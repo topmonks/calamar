@@ -26,14 +26,14 @@ const logoStyle = css`
 	max-width: 100%;
 `;
 
-const searchBoxStyle = css`
+const searchBoxStyle = (theme: Theme) => css`
 	margin: auto;
 	max-width: 1000px;
 	padding-left: 16px;
 	padding-right: 16px;
 	text-align: center;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		display: flex;
 		justify-content: center;
 	}
@@ -59,18 +59,18 @@ const networkSelectStyle = (theme: Theme) => css`
 		border-color: ${theme.palette.secondary.main};
 	}
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 	}
 `;
 
-const searchInputStyle = css`
+const searchInputStyle = (theme: Theme) => css`
 	.MuiInputBase-input {
 		padding: 16px 24px;
 	}
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		flex: 1 1 auto;
 
 		.MuiButton-root {
