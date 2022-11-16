@@ -90,20 +90,6 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 										extrinsic.signature?.address
 									)}
 								</Link>
-								{extrinsic.signature?.address && (
-									<span style={{ marginLeft: 8 }}>
-										<CopyToClipboardButton
-											value={
-												(network &&
-													encodeAddress(
-														network,
-														extrinsic.signature?.address
-													)) ||
-												extrinsic.signature?.address
-											}
-										/>
-									</span>
-								)}
 							</TableCell>
 						)}
 						{columns.find((value) => value === "time") && (
