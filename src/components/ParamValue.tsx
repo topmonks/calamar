@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
+import { Link } from "./Link";
+import { isAddress } from "@polkadot/util-crypto";
 
 const valueTableStyle = css`
 	width: 100%;
@@ -72,7 +74,11 @@ function ParamsValue(props: EventParamValueProps) {
 								<div css={paramIndexStyle}>{index}</div>
 							</TableCell>
 							<TableCell>
-								<ParamsValue value={item} />
+								{
+									isAddress(value) ?
+										<Link to={"/kusama/search?query=".concat(item)}>{item}</Link> :
+										<ParamsValue value={item} />
+								}
 							</TableCell>
 						</TableRow>
 					))}
@@ -84,7 +90,6 @@ function ParamsValue(props: EventParamValueProps) {
 	} else if (value && typeof value === "object") {
 		const keys = Object.keys(value);
 		keys.sort();
-
 		return (
 			<Table size="small" css={valueTableStyle}>
 				<TableBody>
@@ -94,7 +99,11 @@ function ParamsValue(props: EventParamValueProps) {
 								<div css={paramNameStyle}>{key}</div>
 							</TableCell>
 							<TableCell>
-								<ParamsValue value={value[key]} />
+								{
+									isAddress(value[key]) ?
+										<Link to={"/kusama/search?query=".concat(value[key])}>{value[key]}</Link> :
+										<ParamsValue value={value[key]} />
+								}
 							</TableCell>
 						</TableRow>
 					))}
