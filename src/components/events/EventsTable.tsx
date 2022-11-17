@@ -1,7 +1,7 @@
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 
 import { Pagination } from "../../hooks/usePagination";
-import { shortenHash } from "../../utils/shortenHash";
+import { shortenId } from "../../utils/shortenId";
 
 import ItemsTable from "../ItemsTable";
 import { Link } from "../Link";
@@ -46,7 +46,7 @@ function EventsTable(props: EventsTableProps) {
 					<TableRow key={event.id}>
 						<TableCell>
 							<Link to={`/${network}/event/${event.id}`}>
-								{event.id}
+								{shortenId(event.id)}
 							</Link>
 						</TableCell>
 						<TableCell>{event.name}</TableCell>
@@ -57,7 +57,7 @@ function EventsTable(props: EventsTableProps) {
 							<TableCell>
 								{event.extrinsic?.id &&
 									<Link to={`/${network}/extrinsic/${event.extrinsic.id}`}>
-										{event.extrinsic.id}
+										{shortenId(event.extrinsic.id)}
 									</Link>
 								}
 							</TableCell>

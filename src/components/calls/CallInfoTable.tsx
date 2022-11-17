@@ -3,12 +3,14 @@ import { TableBody, TableCell, TableRow } from "@mui/material";
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
+import { shortenHash } from "../../utils/shortenHash";
+import { shortenId } from "../../utils/shortenId";
+
 import CopyToClipboardButton from "../CopyToClipboardButton";
 import InfoTable from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 import ParamsTable from "../ParamsTable";
-import { shortenHash } from "../../utils/shortenHash";
 
 export type CallInfoTableProps = {
 	network: string;
@@ -71,7 +73,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 						<TableCell>Parent</TableCell>
 						<TableCell>
 							<Link to={`/${network}/call/${data.parent.id}`}>
-								{data.parent.id}
+								{shortenId(data.parent.id)}
 							</Link>
 							<CopyToClipboardButton value={data.parent.id} />
 						</TableCell>
@@ -80,7 +82,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 						<TableCell>Extrinsic id</TableCell>
 						<TableCell>
 							<Link to={`/${network}/extrinsic/${data.extrinsic.id}`}>
-								{data.extrinsic.id}
+								{shortenId(data.extrinsic.id)}
 							</Link>
 							<CopyToClipboardButton value={data.extrinsic.id} />
 						</TableCell>

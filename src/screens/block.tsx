@@ -12,6 +12,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { shortenId } from "../utils/shortenId";
 
 type BlockPageParams = {
 	network: string;
@@ -55,7 +56,7 @@ function BlockPage() {
 	return (
 		<>
 			<Card>
-				<CardHeader>Block #{id}</CardHeader>
+				<CardHeader>Block #{shortenId(id)}</CardHeader>
 				<BlockInfoTable network={network} {...block} />
 			</Card>
 			{block.data &&

@@ -4,6 +4,7 @@ import { Card, CardHeader } from "../components/Card";
 import { EventInfoTable } from "../components/events/EventInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useEvent } from "../hooks/useEvent";
+import { shortenId } from "../utils/shortenId";
 
 type EventPageParams = {
 	network: string;
@@ -20,7 +21,7 @@ export const EventPage: React.FC = () => {
 	return (<>
 		<Card>
 			<CardHeader style={{ paddingBottom: 48 }}>
-				Event #{id}
+				Event #{shortenId(id)}
 			</CardHeader>
 			<EventInfoTable network={network} {...event} />
 		</Card>

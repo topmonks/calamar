@@ -9,8 +9,8 @@ import {
 import { Pagination } from "../../hooks/usePagination";
 import { encodeAddress } from "../../utils/formatAddress";
 import { shortenHash } from "../../utils/shortenHash";
+import { shortenId } from "../../utils/shortenId";
 
-import CopyToClipboardButton from "../CopyToClipboardButton";
 import ItemsTable from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
@@ -69,7 +69,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 						{columns.find((value) => value === "id") && (
 							<TableCell>
 								<Link to={`/${network}/extrinsic/${extrinsic.id}`}>
-									{extrinsic.id}
+									{shortenId(extrinsic.id)}
 								</Link>
 							</TableCell>
 						)}

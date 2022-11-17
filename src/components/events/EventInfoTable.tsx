@@ -1,5 +1,7 @@
 import { TableBody, TableCell, TableRow } from "@mui/material";
 
+import { shortenId } from "../../utils/shortenId";
+
 import CopyToClipboardButton from "../CopyToClipboardButton";
 import InfoTable from "../InfoTable";
 import { Link } from "../Link";
@@ -58,7 +60,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 							<Link
 								to={`/${network}/call/${data.call.id}`}
 							>
-								{data.call.id}
+								{shortenId(data.call.id)}
 							</Link>
 							<CopyToClipboardButton
 								value={data.call.id}
@@ -71,7 +73,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 							<Link
 								to={`/${network}/extrinsic/${data.extrinsic.id}`}
 							>
-								{data.extrinsic.id}
+								{shortenId(data.extrinsic.id)}
 							</Link>
 							<CopyToClipboardButton
 								value={data.extrinsic.id}

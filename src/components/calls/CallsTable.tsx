@@ -2,6 +2,7 @@ import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 
 import { Pagination } from "../../hooks/usePagination";
 import { shortenHash } from "../../utils/shortenHash";
+import { shortenId } from "../../utils/shortenId";
 
 import ItemsTable from "../ItemsTable";
 import { Link } from "../Link";
@@ -45,14 +46,14 @@ export const CallsTable = (props: CallsTableProps) => {
 					<TableRow key={call.id}>
 						<TableCell>
 							<Link to={`/${network}/call/${call.id}`}>
-								{call.id}
+								{shortenId(call.id)}
 							</Link>
 						</TableCell>
 						<TableCell>{call.name}</TableCell>
 						<TableCell>{(call.origin && call.origin.value.__kind !== "None") ? shortenHash(call.origin.value.value) : "None"}</TableCell>
 						<TableCell>
 							<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-								{call.extrinsic.id}
+								{shortenId(call.extrinsic.id)}
 							</Link>
 						</TableCell>
 					</TableRow>

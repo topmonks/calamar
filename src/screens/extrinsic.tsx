@@ -10,6 +10,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { shortenId } from "../utils/shortenId";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -28,7 +29,7 @@ function ExtrinsicPage() {
 	return (
 		<>
 			<Card>
-				<CardHeader>Extrinsic #{id}</CardHeader>
+				<CardHeader>Extrinsic #{shortenId(id)}</CardHeader>
 				<ExtrinsicInfoTable network={network} {...extrinsic} />
 			</Card>
 			{extrinsic.data &&
