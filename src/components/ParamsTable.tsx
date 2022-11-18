@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
-import { css } from "@emotion/react";
+import { css, Theme } from "@emotion/react";
 
 import ParamsValue from "./ParamValue";
 
@@ -18,10 +18,14 @@ const paramsStyle = css`
 	}
 `;
 
-const paramsScrollAreaStyle = css`
+const paramsScrollAreaStyle = (theme: Theme) => css`
 	position: relative;
 	max-height: 500px;
 	overflow: auto;
+
+	${theme.breakpoints.down("sm")} {
+		max-height: 250px;
+	}
 `;
 
 export type EventParamsTableProps = {

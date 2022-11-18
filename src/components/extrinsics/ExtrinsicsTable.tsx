@@ -1,17 +1,11 @@
 import { ReactNode } from "react";
-import {
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-} from "@mui/material";
 
 import { Pagination } from "../../hooks/usePagination";
 import { encodeAddress } from "../../utils/formatAddress";
 import { shortenHash } from "../../utils/shortenHash";
 import { shortenId } from "../../utils/shortenId";
 
-import ItemsTable from "../ItemsTable";
+import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
@@ -20,7 +14,6 @@ export type ExtrinsicsTableProps = {
 	items: any[];
 	pagination: Pagination;
 	title?: ReactNode;
-	columns?: string[];
 	loading?: boolean;
 	notFound?: boolean;
 	error?: any;
@@ -31,7 +24,6 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 		network,
 		items,
 		pagination,
-		columns = ["id", "name", "signer", "time"],
 		loading,
 		notFound,
 		error
@@ -39,6 +31,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 
 	return (
 		<ItemsTable
+			items={items}
 			loading={loading}
 			notFound={notFound}
 			notFoundMessage="No extrinsics found"
@@ -46,60 +39,38 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			pagination={pagination}
 			data-test="extrinsics-table"
 		>
-			<TableHead>
-				<TableRow>
-					{columns.find((value) => value === "id") && <TableCell>Id</TableCell>}
-					{columns.find((value) => value === "name") && (
-						<TableCell>Name</TableCell>
-					)}
-					{columns.find((value) => value === "hash") && (
-						<TableCell>Hash</TableCell>
-					)}
-					{columns.find((value) => value === "signer") && (
-						<TableCell>Account</TableCell>
-					)}
-					{columns.find((value) => value === "time") && (
-						<TableCell>Time</TableCell>
-					)}
-				</TableRow>
-			</TableHead>
-			<TableBody>
-				{items.map((extrinsic: any) => (
-					<TableRow key={extrinsic.id}>
-						{columns.find((value) => value === "id") && (
-							<TableCell>
-								<Link to={`/${network}/extrinsic/${extrinsic.id}`}>
-									{shortenId(extrinsic.id)}
-								</Link>
-							</TableCell>
+			<ItemsTableAttribute
+				label="ID"
+				render={(extrinsic) =>
+					<Link to={`/${network}/extrinsic/${extrinsic.id}`}>
+						{shortenId(extrinsic.id)}
+					</Link>
+				}
+			/>
+			<ItemsTableAttribute
+				label="Name"
+				render={(extrinsic) => extrinsic.call.name}
+			/>
+			<ItemsTableAttribute
+				label="Account"
+				render={(extrinsic) =>
+					<Link
+						to={`/${network}/account/${extrinsic.signature?.address}`}
+					>
+						{shortenHash(
+							(network &&
+								encodeAddress(network, extrinsic.signature?.address)) ||
+							extrinsic.signature?.address
 						)}
-						{columns.find((value) => value === "hash") && (
-							<TableCell>{shortenHash(extrinsic.hash)}</TableCell>
-						)}
-						{columns.find((value) => value === "name") && (
-							<TableCell>{extrinsic.call.name}</TableCell>
-						)}
-						{columns.find((value) => value === "signer") && (
-							<TableCell>
-								<Link
-									to={`/${network}/account/${extrinsic.signature?.address}`}
-								>
-									{shortenHash(
-										(network &&
-											encodeAddress(network, extrinsic.signature?.address)) ||
-										extrinsic.signature?.address
-									)}
-								</Link>
-							</TableCell>
-						)}
-						{columns.find((value) => value === "time") && (
-							<TableCell>
-								<Time time={extrinsic.block.timestamp} fromNow />
-							</TableCell>
-						)}
-					</TableRow>
-				))}
-			</TableBody>
+					</Link>
+				}
+			/>
+			<ItemsTableAttribute
+				label="Time"
+				render={(extrinsic) =>
+					<Time time={extrinsic.block.timestamp} fromNow />
+				}
+			/>
 		</ItemsTable>
 	);
 }

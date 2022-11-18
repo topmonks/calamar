@@ -1,10 +1,9 @@
-import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-
 import { Pagination } from "../../hooks/usePagination";
+import { encodeAddress } from "../../utils/formatAddress";
 import { shortenHash } from "../../utils/shortenHash";
 import { shortenId } from "../../utils/shortenId";
 
-import ItemsTable from "../ItemsTable";
+import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 
 export type CallsTableProps = {
@@ -21,6 +20,7 @@ export const CallsTable = (props: CallsTableProps) => {
 
 	return (
 		<ItemsTable
+			items={items}
 			loading={loading}
 			notFound={notFound}
 			notFoundMessage="No calls found"
@@ -28,37 +28,42 @@ export const CallsTable = (props: CallsTableProps) => {
 			pagination={pagination}
 			data-test="calls-table"
 		>
-			<col />
-			<col />
-			<col />
-			<col />
-
-			<TableHead>
-				<TableRow>
-					<TableCell>Id</TableCell>
-					<TableCell>Name</TableCell>
-					<TableCell>Sender</TableCell>
-					<TableCell>Extrinsic id</TableCell>
-				</TableRow>
-			</TableHead>
-			<TableBody>
-				{items.map((call: any) => (
-					<TableRow key={call.id}>
-						<TableCell>
-							<Link to={`/${network}/call/${call.id}`}>
-								{shortenId(call.id)}
-							</Link>
-						</TableCell>
-						<TableCell>{call.name}</TableCell>
-						<TableCell>{(call.origin && call.origin.value.__kind !== "None") ? shortenHash(call.origin.value.value) : "None"}</TableCell>
-						<TableCell>
-							<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-								{shortenId(call.extrinsic.id)}
-							</Link>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
+			<ItemsTableAttribute
+				label="ID"
+				render={(call) =>
+					<Link to={`/${network}/call/${call.id}`}>
+						{shortenId(call.id)}
+					</Link>
+				}
+			/>
+			<ItemsTableAttribute
+				label="Name"
+				render={(call) => call.name}
+			/>
+			<ItemsTableAttribute
+				label="Sender"
+				render={(call) =>
+					call.origin && call.origin.value.__kind !== "None" && (
+						<Link
+							to={`/${network}/account/${call.origin.value.value}`}
+						>
+							{shortenHash(
+								(network &&
+									encodeAddress(network, call.origin.value.value)) ||
+								call.origin.value.value
+							)}
+						</Link>
+					)
+				}
+			/>
+			<ItemsTableAttribute
+				label="Extrinsic"
+				render={(call) =>
+					<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
+						{shortenId(call.extrinsic.id)}
+					</Link>
+				}
+			/>
 		</ItemsTable>
 	);
 };

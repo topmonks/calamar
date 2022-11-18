@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { HTMLAttributes, PropsWithChildren } from "react";
-import { Table, TableContainer } from "@mui/material";
+import { Children, HTMLAttributes, ReactElement, ReactNode } from "react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { Pagination } from "../hooks/usePagination";
@@ -27,24 +27,37 @@ const tableStyle = css`
 	}
 `;
 
-export type ItemsTableProps = PropsWithChildren<HTMLAttributes<HTMLDivElement> & {
-	pagination: Pagination;
+export type ItemsTableAttributeProps<T = any> = {
+	name?: string;
+	label: string;
+	render: (data: T) => ReactNode;
+}
+
+export const ItemsTableAttribute = <T = any>(props: ItemsTableAttributeProps<T>) => {
+	return null;
+};
+
+export type ItemsTableProps<T extends {id: string}> = HTMLAttributes<HTMLDivElement> & {
+	items: T[];
 	loading?: boolean;
 	notFound?: boolean;
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
-}>;
+	pagination: Pagination;
+	children: ReactElement<ItemsTableAttributeProps<T>>|(ReactElement<ItemsTableAttributeProps<T>>|false|undefined|null)[];
+};
 
-function ItemsTable(props: ItemsTableProps) {
+export const ItemsTable = <T extends {id: string}>(props: ItemsTableProps<T>) => {
 	const {
-		pagination,
-		children,
+		items,
 		loading,
 		notFound,
 		notFoundMessage = "No items found",
 		error,
 		errorMessage = "Unexpected error occured while fetching items",
+		pagination,
+		children,
 		...restProps
 	} = props;
 
@@ -69,11 +82,33 @@ function ItemsTable(props: ItemsTableProps) {
 	return (
 		<div {...restProps}>
 			<TableContainer>
-				<Table css={tableStyle}>{children}</Table>
+				<Table css={tableStyle}>
+					<colgroup>
+						{Children.map(children, (child) => child && <col data-name={child.props.name} />)}
+					</colgroup>
+					<TableHead>
+						<TableRow>
+							{Children.map(children, (child) => child && (
+								<TableCell>
+									{child.props.label}
+								</TableCell>
+							))}
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{items.map(item =>
+							<TableRow key={item.id}>
+								{Children.map(children, (child) => child && (
+									<TableCell data-name={child.props.name}>
+										{child.props.render(item)}
+									</TableCell>
+								))}
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
 			</TableContainer>
 			<TablePagination {...pagination} />
 		</div>
 	);
-}
-
-export default ItemsTable;
+};

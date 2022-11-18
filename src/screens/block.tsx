@@ -87,7 +87,7 @@ function BlockPage() {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} {...events} />
+							<EventsTable network={network} {...events} showExtrinsic />
 						</TabPane>
 					</TabbedContent>
 				</Card>
