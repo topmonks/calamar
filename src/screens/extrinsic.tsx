@@ -11,6 +11,7 @@ import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { shortenId } from "../utils/shortenId";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -29,7 +30,10 @@ function ExtrinsicPage() {
 	return (
 		<>
 			<Card>
-				<CardHeader>Extrinsic #{shortenId(id)}</CardHeader>
+				<CardHeader>
+					Extrinsic #{shortenId(id)}
+					<CopyToClipboardButton value={id} />
+				</CardHeader>
 				<ExtrinsicInfoTable network={network} {...extrinsic} />
 			</Card>
 			{extrinsic.data &&

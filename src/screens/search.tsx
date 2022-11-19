@@ -19,6 +19,7 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import NotFound from "../components/NotFound";
 import Loading from "../components/Loading";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import ParamsTable from "../components/ParamsTable";
 
 const queryStyle = css`
 	font-weight: normal;

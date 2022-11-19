@@ -1,7 +1,4 @@
-import { TableBody, TableCell, TableRow } from "@mui/material";
-
-import CopyToClipboardButton from "../CopyToClipboardButton";
-import InfoTable from "../InfoTable";
+import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
@@ -18,57 +15,49 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 
 	return (
 		<InfoTable
+			data={data}
 			loading={loading}
 			notFound={notFound}
 			notFoundMessage="No block found"
 			error={error}
 		>
-			{data && (
-				<TableBody>
-					<TableRow>
-						<TableCell>Id</TableCell>
-						<TableCell>{data.id}</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Hash</TableCell>
-						<TableCell>
-							{data.hash}
-							<CopyToClipboardButton value={data.hash} />
-						</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Parent hash</TableCell>
-						<TableCell>
-							<Link to={`/${network}/search?query=${data.parentHash}`}>
-								{data.parentHash}
-							</Link>
-							<CopyToClipboardButton value={data.parentHash} />
-						</TableCell>
-					</TableRow>
-					{data.validator && (
-						<TableRow>
-							<TableCell>Validator</TableCell>
-							<TableCell>
-								<Link to={`/${network}/account/${data.validator}`}>
-									{data.validator}
-								</Link>
-								<CopyToClipboardButton value={data.validator} />
-							</TableCell>
-						</TableRow>
-					)}
-					<TableRow>
-						<TableCell>Block height</TableCell>
-						<TableCell>{data.height}</TableCell>
-					</TableRow>
-					{data.height !== 0 && <TableRow>
-						<TableCell>Date</TableCell>
-						<TableCell>
-							<Time time={data.timestamp} fromNow />
-						</TableCell>
-					</TableRow>
-					}
-				</TableBody>
-			)}
+			<InfoTableAttribute
+				label="ID"
+				render={(data) => data.id}
+			/>
+			<InfoTableAttribute
+				label="Hash"
+				render={(data) => data.hash}
+				copyToClipboard={(data) => data.hash}
+			/>
+			<InfoTableAttribute
+				label="Parent hash"
+				render={(data) =>
+					<Link to={`/${network}/search?query=${data.parentHash}`}>
+						{data.parentHash}
+					</Link>
+				}
+				copyToClipboard={(data) => data.parentHash}
+			/>
+			<InfoTableAttribute
+				label="Validator"
+				render={(data) => data.validator &&
+					<Link to={`/${network}/account/${data.validator}`}>
+						{data.validator}
+					</Link>
+				}
+				copyToClipboard={(data) => data.validator}
+			/>
+			<InfoTableAttribute
+				label="Height"
+				render={(data) => data.height}
+			/>
+			<InfoTableAttribute
+				label="Date"
+				render={(data) => data.height !== 0 &&
+					<Time time={data.timestamp} fromNow />
+				}
+			/>
 		</InfoTable>
 
 	);

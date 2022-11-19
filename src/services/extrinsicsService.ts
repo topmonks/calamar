@@ -7,6 +7,7 @@ export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
 
 function unifyExtrinsics<T extends ItemsResponse>(response: T) {
+	console.log(JSON.stringify(response.data));
 	return {
 		...response,
 		data: response.data.map((extrinsic: any) => {

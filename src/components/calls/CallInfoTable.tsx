@@ -1,16 +1,14 @@
-import { TableBody, TableCell, TableRow } from "@mui/material";
-
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { shortenHash } from "../../utils/shortenHash";
 import { shortenId } from "../../utils/shortenId";
 
-import CopyToClipboardButton from "../CopyToClipboardButton";
-import InfoTable from "../InfoTable";
+import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 import ParamsTable from "../ParamsTable";
+import { encodeAddress } from "../../utils/formatAddress";
 
 export type CallInfoTableProps = {
 	network: string;
@@ -25,79 +23,84 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 
 	return (
 		<InfoTable
+			data={data}
 			loading={loading}
 			notFound={notFound}
 			notFoundMessage="No call found"
 			error={error}
 		>
-			{data && (
-				<TableBody>
-					<TableRow>
-						<TableCell>Id</TableCell>
-						<TableCell>{data.id}</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Name</TableCell>
-						<TableCell>{data.name}</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Block time</TableCell>
-						<TableCell>
-							<Time time={data.block.timestamp} fromNow />
-						</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Success</TableCell>
-						<TableCell>
-							<img src={data.success ? CheckIcon : CrossIcon} />
-						</TableCell>
-					</TableRow>
-					{data.args && (
-						<TableRow>
-							<TableCell>Parameters</TableCell>
-							<TableCell>
-								<ParamsTable args={data.args} />
-							</TableCell>
-						</TableRow>
-					)}
-					<TableRow>
-						<TableCell>Spec version</TableCell>
-						<TableCell>{data.block.spec.specVersion}</TableCell>
-					</TableRow>
-
-					<TableRow>
-						<TableCell>Sender</TableCell>
-						<TableCell>{(data.origin && data.origin.value.__kind !== "None") ? shortenHash(data.origin.value.value) : "None"}</TableCell>
-					</TableRow>
-					{data.parrent && <TableRow>
-						<TableCell>Parent</TableCell>
-						<TableCell>
-							<Link to={`/${network}/call/${data.parent.id}`}>
-								{shortenId(data.parent.id)}
-							</Link>
-							<CopyToClipboardButton value={data.parent.id} />
-						</TableCell>
-					</TableRow>}
-					<TableRow>
-						<TableCell>Extrinsic id</TableCell>
-						<TableCell>
-							<Link to={`/${network}/extrinsic/${data.extrinsic.id}`}>
-								{shortenId(data.extrinsic.id)}
-							</Link>
-							<CopyToClipboardButton value={data.extrinsic.id} />
-						</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Block height</TableCell>
-						<TableCell>
-							<Link to={`/${network}/block/${data.block.id}`}>
-								{data.block.height}
-							</Link>
-							<CopyToClipboardButton value={data.block.height} />
-						</TableCell>
-					</TableRow>
-				</TableBody>
-			)}
+			<InfoTableAttribute
+				label="ID"
+				render={(data) => data.id}
+			/>
+			<InfoTableAttribute
+				label="Name"
+				render={(data) => data.name}
+			/>
+			<InfoTableAttribute
+				label="Block time"
+				render={(data) =>
+					<Time time={data.block.timestamp} fromNow />
+				}
+			/>
+			<InfoTableAttribute
+				label="Success"
+				render={(data) =>
+					<img src={data.success ? CheckIcon : CrossIcon} />
+				}
+			/>
+			<InfoTableAttribute
+				label="Sender"
+				render={(data) =>
+					data.origin && data.origin.value.__kind !== "None" && (
+						<Link
+							to={`/${network}/account/${data.origin.value.value}`}
+						>
+							{shortenHash(
+								(network &&
+									encodeAddress(network, data.origin.value.value)) ||
+								data.origin.value.value
+							)}
+						</Link>
+					)
+				}
+			/>
+			<InfoTableAttribute
+				name="parameters"
+				label="Parameters"
+				render={(data) => <ParamsTable args={data.args} />}
+			/>
+			<InfoTableAttribute
+				label="Extrinsic"
+				render={(data) =>
+					<Link to={`/${network}/extrinsic/${data.extrinsic.id}`}>
+						{shortenId(data.extrinsic.id)}
+					</Link>
+				}
+				copyToClipboard={(data) => data.extrinsic.id}
+			/>
+			<InfoTableAttribute
+				label="Block"
+				render={(data) =>
+					<Link to={`/${network}/block/${data.block.id}`}>
+						{shortenId(data.block.id)}
+					</Link>
+				}
+				copyToClipboard={(data) => data.block.id}
+			/>
+			<InfoTableAttribute
+				label="Parent"
+				render={(data) => data.parent &&
+					<Link to={`/${network}/call/${data.parent.id}`}>
+						{shortenId(data.parent.id)}
+					</Link>
+				}
+				copyToClipboard={(data) => data.parent?.id}
+			/>
+			<InfoTableAttribute
+				label="Spec version"
+				render={(data) => data.block.spec.specVersion}
+			/>
 		</InfoTable>
 	);
 };
