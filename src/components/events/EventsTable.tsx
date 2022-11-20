@@ -7,10 +7,8 @@ import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import ParamsTable from "../ParamsTable";
 
-const tableStyle = (showExtrinsic?: boolean) => css`
-	col[data-name=parameters] {
-		width: ${showExtrinsic ? "40%" : "60%"};
-	}
+const parametersColCss = (showExtrinsic?: boolean) => css`
+	width: ${showExtrinsic ? "40%" : "60%"};
 `;
 
 export type EventsTableProps = {
@@ -35,7 +33,6 @@ function EventsTable(props: EventsTableProps) {
 			error={error}
 			pagination={pagination}
 			data-test="events-table"
-			css={tableStyle(showExtrinsic)}
 		>
 			<ItemsTableAttribute
 				label="ID"
@@ -60,8 +57,8 @@ function EventsTable(props: EventsTableProps) {
 				/>
 			)}
 			<ItemsTableAttribute
-				name="parameters"
 				label="Parameters"
+				colCss={parametersColCss(showExtrinsic)}
 				render={(event) => <ParamsTable args={event.args} />}
 			/>
 		</ItemsTable>

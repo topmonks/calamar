@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Children, HTMLAttributes, ReactElement, ReactNode } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { css } from "@emotion/react";
+import { css, Interpolation, Theme } from "@emotion/react";
 
 import { Pagination } from "../hooks/usePagination";
 
@@ -13,23 +13,23 @@ import { ErrorMessage } from "./ErrorMessage";
 const tableStyle = css`
 	table-layout: fixed;
 	min-width: 860px;
+`;
 
-	td, th {
-		word-break: break-all;
+const cellStyle = css`
+	word-break: break-all;
 
-		&:first-child, &:first-child {
-			padding-left: 0;
-		}
+	&:first-child {
+		padding-left: 0;
+	}
 
-		&:last-child, &:last-child {
-			padding-right: 0;
-		}
+	&:last-child {
+		padding-right: 0;
 	}
 `;
 
 export type ItemsTableAttributeProps<T = any> = {
-	name?: string;
 	label: string;
+	colCss?: Interpolation<Theme>;
 	render: (data: T) => ReactNode;
 }
 
@@ -84,12 +84,12 @@ export const ItemsTable = <T extends {id: string}>(props: ItemsTableProps<T>) =>
 			<TableContainer>
 				<Table css={tableStyle}>
 					<colgroup>
-						{Children.map(children, (child) => child && <col data-name={child.props.name} />)}
+						{Children.map(children, (child) => child && <col css={child.props.colCss} />)}
 					</colgroup>
 					<TableHead>
 						<TableRow>
 							{Children.map(children, (child) => child && (
-								<TableCell>
+								<TableCell css={cellStyle}>
 									{child.props.label}
 								</TableCell>
 							))}
@@ -99,7 +99,7 @@ export const ItemsTable = <T extends {id: string}>(props: ItemsTableProps<T>) =>
 						{items.map(item =>
 							<TableRow key={item.id}>
 								{Children.map(children, (child) => child && (
-									<TableCell data-name={child.props.name}>
+									<TableCell css={cellStyle}>
 										{child.props.render(item)}
 									</TableCell>
 								))}
