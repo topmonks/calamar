@@ -22,9 +22,9 @@ const textFieldStyle = css`
 		border-right: none;
 	}
 
-	.MuiOutlinedInput-notchedOutline,
+	.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline,
 	&:hover .MuiOutlinedInput-notchedOutline,
-	.Mui-focused .MuiOutlinedInput-notchedOutline {
+	.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
 		border-color: #c4cdd5;
 	}
 `;
@@ -35,11 +35,8 @@ const buttonStyle = (theme: Theme) => css`
 	border-bottom-left-radius: 0px;
 	border: 1px solid ${theme.palette.primary.dark};
 
-	.text {
-		display: none;
-	}
-
 	.MuiButton-startIcon {
+		display: none;
 		margin: 0;
 
 		svg {
@@ -47,13 +44,16 @@ const buttonStyle = (theme: Theme) => css`
 		}
 	}
 
-	@media (min-width: 720px) {
+	${theme.breakpoints.down("md")} {
+		padding-left: 16px;
+		padding-right: 16px;
+
 		.text {
-			display: inline-block;
+			display: none;
 		}
 
 		.MuiButton-startIcon {
-			display: none;
+			display: flex;
 		}
 	}
 `;

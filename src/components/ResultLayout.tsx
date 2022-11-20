@@ -83,49 +83,59 @@ const logoStyle = (theme: Theme) => css`
 
 	> svg {
 		display: block;
-		width: 160px;
+		width: 250px;
 	}
 
-	${theme.breakpoints.up("md")} {
+	${theme.breakpoints.down("md")} {
+		margin-bottom: 12px;
+
 		> svg {
-			width: 250px;
+			width: 160px;
 		}
 	}
 `;
 
 const networkSelectStyle = (theme: Theme) => css`
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+
 	& .MuiInputBase-input {
-		color: white;
-		background-color: #61dafb;
+		//color: white;
+		//background-color: #61dafb;
 		font-size: 16px;
-		font-weight: 600;
+		font-weight: 400;
 	}
 
 	& .MuiOutlinedInput-notchedOutline,
 	&:hover .MuiOutlinedInput-notchedOutline,
 	&.Mui-focused .MuiOutlinedInput-notchedOutline {
 		border-color: ${theme.palette.secondary.main};
+		border-color: #c4cdd5;
+		border-right: none;
 	}
 
-	${theme.breakpoints.up("md")} {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
+	&::after {
+		content: '';
+		display: block;
+		width: 1px;
+		height: 24px;
+		margin-left: -1px;
+		background-color: #c4cdd5;
+		position: relative;
+		z-index: 10;
 	}
 `;
 
 const searchInputStyle = (theme: Theme) => css`
 	width: 100%;
+	flex: 1 1 auto;
 
-	${theme.breakpoints.up("md")} {
-		flex: 1 1 auto;
+	.MuiInputBase-root {
+		border-radius: 0px;
+	}
 
-		.MuiInputBase-root {
-			border-radius: 0px;
-		}
-
-		.MuiOutlinedInput-notchedOutline {
-			border-left: none;
-		}
+	.MuiOutlinedInput-notchedOutline {
+		border-left: none;
 	}
 `;
 
@@ -158,9 +168,9 @@ function ResultLayout() {
 						<Link css={logoStyle} to="/">
 							<Logo />
 						</Link>
-						<NetworkSelect css={networkSelectStyle} onChange={setNetwork} value={network} />
 					</div>
 					<div css={topBarRowStyle}>
+						<NetworkSelect css={networkSelectStyle} onChange={setNetwork} value={network} />
 						<SearchInput css={searchInputStyle} network={network} />
 					</div>
 				</div>

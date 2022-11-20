@@ -27,24 +27,23 @@ const logoStyle = css`
 `;
 
 const searchBoxStyle = (theme: Theme) => css`
+	display: flex;
 	margin: auto;
 	max-width: 1000px;
 	padding-left: 16px;
 	padding-right: 16px;
 	text-align: center;
-
-	${theme.breakpoints.up("md")} {
-		display: flex;
-		justify-content: center;
-	}
+	justify-content: center;
 `;
 
 const networkSelectStyle = (theme: Theme) => css`
 	margin-bottom: 16px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 
 	& .MuiInputBase-input {
-		color: white;
-		background-color: #61dafb;
+		//color: white;
+		//background-color: #61dafb;
 		font-size: 16px;
 		font-weight: 600;
 
@@ -56,34 +55,42 @@ const networkSelectStyle = (theme: Theme) => css`
 	& .MuiOutlinedInput-notchedOutline,
 	&:hover .MuiOutlinedInput-notchedOutline,
 	&.Mui-focused .MuiOutlinedInput-notchedOutline {
-		border-color: ${theme.palette.secondary.main};
+		//border-color: ${theme.palette.secondary.main};
+		border-color: #c4cdd5;
+		border-right: none;
 	}
 
-	${theme.breakpoints.up("md")} {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
+	&::after {
+		content: '';
+		display: block;
+		width: 1px;
+		height: 24px;
+		margin-left: -1px;
+		background-color: #c4cdd5;
+		position: relative;
+		z-index: 10;
 	}
 `;
 
 const searchInputStyle = (theme: Theme) => css`
+	flex: 1 1 auto;
+
 	.MuiInputBase-input {
 		padding: 16px 24px;
 	}
 
-	${theme.breakpoints.up("md")} {
-		flex: 1 1 auto;
+	.MuiInputBase-root {
+		border-radius: 0px;
+	}
 
+	.MuiOutlinedInput-notchedOutline {
+		border-left: none;
+	}
+
+	${theme.breakpoints.up("md")} {
 		.MuiButton-root {
 			padding-left: 52px;
 			padding-right: 52px;
-		}
-
-		.MuiInputBase-root {
-			border-radius: 0px;
-		}
-
-		.MuiOutlinedInput-notchedOutline {
-			border-left: none;
 		}
 	}
 `;

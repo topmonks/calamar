@@ -1,8 +1,47 @@
+/** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useMemo } from "react";
-import { capitalize, MenuItem, Select, SelectProps } from "@mui/material";
+import { capitalize, ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
+import { css, Theme } from "@emotion/react";
 
 import { useArchives } from "../hooks/useArchives";
 import { useNetworks } from "../hooks/useNetworks";
+
+const selectStyle = (theme: Theme) => css`
+	&.MuiInputBase-root {
+		.MuiSelect-select {
+			display: flex;
+			align-items: center;
+			padding-left: 16px;
+			font-size: 18px;
+		}
+	}
+
+	.MuiListItemIcon-root {
+		min-width: 36px;
+
+		img {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	${theme.breakpoints.down("sm")} {
+		.MuiListItemIcon-root {
+			min-width: 0;
+		}
+
+		.MuiListItemText-root {
+			display: none;
+		}
+	}
+`;
+
+const iconStyle = css`
+	width: 20px;
+	height: 20px;
+
+	border-radius: 4px;
+`;
 
 type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
 	value?: string;
@@ -48,10 +87,17 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 			{...selectProps}
 			onChange={handleArchiveChange}
 			value={value || ""}
+			css={selectStyle}
 		>
 			{items.map((item) => (
 				<MenuItem key={item.value} value={item.value}>
-					{item.label}
+					<ListItemIcon>
+						<img
+							src={`https://raw.githubusercontent.com/subsquid/archive-registry/main/ui/logos/networks/${item.value}.png`}
+							css={iconStyle}
+						/>
+					</ListItemIcon>
+					<ListItemText>{item.label}</ListItemText>
 				</MenuItem>
 			))}
 		</Select>
