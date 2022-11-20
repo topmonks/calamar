@@ -65,16 +65,6 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				}
 			/>
 			<InfoTableAttribute
-				label="Name"
-				render={(data) => data.call.name}
-			/>
-			<InfoTableAttribute
-				label="Parameters"
-				render={(data) =>
-					<ParamsTable args={data.call.args} />
-				}
-			/>
-			<InfoTableAttribute
 				label="Result"
 				render={(data) =>
 					<Chip
@@ -82,6 +72,16 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 						icon={<img src={data.success ? CheckIcon : CrossIcon}  />}
 						label={data.success ? "Success" : "Fail"}
 					/>
+				}
+			/>
+			<InfoTableAttribute
+				label="Name"
+				render={(data) => data.call.name}
+			/>
+			<InfoTableAttribute
+				label="Parameters"
+				render={(data) =>
+					<ParamsTable args={data.call.args} />
 				}
 			/>
 			<InfoTableAttribute
