@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 
 import { Card, CardHeader } from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import { EventInfoTable } from "../components/events/EventInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useEvent } from "../hooks/useEvent";
-import { shortenId } from "../utils/shortenId";
 
 type EventPageParams = {
 	network: string;
@@ -20,8 +20,9 @@ export const EventPage: React.FC = () => {
 
 	return (<>
 		<Card>
-			<CardHeader style={{ paddingBottom: 48 }}>
-				Event #{shortenId(id)}
+			<CardHeader>
+				Event #{id}
+				<CopyToClipboardButton value={id} />
 			</CardHeader>
 			<EventInfoTable network={network} {...event} />
 		</Card>

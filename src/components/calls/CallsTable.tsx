@@ -1,7 +1,6 @@
 import { Pagination } from "../../hooks/usePagination";
 import { encodeAddress } from "../../utils/formatAddress";
 import { shortenHash } from "../../utils/shortenHash";
-import { shortenId } from "../../utils/shortenId";
 
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
@@ -32,7 +31,7 @@ export const CallsTable = (props: CallsTableProps) => {
 				label="ID"
 				render={(call) =>
 					<Link to={`/${network}/call/${call.id}`}>
-						{shortenId(call.id)}
+						{call.id}
 					</Link>
 				}
 			/>
@@ -60,7 +59,7 @@ export const CallsTable = (props: CallsTableProps) => {
 				label="Extrinsic"
 				render={(call) =>
 					<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-						{shortenId(call.extrinsic.id)}
+						{call.extrinsic.id}
 					</Link>
 				}
 			/>

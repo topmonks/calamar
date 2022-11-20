@@ -2,7 +2,6 @@
 import { css } from "@emotion/react";
 
 import { Pagination } from "../../hooks/usePagination";
-import { shortenId } from "../../utils/shortenId";
 
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
@@ -42,7 +41,7 @@ function EventsTable(props: EventsTableProps) {
 				label="ID"
 				render={(event) => (
 					<Link to={`/${network}/event/${event.id}`}>
-						{shortenId(event.id)}
+						{event.id}
 					</Link>
 				)}
 			/>
@@ -55,7 +54,7 @@ function EventsTable(props: EventsTableProps) {
 					label="Extrinsic"
 					render={(event) => event.extrinsic?.id && (
 						<Link to={`/${network}/extrinsic/${event.extrinsic.id}`}>
-							{shortenId(event.extrinsic.id)}
+							{event.extrinsic.id}
 						</Link>
 					)}
 				/>

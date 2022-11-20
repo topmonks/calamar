@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { BlockInfoTable } from "../components/blocks/BlockInfoTable";
 import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader } from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import EventsTable from "../components/events/EventsTable";
@@ -12,7 +13,6 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { shortenId } from "../utils/shortenId";
 
 type BlockPageParams = {
 	network: string;
@@ -56,7 +56,10 @@ function BlockPage() {
 	return (
 		<>
 			<Card>
-				<CardHeader>Block #{shortenId(id)}</CardHeader>
+				<CardHeader>
+					Block #{id}
+					<CopyToClipboardButton value={id} />
+				</CardHeader>
 				<BlockInfoTable network={network} {...block} />
 			</Card>
 			{block.data &&

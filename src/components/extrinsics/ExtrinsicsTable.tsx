@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import { Pagination } from "../../hooks/usePagination";
 import { encodeAddress } from "../../utils/formatAddress";
 import { shortenHash } from "../../utils/shortenHash";
-import { shortenId } from "../../utils/shortenId";
 
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
@@ -43,7 +42,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				label="ID"
 				render={(extrinsic) =>
 					<Link to={`/${network}/extrinsic/${extrinsic.id}`}>
-						{shortenId(extrinsic.id)}
+						{extrinsic.id}
 					</Link>
 				}
 			/>

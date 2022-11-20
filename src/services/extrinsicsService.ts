@@ -45,6 +45,9 @@ export async function getExtrinsicsWithoutTotalCount(
 					id
 					hash
 					timestamp
+					spec {
+						specVersion
+					}
 				}
 				signature
 				indexInBlock

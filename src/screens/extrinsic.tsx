@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Card, CardHeader } from "../components/Card";
 import { CallsTable } from "../components/calls/CallsTable";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import EventsTable from "../components/events/EventsTable";
 import { ExtrinsicInfoTable } from "../components/extrinsics/ExtrinsicInfoTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -10,7 +11,6 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { shortenId } from "../utils/shortenId";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -29,7 +29,10 @@ function ExtrinsicPage() {
 	return (
 		<>
 			<Card>
-				<CardHeader>Extrinsic #{shortenId(id)}</CardHeader>
+				<CardHeader>
+					Extrinsic #{id}
+					<CopyToClipboardButton value={id} />
+				</CardHeader>
 				<ExtrinsicInfoTable network={network} {...extrinsic} />
 			</Card>
 			{extrinsic.data &&

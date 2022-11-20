@@ -21,4 +21,9 @@ export const CardHeader = styled.div`
 	line-height: 33px;
 
 	word-break: break-all;
+
+	> [data-name=copy-button] {
+		position: relative;
+		top: -1px;
+	}
 `;

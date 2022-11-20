@@ -33,7 +33,7 @@ export type ItemsTableAttributeProps<T = any> = {
 	render: (data: T) => ReactNode;
 }
 
-export const ItemsTableAttribute = <T = any>(props: ItemsTableAttributeProps<T>) => {
+export const ItemsTableAttribute = <T extends object = any>(props: ItemsTableAttributeProps<T>) => {
 	return null;
 };
 

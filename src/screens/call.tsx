@@ -2,12 +2,12 @@ import { useParams } from "react-router-dom";
 
 import { Card, CardHeader } from "../components/Card";
 import { CallInfoTable } from "../components/calls/CallInfoTable";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import EventsTable from "../components/events/EventsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { shortenId } from "../utils/shortenId";
 
 type CallPageParams = {
 	network: string;
@@ -25,8 +25,9 @@ export const CallPage: React.FC = () => {
 	return (
 		<>
 			<Card>
-				<CardHeader style={{ paddingBottom: 48 }}>
-					Call #{shortenId(id)}
+				<CardHeader>
+					Call #{id}
+					<CopyToClipboardButton value={id} />
 				</CardHeader>
 				<CallInfoTable network={network} {...call} />
 			</Card>
