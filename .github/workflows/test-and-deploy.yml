@@ -32,9 +32,19 @@ jobs:
       url: ${{ steps.pages.outputs.url }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.28.0-focal
     steps:
+      - name: Install jq # TODO temporary - move steps requiring it into another job a keep this one only for playwright tests
+        run: |
+          apt update
+          apt install -y jq
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
       - name: Install dependencies
         uses: ./.github/actions/install-dependencies
       - name: Download build artifact
@@ -42,24 +52,25 @@ jobs:
         with:
           name: build
           path: build
-      - name: Install Playwright Browsers
-        uses: ./.github/actions/install-playwright-browsers
+      #- name: Install Playwright Browsers
+        #uses: ./.github/actions/install-playwright-browsers
       - name: Start app
         run: npm run start:test &
       - name: Run Playwright Tests
-        run: npm run test
+        run: npx playwright test
       - name: Upload Argos screenshots
         continue-on-error: true
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
         run: npx argos upload test/results
-      - name: Upload test teport artifact
+      - name: Upload test report artifact
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-report
           path: test/report/
           retention-days: 14
+
       - name: Deploy test report to Cloudflare Pages
         if: always()
         id: pages
