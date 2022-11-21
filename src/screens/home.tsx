@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
@@ -72,20 +73,33 @@ const networkSelectStyle = (theme: Theme) => css`
 	}
 `;
 
-const searchInputStyle = (theme: Theme) => css`
+const searchInputStyle = (variant: string) => (theme: Theme) => css`
 	flex: 1 1 auto;
 
-	.MuiInputBase-input {
-		padding: 16px 24px;
-	}
-
 	.MuiInputBase-root {
-		border-radius: 0px;
+		.MuiInputBase-input,
+		.MuiSelect-select {
+			padding: 16px 24px;
+		}
 	}
 
-	.MuiOutlinedInput-notchedOutline {
-		border-left: none;
-	}
+	${["3", "4"].includes(variant) && css`
+		.MuiListItemIcon-root {
+			min-width: 36px !important;
+
+			img {
+				width: 24px !important;
+				height: 24px !important;
+			}
+		}
+
+		.MuiSelect-select {
+			&::before,
+			&::after {
+				height: 38px !important;
+			}
+		}
+	`}
 
 	${theme.breakpoints.up("md")} {
 		.MuiButton-root {
@@ -98,28 +112,19 @@ const searchInputStyle = (theme: Theme) => css`
 function HomePage() {
 	const [network, setNetwork] = useState<string | undefined>();
 
-	const handleNetworkSelect = useCallback(
-		(network: string, isUserAction: boolean) => {
-			if (isUserAction) {
-				localStorage.setItem("network", network);
-			}
-
-			setNetwork(network);
-		},
-		[]
-	);
-
-	useEffect(() => {
-		const network = localStorage.getItem("network");
-		network && setNetwork(network);
-	}, []);
+	// TODO this is temporary until resolved
+	const [qs] = useSearchParams();
+	const searchInputVariant = qs.get("search-input-variant") || "1";
 
 	return (
 		<div css={containerStyle}>
 			<Logo css={logoStyle} />
 			<div css={searchBoxStyle}>
-				<NetworkSelect css={networkSelectStyle} onChange={handleNetworkSelect} value={network} />
-				<SearchInput css={searchInputStyle} network={network} />
+				<SearchInput
+					css={searchInputStyle(searchInputVariant)}
+					onNetworkChange={setNetwork}
+					persistNetwork
+				/>
 			</div>
 			<div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
 				<Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>

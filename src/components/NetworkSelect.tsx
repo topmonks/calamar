@@ -1,18 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useMemo } from "react";
 import { capitalize, ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
-import { css, Theme } from "@emotion/react";
+import { css } from "@emotion/react";
 
 import { useArchives } from "../hooks/useArchives";
 import { useNetworks } from "../hooks/useNetworks";
 
-const selectStyle = (theme: Theme) => css`
+const selectStyle = css`
 	&.MuiInputBase-root {
 		.MuiSelect-select {
 			display: flex;
 			align-items: center;
 			padding-left: 16px;
-			font-size: 18px;
 		}
 	}
 
@@ -25,15 +24,6 @@ const selectStyle = (theme: Theme) => css`
 		}
 	}
 
-	${theme.breakpoints.down("sm")} {
-		.MuiListItemIcon-root {
-			min-width: 0;
-		}
-
-		.MuiListItemText-root {
-			display: none;
-		}
-	}
 `;
 
 const iconStyle = css`

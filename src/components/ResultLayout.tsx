@@ -9,7 +9,6 @@ import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 import { getArchive } from "../services/archiveRegistryService";
 import NotFoundPage from "../screens/notFound";
 
-import NetworkSelect from "./NetworkSelect";
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
 
@@ -95,48 +94,9 @@ const logoStyle = (theme: Theme) => css`
 	}
 `;
 
-const networkSelectStyle = (theme: Theme) => css`
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-
-	& .MuiInputBase-input {
-		//color: white;
-		//background-color: #61dafb;
-		font-size: 16px;
-		font-weight: 400;
-	}
-
-	& .MuiOutlinedInput-notchedOutline,
-	&:hover .MuiOutlinedInput-notchedOutline,
-	&.Mui-focused .MuiOutlinedInput-notchedOutline {
-		border-color: ${theme.palette.secondary.main};
-		border-color: #c4cdd5;
-		border-right: none;
-	}
-
-	&::after {
-		content: '';
-		display: block;
-		width: 1px;
-		height: 24px;
-		margin-left: -1px;
-		background-color: #c4cdd5;
-		position: relative;
-		z-index: 10;
-	}
-`;
-
-const searchInputStyle = (theme: Theme) => css`
+const searchInputStyle = css`
 	width: 100%;
 	flex: 1 1 auto;
-
-	.MuiInputBase-root {
-		border-radius: 0px;
-	}
-
-	.MuiOutlinedInput-notchedOutline {
-		border-left: none;
-	}
 `;
 
 type ResultLayoutParams = {
@@ -170,8 +130,7 @@ function ResultLayout() {
 						</Link>
 					</div>
 					<div css={topBarRowStyle}>
-						<NetworkSelect css={networkSelectStyle} onChange={setNetwork} value={network} />
-						<SearchInput css={searchInputStyle} network={network} />
+						<SearchInput css={searchInputStyle} defaultNetwork={network} key={network} />
 					</div>
 				</div>
 			</div>
