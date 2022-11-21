@@ -25,6 +25,12 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<InfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
+					<Time time={data.block.timestamp} utc />
+				}
+			/>
+			<InfoTableAttribute
+				label="Block time"
+				render={(data) =>
 					<Time time={data.block.timestamp} fromNow />
 				}
 			/>
@@ -41,14 +47,14 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Extrinsic"
-				render={(data) =>
+				render={(data) => data.extrinsic &&
 					<Link
 						to={`/${network}/extrinsic/${data.extrinsic.id}`}
 					>
 						{data.extrinsic.id}
 					</Link>
 				}
-				copyToClipboard={(data) => data.extrinsic.id}
+				copyToClipboard={(data) => data.extrinsic?.id}
 			/>
 			<InfoTableAttribute
 				label="Call"

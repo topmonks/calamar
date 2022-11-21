@@ -1,3 +1,5 @@
+import { encodeAddress } from "../../utils/formatAddress";
+
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
@@ -22,8 +24,22 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			error={error}
 		>
 			<InfoTableAttribute
-				label="ID"
-				render={(data) => data.id}
+				label="Timestamp"
+				render={(data) =>
+					<Time time={data.timestamp} utc />
+				}
+				hide={(data) => data.height === 0}
+			/>
+			<InfoTableAttribute
+				label="Block time"
+				render={(data) =>
+					<Time time={data.timestamp} fromNow />
+				}
+				hide={(data) => data.height === 0}
+			/>
+			<InfoTableAttribute
+				label="Block height"
+				render={(data) => data.height}
 			/>
 			<InfoTableAttribute
 				label="Hash"
@@ -43,20 +59,11 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 				label="Validator"
 				render={(data) => data.validator &&
 					<Link to={`/${network}/account/${data.validator}`}>
-						{data.validator}
+						{encodeAddress(network, data.validator) || data.validator}
 					</Link>
 				}
 				copyToClipboard={(data) => data.validator}
-			/>
-			<InfoTableAttribute
-				label="Height"
-				render={(data) => data.height}
-			/>
-			<InfoTableAttribute
-				label="Date"
-				render={(data) => data.height !== 0 &&
-					<Time time={data.timestamp} fromNow />
-				}
+				hide={(data) => !data.validator}
 			/>
 		</InfoTable>
 

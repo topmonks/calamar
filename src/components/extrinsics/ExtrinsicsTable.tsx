@@ -12,7 +12,7 @@ export type ExtrinsicsTableProps = {
 	network: string;
 	items: any[];
 	pagination: Pagination;
-	title?: ReactNode;
+	showTime?: boolean;
 	loading?: boolean;
 	notFound?: boolean;
 	error?: any;
@@ -23,6 +23,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 		network,
 		items,
 		pagination,
+		showTime,
 		loading,
 		notFound,
 		error
@@ -64,12 +65,14 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 					</Link>
 				}
 			/>
-			<ItemsTableAttribute
-				label="Time"
-				render={(extrinsic) =>
-					<Time time={extrinsic.block.timestamp} fromNow />
-				}
-			/>
+			{showTime &&
+				<ItemsTableAttribute
+					label="Time"
+					render={(extrinsic) =>
+						<Time time={extrinsic.block.timestamp} fromNow tooltip utc />
+					}
+				/>
+			}
 		</ItemsTable>
 	);
 }

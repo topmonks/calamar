@@ -31,6 +31,12 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<InfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
+					<Time time={data.block.timestamp} utc />
+				}
+			/>
+			<InfoTableAttribute
+				label="Block time"
+				render={(data) =>
 					<Time time={data.block.timestamp} fromNow />
 				}
 			/>
@@ -80,6 +86,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 						data.origin.value.value
 					) || data.origin.value.value
 				}
+				hide={(data) => !data.origin || data.origin.value.__kind === "None"}
 			/>
 			<InfoTableAttribute
 				label="Result"

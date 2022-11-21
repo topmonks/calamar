@@ -29,15 +29,21 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			error={error}
 		>
 			<InfoTableAttribute
-				label="Hash"
-				render={(data) => data.hash}
-				copyToClipboard={(data) => data.hash}
+				label="Timestamp"
+				render={(data) =>
+					<Time time={data.block.timestamp} timezone utc />
+				}
 			/>
 			<InfoTableAttribute
-				label="Timestamp"
+				label="Block time"
 				render={(data) =>
 					<Time time={data.block.timestamp} fromNow />
 				}
+			/>
+			<InfoTableAttribute
+				label="Hash"
+				render={(data) => data.hash}
+				copyToClipboard={(data) => data.hash}
 			/>
 			<InfoTableAttribute
 				label="Block"
@@ -63,6 +69,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 						data.signature?.address
 					) || data.signature?.address
 				}
+				hide={(data) => !data.signature?.address}
 			/>
 			<InfoTableAttribute
 				label="Result"
@@ -92,11 +99,13 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<InfoTableAttribute
 				label="Fee"
 				render={(data) => data.fee}
+				hide={(data) => !Number.isInteger(data.fee)}
 			/>
 			<InfoTableAttribute
 				label="Signature"
 				render={(data) => data.signature?.signature.value}
 				copyToClipboard={(data) => data.signature?.signature.value}
+				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute
 				label="Spec version"
