@@ -2,7 +2,8 @@
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
 import { Link } from "./Link";
-import { isAddress } from "@polkadot/util-crypto";
+import { encodeAddress, isPublicKey } from "../utils/formatAddress";
+import { useParams } from "react-router-dom";
 
 const valueTableStyle = css`
 	width: 100%;
@@ -61,8 +62,14 @@ export type EventParamValueProps = {
 	value: any;
 };
 
+type AccountPageParams = {
+	network: string;
+};
+
 function ParamsValue(props: EventParamValueProps) {
 	let { value } = props;
+
+	const { network } = useParams() as AccountPageParams;
 
 	if (Array.isArray(value) && value.length > 0) {
 		return (
@@ -75,8 +82,11 @@ function ParamsValue(props: EventParamValueProps) {
 							</TableCell>
 							<TableCell>
 								{
-									isAddress(value) ?
-										<Link to={"/kusama/search?query=".concat(item)}>{item}</Link> :
+									isPublicKey(item) ?
+										<Link to={"/kusama/search?query=".concat(item)}>{
+											encodeAddress(network, item) ||
+											item
+										}</Link> :
 										<ParamsValue value={item} />
 								}
 							</TableCell>
@@ -100,8 +110,11 @@ function ParamsValue(props: EventParamValueProps) {
 							</TableCell>
 							<TableCell>
 								{
-									isAddress(value[key]) ?
-										<Link to={"/kusama/search?query=".concat(value[key])}>{value[key]}</Link> :
+									isPublicKey(value[key]) ?
+										<Link to={"/kusama/search?query=".concat(value[key])}>{
+											encodeAddress(network, value[key]) ||
+											value[key]
+										}</Link> :
 										<ParamsValue value={value[key]} />
 								}
 							</TableCell>

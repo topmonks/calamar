@@ -1,10 +1,15 @@
 import ss58Registry from "../ss58-registry.json";
 import Keyring from "@polkadot/keyring";
 import arrayBufferToHex from "array-buffer-to-hex";
+import { isAddress } from "@polkadot/util-crypto";
 
 const getPrefix = (network: string) => {
 	return ss58Registry.registry.find((r) => r.network === network)?.prefix;
 };
+
+export function isPublicKey(address: any) {
+	return typeof address === "string" && address.length === 66 && isAddress(address);
+}
 
 export function decodeAddress(address: string) {
 	try {

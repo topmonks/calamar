@@ -36,7 +36,6 @@ function ParamsTable(props: EventParamsTableProps) {
 		[args]
 	);
 
-	console.log(argsArray);
 	return (
 		<div css={paramsStyle}>
 			<div css={paramsScrollAreaStyle}>
