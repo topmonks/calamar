@@ -124,7 +124,7 @@ function SearchPage() {
 			<Card>
 				<ErrorMessage
 					message={<>Unexpected error occured while searching for <span css={queryStyle}>{query}</span></>}
-					details={error.stack || error.message}
+					details={error.message}
 					showReported
 				/>
 			</Card>

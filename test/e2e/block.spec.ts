@@ -1,41 +1,38 @@
-import { test, expect } from "@playwright/test";
-
 import { getBlock } from "../../src/services/blocksService";
 import { getExtrinsics } from "../../src/services/extrinsicsService";
 import { getEvents } from "../../src/services/eventsService";
 import { getCalls } from "../../src/services/callsService";
 
 import { mockRequest } from "../utils/mockRequest";
-import { screenshot } from "../utils/screenshot";
-import { waitForPageEvent } from "../utils/waitForPageEvent";
 import { navigate } from "../utils/navigate";
+import { test, expect } from "../utils/test";
 
 test.describe("Block detail page", () => {
 	const blockId = "0014932897-93378";
 
-	test("shows block detail page with extrinsics", async ({ page }) => {
+	test("shows block detail page with extrinsics", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
 
-		await screenshot(page, "blockWithExtrinsics");
+		await takeScreenshot("block-with-extrinsics");
 	});
 
-	test("shows block detail page with calls", async ({ page }) => {
+	test("shows block detail page with calls", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("calls-tab").click();
 
-		await screenshot(page, "blockWithCalls");
+		await takeScreenshot("block-with-calls");
 	});
 
-	test("shows block detail page with events", async ({ page }) => {
+	test("shows block detail page with events", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("events-tab").click();
 
-		await screenshot(page, "blockWithEvents");
+		await takeScreenshot("block-with-events");
 	});
 
-	test("shows not found message if block was not found", async ({ page }) => {
+	test("shows not found message if block was not found", async ({ page, takeScreenshot }) => {
 		const id = "111-22-3";
 
 		await navigate(page, `/kusama/block/${id}`, {waitUntil: "data-loaded"});
@@ -44,10 +41,10 @@ test.describe("Block detail page", () => {
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText("No block found");
 
-		await screenshot(page, "blockNotFound");
+		await takeScreenshot("block-not-found");
 	});
 
-	test("show error message when block data fetch fails", async ({ page }) => {
+	test("show error message when block data fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getBlock("kusama", {id_eq: blockId}),
@@ -68,10 +65,10 @@ test.describe("Block detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Block error/);
 
-		await screenshot(page, "blockError");
+		await takeScreenshot("block-error");
 	});
 
-	test("show error message when extrinsics items fetch fails", async ({ page }) => {
+	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getExtrinsics("kusama", 10, 0, { block: { id_eq: blockId } }, "id_DESC"),
@@ -92,10 +89,10 @@ test.describe("Block detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Extrinsics error/);
 
-		await screenshot(page, "blockWithExtrinsicsError");
+		await takeScreenshot("block-with-extrinsics-error");
 	});
 
-	test("show error message when calls items fetch fails", async ({ page }) => {
+	test("show error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getCalls("kusama", 10, 0, { block: { id_eq: blockId } }, "id_DESC"),
@@ -118,10 +115,10 @@ test.describe("Block detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Calls error/);
 
-		await screenshot(page, "blockWithCallsError");
+		await takeScreenshot("block-with-calls-error");
 	});
 
-	test("show error message when events items fetch fails", async ({ page }) => {
+	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getEvents("kusama", 10, 0, { block: { id_eq: blockId } }, "id_DESC"),
@@ -144,6 +141,6 @@ test.describe("Block detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Events error/);
 
-		await screenshot(page, "blockWithEventsError");
+		await takeScreenshot("block-with-events-error");
 	});
 });
