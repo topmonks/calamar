@@ -27,9 +27,6 @@ jobs:
   test:
     name: Test
     needs: build
-    environment:
-      name: test-report
-      url: ${{ steps.pages.outputs.url }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
@@ -52,17 +49,17 @@ jobs:
         with:
           name: build
           path: build
-      #- name: Install Playwright Browsers
-        #uses: ./.github/actions/install-playwright-browsers
       - name: Start app
         run: npm run start:test &
       - name: Run Playwright Tests
         run: npx playwright test
-      - name: Upload Argos screenshots
-        continue-on-error: true
-        env:
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: npx argos upload test/results
+      - name: Upload test screenshots artifact
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-screenshots
+          path: test/screenshots
+          retention-days: 14
       - name: Upload test report artifact
         uses: actions/upload-artifact@v3
         if: always()
@@ -70,9 +67,35 @@ jobs:
           name: test-report
           path: test/report/
           retention-days: 14
-
+  test-report:
+    name: Test report
+    needs: test
+    if: always()
+    environment:
+      name: test-report
+      url: ${{ steps.pages.outputs.url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+      - name: Download test screenshots artifact
+        uses: actions/download-artifact@master
+        with:
+          name: test-screenshots
+          path: test/screenshots
+      - name: Download test report artifact
+        uses: actions/download-artifact@master
+        with:
+          name: test-report
+          path: test/report
+      - name: Upload Argos screenshots
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        run: npx argos upload test/screenshots
       - name: Deploy test report to Cloudflare Pages
-        if: always()
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
         with:
