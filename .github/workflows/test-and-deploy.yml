@@ -32,10 +32,6 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.28.0-focal
     steps:
-      - name: Install jq # TODO temporary - move steps requiring it into another job a keep this one only for playwright tests
-        run: |
-          apt update
-          apt install -y jq
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node.js
