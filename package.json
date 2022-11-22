@@ -65,7 +65,7 @@
   "devDependencies": {
     "@argos-ci/cli": "^0.2.3",
     "@emotion/eslint-plugin": "^11.10.0",
-    "@playwright/test": "^1.27.1",
+    "@playwright/test": "^1.28.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "cross-env": "^7.0.3",
