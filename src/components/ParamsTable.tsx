@@ -35,15 +35,10 @@ export type EventParamsTableProps = {
 function ParamsTable(props: EventParamsTableProps) {
 	const { args } = props;
 
-	const argsArray: any[] = useMemo(
-		() => (Array.isArray(args) ? args : [args]),
-		[args]
-	);
-
 	return (
 		<div css={paramsStyle}>
 			<div css={paramsScrollAreaStyle}>
-				<ParamsValue value={argsArray} />
+				<ParamsValue value={args} />
 			</div>
 		</div>
 	);
