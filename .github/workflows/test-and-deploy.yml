@@ -49,12 +49,12 @@ jobs:
         run: npm run start:test &
       - name: Run Playwright Tests
         run: npx playwright test
-      - name: Upload test results artifact
+      - name: Upload test screenshots artifact
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: test-results
-          path: test/results/
+          name: test-screenshots
+          path: test/screenshots
           retention-days: 14
       - name: Upload test report artifact
         uses: actions/upload-artifact@v3
@@ -74,12 +74,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Download build artifact
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+      - name: Download test screenshots artifact
         uses: actions/download-artifact@master
         with:
-          name: test-results
-          path: test/results
-      - name: Download build artifact
+          name: test-screenshots
+          path: test/screenshots
+      - name: Download test report artifact
         uses: actions/download-artifact@master
         with:
           name: test-report
@@ -88,7 +90,7 @@ jobs:
         continue-on-error: true
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: npx argos upload test/results
+        run: npx argos upload test/screenshots
       - name: Deploy test report to Cloudflare Pages
         id: pages
         uses: ./.github/actions/deploy-cloudflare-pages
