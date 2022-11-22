@@ -1,21 +1,19 @@
-import { test, expect } from "@playwright/test";
-
 import { getEvent } from "../../src/services/eventsService";
 
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
-import { screenshot } from "../utils/screenshot";
-import { waitForPageEvent } from "../utils/waitForPageEvent";
+import { test, expect } from "../utils/test";
+
 
 test.describe("Event detail page", () => {
 	const eventId = "0015163154-000040-44488";
-	test("shows event detail page", async ({ page }) => {
+	test("shows event detail page", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/event/${eventId}`, {waitUntil: "data-loaded"});
 
-		await screenshot(page, "event");
+		await takeScreenshot("event");
 	});
 
-	test("shows not found message if event was not found", async ({ page }) => {
+	test("shows not found message if event was not found", async ({ page, takeScreenshot }) => {
 		const id = "111-22-3";
 
 		await navigate(page, `/kusama/event/${id}`, {waitUntil: "data-loaded"});
@@ -24,10 +22,10 @@ test.describe("Event detail page", () => {
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText("No event found");
 
-		await screenshot(page, "eventNotFound");
+		await takeScreenshot("event-not-found");
 	});
 
-	test("show error message when event data fetch fails", async ({ page }) => {
+	test("show error message when event data fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getEvent("kusama", { id_eq: eventId }),
@@ -48,6 +46,6 @@ test.describe("Event detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Event error/);
 
-		await screenshot(page, "eventError");
+		await takeScreenshot("event-error");
 	});
 });

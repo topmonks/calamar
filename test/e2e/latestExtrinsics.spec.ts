@@ -1,21 +1,20 @@
-import { test, expect } from "@playwright/test";
-
 import { getExtrinsicsWithoutTotalCount } from "../../src/services/extrinsicsService";
 
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { removeContent } from "../utils/removeContent";
-import { screenshot } from "../utils/screenshot";
+import { test, expect } from "../utils/test";
+
 
 test.describe("Latest extrinsics page", () => {
-	test("shows latest extrinsics page", async ({ page }) => {
+	test("shows latest extrinsics page", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/polkadot/latest-extrinsics", {waitUntil: "data-loaded"});
 
 		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
-		await screenshot(page, "latestExtrinsics");
+		await takeScreenshot("latest-extrinsics");
 	});
 
-	test("show error message when extrinsics items fetch fails", async ({ page }) => {
+	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
 			() => getExtrinsicsWithoutTotalCount("polkadot", 10, 0, undefined, "id_DESC"),
@@ -36,6 +35,6 @@ test.describe("Latest extrinsics page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Extrinsics error/);
 
-		await screenshot(page, "latestExtrinsicsError");
+		await takeScreenshot("latest-extrinsics-error");
 	});
 });
