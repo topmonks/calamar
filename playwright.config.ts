@@ -55,7 +55,14 @@ const config: Config = {
 			use: {
 				...devices["Desktop Chrome"],
 			},
-		}
+		},
+		{
+			name: "mobile",
+			use: {
+				...devices["iPhone SE"],
+				deviceScaleFactor: 1
+			},
+		},
 	],
 	globalSetup: "./test/global-setup.ts"
 };

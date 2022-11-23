@@ -1,47 +1,68 @@
-import { useCallback, useEffect, useState } from "react";
-import { format as formatTime, formatDistanceToNowStrict } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
+import { formatDistanceToNowStrict } from "date-fns";
+import enGB from "date-fns/locale/en-GB";
+import { format as formatTime, formatInTimeZone as formatTimeInTimeZone } from "date-fns-tz";
 import { Tooltip } from "@mui/material";
 
 export type TimeProps = {
 	time: Date|number;
-	fromNow?: boolean;
-	useTooltip?: string;
 	format?: string;
-	tooltipFormat?: string;
+	fromNow?: boolean;
+	utc?: boolean;
+	timezone?: boolean;
+	tooltip?: boolean;
 }
 
 export const Time = (props: TimeProps) => {
-	const {time, fromNow = false, useTooltip = fromNow, format = "PP pp", tooltipFormat = format} = props;
+	const {
+		time,
+		format: formatProp = "PP pp",
+		utc = false,
+		fromNow = false,
+		timezone = utc,
+		tooltip = false
+	} = props;
 
-	const [formatted, setFormatted] = useState<string>();
+	const [fromNowFormatted, setFromNowFormatted] = useState<string>();
 
-	const setFromNow = useCallback(() => {
-		setFromNow();
-	}, []);
+	const formatted = useMemo(() => {
+		let format = formatProp;
+
+		if (timezone) {
+			format += " (zzz)";
+		}
+
+		if (utc) {
+			return formatTimeInTimeZone(new Date(time), "UTC", format, { locale: enGB });
+		} else {
+			return formatTime(new Date(time), format, { locale: enGB });
+		}
+	}, [time, formatProp, utc, timezone]);
 
 	useEffect(() => {
 		if (fromNow) {
 			const interval = setInterval(() =>
-				setFormatted(formatDistanceToNowStrict(new Date(time), {addSuffix: true}))
+				setFromNowFormatted(formatDistanceToNowStrict(new Date(time), {addSuffix: true, locale: enGB}))
 			);
 
 			return () => clearInterval(interval);
 		}
+	}, [time, fromNow]);
 
-		setFormatted(formatTime(new Date(time), format));
-	}, [time, format, fromNow]);
+	const timeElement = <span data-test="time">{fromNow ? fromNowFormatted : formatted}</span>;
 
-	if (!useTooltip) {
-		return <span data-test="time">{formatted}</span>;
+	if (!tooltip) {
+		return timeElement;
 	}
 
 	return (
 		<Tooltip
 			arrow
 			placement="top"
-			title={formatTime(new Date(time), tooltipFormat)}
+			enterTouchDelay={0}
+			title={formatted}
 		>
-			<span data-test="time">{formatted}</span>
+			{timeElement}
 		</Tooltip>
 	);
 };

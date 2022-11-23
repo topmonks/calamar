@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { BlockInfoTable } from "../components/blocks/BlockInfoTable";
 import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader } from "../components/Card";
+import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import EventsTable from "../components/events/EventsTable";
@@ -55,7 +56,10 @@ function BlockPage() {
 	return (
 		<>
 			<Card>
-				<CardHeader>Block #{id}</CardHeader>
+				<CardHeader>
+					Block #{id}
+					<CopyToClipboardButton value={id} />
+				</CardHeader>
 				<BlockInfoTable network={network} {...block} />
 			</Card>
 			{block.data &&
@@ -86,7 +90,7 @@ function BlockPage() {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} {...events} />
+							<EventsTable network={network} {...events} showExtrinsic />
 						</TabPane>
 					</TabbedContent>
 				</Card>

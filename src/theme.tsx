@@ -142,6 +142,20 @@ export const theme = createTheme({
 					color: black!important;
 				`
 			}
+		},
+		MuiChip: {
+			styleOverrides: {
+				root: css`
+					border: none;
+					height: 24px;
+					font-size: 16px;
+					justify-content: flex-start;
+				`,
+				icon: css`
+					margin-left: 0;
+					margin-right: -4px;
+				`
+			}
 		}
 	}
 });

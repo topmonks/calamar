@@ -83,20 +83,20 @@ function SearchPage() {
 	console.log(allResources);
 
 	if (!query) {
-		return <Navigate to="/" />;
+		return <Navigate to="/" replace />;
 	}
 
 	if (!forceLoading) {
 		if (extrinsicByHash.data) {
-			return <Navigate to={`/${network}/extrinsic/${extrinsicByHash.data.id}`} />;
+			return <Navigate to={`/${network}/extrinsic/${extrinsicByHash.data.id}`} replace />;
 		}
 
 		if (blockByHash.data || blockByHeight.data) {
-			return <Navigate to={`/${network}/block/${blockByHash.data?.id || blockByHeight.data?.id}`} />;
+			return <Navigate to={`/${network}/block/${blockByHash.data?.id || blockByHeight.data?.id}`} replace />;
 		}
 
 		if (account.data) {
-			return <Navigate to={`/${network}/account/${account.data.id}`} />;
+			return <Navigate to={`/${network}/account/${account.data.id}`} replace />;
 		}
 	}
 

@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const buttonStyle = (theme: Theme) => css`
 	padding: 0;
-	margin: 0 16px;
+	margin-left: 16px;
 	color: ${theme.palette.secondary.main};
 `;
 
@@ -35,11 +35,11 @@ const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
 			placement="top"
 			title="Copied"
 		>
-			<IconButton onClick={copyToClipboard} css={buttonStyle}>
+			<IconButton onClick={copyToClipboard} css={buttonStyle} data-name="copy-button">
 				<svg
-					height="24"
+					height="20"
 					viewBox="0 0 24 24"
-					width="24"
+					width="20"
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path

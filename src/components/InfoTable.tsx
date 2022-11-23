@@ -1,58 +1,124 @@
 /** @jsxImportSource @emotion/react */
-import { PropsWithChildren } from "react";
-import { Table, TableContainer } from "@mui/material";
-import { css } from "@emotion/react";
+import { Children, cloneElement, ReactElement, ReactNode } from "react";
+import { Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
+import { css, Interpolation, Theme } from "@emotion/react";
 
+import CopyToClipboardButton from "./CopyToClipboardButton";
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 import { ErrorMessage } from "./ErrorMessage";
 
-const tableStyles = css`
+const tableStyles = (theme: Theme) => css`
 	table-layout: fixed;
-	min-width: 860px;
 
-	td, th {
+	${theme.breakpoints.down("sm")} {
+		&,
+		& > tbody,
+		& > tbody > tr,
+		& > tbody > tr > td,
+		& > tbody > tr > th {
+			display: block;
+		}
+	}
+`;
+
+const attributeStyle = css`
+	& > td {
+		position: relative;
 		vertical-align: top;
 		line-height: 24px;
 	}
 
-	td {
-		&:first-child {
-			padding-left: 0;
-		}
+	&:last-child > td {
+		padding-bottom: 0;
+	}
+`;
 
-		&:last-child {
-			padding-right: 0;
-		}
+const labelStyle = (theme: Theme) => css`
+	width: 200px;
+	padding-left: 0;
+	font-weight: 700;
 
-		&:not(:first-child) {
-			word-break: break-all;
-		}
+	${theme.breakpoints.down("sm")} {
+		width: auto;
+		padding-right: 0;
+		padding-bottom: 0;
+		border-bottom: none;
+	}
+`;
 
-		> img {
-			&:only-child {
-				display: block;
-			}
-		}
+const valueStyle = (theme: Theme) => css`
+	word-break: break-all;
+	padding-right: 0;
+
+	> img:only-child {
+		display: block;
 	}
 
-	& > tbody > tr > td:first-child {
-		width: 200px;
-		font-weight: 700;
+	> .MuiChip-root:only-child {
+		display: flex;
+	}
+
+	${theme.breakpoints.down("sm")} {
 		padding-left: 0;
 	}
 `;
 
-export type InfoTableProps = PropsWithChildren<{
+
+export type InfoTableAttributeProps<T> = {
+	name?: string;
+	label: string;
+	labelCss?: Interpolation<Theme>;
+	valueCss?: Interpolation<Theme>;
+	render: (data: T) => ReactNode;
+	copyToClipboard?: (data: T) => string;
+	hide?: (data: T) => boolean;
+	_data?: T;
+}
+
+export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttributeProps<T>) => {
+	const {
+		label,
+		labelCss: labelStyleOverride,
+		valueCss: valueStyleOverride,
+		render,
+		copyToClipboard,
+		hide,
+		_data
+	} = props;
+
+	if (!_data || hide?.(_data)) {
+		return null;
+	}
+
+	return (
+		<TableRow css={attributeStyle}>
+			<TableCell css={[labelStyle, labelStyleOverride]}>
+				{label}
+			</TableCell>
+			<TableCell css={[valueStyle, valueStyleOverride]}>
+				{render?.(_data)}
+				{copyToClipboard?.(_data) &&
+					<CopyToClipboardButton value={copyToClipboard(_data)} />
+				}
+			</TableCell>
+		</TableRow>
+	);
+};
+
+export type InfoTableProps<T> = {
+	data: any;
 	loading?: boolean;
 	notFound?: boolean;
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
-}>;
+	children: ReactElement<InfoTableAttributeProps<T>>|(ReactElement<InfoTableAttributeProps<T>>|false|undefined|null)[];
+};
 
-const InfoTable = (props: InfoTableProps) => {
+export const InfoTable = <T extends object>(props: InfoTableProps<T>) => {
 	const {
+		data,
 		loading,
 		notFound,
 		notFoundMessage = "No item found",
@@ -81,9 +147,15 @@ const InfoTable = (props: InfoTableProps) => {
 
 	return (
 		<TableContainer>
-			<Table css={tableStyles}>{children}</Table>
+			<Table css={tableStyles}>
+				{data &&
+					<TableBody>
+						{Children.map(children, (child) =>
+							child && cloneElement(child, {_data: data}))
+						}
+					</TableBody>
+				}
+			</Table>
 		</TableContainer>
 	);
 };
-
-export default InfoTable;

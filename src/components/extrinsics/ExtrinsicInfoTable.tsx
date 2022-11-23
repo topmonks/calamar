@@ -1,15 +1,13 @@
-import { TableBody, TableCell, TableRow } from "@mui/material";
-
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
 
-import CopyToClipboardButton from "../CopyToClipboardButton";
-import InfoTable from "../InfoTable";
+import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 import ParamsTable from "../ParamsTable";
+import { Chip } from "@mui/material";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
@@ -24,112 +22,95 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 
 	return (
 		<InfoTable
+			data={data}
 			loading={loading}
 			notFound={notFound}
 			notFoundMessage="No extrinsic found"
 			error={error}
 		>
-			{data && (
-				<TableBody>
-					<TableRow>
-						<TableCell>Id</TableCell>
-						<TableCell>{data.id}</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Hash</TableCell>
-						<TableCell>
-							{data.hash}
-							<CopyToClipboardButton value={data.hash} />
-						</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Block time</TableCell>
-						<TableCell>
-							<Time time={data.block.timestamp} fromNow />
-						</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Block hash</TableCell>
-						<TableCell>
-							<Link to={`/${network}/block/${data.block.id}`}>
-								{data.block.hash}
-							</Link>
-							<CopyToClipboardButton value={data.block.hash} />
-						</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Name</TableCell>
-						<TableCell>{data.call.name}</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Is signed</TableCell>
-						<TableCell>
-							<img src={data.signature ? CheckIcon : CrossIcon} />
-						</TableCell>
-					</TableRow>
-					{data.signature?.address && (
-						<TableRow>
-							<TableCell>Account</TableCell>
-							<TableCell>
-								<Link
-									to={`/${network}/account/${data.signature.address}`}
-								>
-									{encodeAddress(network, data.signature?.address) ||
-										data.signature?.address}
-								</Link>
-								<CopyToClipboardButton
-									value={
-										encodeAddress(
-											network,
-											data.signature?.address
-										) || data.signature?.address
-									}
-								/>
-							</TableCell>
-						</TableRow>
-					)}
-					<TableRow>
-						<TableCell>Index in block</TableCell>
-						<TableCell>{data.indexInBlock}</TableCell>
-					</TableRow>
-					<TableRow>
-						<TableCell>Success</TableCell>
-						<TableCell>
-							<img src={data.success ? CheckIcon : CrossIcon} />
-						</TableCell>
-					</TableRow>
-					{data.tip !== null && (
-						<TableRow>
-							<TableCell>Tip</TableCell>
-							<TableCell>{data.tip}</TableCell>
-						</TableRow>
-					)}
-					{data.fee !== null && (
-						<TableRow>
-							<TableCell>Fee</TableCell>
-							<TableCell>{data.fee}</TableCell>
-						</TableRow>
-					)}
-					{data.error !== null && (
-						<TableRow>
-							<TableCell>Error</TableCell>
-							<TableCell>{JSON.stringify(data.error)}</TableCell>
-						</TableRow>
-					)}
-					<TableRow>
-						<TableCell>Version</TableCell>
-						<TableCell>{data.version}</TableCell>
-					</TableRow>
-					{data.call.args && (
-						<TableRow>
-							<TableCell>Parameters</TableCell>
-							<TableCell>
-								<ParamsTable args={data.call.args} />
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			)}
+			<InfoTableAttribute
+				label="Timestamp"
+				render={(data) =>
+					<Time time={data.block.timestamp} timezone utc />
+				}
+			/>
+			<InfoTableAttribute
+				label="Block time"
+				render={(data) =>
+					<Time time={data.block.timestamp} fromNow />
+				}
+			/>
+			<InfoTableAttribute
+				label="Hash"
+				render={(data) => data.hash}
+				copyToClipboard={(data) => data.hash}
+			/>
+			<InfoTableAttribute
+				label="Block"
+				render={(data) =>
+					<Link to={`/${network}/block/${data.block.id}`}>
+						{data.block.id}
+					</Link>
+				}
+				copyToClipboard={(data) => data.block.id}
+			/>
+			<InfoTableAttribute
+				label="Account"
+				render={(data) => data.signature?.address &&
+					<Link
+						to={`/${network}/account/${data.signature.address}`}
+					>
+						{encodeAddress(network, data.signature?.address) || data.signature?.address}
+					</Link>
+				}
+				copyToClipboard={(data) =>
+					encodeAddress(
+						network,
+						data.signature?.address
+					) || data.signature?.address
+				}
+				hide={(data) => !data.signature?.address}
+			/>
+			<InfoTableAttribute
+				label="Result"
+				render={(data) =>
+					<Chip
+						variant="outlined"
+						icon={<img src={data.success ? CheckIcon : CrossIcon}  />}
+						label={data.success ? "Success" : "Fail"}
+					/>
+				}
+			/>
+			<InfoTableAttribute
+				label="Name"
+				render={(data) => data.call.name}
+			/>
+			<InfoTableAttribute
+				label="Parameters"
+				render={(data) =>
+					<ParamsTable args={data.call.args} />
+				}
+			/>
+			<InfoTableAttribute
+				label="Error"
+				render={(data) => <ParamsTable args={data.error} />}
+				hide={(data) => !data.error}
+			/>
+			<InfoTableAttribute
+				label="Fee"
+				render={(data) => data.fee}
+				hide={(data) => !Number.isInteger(data.fee)}
+			/>
+			<InfoTableAttribute
+				label="Signature"
+				render={(data) => data.signature?.signature.value}
+				copyToClipboard={(data) => data.signature?.signature.value}
+				hide={(data) => !data.signature}
+			/>
+			<InfoTableAttribute
+				label="Spec version"
+				render={(data) => data.block.spec.specVersion}
+			/>
 		</InfoTable>
 	);
 };

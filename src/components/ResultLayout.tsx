@@ -9,7 +9,6 @@ import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 import { getArchive } from "../services/archiveRegistryService";
 import NotFoundPage from "../screens/notFound";
 
-import NetworkSelect from "./NetworkSelect";
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
 
@@ -25,7 +24,7 @@ const backgroundStyle = css`
 	background-image: url(${Background});
 `;
 
-const topBarStyle = css`
+const topBarStyle = (theme: Theme) => css`
 	position: sticky;
 	top: 0;
 	padding: 16px;
@@ -35,19 +34,19 @@ const topBarStyle = css`
 	background-color: white;
 	z-index: 1000;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		padding: 24px 32px;
 		padding-bottom: 0;
 	}
 `;
 
-const topBarContentStyle = css`
+const topBarContentStyle = (theme: Theme) => css`
 	max-width: 1500px;
 	margin: auto;
 	display: flex;
 	flex-direction: column;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		flex-direction: row;
 		align-items: center;
 	}
@@ -59,7 +58,7 @@ const topBarRowStyle = css`
 	flex: 1 1 auto;
 `;
 
-const contentStyle = css`
+const contentStyle = (theme: Theme) => css`
 	position: relative;
 	padding: 0 16px;
 	padding-top: 40px;
@@ -67,7 +66,7 @@ const contentStyle = css`
 	width: 100%;
 	box-sizing: border-box;
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.up("md")} {
 		padding-left: 32px;
 		padding-right: 32px;
 	}
@@ -78,55 +77,26 @@ const contentInnerStyle = css`
 	margin: auto;
 `;
 
-const logoStyle = css`
+const logoStyle = (theme: Theme) => css`
 	margin-right: auto;
 
 	> svg {
 		display: block;
-		width: 160px;
+		width: 250px;
 	}
 
-	@media (min-width: 900px) {
+	${theme.breakpoints.down("md")} {
+		margin-bottom: 12px;
+
 		> svg {
-			width: 250px;
+			width: 160px;
 		}
 	}
 `;
 
-const networkSelectStyle = (theme: Theme) => css`
-	& .MuiInputBase-input {
-		color: white;
-		background-color: #61dafb;
-		font-size: 16px;
-		font-weight: 600;
-	}
-
-	& .MuiOutlinedInput-notchedOutline,
-	&:hover .MuiOutlinedInput-notchedOutline,
-	&.Mui-focused .MuiOutlinedInput-notchedOutline {
-		border-color: ${theme.palette.secondary.main};
-	}
-
-	@media (min-width: 900px) {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-	}
-`;
-
-const searchInputStyle = () => css`
+const searchInputStyle = css`
 	width: 100%;
-
-	@media (min-width: 900px) {
-		flex: 1 1 auto;
-
-		.MuiInputBase-root {
-			border-radius: 0px;
-		}
-
-		.MuiOutlinedInput-notchedOutline {
-			border-left: none;
-		}
-	}
+	flex: 1 1 auto;
 `;
 
 type ResultLayoutParams = {
@@ -158,10 +128,9 @@ function ResultLayout() {
 						<Link css={logoStyle} to="/">
 							<Logo />
 						</Link>
-						<NetworkSelect css={networkSelectStyle} onChange={setNetwork} value={network} />
 					</div>
 					<div css={topBarRowStyle}>
-						<SearchInput css={searchInputStyle} network={network} />
+						<SearchInput css={searchInputStyle} defaultNetwork={network} key={network} />
 					</div>
 				</div>
 			</div>
