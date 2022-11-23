@@ -3,12 +3,8 @@ import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
 
 const valueTableStyle = css`
-	width: 100%;
+	width: fit-content;
 	word-break: initial;
-
-	th, td > & {
-		//margin: -6px 0px;
-	}
 
 	th, td {
 		vertical-align: top;
@@ -37,6 +33,8 @@ const paramIndexStyle = css`
 	width: 60px;
 	padding: 6px 0;
 	padding-right: 16px;
+	position: sticky;
+	top: 0;
 `;
 
 const paramNameStyle = css`
@@ -46,11 +44,18 @@ const paramNameStyle = css`
 	width: 180px;
 	padding: 6px 0;
 	padding-right: 32px;
+	position: sticky;
+	top: 0;
+`;
+
+const paramKindStyle = css`
+	font-weight: 400;
+	font-style: italic;
 `;
 
 const paramValueStyle = css`
 	word-break: break-all;
-	min-width: 100px;
+	min-width: 180px;
 	max-width: 550px;
 	padding: 6px 0;
 `;
@@ -59,7 +64,7 @@ export type EventParamValueProps = {
 	value: any;
 };
 
-function ParamsValue(props: EventParamValueProps) {
+export const DataViewerValueTable = (props: EventParamValueProps) => {
 	let { value } = props;
 
 	if (Array.isArray(value) && value.length > 0) {
@@ -72,7 +77,7 @@ function ParamsValue(props: EventParamValueProps) {
 								<div css={paramIndexStyle}>{index}</div>
 							</TableCell>
 							<TableCell>
-								<ParamsValue value={item} />
+								<DataViewerValueTable value={item} />
 							</TableCell>
 						</TableRow>
 					))}
@@ -82,6 +87,31 @@ function ParamsValue(props: EventParamValueProps) {
 	} else if (Array.isArray(value) && value.length === 0) {
 		value = "[ ]";
 	} else if (value && typeof value === "object") {
+		if (value.__kind) {
+			const kind = value.__kind;
+			value = {...value};
+			delete value.__kind;
+
+			if (Object.keys(value).length === 1 && value.value) {
+				value = value.value;
+			}
+
+			return (
+				<Table size="small" css={valueTableStyle}>
+					<TableBody>
+						<TableRow>
+							<TableCell css={paramNameCellStyle}>
+								<div css={[paramNameStyle, paramKindStyle]}>{kind}</div>
+							</TableCell>
+							<TableCell>
+								<DataViewerValueTable value={value} />
+							</TableCell>
+						</TableRow>
+					</TableBody>
+				</Table>
+			);
+		}
+
 		const keys = Object.keys(value);
 		keys.sort();
 
@@ -94,7 +124,7 @@ function ParamsValue(props: EventParamValueProps) {
 								<div css={paramNameStyle}>{key}</div>
 							</TableCell>
 							<TableCell>
-								<ParamsValue value={value[key]} />
+								<DataViewerValueTable value={value[key]} />
 							</TableCell>
 						</TableRow>
 					))}
@@ -106,6 +136,4 @@ function ParamsValue(props: EventParamValueProps) {
 	}
 
 	return <div css={paramValueStyle}>{value}</div>;
-}
-
-export default ParamsValue;
+};

@@ -1,3 +1,5 @@
+import { Chip } from "@mui/material";
+
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
@@ -6,8 +8,7 @@ import { encodeAddress } from "../../utils/formatAddress";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
-import { Chip } from "@mui/material";
+import DataViewer from "../DataViewer";
 
 export type CallInfoTableProps = {
 	network: string;
@@ -105,7 +106,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<InfoTableAttribute
 				name="parameters"
 				label="Parameters"
-				render={(data) => <ParamsTable args={data.args} />}
+				render={(data) => <DataViewer data={data.args} controls />}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

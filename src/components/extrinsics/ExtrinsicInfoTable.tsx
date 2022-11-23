@@ -1,13 +1,14 @@
+import { Chip } from "@mui/material";
+
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
 
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
-import { Chip } from "@mui/material";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
@@ -88,12 +89,12 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<ParamsTable args={data.call.args} />
+					<DataViewer data={data.call.args} controls />
 				}
 			/>
 			<InfoTableAttribute
 				label="Error"
-				render={(data) => <ParamsTable args={data.error} />}
+				render={(data) => <DataViewer data={data.error} />}
 				hide={(data) => !data.error}
 			/>
 			<InfoTableAttribute
@@ -103,8 +104,8 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Signature"
-				render={(data) => data.signature?.signature.value}
-				copyToClipboard={(data) => data.signature?.signature.value}
+				render={(data) => <DataViewer data={data.signature?.signature.value} />}
+				//copyToClipboard={(data) => data.signature?.signature.value} // TODO copy from DataViewer
 				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute

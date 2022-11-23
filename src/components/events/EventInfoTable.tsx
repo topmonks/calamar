@@ -1,7 +1,7 @@
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
 
 export type EventInfoTableProps = {
 	network: string;
@@ -74,8 +74,9 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<ParamsTable args={data.args} />
+					<DataViewer data={data.args} controls />
 				}
+				hide={(data) => !data.args}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

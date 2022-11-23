@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start": "cross-env BROWSER=none react-scripts start",
-    "start:test": "http-server ./build -p 3000 --proxy http://localhost:3000?",
+    "start:test": "serve ./build -s",
     "build": "cross-env CI=false react-scripts build",
     "test": "playwright test",
     "test:report": "playwright show-report test/report",
@@ -72,6 +72,6 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.23.1",
     "eslint-plugin-react": "^7.31.8",
-    "http-server": "^14.1.1"
+    "serve": "^14.1.2"
   }
 }

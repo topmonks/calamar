@@ -3,9 +3,9 @@ import { css } from "@emotion/react";
 
 import { Pagination } from "../../hooks/usePagination";
 
+import DataViewer from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
-import ParamsTable from "../ParamsTable";
 
 const parametersColCss = (showExtrinsic?: boolean) => css`
 	width: ${showExtrinsic ? "40%" : "60%"};
@@ -59,7 +59,7 @@ function EventsTable(props: EventsTableProps) {
 			<ItemsTableAttribute
 				label="Parameters"
 				colCss={parametersColCss(showExtrinsic)}
-				render={(event) => <ParamsTable args={event.args} />}
+				render={(event) => event.args && <DataViewer data={event.args} controls />}
 			/>
 		</ItemsTable>
 	);

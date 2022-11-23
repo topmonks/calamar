@@ -41,6 +41,11 @@ export const theme = createTheme({
 				`
 			}
 		},
+		MuiButtonGroup: {
+			defaultProps: {
+				disableElevation: true,
+			}
+		},
 		MuiInputBase: {
 			styleOverrides: {
 				root: css`
