@@ -7,6 +7,7 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { AccountArrayProvider } from "../hooks/useAccountsArrayContext";
 
 type CallPageParams = {
 	network: string;
@@ -22,7 +23,7 @@ export const CallPage: React.FC = () => {
 	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
 
 	return (
-		<>
+		<AccountArrayProvider>
 			<Card>
 				<CardHeader style={{ paddingBottom: 48 }}>
 					Call #{id}
@@ -44,6 +45,6 @@ export const CallPage: React.FC = () => {
 					</TabbedContent>
 				</Card>
 			}
-		</>
+		</AccountArrayProvider>
 	);
 };

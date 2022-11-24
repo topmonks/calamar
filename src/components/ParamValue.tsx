@@ -4,6 +4,8 @@ import { css } from "@emotion/react";
 import { Link } from "./Link";
 import { encodeAddress, isPublicKey } from "../utils/formatAddress";
 import { useParams } from "react-router-dom";
+import { useContext } from "react";
+import { AccountArrayContext } from "../hooks/useAccountsArrayContext";
 
 const valueTableStyle = css`
 	width: 100%;
@@ -66,10 +68,27 @@ type AccountPageParams = {
 	network: string;
 };
 
+const renderValue = (value: any) => {
+	const verifiedAccounts = useContext(AccountArrayContext);
+	const { network } = useParams() as AccountPageParams;
+
+	if (!verifiedAccounts.includes(value)) {
+		if (!isPublicKey(value)) return (
+			<ParamsValue value={value} />
+		);
+		verifiedAccounts.push(value);
+	}
+	
+	return (
+		<Link to={"/kusama/search?query=".concat(value)}>{
+			encodeAddress(network, value) ||
+			value
+		}</Link>
+	);	
+};
+
 function ParamsValue(props: EventParamValueProps) {
 	let { value } = props;
-
-	const { network } = useParams() as AccountPageParams;
 
 	if (Array.isArray(value) && value.length > 0) {
 		return (
@@ -82,12 +101,7 @@ function ParamsValue(props: EventParamValueProps) {
 							</TableCell>
 							<TableCell>
 								{
-									isPublicKey(item) ?
-										<Link to={"/kusama/search?query=".concat(item)}>{
-											encodeAddress(network, item) ||
-											item
-										}</Link> :
-										<ParamsValue value={item} />
+									renderValue(item)
 								}
 							</TableCell>
 						</TableRow>
@@ -110,12 +124,7 @@ function ParamsValue(props: EventParamValueProps) {
 							</TableCell>
 							<TableCell>
 								{
-									isPublicKey(value[key]) ?
-										<Link to={"/kusama/search?query=".concat(value[key])}>{
-											encodeAddress(network, value[key]) ||
-											value[key]
-										}</Link> :
-										<ParamsValue value={value[key]} />
+									renderValue(value[key])
 								}
 							</TableCell>
 						</TableRow>

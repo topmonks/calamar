@@ -2,13 +2,36 @@ import ss58Registry from "../ss58-registry.json";
 import Keyring from "@polkadot/keyring";
 import arrayBufferToHex from "array-buffer-to-hex";
 import { isAddress } from "@polkadot/util-crypto";
+import { useParams } from "react-router-dom";
+import { useAccount } from "../hooks/useAccount";
+import { useBlock } from "../hooks/useBlock";
+import { useExtrinsic } from "../hooks/useExtrinsic";
+import { useEventsWithoutTotalCount } from "../hooks/useEventsWithoutTotalCount";
+import { useContext } from "react";
+import { AccountArrayContext } from "../hooks/useAccountsArrayContext";
 
 const getPrefix = (network: string) => {
 	return ss58Registry.registry.find((r) => r.network === network)?.prefix;
 };
 
+type SearchPageParams = {
+	network: string;
+};
+
 export function isPublicKey(address: any) {
-	return typeof address === "string" && address.length === 66 && isAddress(address);
+
+	if (typeof address === "string" && address.length === 66 && isAddress(address)) {
+
+		// This part was inspired by search.tsx
+		const { network } = useParams() as SearchPageParams;
+
+		const tryExtrinsic = useExtrinsic(network, { hash_eq: address } );
+		if (tryExtrinsic.data) return false;
+		const tryBlock = useBlock(network, { hash_eq: address });
+		if (tryBlock.data) return false;
+		return true;
+	}
+	return false;
 }
 
 export function decodeAddress(address: string) {

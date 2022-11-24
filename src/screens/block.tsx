@@ -12,6 +12,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { AccountArrayProvider } from "../hooks/useAccountsArrayContext";
 
 type BlockPageParams = {
 	network: string;
@@ -53,7 +54,7 @@ function BlockPage() {
 	}, [extrinsics]);
 
 	return (
-		<>
+		<AccountArrayProvider>
 			<Card>
 				<CardHeader>Block #{id}</CardHeader>
 				<BlockInfoTable network={network} {...block} />
@@ -91,7 +92,7 @@ function BlockPage() {
 					</TabbedContent>
 				</Card>
 			}
-		</>
+		</AccountArrayProvider>
 	);
 }
 

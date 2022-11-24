@@ -10,6 +10,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { AccountArrayProvider } from "../hooks/useAccountsArrayContext";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -26,7 +27,7 @@ function ExtrinsicPage() {
 	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
 
 	return (
-		<>
+		<AccountArrayProvider>
 			<Card>
 				<CardHeader>Extrinsic #{id}</CardHeader>
 				<ExtrinsicInfoTable network={network} {...extrinsic} />
@@ -55,7 +56,7 @@ function ExtrinsicPage() {
 					</TabbedContent>
 				</Card>
 			}
-		</>
+		</AccountArrayProvider>
 	);
 }
 
