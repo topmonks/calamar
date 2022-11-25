@@ -60,6 +60,7 @@ const config: Config = {
 			name: "mobile",
 			use: {
 				...devices["iPhone SE"],
+				defaultBrowserType: "chromium",
 				deviceScaleFactor: 1
 			},
 		},
