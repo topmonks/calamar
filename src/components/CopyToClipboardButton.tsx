@@ -6,7 +6,6 @@ import { useState } from "react";
 const buttonStyle = (theme: Theme) => css`
 	padding: 0;
 	margin-left: 16px;
-	color: ${theme.palette.secondary.main};
 `;
 
 export type CopyToClipboardButtonProps = {
@@ -38,12 +37,12 @@ const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
 			<IconButton onClick={copyToClipboard} css={buttonStyle} data-name="copy-button">
 				<svg
 					height="20"
-					viewBox="0 0 24 24"
+					viewBox="0 0 20 20"
 					width="20"
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path
-						d="M18 6v-6h-18v18h6v6h18v-18h-6zm-12 10h-4v-14h14v4h-10v10zm16 6h-14v-14h14v14z"
+						d="M15 5v-5h-15v15h5v5h15v-15h-5z m-10 8h-3v-11h11v3h-8v8z m13 5h-11v-11h11v11z"
 						fill="currentColor"
 					/>
 				</svg>

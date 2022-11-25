@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo, useState } from "react";
 import { css, Theme } from "@emotion/react";
+import { darken, IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Close } from "@mui/icons-material";
 
-import { DataViewerValueTable }  from "./DataViewerValueTable";
+import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
-import { Button, ButtonGroup, IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { Close, Fullscreen } from "@mui/icons-material";
+import { DataViewerValueTable }  from "./DataViewerValueTable";
 
 const dataViewerStyle = css`
 	display: inline-block;
@@ -46,30 +47,24 @@ const controlsStyle = css`
 	margin-bottom: 12px;
 	align-items: center;
 	font-size: 14px;
-
-	> * {
-		background-color: rgba(0, 0, 0, .05);
-		border-radius: 4px;
-	}
 `;
 
-const modeButtonStyle = css`
+const modeButtonsStyle = css`
+	margin-right: auto;
+`;
+
+const modeButtonStyle = (theme: Theme) => css`
 	font-size: 14px;
 	padding: 0 8px;
 	border: none;
 	line-height: 24px;
+	background-color: ${darken(theme.palette.neutral.main, 0.1)};
+	background-color: green;
 `;
 
 const fullscreenButtonStyle = css`
 	padding: 0;
-	margin-left: auto;
-
-	background-color: rgba(0, 0, 0, .05);
-	border-radius: 4px;
-
-	> svg {
-		display: block;
-	}
+	margin-left: 8px;
 `;
 
 const closeButtonStyle = css`
@@ -79,17 +74,10 @@ const closeButtonStyle = css`
 	margin: 12px;
 	padding: 0;
 
-	background-color: rgba(0, 0, 0, .05);
-	border-radius: 4px;
-
 	z-index: 10;
-
-	> svg {
-		display: block;
-	}
 `;
 
-const modalDataViewerStyle = (theme: Theme) => css`
+const modalDataViewerStyle = css`
 	position: relative;
 	height: calc(100vh - 32px);
 	width: calc(100vw - 32px);
@@ -137,13 +125,23 @@ const DataViewerModalHandle = (props: DataViewerProps) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 
 	if (isModal) {
-		return null;
+		return <span css={{width: 32}} />;
 	}
 
 	return (
 		<>
 			<IconButton css={fullscreenButtonStyle} onClick={() => setShowModal(true)}>
-				<Fullscreen />
+				<svg
+					height="20"
+					viewBox="0 0 20 20"
+					width="20"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M1,1 h7v2h-5v5h-2z M12,1 h7v7h-2v-5h-5z M19,12 v7h-7v-2h5v-5z M8,19 h-7v-7h2v5h5z"
+						fill="currentColor"
+					/>
+				</svg>
 			</IconButton>
 			<Modal
 				open={showModal}
@@ -193,6 +191,7 @@ function DataViewer(props: DataViewerProps) {
 			{controls &&
 				<div css={controlsStyle}>
 					<ToggleButtonGroup
+						css={modeButtonsStyle}
 						exclusive
 						value={mode}
 						onChange={(_, mode) => setMode(mode)}
@@ -203,6 +202,7 @@ function DataViewer(props: DataViewerProps) {
 							</ToggleButton>
 						)}
 					</ToggleButtonGroup>
+					<CopyToClipboardButton value={JSON.stringify(data, null, 4)} />
 					<DataViewerModalHandle {...props} defaultMode={mode} />
 				</div>
 			}
