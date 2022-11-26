@@ -11,6 +11,7 @@ import NotFoundPage from "../screens/notFound";
 
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
+import ContactLinks from "./ContactLinks";
 
 const backgroundStyle = css`
 	position: fixed;
@@ -120,7 +121,7 @@ function ResultLayout() {
 	}, [networkParam, networkIsValid]);
 
 	return (
-		<>
+		<div style={{ display: "flex", flexDirection: "column"}}>
 			<div css={backgroundStyle} data-test="background" />
 			<div css={topBarStyle} data-test="top-bar">
 				<div css={topBarContentStyle}>
@@ -140,7 +141,10 @@ function ResultLayout() {
 					{!networkIsValid && <NotFoundPage />}
 				</div>
 			</div>
-		</>
+			<div style={{ display: "flex", justifyContent: "center" }}>
+				<ContactLinks />
+			</div>
+		</div>
 	);
 }
 

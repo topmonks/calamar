@@ -9,10 +9,7 @@ import Background from "../assets/main-screen-bgr.svg";
 import { Link } from "../components/Link";
 import NetworkSelect from "../components/NetworkSelect";
 import SearchInput from "../components/SearchInput";
-
-import Telegram from "../assets/telegram-icon.png";
-import GitHub from "../assets/github-icon.png";
-import Email from "../assets/email-icon.png";
+import ContactLinks from "../components/ContactLinks";
 
 const containerStyle = css`
   width: 100vw;
@@ -117,11 +114,6 @@ const searchInputStyle = (variant: string) => (theme: Theme) =>
     }
   `;
 
-const iconStyle = css`
-  filter: sepia(300%) hue-rotate(150deg) saturate(450%) brightness(0.9);
-  scale: 0.8;
-`;
-
 function HomePage() {
 	const [network, setNetwork] = useState<string | undefined>();
 
@@ -131,16 +123,8 @@ function HomePage() {
 
 	return (
 		<div css={containerStyle}>
-			<div style={{ display: "flex", justifyContent: "end", gap: "2rem" }}>
-				<a href="t.me/calamar_explorer">
-					<img src={Telegram} alt="Telegram" css={iconStyle} />
-				</a>
-				<a href="t.me/calamar_explorer">
-					<img src={GitHub} alt="GitHub" css={iconStyle} />
-				</a>
-				<a href="t.me/calamar_explorer">
-					<img src={Email} alt="Email" css={iconStyle} />
-				</a>
+			<div style={{ display: "flex", justifyContent: "end" }}>
+				<ContactLinks />
 			</div>
 			<div>
 				<Logo css={logoStyle} />
