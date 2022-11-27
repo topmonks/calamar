@@ -44,6 +44,7 @@ export async function getExtrinsicsWithoutTotalCount(
 				block {
 					id
 					hash
+					height
 					timestamp
 					spec {
 						specVersion
@@ -108,7 +109,11 @@ export async function getExtrinsics(
 						block {
 							id
 							hash
+							height
 							timestamp
+							spec {
+								specVersion
+							}
 						}
 						signature
 						indexInBlock

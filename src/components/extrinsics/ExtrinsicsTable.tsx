@@ -1,9 +1,6 @@
-import { ReactNode } from "react";
-
 import { Pagination } from "../../hooks/usePagination";
-import { encodeAddress } from "../../utils/formatAddress";
-import { shortenHash } from "../../utils/shortenHash";
 
+import { AccountAddress } from "../AccountAddress";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
@@ -12,6 +9,7 @@ export type ExtrinsicsTableProps = {
 	network: string;
 	items: any[];
 	pagination: Pagination;
+	showAccount?: boolean;
 	showTime?: boolean;
 	loading?: boolean;
 	notFound?: boolean;
@@ -23,6 +21,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 		network,
 		items,
 		pagination,
+		showAccount,
 		showTime,
 		loading,
 		notFound,
@@ -51,20 +50,19 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				label="Name"
 				render={(extrinsic) => extrinsic.call.name}
 			/>
-			<ItemsTableAttribute
-				label="Account"
-				render={(extrinsic) =>
-					<Link
-						to={`/${network}/account/${extrinsic.signature?.address}`}
-					>
-						{shortenHash(
-							(network &&
-								encodeAddress(network, extrinsic.signature?.address)) ||
-							extrinsic.signature?.address
-						)}
-					</Link>
-				}
-			/>
+			{showAccount &&
+				<ItemsTableAttribute
+					label="Account"
+					render={(extrinsic) =>
+						extrinsic.signature?.address &&
+							<AccountAddress
+								network={network}
+								address={extrinsic.signature.address}
+								shorten
+							/>
+					}
+				/>
+			}
 			{showTime &&
 				<ItemsTableAttribute
 					label="Time"

@@ -6,7 +6,7 @@ import { Close } from "@mui/icons-material";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
-import { DataViewerValueTable }  from "./DataViewerValueTable";
+import { DataViewerValueParsed }  from "./DataViewerValueParsed";
 
 const dataViewerStyle = css`
 	display: inline-block;
@@ -112,6 +112,7 @@ const modeLabels: Record<DataViewerMode, string> = {
 };
 
 export type DataViewerProps = {
+	network: string;
 	data: any;
 	modes?: DataViewerMode[];
 	defaultMode?: DataViewerMode;
@@ -161,6 +162,7 @@ const DataViewerModalHandle = (props: DataViewerProps) => {
 
 function DataViewer(props: DataViewerProps) {
 	const {
+		network,
 		data,
 		modes = ["parsed", "json"],
 		defaultMode = modes[0],
@@ -182,7 +184,7 @@ function DataViewer(props: DataViewerProps) {
 
 	const parsedContent = useMemo(() => (
 		<div css={scrollAreaStyle}>
-			<DataViewerValueTable value={data} />
+			<DataViewerValueParsed network={network} value={data} />
 		</div>
 	), [data]);
 
@@ -194,7 +196,7 @@ function DataViewer(props: DataViewerProps) {
 						css={modeButtonsStyle}
 						exclusive
 						value={mode}
-						onChange={(_, mode) => setMode(mode)}
+						onChange={(_, mode) => mode && setMode(mode)}
 					>
 						{modes.map(mode =>
 							<ToggleButton key={mode} css={modeButtonStyle} value={mode}>
@@ -202,7 +204,7 @@ function DataViewer(props: DataViewerProps) {
 							</ToggleButton>
 						)}
 					</ToggleButtonGroup>
-					<CopyToClipboardButton value={JSON.stringify(data, null, 4)} />
+					{mode === "json" && <CopyToClipboardButton value={JSON.stringify(data, null, 4)} />}
 					<DataViewerModalHandle {...props} defaultMode={mode} />
 				</div>
 			}

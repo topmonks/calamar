@@ -1,5 +1,6 @@
 import { encodeAddress } from "../../utils/formatAddress";
 
+import { AccountAddress } from "../AccountAddress";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
@@ -58,11 +59,9 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			<InfoTableAttribute
 				label="Validator"
 				render={(data) => data.validator &&
-					<Link to={`/${network}/account/${data.validator}`}>
-						{encodeAddress(network, data.validator) || data.validator}
-					</Link>
+					<AccountAddress network={network} address={data.validator} />
 				}
-				copyToClipboard={(data) => data.validator}
+				copyToClipboard={(data) => encodeAddress(network, data.validator)}
 				hide={(data) => !data.validator}
 			/>
 		</InfoTable>

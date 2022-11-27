@@ -1,6 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
+import { isAddress } from "@polkadot/util-crypto";
+
+import { useAccount } from "../hooks/useAccount";
+
+import { AccountAddress } from "./AccountAddress";
+import CopyToClipboardButton from "./CopyToClipboardButton";
 
 const valueTableStyle = css`
 	width: fit-content;
@@ -60,11 +66,39 @@ const paramValueStyle = css`
 	padding: 6px 0;
 `;
 
-export type EventParamValueProps = {
+type MaybeAccountLinkValueProps = {
+	network: string;
+	value: string;
+}
+
+const MaybeAccountLinkValue = (props: MaybeAccountLinkValueProps) => {
+	const {network, value} = props;
+
+	const account = useAccount(network, value);
+
+	if (account.loading) {
+		return null;
+	}
+
+	if (account.data) {
+		return (
+			<div css={paramValueStyle}>
+				<AccountAddress network={network} address={value} />
+				<CopyToClipboardButton value={value} />
+			</div>
+		);
+	}
+
+	return <div css={paramValueStyle}>{value}</div>;
+};
+
+export type DataViewerValueParsedProps = {
+	network: string;
 	value: any;
 };
 
-export const DataViewerValueTable = (props: EventParamValueProps) => {
+export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
+	const { network } = props;
 	let { value } = props;
 
 	if (Array.isArray(value) && value.length > 0) {
@@ -77,7 +111,7 @@ export const DataViewerValueTable = (props: EventParamValueProps) => {
 								<div css={paramIndexStyle}>{index}</div>
 							</TableCell>
 							<TableCell>
-								<DataViewerValueTable value={item} />
+								<DataViewerValueParsed network={network} value={item} />
 							</TableCell>
 						</TableRow>
 					))}
@@ -104,7 +138,7 @@ export const DataViewerValueTable = (props: EventParamValueProps) => {
 								<div css={[paramNameStyle, paramKindStyle]}>{kind}</div>
 							</TableCell>
 							<TableCell>
-								<DataViewerValueTable value={value} />
+								<DataViewerValueParsed network={network} value={value} />
 							</TableCell>
 						</TableRow>
 					</TableBody>
@@ -124,13 +158,15 @@ export const DataViewerValueTable = (props: EventParamValueProps) => {
 								<div css={paramNameStyle}>{key}</div>
 							</TableCell>
 							<TableCell>
-								<DataViewerValueTable value={value[key]} />
+								<DataViewerValueParsed network={network} value={value[key]} />
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
 		);
+	} else if (isAddress(value) && value.length === 66) {
+		return <MaybeAccountLinkValue network={network} value={value} />;
 	} else if (typeof value === "boolean") {
 		value = value ? "true" : "false";
 	}

@@ -1,15 +1,15 @@
 /** @jsxImportSource @emotion/react */
+import { useCallback, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
-import { css, Theme } from "@emotion/react";
-import { useState } from "react";
+import { css } from "@emotion/react";
 
-const buttonStyle = (theme: Theme) => css`
+const buttonStyle = css`
 	padding: 0;
 	margin-left: 16px;
 `;
 
 export type CopyToClipboardButtonProps = {
-	value: string;
+	value?: string;
 }
 
 const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
@@ -17,14 +17,18 @@ const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
 
 	const [copied, setCopied] = useState(false);
 
-	const copyToClipboard = async () => {
+	const copyToClipboard = useCallback(async () => {
+		if (!value) {
+			return;
+		}
+
 		await navigator.clipboard.writeText(value);
 
 		setCopied(true);
 		setTimeout(() => {
 			setCopied(false);
 		}, 1000);
-	};
+	}, [value]);
 
 	return (
 		<Tooltip

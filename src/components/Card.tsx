@@ -14,16 +14,13 @@ export const Card = styled.div`
 `;
 
 export const CardHeader = styled.div`
+	display: flex;
 	padding-bottom: 48px;
+	align-items: center;
 
 	font-weight: 700;
 	font-size: 24px;
 	line-height: 33px;
 
 	word-break: break-all;
-
-	> [data-name=copy-button] {
-		position: relative;
-		top: -1px;
-	}
 `;

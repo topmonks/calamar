@@ -241,6 +241,9 @@ export const theme = createTheme({
 				icon: css`
 					margin-left: 0;
 					margin-right: -4px;
+				`,
+				label: css`
+					padding-right: 0;
 				`
 			}
 		}

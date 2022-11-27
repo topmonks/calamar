@@ -1,6 +1,9 @@
+/** @jsxImportSource @emotion/react */
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { css } from "@emotion/react";
 
+import { AccountAvatar } from "../components/AccountAvatar";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -8,6 +11,10 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+
+const avatarStyle = css`
+	margin-right: 8px;
+`;
 
 type AccountPageParams = {
 	network: string;
@@ -38,6 +45,9 @@ function AccountPage() {
 		<>
 			<Card>
 				<CardHeader>
+					{account.data &&
+						<AccountAvatar address={address} size={32} css={avatarStyle} />
+					}
 					Account #{address}
 				</CardHeader>
 				<AccountInfoTable network={network} {...account} />
@@ -52,7 +62,7 @@ function AccountPage() {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} {...extrinsics} />
+							<ExtrinsicsTable network={network} {...extrinsics} showTime />
 						</TabPane>
 					</TabbedContent>
 				</Card>

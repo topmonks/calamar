@@ -1,4 +1,4 @@
-export const shortenHash = (hash: string) => {
+export const shortenHash = (hash?: string) => {
 	if (!hash || hash.length < 15) {
 		return hash;
 	}

@@ -5,6 +5,7 @@ import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
 
+import { AccountAddress } from "../AccountAddress";
 import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
@@ -50,25 +51,21 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				label="Block"
 				render={(data) =>
 					<Link to={`/${network}/block/${data.block.id}`}>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.id}
+				copyToClipboard={(data) => data.block.height}
 			/>
 			<InfoTableAttribute
 				label="Account"
 				render={(data) => data.signature?.address &&
-					<Link
-						to={`/${network}/account/${data.signature.address}`}
-					>
-						{encodeAddress(network, data.signature?.address) || data.signature?.address}
-					</Link>
+					<AccountAddress network={network} address={data.signature.address} />
 				}
 				copyToClipboard={(data) =>
 					encodeAddress(
 						network,
 						data.signature?.address
-					) || data.signature?.address
+					)
 				}
 				hide={(data) => !data.signature?.address}
 			/>
@@ -89,12 +86,12 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<DataViewer data={data.call.args} controls />
+					<DataViewer network={network} data={data.call.args} controls />
 				}
 			/>
 			<InfoTableAttribute
 				label="Error"
-				render={(data) => <DataViewer data={data.error} />}
+				render={(data) => <DataViewer network={network} data={data.error} />}
 				hide={(data) => !data.error}
 			/>
 			<InfoTableAttribute
@@ -104,7 +101,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Signature"
-				render={(data) => <DataViewer data={data.signature?.signature.value} />}
+				render={(data) => <DataViewer network={network} data={data.signature?.signature.value} />}
 				//copyToClipboard={(data) => data.signature?.signature.value} // TODO copy from DataViewer
 				hide={(data) => !data.signature}
 			/>

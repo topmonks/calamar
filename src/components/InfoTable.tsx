@@ -71,7 +71,7 @@ export type InfoTableAttributeProps<T> = {
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
 	render: (data: T) => ReactNode;
-	copyToClipboard?: (data: T) => string;
+	copyToClipboard?: (data: T) => string|undefined;
 	hide?: (data: T) => boolean;
 	_data?: T;
 }

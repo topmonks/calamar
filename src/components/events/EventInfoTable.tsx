@@ -40,7 +40,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 					<Link
 						to={`/${network}/block/${data.block.id}`}
 					>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
 				copyToClipboard={(data) => data.block.height}
@@ -74,7 +74,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<DataViewer data={data.args} controls />
+					<DataViewer network={network} data={data.args} controls />
 				}
 				hide={(data) => !data.args}
 			/>

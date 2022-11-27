@@ -72,7 +72,7 @@ function BlockPage() {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} {...extrinsics} />
+							<ExtrinsicsTable network={network} {...extrinsics} showAccount />
 						</TabPane>
 						<TabPane
 							label="Calls"
