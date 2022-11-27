@@ -234,7 +234,7 @@ export const theme = createTheme({
 			styleOverrides: {
 				root: css`
 					border: none;
-					height: 24px;
+					height: auto;
 					font-size: 16px;
 					justify-content: flex-start;
 				`,
@@ -244,6 +244,7 @@ export const theme = createTheme({
 				`,
 				label: css`
 					padding-right: 0;
+					white-space: normal;
 				`
 			}
 		}

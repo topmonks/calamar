@@ -60,6 +60,7 @@ const kindStyle = css`
 `;
 
 const valueStyle = css`
+	display: flex;
 	word-break: break-all;
 	min-width: 180px;
 	max-width: 550px;
