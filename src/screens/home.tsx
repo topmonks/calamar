@@ -73,7 +73,7 @@ const networkSelectStyle = (theme: Theme) => css`
 	}
 `;
 
-const searchInputStyle = (variant: string) => (theme: Theme) => css`
+const searchInputStyle = (theme: Theme) => css`
 	flex: 1 1 auto;
 
 	.MuiInputBase-root {
@@ -82,24 +82,6 @@ const searchInputStyle = (variant: string) => (theme: Theme) => css`
 			padding: 16px 24px;
 		}
 	}
-
-	${["3", "4"].includes(variant) && css`
-		.MuiListItemIcon-root {
-			min-width: 36px !important;
-
-			img {
-				width: 24px !important;
-				height: 24px !important;
-			}
-		}
-
-		.MuiSelect-select {
-			&::before,
-			&::after {
-				height: 38px !important;
-			}
-		}
-	`}
 
 	${theme.breakpoints.up("md")} {
 		.MuiButton-root {
@@ -112,16 +94,12 @@ const searchInputStyle = (variant: string) => (theme: Theme) => css`
 function HomePage() {
 	const [network, setNetwork] = useState<string | undefined>();
 
-	// TODO this is temporary until resolved
-	const [qs] = useSearchParams();
-	const searchInputVariant = qs.get("search-input-variant") || "1";
-
 	return (
 		<div css={containerStyle}>
 			<Logo css={logoStyle} />
 			<div css={searchBoxStyle}>
 				<SearchInput
-					css={searchInputStyle(searchInputVariant)}
+					css={searchInputStyle}
 					onNetworkChange={setNetwork}
 					persistNetwork
 				/>
