@@ -1,7 +1,6 @@
 import { Pagination } from "../../hooks/usePagination";
-import { encodeAddress } from "../../utils/formatAddress";
-import { shortenHash } from "../../utils/shortenHash";
 
+import { AccountAddress } from "../AccountAddress";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 
@@ -43,15 +42,11 @@ export const CallsTable = (props: CallsTableProps) => {
 				label="Sender"
 				render={(call) =>
 					call.origin && call.origin.value.__kind !== "None" && (
-						<Link
-							to={`/${network}/account/${call.origin.value.value}`}
-						>
-							{shortenHash(
-								(network &&
-									encodeAddress(network, call.origin.value.value)) ||
-								call.origin.value.value
-							)}
-						</Link>
+						<AccountAddress
+							network={network}
+							address={call.origin.value.value}
+							shorten
+						/>
 					)
 				}
 			/>

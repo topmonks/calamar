@@ -1,13 +1,15 @@
+import { Chip } from "@mui/material";
+
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
 
+import { AccountAddress } from "../AccountAddress";
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
-import { Chip } from "@mui/material";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
@@ -49,25 +51,21 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				label="Block"
 				render={(data) =>
 					<Link to={`/${network}/block/${data.block.id}`}>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.id}
+				copyToClipboard={(data) => data.block.height}
 			/>
 			<InfoTableAttribute
 				label="Account"
 				render={(data) => data.signature?.address &&
-					<Link
-						to={`/${network}/account/${data.signature.address}`}
-					>
-						{encodeAddress(network, data.signature?.address) || data.signature?.address}
-					</Link>
+					<AccountAddress network={network} address={data.signature.address} />
 				}
 				copyToClipboard={(data) =>
 					encodeAddress(
 						network,
 						data.signature?.address
-					) || data.signature?.address
+					)
 				}
 				hide={(data) => !data.signature?.address}
 			/>
@@ -88,12 +86,12 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<ParamsTable args={data.call.args} />
+					<DataViewer network={network} data={data.call.args} copyToClipboard />
 				}
 			/>
 			<InfoTableAttribute
 				label="Error"
-				render={(data) => <ParamsTable args={data.error} />}
+				render={(data) => <DataViewer network={network} data={data.error} copyToClipboard />}
 				hide={(data) => !data.error}
 			/>
 			<InfoTableAttribute
@@ -103,8 +101,14 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Signature"
-				render={(data) => data.signature?.signature.value}
-				copyToClipboard={(data) => data.signature?.signature.value}
+				render={(data) =>
+					<DataViewer
+						simple
+						network={network}
+						data={data.signature?.signature.value}
+						copyToClipboard
+					/>
+				}
 				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute

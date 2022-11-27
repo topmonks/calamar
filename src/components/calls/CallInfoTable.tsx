@@ -1,13 +1,15 @@
+import { Chip } from "@mui/material";
+
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
 
+import { AccountAddress } from "../AccountAddress";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
-import { Chip } from "@mui/material";
+import DataViewer from "../DataViewer";
 
 export type CallInfoTableProps = {
 	network: string;
@@ -44,7 +46,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				label="Block"
 				render={(data) =>
 					<Link to={`/${network}/block/${data.block.id}`}>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
 				copyToClipboard={(data) => data.block.id}
@@ -72,11 +74,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				label="Sender"
 				render={(data) =>
 					data.origin && data.origin.value.__kind !== "None" && (
-						<Link
-							to={`/${network}/account/${data.origin.value.value}`}
-						>
-							{encodeAddress(network, data.origin.value.value) || data.origin.value.value}
-						</Link>
+						<AccountAddress network={network} address={data.origin.value.value} />
 					)
 				}
 				copyToClipboard={(data) =>
@@ -84,7 +82,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 					encodeAddress(
 						network,
 						data.origin.value.value
-					) || data.origin.value.value
+					)
 				}
 				hide={(data) => !data.origin || data.origin.value.__kind === "None"}
 			/>
@@ -105,7 +103,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<InfoTableAttribute
 				name="parameters"
 				label="Parameters"
-				render={(data) => <ParamsTable args={data.args} />}
+				render={(data) => <DataViewer network={network} data={data.args} copyToClipboard />}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

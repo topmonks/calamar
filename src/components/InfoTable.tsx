@@ -34,7 +34,7 @@ const attributeStyle = css`
 	}
 `;
 
-const labelStyle = (theme: Theme) => css`
+const labelCellStyle = (theme: Theme) => css`
 	width: 200px;
 	padding-left: 0;
 	font-weight: 700;
@@ -47,7 +47,7 @@ const labelStyle = (theme: Theme) => css`
 	}
 `;
 
-const valueStyle = (theme: Theme) => css`
+const valueCellStyle = (theme: Theme) => css`
 	word-break: break-all;
 	padding-right: 0;
 
@@ -64,6 +64,13 @@ const valueStyle = (theme: Theme) => css`
 	}
 `;
 
+const valueStyle = css`
+	display: flex;
+`;
+
+const copyButtonStyle = css`
+	margin-left: 16px;
+`;
 
 export type InfoTableAttributeProps<T> = {
 	name?: string;
@@ -71,7 +78,7 @@ export type InfoTableAttributeProps<T> = {
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
 	render: (data: T) => ReactNode;
-	copyToClipboard?: (data: T) => string;
+	copyToClipboard?: (data: T) => string|undefined;
 	hide?: (data: T) => boolean;
 	_data?: T;
 }
@@ -79,8 +86,8 @@ export type InfoTableAttributeProps<T> = {
 export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttributeProps<T>) => {
 	const {
 		label,
-		labelCss: labelStyleOverride,
-		valueCss: valueStyleOverride,
+		labelCss: labelCellStyleOverride,
+		valueCss: valueCellStyleOverride,
 		render,
 		copyToClipboard,
 		hide,
@@ -93,14 +100,19 @@ export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttri
 
 	return (
 		<TableRow css={attributeStyle}>
-			<TableCell css={[labelStyle, labelStyleOverride]}>
+			<TableCell css={[labelCellStyle, labelCellStyleOverride]}>
 				{label}
 			</TableCell>
-			<TableCell css={[valueStyle, valueStyleOverride]}>
-				{render?.(_data)}
-				{copyToClipboard?.(_data) &&
-					<CopyToClipboardButton value={copyToClipboard(_data)} />
-				}
+			<TableCell css={[valueCellStyle, valueCellStyleOverride]}>
+				<div css={valueStyle}>
+					{render?.(_data)}
+					{copyToClipboard?.(_data) &&
+						<CopyToClipboardButton
+							css={copyButtonStyle}
+							value={copyToClipboard(_data)}
+						/>
+					}
+				</div>
 			</TableCell>
 		</TableRow>
 	);

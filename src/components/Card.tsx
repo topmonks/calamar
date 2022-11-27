@@ -14,7 +14,9 @@ export const Card = styled.div`
 `;
 
 export const CardHeader = styled.div`
+	display: flex;
 	padding-bottom: 48px;
+	align-items: center;
 
 	font-weight: 700;
 	font-size: 24px;
@@ -22,8 +24,7 @@ export const CardHeader = styled.div`
 
 	word-break: break-all;
 
-	> [data-name=copy-button] {
-		position: relative;
-		top: -1px;
+	[data-name=copy-button] {
+		margin-left: 16px;
 	}
 `;

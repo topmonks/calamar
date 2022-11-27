@@ -1,7 +1,7 @@
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
 
 export type EventInfoTableProps = {
 	network: string;
@@ -40,7 +40,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 					<Link
 						to={`/${network}/block/${data.block.id}`}
 					>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
 				copyToClipboard={(data) => data.block.height}
@@ -74,8 +74,9 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<ParamsTable args={data.args} />
+					<DataViewer network={network} data={data.args} copyToClipboard />
 				}
+				hide={(data) => !data.args}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

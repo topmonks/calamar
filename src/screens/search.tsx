@@ -145,7 +145,7 @@ function SearchPage() {
 						error={extrinsicsByName.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network} {...extrinsicsByName} />
+						<ExtrinsicsTable network={network} {...extrinsicsByName} showAccount showTime />
 					</TabPane>
 				}
 				{!eventsByName.notFound &&

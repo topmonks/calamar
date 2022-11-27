@@ -1,6 +1,10 @@
-import { createTheme } from "@mui/material";
+import { createTheme, darken, lighten } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { css } from "@emotion/react";
+
+const customColors = {
+	neutral: "#e9e9e9"
+};
 
 export const theme = createTheme({
 	palette: {
@@ -12,6 +16,12 @@ export const theme = createTheme({
 			main: "#14a1c0",
 			contrastText: "#ffffff"
 		},
+		neutral: {
+			main: customColors.neutral,
+			dark: darken(customColors.neutral, 0.1),
+			light: lighten(customColors.neutral, 0.1),
+			contrastText: "rgba(0, 0, 0, 0.7)"
+		}
 	},
 	typography: {
 		fontFamily: "\"Open Sans\", sans-serif",
@@ -27,18 +37,95 @@ export const theme = createTheme({
 				root: ({theme}) => css`
 					font-weight: 700;
 					font-family: "Google Sans", sans-serif;
-					color: ${theme.palette.secondary.main}
+					color: ${theme.palette.secondary.main};
 				`
 			}
 		},
 		MuiButton: {
 			defaultProps: {
+				color: "neutral",
 				disableElevation: true,
 			},
+			variants: [
+				{
+					props: {color: "neutral"},
+					style: css`
+					`
+				}
+			],
 			styleOverrides: {
 				root: css`
 					padding: 6px 32px;
+				`,
+
+			}
+		},
+		MuiToggleButton: {
+			styleOverrides: {
+				root: ({ownerState}) => {
+					const color = (!ownerState.color || ownerState.color === "standard") ? "neutral" : ownerState.color;
+					return css`
+						border: none;
+						background-color: ${theme.palette.neutral.main};
+						padding: 6px 32px;
+
+						&:hover {
+							background-color: ${darken(theme.palette[color].main, 0.1)}
+						}
+					`;
+				},
+				selected: ({theme, ownerState}) => {
+					const color = (!ownerState.color || ownerState.color === "standard") ? "neutral" : ownerState.color;
+					return css`
+						background-color: ${theme.palette[color].main};
+
+						&:hover {
+							background-color: ${darken(theme.palette[color].main, 0.2)}
+						}
+					`;
+				}
+			}
+		},
+		MuiIconButton: {
+			styleOverrides: {
+				root: css`
+					padding: 4px;
+					border-radius: 4px;
+
+					> svg {
+						display: block;
+					}
 				`
+			}
+		},
+		MuiButtonGroup: {
+			defaultProps: {
+				disableElevation: true,
+			}
+		},
+		MuiToggleButtonGroup: {
+			styleOverrides: {
+				root: ({theme, ownerState}) => {
+					const color = (!ownerState.color || ownerState.color === "standard") ? "neutral" : ownerState.color;
+					return css`
+						.MuiButtonBase-root {
+							background-color: ${theme.palette.neutral.main};
+
+							&:hover {
+								background-color: ${darken(theme.palette.neutral.main, 0.05)};
+							}
+
+							&.Mui-selected {
+								color: ${theme.palette[color].contrastText};
+								background-color: ${color === "neutral" ? theme.palette.neutral.dark : theme.palette[color].main};
+
+								&:hover {
+									background-color: ${color === "neutral" ? theme.palette.neutral.dark : theme.palette[color].main};
+								}
+							}
+						}
+					`;
+				}
 			}
 		},
 		MuiInputBase: {
@@ -147,13 +234,17 @@ export const theme = createTheme({
 			styleOverrides: {
 				root: css`
 					border: none;
-					height: 24px;
+					height: auto;
 					font-size: 16px;
 					justify-content: flex-start;
 				`,
 				icon: css`
 					margin-left: 0;
 					margin-right: -4px;
+				`,
+				label: css`
+					padding-right: 0;
+					white-space: normal;
 				`
 			}
 		}
