@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { useMemo, useState } from "react";
+import { PropsWithChildren, useMemo, useState } from "react";
 import { css, Theme } from "@emotion/react";
-import { darken, IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
@@ -11,9 +11,11 @@ import { DataViewerValueParsed }  from "./DataViewerValueParsed";
 const dataViewerStyle = css`
 	display: flex;
 	padding: 12px;
+	height: 100%;
 	max-width: 100%;
 	box-sizing: border-box;
 	flex-direction: column;
+	flex: 1 1 auto;
 
 	background-color: #f5f5f5;
 	border-radius: 8px;
@@ -35,12 +37,20 @@ const simpleDataViewerStyle = css`
 	flex-direction: row-reverse;
 `;
 
-const modalDataViewerStyle = css`
-	position: relative;
+const modalStyle = css`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+
 	height: calc(100vh - 32px);
 	width: calc(100vw - 32px);
 	max-width: calc(100vw - 32px);
 	max-height: calc(100vh - 32px);
+
+	flex-direction: column;
+	outline: none;
 
 	@media (min-height: calc(500px + 32px)) {
 		height: auto;
@@ -50,16 +60,6 @@ const modalDataViewerStyle = css`
 	@media (min-width: calc(1600px + 32px)) {
 		width: 1600px;
 	}
-`;
-
-const modalStyle = css`
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	display: flex;
-	flex-direction: column;
-	outline: none;
 `;
 
 const scrollAreaStyle = css`
@@ -78,6 +78,10 @@ const controlsStyle = css`
 	margin-bottom: 12px;
 	align-items: center;
 	font-size: 14px;
+
+	.MuiModal-root & {
+		padding-right: 34px;
+	}
 `;
 
 const simpleControlsStyle = css`
@@ -117,29 +121,42 @@ const closeButtonStyle = css`
 
 export type DataViewerMode = "json" | "parsed";
 
+const modes: DataViewerMode[] = ["parsed", "json"];
 const modeLabels: Record<DataViewerMode, string> = {
 	parsed: "Parsed",
 	json: "Raw"
 };
 
-export type DataViewerProps = {
-	network: string;
-	data: any;
-	modes?: DataViewerMode[];
-	defaultMode?: DataViewerMode;
-	simple?: boolean;
-	copyToClipboard?: boolean;
-	isModal?: boolean;
+type ModeSelectProps = {
+	value: DataViewerMode;
+	onChange: (mode: DataViewerMode) => void;
 };
 
-const DataViewerModalHandle = (props: DataViewerProps) => {
-	const {isModal} = props;
+const ModeSelect = (props: ModeSelectProps) => {
+	const {value, onChange} = props;
+
+	return (
+		<ToggleButtonGroup
+			css={modeButtonsStyle}
+			exclusive
+			value={value}
+			onChange={(_, mode) => mode && onChange(mode)}
+		>
+			{modes.map(mode =>
+				<ToggleButton key={mode} css={modeButtonStyle} value={mode}>
+					{modeLabels[mode]}
+				</ToggleButton>
+			)}
+		</ToggleButtonGroup>
+	);
+};
+
+export type DataViewerModalHandleProps = PropsWithChildren;
+
+const DataViewerModalHandle = (props: DataViewerModalHandleProps) => {
+	const {children} = props;
 
 	const [showModal, setShowModal] = useState<boolean>(false);
-
-	if (isModal) {
-		return <span css={{width: 32}} />;
-	}
 
 	return (
 		<>
@@ -165,22 +182,29 @@ const DataViewerModalHandle = (props: DataViewerProps) => {
 					<IconButton css={closeButtonStyle} onClick={() => setShowModal(false)}>
 						<Close />
 					</IconButton>
-					<DataViewer {...props} isModal />
+					{children}
 				</div>
 			</Modal>
 		</>
 	);
 };
 
+export type DataViewerProps = {
+	network: string;
+	data: any;
+	modes?: DataViewerMode[];
+	defaultMode?: DataViewerMode;
+	simple?: boolean;
+	copyToClipboard?: boolean;
+};
+
 function DataViewer(props: DataViewerProps) {
 	const {
 		network,
 		data,
-		modes = ["parsed", "json"],
 		defaultMode = modes[0],
 		simple,
 		copyToClipboard,
-		isModal
 	} = props;
 
 	const [mode, setMode] = useState<DataViewerMode>(defaultMode);
@@ -209,31 +233,27 @@ function DataViewer(props: DataViewerProps) {
 		<div
 			css={[
 				dataViewerStyle,
-				isModal
-					? modalDataViewerStyle
-					: simple
-						? simpleDataViewerStyle
-						: embeddedDataViewerStyle
+				simple
+					? simpleDataViewerStyle
+					: embeddedDataViewerStyle
 			]}
 		>
 			<div css={[controlsStyle, simple && simpleControlsStyle]}>
-				{!simple &&
-					<ToggleButtonGroup
-						css={modeButtonsStyle}
-						exclusive
-						value={mode}
-						onChange={(_, mode) => mode && setMode(mode)}
-					>
-						{modes.map(mode =>
-							<ToggleButton key={mode} css={modeButtonStyle} value={mode}>
-								{modeLabels[mode]}
-							</ToggleButton>
-						)}
-					</ToggleButtonGroup>
-				}
+				{!simple && <ModeSelect value={mode} onChange={setMode} />}
 				{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
 				{!simple &&
-					<DataViewerModalHandle {...props} defaultMode={mode} />
+					<DataViewerModalHandle>
+						<div css={dataViewerStyle}>
+							<div css={[controlsStyle]}>
+								<ModeSelect value={mode} onChange={setMode} />
+								{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
+							</div>
+							<div css={scrollAreaStyle}>
+								{mode === "json" && jsonContent}
+								{mode === "parsed" && parsedContent}
+							</div>
+						</div>
+					</DataViewerModalHandle>
 				}
 			</div>
 			<div css={scrollAreaStyle}>
