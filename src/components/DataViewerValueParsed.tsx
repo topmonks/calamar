@@ -24,15 +24,11 @@ const valueTableStyle = css`
 	}
 `;
 
-const paramIndexCellStyle = css`
+const arrayIndexCellStyle = css`
 	width: 60px;
 `;
 
-const paramNameCellStyle = css`
-	width: 180px;
-`;
-
-const paramIndexStyle = css`
+const arrayIndexStyle = css`
 	font-weight: 300;
 	word-break: break-all;
 	box-sizing: border-box;
@@ -43,7 +39,11 @@ const paramIndexStyle = css`
 	top: 0;
 `;
 
-const paramNameStyle = css`
+const objectKeyCellStyle = css`
+	width: 180px;
+`;
+
+const objectKeyStyle = css`
 	font-weight: 700;
 	word-break: break-all;
 	box-sizing: border-box;
@@ -54,16 +54,20 @@ const paramNameStyle = css`
 	top: 0;
 `;
 
-const paramKindStyle = css`
+const kindStyle = css`
 	font-weight: 400;
 	font-style: italic;
 `;
 
-const paramValueStyle = css`
+const valueStyle = css`
 	word-break: break-all;
 	min-width: 180px;
 	max-width: 550px;
 	padding: 6px 0;
+`;
+
+const copyButtonStyle = css`
+	margin-left: 12px;
 `;
 
 type MaybeAccountLinkValueProps = {
@@ -82,14 +86,14 @@ const MaybeAccountLinkValue = (props: MaybeAccountLinkValueProps) => {
 
 	if (account.data) {
 		return (
-			<div css={paramValueStyle}>
+			<div css={valueStyle}>
 				<AccountAddress network={network} address={value} />
-				<CopyToClipboardButton value={value} />
+				<CopyToClipboardButton value={value} css={copyButtonStyle} />
 			</div>
 		);
 	}
 
-	return <div css={paramValueStyle}>{value}</div>;
+	return <div css={valueStyle}>{value}</div>;
 };
 
 export type DataViewerValueParsedProps = {
@@ -107,8 +111,8 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 				<TableBody>
 					{value.map((item, index) => (
 						<TableRow key={index}>
-							<TableCell css={paramIndexCellStyle}>
-								<div css={paramIndexStyle}>{index}</div>
+							<TableCell css={arrayIndexCellStyle}>
+								<div css={arrayIndexStyle}>{index}</div>
 							</TableCell>
 							<TableCell>
 								<DataViewerValueParsed network={network} value={item} />
@@ -134,8 +138,8 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 				<Table size="small" css={valueTableStyle}>
 					<TableBody>
 						<TableRow>
-							<TableCell css={paramNameCellStyle}>
-								<div css={[paramNameStyle, paramKindStyle]}>{kind}</div>
+							<TableCell css={objectKeyCellStyle}>
+								<div css={[objectKeyStyle, kindStyle]}>{kind}</div>
 							</TableCell>
 							<TableCell>
 								<DataViewerValueParsed network={network} value={value} />
@@ -154,8 +158,8 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 				<TableBody>
 					{keys.map((key) => (
 						<TableRow key={key}>
-							<TableCell css={paramNameCellStyle}>
-								<div css={paramNameStyle}>{key}</div>
+							<TableCell css={objectKeyCellStyle}>
+								<div css={objectKeyStyle}>{key}</div>
 							</TableCell>
 							<TableCell>
 								<DataViewerValueParsed network={network} value={value[key]} />
@@ -171,5 +175,5 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 		value = value ? "true" : "false";
 	}
 
-	return <div css={paramValueStyle}>{value}</div>;
+	return <div css={valueStyle}>{value}</div>;
 };

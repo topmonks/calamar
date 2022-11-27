@@ -103,7 +103,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<InfoTableAttribute
 				name="parameters"
 				label="Parameters"
-				render={(data) => <DataViewer network={network} data={data.args} controls />}
+				render={(data) => <DataViewer network={network} data={data.args} copyToClipboard />}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

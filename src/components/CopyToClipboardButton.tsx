@@ -1,19 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton, IconButtonProps, Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 
 const buttonStyle = css`
 	padding: 0;
-	margin-left: 16px;
 `;
 
-export type CopyToClipboardButtonProps = {
+export type CopyToClipboardButtonProps = IconButtonProps & {
 	value?: string;
 }
 
 const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
-	const {value} = props;
+	const {value, ...restProps} = props;
 
 	const [copied, setCopied] = useState(false);
 
@@ -38,7 +37,12 @@ const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
 			placement="top"
 			title="Copied"
 		>
-			<IconButton onClick={copyToClipboard} css={buttonStyle} data-name="copy-button">
+			<IconButton
+				{...restProps}
+				css={buttonStyle}
+				onClick={copyToClipboard}
+				data-name="copy-button"
+			>
 				<svg
 					height="20"
 					viewBox="0 0 20 20"

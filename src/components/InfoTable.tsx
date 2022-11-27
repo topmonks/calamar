@@ -64,6 +64,9 @@ const valueStyle = (theme: Theme) => css`
 	}
 `;
 
+const copyButtonStyle = css`
+	margin-left: 16px;
+`;
 
 export type InfoTableAttributeProps<T> = {
 	name?: string;
@@ -99,7 +102,10 @@ export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttri
 			<TableCell css={[valueStyle, valueStyleOverride]}>
 				{render?.(_data)}
 				{copyToClipboard?.(_data) &&
-					<CopyToClipboardButton value={copyToClipboard(_data)} />
+					<CopyToClipboardButton
+						css={copyButtonStyle}
+						value={copyToClipboard(_data)}
+					/>
 				}
 			</TableCell>
 		</TableRow>

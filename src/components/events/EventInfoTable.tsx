@@ -74,7 +74,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<DataViewer network={network} data={data.args} controls />
+					<DataViewer network={network} data={data.args} copyToClipboard />
 				}
 				hide={(data) => !data.args}
 			/>

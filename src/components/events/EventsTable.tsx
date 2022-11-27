@@ -59,7 +59,7 @@ function EventsTable(props: EventsTableProps) {
 			<ItemsTableAttribute
 				label="Parameters"
 				colCss={parametersColCss(showExtrinsic)}
-				render={(event) => event.args && <DataViewer network={network} data={event.args} controls />}
+				render={(event) => event.args && <DataViewer network={network} data={event.args} copyToClipboard />}
 			/>
 		</ItemsTable>
 	);

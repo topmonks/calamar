@@ -86,12 +86,12 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<InfoTableAttribute
 				label="Parameters"
 				render={(data) =>
-					<DataViewer network={network} data={data.call.args} controls />
+					<DataViewer network={network} data={data.call.args} copyToClipboard />
 				}
 			/>
 			<InfoTableAttribute
 				label="Error"
-				render={(data) => <DataViewer network={network} data={data.error} />}
+				render={(data) => <DataViewer network={network} data={data.error} copyToClipboard />}
 				hide={(data) => !data.error}
 			/>
 			<InfoTableAttribute
@@ -101,8 +101,14 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Signature"
-				render={(data) => <DataViewer network={network} data={data.signature?.signature.value} />}
-				//copyToClipboard={(data) => data.signature?.signature.value} // TODO copy from DataViewer
+				render={(data) =>
+					<DataViewer
+						simple
+						network={network}
+						data={data.signature?.signature.value}
+						copyToClipboard
+					/>
+				}
 				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute

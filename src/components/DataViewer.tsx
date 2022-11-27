@@ -9,21 +9,21 @@ import { DataViewerValueJson } from "./DataViewerValueJson";
 import { DataViewerValueParsed }  from "./DataViewerValueParsed";
 
 const dataViewerStyle = css`
-	display: inline-block;
-	display: block;
 	display: flex;
-	flex-direction: column;
+	padding: 12px;
+	max-width: 100%;
 	box-sizing: border-box;
+	flex-direction: column;
+
 	background-color: #f5f5f5;
 	border-radius: 8px;
-	padding: 12px;
-	overflow: hidden;
+
 	line-height: 24px;
+	overflow: hidden;
 	word-break: initial;
 `;
 
-const normalDataViewerStyle = (theme: Theme) => css`
-	max-width: 100%;
+const embeddedDataViewerStyle = (theme: Theme) => css`
 	max-height: 500px;
 
 	${theme.breakpoints.down("sm")} {
@@ -31,50 +31,8 @@ const normalDataViewerStyle = (theme: Theme) => css`
 	}
 `;
 
-const scrollAreaStyle = css`
-	position: relative;
-	overflow: auto;
-	flex: 1 1 auto;
-
-	> * {
-		margin: 0 12px;
-		width: auto !important;
-	}
-`;
-
-const controlsStyle = css`
-	display: flex;
-	margin-bottom: 12px;
-	align-items: center;
-	font-size: 14px;
-`;
-
-const modeButtonsStyle = css`
-	margin-right: auto;
-`;
-
-const modeButtonStyle = (theme: Theme) => css`
-	font-size: 14px;
-	padding: 0 8px;
-	border: none;
-	line-height: 24px;
-	background-color: ${darken(theme.palette.neutral.main, 0.1)};
-	background-color: green;
-`;
-
-const fullscreenButtonStyle = css`
-	padding: 0;
-	margin-left: 8px;
-`;
-
-const closeButtonStyle = css`
-	position: absolute;
-	top: 0;
-	right: 0;
-	margin: 12px;
-	padding: 0;
-
-	z-index: 10;
+const simpleDataViewerStyle = css`
+	flex-direction: row-reverse;
 `;
 
 const modalDataViewerStyle = css`
@@ -104,6 +62,59 @@ const modalStyle = css`
 	outline: none;
 `;
 
+const scrollAreaStyle = css`
+	position: relative;
+	overflow: auto;
+	flex: 1 1 auto;
+
+	> * {
+		margin: 0 12px;
+		width: auto !important;
+	}
+`;
+
+const controlsStyle = css`
+	display: flex;
+	margin-bottom: 12px;
+	align-items: center;
+	font-size: 14px;
+`;
+
+const simpleControlsStyle = css`
+	align-items: flex-start;
+	margin-bottom: 0;
+	margin-left: 12px;
+`;
+
+const modeButtonsStyle = css`
+	margin-right: auto;
+`;
+
+const modeButtonStyle = css`
+	font-size: 14px;
+	padding: 0 8px;
+	line-height: 24px;
+`;
+
+const fullscreenButtonStyle = css`
+	padding: 2px;
+	margin-left: 8px;
+`;
+
+const copyButtonStyle = css`
+	padding: 2px;
+`;
+
+const closeButtonStyle = css`
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 12px;
+	padding: 0;
+
+	z-index: 10;
+`;
+
 export type DataViewerMode = "json" | "parsed";
 
 const modeLabels: Record<DataViewerMode, string> = {
@@ -116,7 +127,8 @@ export type DataViewerProps = {
 	data: any;
 	modes?: DataViewerMode[];
 	defaultMode?: DataViewerMode;
-	controls?: boolean;
+	simple?: boolean;
+	copyToClipboard?: boolean;
 	isModal?: boolean;
 };
 
@@ -166,7 +178,8 @@ function DataViewer(props: DataViewerProps) {
 		data,
 		modes = ["parsed", "json"],
 		defaultMode = modes[0],
-		controls,
+		simple,
+		copyToClipboard,
 		isModal
 	} = props;
 
@@ -174,24 +187,37 @@ function DataViewer(props: DataViewerProps) {
 
 	console.log("render");
 
+	const copyToClipboardValue = useMemo(() => {
+		if (Array.isArray(data) || typeof data === "object") {
+			return JSON.stringify(data, null, 4);
+		}
+
+		return data;
+	}, [data]);
+
 	const jsonContent = useMemo(() => (
-		<div css={scrollAreaStyle}>
-			<div css={{fontSize: 14}}>
-				<DataViewerValueJson value={data} />
-			</div>
+		<div css={{fontSize: 14}}>
+			<DataViewerValueJson value={data} />
 		</div>
 	), [data]);
 
 	const parsedContent = useMemo(() => (
-		<div css={scrollAreaStyle}>
-			<DataViewerValueParsed network={network} value={data} />
-		</div>
+		<DataViewerValueParsed network={network} value={data} />
 	), [data]);
 
 	return (
-		<div css={[dataViewerStyle, isModal ? modalDataViewerStyle : normalDataViewerStyle]}>
-			{controls &&
-				<div css={controlsStyle}>
+		<div
+			css={[
+				dataViewerStyle,
+				isModal
+					? modalDataViewerStyle
+					: simple
+						? simpleDataViewerStyle
+						: embeddedDataViewerStyle
+			]}
+		>
+			<div css={[controlsStyle, simple && simpleControlsStyle]}>
+				{!simple &&
 					<ToggleButtonGroup
 						css={modeButtonsStyle}
 						exclusive
@@ -204,12 +230,16 @@ function DataViewer(props: DataViewerProps) {
 							</ToggleButton>
 						)}
 					</ToggleButtonGroup>
-					{mode === "json" && <CopyToClipboardButton value={JSON.stringify(data, null, 4)} />}
+				}
+				{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
+				{!simple &&
 					<DataViewerModalHandle {...props} defaultMode={mode} />
-				</div>
-			}
-			{mode === "json" && jsonContent}
-			{mode === "parsed" && parsedContent}
+				}
+			</div>
+			<div css={scrollAreaStyle}>
+				{mode === "json" && jsonContent}
+				{mode === "parsed" && parsedContent}
+			</div>
 		</div>
 	);
 }
