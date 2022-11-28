@@ -1,6 +1,9 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { decodeMetadata } from "../utils/metadata";
 import { unifyConnection } from "../utils/unifyConnection";
+
+import { getLatestRuntimeSpec } from "./runtimeService";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
@@ -44,15 +47,28 @@ export async function getEventsByName(
 	name: string,
 	order: EventsOrder = "id_DESC"
 ) {
+	let [pallet, event] = name.split(".");
+
+	// try to fix casing according to latest runtime spec
+	const runtimeSpec = await getLatestRuntimeSpec(network);
+	const metadata = decodeMetadata(runtimeSpec.hex);
+
+	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimeEvents = runtimePallet && metadata.lookup.getSiType(runtimePallet.events.unwrap().type).def.asVariant.variants;
+	const runtimeEvent = runtimeEvents?.find(it => it.name.toLowerCase() === event?.toLowerCase());
+
+	pallet = runtimePallet?.name.toString() || pallet;
+	event = runtimeEvent?.name.toString() || event;
+
 	let filter;
 
-	if (name.includes(".")) {
+	if (event) {
 		filter = {
-			name_eq: name
+			name_eq: `${pallet}.${event}`
 		};
 	} else {
 		filter = {
-			name_startsWith: `${name}.`
+			name_startsWith: `${pallet}.`
 		};
 	}
 
