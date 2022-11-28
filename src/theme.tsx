@@ -150,7 +150,13 @@ export const theme = createTheme({
 							}
 						}
 					`;
-				}
+				},
+				grouped: css`
+					&:not(:first-of-type) {
+						border-left: none;
+						margin-left: 0;
+					}
+				`
 			}
 		},
 		MuiInputBase: {
