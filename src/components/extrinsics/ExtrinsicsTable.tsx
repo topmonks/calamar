@@ -1,6 +1,7 @@
 import { Pagination } from "../../hooks/usePagination";
 
 import { AccountAddress } from "../AccountAddress";
+import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
@@ -48,7 +49,15 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			/>
 			<ItemsTableAttribute
 				label="Name"
-				render={(extrinsic) => extrinsic.call.name}
+				render={(extrinsic) =>
+					<ButtonLink
+						to={`/${network}/search?query=${extrinsic.call.name}`}
+						size="small"
+						color="secondary"
+					>
+						{extrinsic.call.name}
+					</ButtonLink>
+				}
 			/>
 			{showAccount &&
 				<ItemsTableAttribute

@@ -96,6 +96,7 @@ const modeButtonsStyle = css`
 
 const modeButtonStyle = css`
 	font-size: 14px;
+	font-weight: 600;
 	padding: 0 8px;
 	line-height: 24px;
 `;

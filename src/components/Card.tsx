@@ -24,7 +24,9 @@ export const CardHeader = styled.div`
 
 	word-break: break-all;
 
+	gap: 8px;
+
 	[data-name=copy-button] {
-		margin-left: 16px;
+		margin-left: 8px;
 	}
 `;

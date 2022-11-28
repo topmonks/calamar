@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 
 import { Pagination } from "../../hooks/usePagination";
+import { ButtonLink } from "../ButtonLink";
 
 import DataViewer from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
@@ -44,7 +45,15 @@ function EventsTable(props: EventsTableProps) {
 			/>
 			<ItemsTableAttribute
 				label="Name"
-				render={(event) => event.name}
+				render={(event) =>
+					<ButtonLink
+						to={`/${network}/search?query=${event.name}`}
+						size="small"
+						color="secondary"
+					>
+						{event.name}
+					</ButtonLink>
+				}
 			/>
 			{showExtrinsic && (
 				<ItemsTableAttribute

@@ -1,9 +1,10 @@
-import { createTheme, darken, lighten } from "@mui/material";
+import { alpha, createTheme, darken, lighten } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { css } from "@emotion/react";
 
 const customColors = {
-	neutral: "#e9e9e9"
+	//neutral: "#e9e9e9"
+	neutral: "#dddddd"
 };
 
 export const theme = createTheme({
@@ -21,6 +22,7 @@ export const theme = createTheme({
 			dark: darken(customColors.neutral, 0.1),
 			light: lighten(customColors.neutral, 0.1),
 			contrastText: "rgba(0, 0, 0, 0.7)"
+			//contrastText: "#ffffff"
 		}
 	},
 	typography: {
@@ -48,8 +50,14 @@ export const theme = createTheme({
 			},
 			variants: [
 				{
-					props: {color: "neutral"},
-					style: css`
+					props: {color: "neutral", variant: "text"},
+					style: ({theme}) => css`
+						color: ${alpha(theme.palette.neutral.contrastText, .6)};
+						background-color: ${alpha(theme.palette.neutral.main, .15)};
+
+						&:hover {
+							background-color: ${alpha(theme.palette.neutral.main, .45)};
+						}
 					`
 				}
 			],
@@ -57,7 +65,24 @@ export const theme = createTheme({
 				root: css`
 					padding: 6px 32px;
 				`,
+				sizeSmall: css`
+					padding: 2px 10px;
+					font-size: 16px;
+					font-weight: 400;
+				`,
+				text: ({theme, ownerState}) => css`
+					${ownerState.color && ownerState.color !== "inherit" && css`
+						${ownerState.size === "small" && css`
+							color: ${theme.palette[ownerState.color].dark};
+						`}
 
+						background-color: ${alpha(theme.palette[ownerState.color].main, .075)};
+
+						&:hover {
+							background-color: ${alpha(theme.palette[ownerState.color].main, .15)};
+						}
+					`}
+				`
 			}
 		},
 		MuiToggleButton: {

@@ -1,4 +1,4 @@
-import { Chip } from "@mui/material";
+import { Button, Chip } from "@mui/material";
 
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
@@ -10,6 +10,7 @@ import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
+import { ButtonLink } from "../ButtonLink";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
@@ -81,7 +82,15 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Name"
-				render={(data) => data.call.name}
+				render={(data) =>
+					<ButtonLink
+						to={`/${network}/search?query=${data.call.name}`}
+						size="small"
+						color="secondary"
+					>
+						{data.call.name}
+					</ButtonLink>
+				}
 			/>
 			<InfoTableAttribute
 				label="Parameters"
