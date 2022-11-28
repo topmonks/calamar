@@ -7,9 +7,9 @@ import { isAddress } from "@polkadot/util-crypto";
 
 import { useAccount } from "../hooks/useAccount";
 import { useBlock } from "../hooks/useBlock";
-import { useEventsWithoutTotalCount } from "../hooks/useEventsWithoutTotalCount";
 import { useExtrinsic } from "../hooks/useExtrinsic";
-import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { useExtrinsicsByName } from "../hooks/useExtrinsicsByName";
+import { useEventsByName } from "../hooks/useEventsByName";
 
 import { Card, CardHeader } from "../components/Card";
 import { ErrorMessage } from "../components/ErrorMessage";
@@ -60,8 +60,8 @@ function SearchPage() {
 
 	const blockByHeight = useBlock(network, { height_eq: parseInt(query) }, { skip: !maybeHeight });
 
-	const extrinsicsByName = useExtrinsicsWithoutTotalCount(network, { call: { name_eq: query }}, "id_DESC", { skip: !maybeName });
-	const eventsByName = useEventsWithoutTotalCount(network, { name_eq: query }, "id_DESC", { skip: !maybeName });
+	const extrinsicsByName = useExtrinsicsByName(network, query, "id_DESC", { skip: !maybeName });
+	const eventsByName = useEventsByName(network, query, "id_DESC", { skip: !maybeName });
 
 	const allResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
 	const multipleResultsResources = [extrinsicsByName, eventsByName];

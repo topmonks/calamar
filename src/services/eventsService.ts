@@ -37,6 +37,28 @@ export async function getEvent(network: string, filter: EventsFilter) {
 	return response.events[0];
 }
 
+export async function getEventsByName(
+	network: string,
+	limit: number,
+	offset: number,
+	name: string,
+	order: EventsOrder = "id_DESC"
+) {
+	let filter;
+
+	if (name.includes(".")) {
+		filter = {
+			name_eq: name
+		};
+	} else {
+		filter = {
+			name_startsWith: `${name}.`
+		};
+	}
+
+	return getEventsWithoutTotalCount(network, limit, offset, filter, order);
+}
+
 export async function getEventsWithoutTotalCount(
 	network: string,
 	limit: number,

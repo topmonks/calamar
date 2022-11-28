@@ -24,6 +24,32 @@ export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	return extrinsics.data[0];
 }
 
+export async function getExtrinsicsByName(
+	network: string,
+	limit: number,
+	offset: number,
+	name: string,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+	let filter;
+
+	if (name.includes(".")) {
+		filter = {
+			call: {
+				name_eq: name
+			}
+		};
+	} else {
+		filter = {
+			call: {
+				name_startsWith: `${name}.`
+			}
+		};
+	}
+
+	return getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
+}
+
 export async function getExtrinsicsWithoutTotalCount(
 	network: string,
 	limit: number,
@@ -31,7 +57,7 @@ export async function getExtrinsicsWithoutTotalCount(
 	filter?: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql<{extrinsics: any}>(
+	const response = await fetchGraphql<{ extrinsics: any }>(
 		network,
 		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
 			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
@@ -94,7 +120,7 @@ export async function getExtrinsics(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{extrinsicsConnection: ArchiveConnection<any>}>(
+	const response = await fetchGraphql<{ extrinsicsConnection: ArchiveConnection<any> }>(
 		network,
 		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
