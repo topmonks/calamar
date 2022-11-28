@@ -2,6 +2,7 @@ import { ArchiveConnection } from "../model/archiveConnection";
 import { ItemsResponse } from "../model/itemsResponse";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { decodeMetadata } from "../utils/metadata";
+import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
 import { getLatestRuntimeSpec } from "./runtimeService";
@@ -41,11 +42,11 @@ export async function getExtrinsicsByName(
 	const metadata = decodeMetadata(runtimeSpec.hex);
 
 	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
-	const runtimeCalls = runtimePallet && metadata.lookup.getSiType(runtimePallet.calls.unwrap().type).def.asVariant.variants;
-	const runtimeCall = runtimeCalls?.find(it => it.name.toLowerCase() === call.toLowerCase());
+	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === call.toLowerCase());
 
-	pallet = runtimePallet?.name.toString() || pallet;
-	call = runtimeCall?.name.toString() || call;
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
+	call = runtimeCall?.name.toString() || (call && lowerFirst(call));
 
 	let filter;
 

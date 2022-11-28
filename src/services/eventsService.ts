@@ -1,6 +1,7 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { decodeMetadata } from "../utils/metadata";
+import { upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
 import { getLatestRuntimeSpec } from "./runtimeService";
@@ -54,11 +55,11 @@ export async function getEventsByName(
 	const metadata = decodeMetadata(runtimeSpec.hex);
 
 	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
-	const runtimeEvents = runtimePallet && metadata.lookup.getSiType(runtimePallet.events.unwrap().type).def.asVariant.variants;
-	const runtimeEvent = runtimeEvents?.find(it => it.name.toLowerCase() === event?.toLowerCase());
+	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === event.toLowerCase());
 
-	pallet = runtimePallet?.name.toString() || pallet;
-	event = runtimeEvent?.name.toString() || event;
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
+	event = runtimeEvent?.name.toString() || (event && upperFirst(event));
 
 	let filter;
 
