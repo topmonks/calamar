@@ -12,6 +12,11 @@ import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
+const avatarStyle = css`
+	vertical-align: text-bottom;
+	margin-right: 8px;
+`;
+
 type AccountPageParams = {
 	network: string;
 	address: string;
@@ -42,7 +47,7 @@ function AccountPage() {
 			<Card>
 				<CardHeader>
 					{account.data &&
-						<AccountAvatar address={address} size={32} />
+						<AccountAvatar address={address} size={32} css={avatarStyle} />
 					}
 					Account #{address}
 				</CardHeader>
