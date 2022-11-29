@@ -80,7 +80,7 @@ const copyButtonStyle = css`
 
 export type InfoTableAttributeProps<T> = {
 	name?: string;
-	label: string;
+	label: ReactNode | ((data: T) => ReactNode);
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
 	render: (data: T) => ReactNode;
@@ -107,7 +107,10 @@ export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttri
 	return (
 		<TableRow css={attributeStyle}>
 			<TableCell css={[labelCellStyle, labelCellStyleOverride]}>
-				{label}
+				{typeof label === "function"
+					? label(_data)
+					: label
+				}
 			</TableCell>
 			<TableCell css={[valueCellStyle, valueCellStyleOverride]}>
 				<div css={valueStyle}>

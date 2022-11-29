@@ -1,4 +1,5 @@
 import { Pagination } from "../../hooks/usePagination";
+import { getSignatureAddress } from "../../utils/signature";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
@@ -63,10 +64,10 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				<ItemsTableAttribute
 					label="Account"
 					render={(extrinsic) =>
-						extrinsic.signature?.address &&
+						extrinsic.signature &&
 							<AccountAddress
 								network={network}
-								address={extrinsic.signature.address}
+								address={getSignatureAddress(extrinsic.signature)}
 								shorten
 							/>
 					}

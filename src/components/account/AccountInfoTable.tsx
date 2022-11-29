@@ -1,3 +1,8 @@
+import { isEthereumAddress } from "@polkadot/util-crypto";
+
+import { useNetwork } from "../../hooks/useNetwork";
+import { encodeAddress } from "../../utils/formatAddress";
+
 import {InfoTable, InfoTableAttribute } from "../InfoTable";
 
 export type ExtrinsicInfoTableProps = {
@@ -11,6 +16,8 @@ export type ExtrinsicInfoTableProps = {
 export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 	const {network, data, loading, notFound, error} = props;
 
+	const networkData = useNetwork(network);
+
 	return (
 		<InfoTable
 			data={data}
@@ -20,17 +27,19 @@ export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 			error={error}
 		>
 			<InfoTableAttribute
-				label="Address"
-				render={(data) => data.networkEncodedAddress}
-				copyToClipboard={(data) => data.networkEncodedAddress}
+				label={`${networkData?.displayName} address`}
+				render={(data) => encodeAddress(network, data.address)}
+				copyToClipboard={(data) => encodeAddress(network, data.address)}
+				hide={(data) => isEthereumAddress(data.address)}
 			/>
 			<InfoTableAttribute
-				label="Address (42 prefix)"
-				render={(data) => data.networkEncodedAddress42}
-				copyToClipboard={(data) => data.networkEncodedAddress42}
+				label="Substrate address"
+				render={(data) => encodeAddress(network, data.address, 42)}
+				copyToClipboard={(data) => encodeAddress(network, data.address, 42)}
+				hide={(data) => isEthereumAddress(data.address)}
 			/>
 			<InfoTableAttribute
-				label="Raw address"
+				label={(data) => isEthereumAddress(data.address) ? "Address" : "Public key"}
 				render={(data) => data.address}
 				copyToClipboard={(data) => data.address}
 			/>

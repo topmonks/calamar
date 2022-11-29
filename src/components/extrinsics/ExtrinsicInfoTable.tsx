@@ -4,6 +4,7 @@ import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
+import { getSignatureAddress, getSignatureValue } from "../../utils/signature";
 
 import { AccountAddress } from "../AccountAddress";
 import DataViewer from "../DataViewer";
@@ -59,16 +60,16 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Account"
-				render={(data) => data.signature?.address &&
-					<AccountAddress network={network} address={data.signature.address} />
+				render={(data) => data.signature &&
+					<AccountAddress
+						network={network}
+						address={getSignatureAddress(data.signature)}
+					/>
 				}
-				copyToClipboard={(data) =>
-					encodeAddress(
-						network,
-						data.signature?.address
-					)
+				copyToClipboard={(data) => data.signature &&
+					encodeAddress(network, getSignatureAddress(data.signature))
 				}
-				hide={(data) => !data.signature?.address}
+				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute
 				label="Result"
@@ -114,7 +115,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 					<DataViewer
 						simple
 						network={network}
-						data={data.signature?.signature.value}
+						data={getSignatureValue(data.signature)}
 						copyToClipboard
 					/>
 				}
