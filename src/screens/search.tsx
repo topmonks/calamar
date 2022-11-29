@@ -22,6 +22,7 @@ import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 const queryStyle = css`
 	font-weight: normal;
+	word-break: break-all;
 
 	&::before {
 		content: open-quote;

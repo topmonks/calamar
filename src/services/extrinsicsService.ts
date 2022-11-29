@@ -32,23 +32,13 @@ export async function getExtrinsicsByName(
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
 	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
-	call = runtimeCall?.name.toString() || (call && lowerFirst(call));
+	call = runtimeCall?.name.toString() || lowerFirst(call);
 
-	let filter;
-
-	if (call) {
-		filter = {
-			call: {
-				name_eq: `${pallet}.${call}`
-			}
-		};
-	} else {
-		filter = {
-			call: {
-				name_startsWith: `${pallet}.`
-			}
-		};
-	}
+	const filter = {
+		call: {
+			name_eq: `${pallet}.${call}`
+		}
+	};
 
 	return getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
 }

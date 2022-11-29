@@ -1,4 +1,3 @@
-import { Theme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 export const Card = styled.div`
@@ -14,19 +13,19 @@ export const Card = styled.div`
 `;
 
 export const CardHeader = styled.div`
-	display: flex;
+	display: block;
 	padding-bottom: 48px;
 	align-items: center;
 
 	font-weight: 700;
 	font-size: 24px;
-	line-height: 33px;
+	line-height: 32px;
 
 	word-break: break-all;
 
-	gap: 8px;
-
 	[data-name=copy-button] {
-		margin-left: 8px;
+		vertical-align: text-bottom;
+		margin: 6px 0;
+		margin-left: 16px;
 	}
 `;

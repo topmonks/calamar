@@ -5,7 +5,6 @@ import { css } from "@emotion/react";
 const notFoundMessageStyle = css`
 	padding: 16px 0;
 	text-align: center;
-	line-height: 54px;
 `;
 
 export type NotFoundProps = {
