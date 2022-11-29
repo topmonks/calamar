@@ -48,7 +48,7 @@ export async function getEventsByName(
 	name: string,
 	order: EventsOrder = "id_DESC"
 ) {
-	let [pallet, event] = name.split(".");
+	let [pallet, event = ""] = name.split(".");
 
 	// try to fix casing according to latest runtime spec
 	const runtimeSpec = await getLatestRuntimeSpec(network);
@@ -59,19 +59,11 @@ export async function getEventsByName(
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
 	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
-	event = runtimeEvent?.name.toString() || (event && upperFirst(event));
+	event = runtimeEvent?.name.toString() || upperFirst(event);
 
-	let filter;
-
-	if (event) {
-		filter = {
-			name_eq: `${pallet}.${event}`
-		};
-	} else {
-		filter = {
-			name_startsWith: `${pallet}.`
-		};
-	}
+	const filter = {
+		name_eq: `${pallet}.${event}`
+	};
 
 	return getEventsWithoutTotalCount(network, limit, offset, filter, order);
 }
