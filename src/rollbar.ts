@@ -1,9 +1,9 @@
-import { Configuration } from "rollbar";
+import Rollbar, { Configuration } from "rollbar";
 
 import { config } from "./config";
 
 export const rollbarConfig: Configuration = {
-	accessToken: config.rollbar.accessToken,
+	accessToken: config.rollbar.accessToken || "dummy-token",
 	captureUncaught: true,
 	captureUnhandledRejections: true,
 	payload: {
@@ -21,3 +21,5 @@ export const rollbarConfig: Configuration = {
 	},
 	enabled: config.rollbar.enabled
 };
+
+export const rollbar = new Rollbar(rollbarConfig);

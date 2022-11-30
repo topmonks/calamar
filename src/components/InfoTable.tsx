@@ -34,7 +34,7 @@ const attributeStyle = css`
 	}
 `;
 
-const labelStyle = (theme: Theme) => css`
+const labelCellStyle = (theme: Theme) => css`
 	width: 200px;
 	padding-left: 0;
 	font-weight: 700;
@@ -47,78 +47,105 @@ const labelStyle = (theme: Theme) => css`
 	}
 `;
 
-const valueStyle = (theme: Theme) => css`
+const valueCellStyle = (theme: Theme) => css`
 	word-break: break-all;
 	padding-right: 0;
-
-	> img:only-child {
-		display: block;
-	}
-
-	> .MuiChip-root:only-child {
-		display: flex;
-	}
 
 	${theme.breakpoints.down("sm")} {
 		padding-left: 0;
 	}
 `;
 
+const valueStyle = css`
+	display: flex;
 
-export type InfoTableAttributeProps<T> = {
+	> img:only-child {
+		display: block;
+	}
+
+	> .MuiButton-root:only-child {
+		&.MuiButton-sizeSmall {
+			margin: -4px 0;
+		}
+	}
+
+	> .MuiChip-root:only-child {
+		display: flex;
+	}
+`;
+
+const copyButtonStyle = css`
+	margin-left: 16px;
+`;
+
+type InfoTableGetter<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
+
+export type InfoTableAttributeProps<T, A extends any[]> = {
 	name?: string;
-	label: string;
+	label: ReactNode | InfoTableGetter<T, A, ReactNode>;
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
-	render: (data: T) => ReactNode;
-	copyToClipboard?: (data: T) => string;
-	hide?: (data: T) => boolean;
+	render: InfoTableGetter<T, A, ReactNode>;
+	copyToClipboard?: InfoTableGetter<T, A, string|undefined>;
+	hide?: InfoTableGetter<T, A, boolean>;
 	_data?: T;
+	_additionalData?: A;
 }
 
-export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttributeProps<T>) => {
+export const InfoTableAttribute = <T extends object = any, A extends any[] = []>(props: InfoTableAttributeProps<T, A>) => {
 	const {
 		label,
-		labelCss: labelStyleOverride,
-		valueCss: valueStyleOverride,
+		labelCss: labelCellStyleOverride,
+		valueCss: valueCellStyleOverride,
 		render,
 		copyToClipboard,
 		hide,
-		_data
+		_data,
+		_additionalData = [] as any
 	} = props;
 
-	if (!_data || hide?.(_data)) {
+	if (!_data || hide?.(_data, ..._additionalData)) {
 		return null;
 	}
 
 	return (
 		<TableRow css={attributeStyle}>
-			<TableCell css={[labelStyle, labelStyleOverride]}>
-				{label}
-			</TableCell>
-			<TableCell css={[valueStyle, valueStyleOverride]}>
-				{render?.(_data)}
-				{copyToClipboard?.(_data) &&
-					<CopyToClipboardButton value={copyToClipboard(_data)} />
+			<TableCell css={[labelCellStyle, labelCellStyleOverride]}>
+				{typeof label === "function"
+					? label(_data, ..._additionalData)
+					: label
 				}
+			</TableCell>
+			<TableCell css={[valueCellStyle, valueCellStyleOverride]}>
+				<div css={valueStyle}>
+					{render?.(_data, ..._additionalData)}
+					{copyToClipboard?.(_data, ..._additionalData) &&
+						<CopyToClipboardButton
+							css={copyButtonStyle}
+							value={copyToClipboard(_data, ..._additionalData)}
+						/>
+					}
+				</div>
 			</TableCell>
 		</TableRow>
 	);
 };
 
-export type InfoTableProps<T> = {
-	data: any;
+export type InfoTableProps<T extends object, A extends any[] = []> = {
+	data: T;
+	additionalData?: A;
 	loading?: boolean;
 	notFound?: boolean;
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
-	children: ReactElement<InfoTableAttributeProps<T>>|(ReactElement<InfoTableAttributeProps<T>>|false|undefined|null)[];
+	children: ReactElement<InfoTableAttributeProps<T, A>>|(ReactElement<InfoTableAttributeProps<T, A>>|false|undefined|null)[];
 };
 
-export const InfoTable = <T extends object>(props: InfoTableProps<T>) => {
+export const InfoTable = <T extends object, A extends any[] = []>(props: InfoTableProps<T, A>) => {
 	const {
 		data,
+		additionalData,
 		loading,
 		notFound,
 		notFoundMessage = "No item found",
@@ -151,7 +178,10 @@ export const InfoTable = <T extends object>(props: InfoTableProps<T>) => {
 				{data &&
 					<TableBody>
 						{Children.map(children, (child) =>
-							child && cloneElement(child, {_data: data}))
+							child && cloneElement(child, {
+								_data: data,
+								_additionalData: additionalData
+							}))
 						}
 					</TableBody>
 				}

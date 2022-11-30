@@ -13,7 +13,10 @@ const formGroupStyle = css`
 	flex-wrap: nowrap;
 `;
 
-const networkSelectStyle = (variant: string) => (theme: Theme) => css`
+const networkSelectStyle = (theme: Theme) => css`
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+
 	&, &:hover, &.Mui-focused {
 		.MuiOutlinedInput-notchedOutline {
 			border-color: #c4cdd5;
@@ -21,83 +24,15 @@ const networkSelectStyle = (variant: string) => (theme: Theme) => css`
 		}
 	}
 
-	${["1", "2"].includes(variant) && css`
-		&::before,
-		&::after {
-			position: absolute;
-			content: '';
-			display: block;
-			width: 1px;
-			height: 24px;
-			background-color: #c4cdd5;
-			z-index: 10;
-		}
-	`}
-
-	${["3", "4"].includes(variant) && css`
-		.MuiSelect-select {
-			> * {
-				position: relative;
-				z-index: 10;
-			}
-
-			&::before,
-			&::after {
-				position: absolute;
-				content: '';
-				display: block;
-				height: 32px;
-				left: 8px;
-				right: 8px;
-				background-color: #dedede;
-				z-index: 0;
-				border-radius: 6px;
-			}
-		}
-
-		.MuiSelect-icon {
-			right: 12px;
-		}
-
-		.MuiListItemIcon-root {
-			min-width: 30px;
-
-			img {
-				width: 20px;
-				height: 20px;
-			}
-		}
-	`}
-
-	&::before {
-		left: 0;
-	}
-
 	&::after {
+		position: absolute;
 		right: 0;
-	}
-
-	&:first-child {
-		&::before {
-			display: none;
-		}
-
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-	}
-
-	&:not(:first-child) {
-		&.MuiInputBase-root {
-			border-radius: 0;
-		}
-
-		.MuiOutlinedInput-notchedOutline {
-			border-left: none;
-		}
-
-		&::after {
-			display: none;
-		}
+		content: '';
+		display: block;
+		width: 1px;
+		height: 24px;
+		background-color: #c4cdd5;
+		z-index: 10;
 	}
 
 	${theme.breakpoints.down("sm")} {
@@ -218,19 +153,14 @@ function SearchInput(props: SearchInputProps) {
 		onNetworkChange?.(network);
 	}, [onNetworkChange, network]);
 
-	// TODO this is temporary until resolved
-	const searchInputVariant = qs.get("search-input-variant") || "1";
-
 	return (
 		<form {...restProps} onSubmit={handleSubmit}>
 			<FormGroup row css={formGroupStyle}>
-				{["1", "3"].includes(searchInputVariant) &&
-					<NetworkSelect
-						css={networkSelectStyle(searchInputVariant)}
-						onChange={handleNetworkSelect}
-						value={network}
-					/>
-				}
+				<NetworkSelect
+					css={networkSelectStyle}
+					onChange={handleNetworkSelect}
+					value={network}
+				/>
 				<TextField
 					css={textFieldStyle}
 					fullWidth
@@ -239,13 +169,6 @@ function SearchInput(props: SearchInputProps) {
 					placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
 					value={search}
 				/>
-				{["2", "4"].includes(searchInputVariant) &&
-					<NetworkSelect
-						css={networkSelectStyle(searchInputVariant)}
-						onChange={handleNetworkSelect}
-						value={network}
-					/>
-				}
 				<Button
 					css={buttonStyle}
 					onClick={handleSubmit}

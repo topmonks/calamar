@@ -29,6 +29,9 @@ export async function getBlocks(
 					timestamp
 					parentHash
 					validator
+					spec {
+						specVersion
+					}
 				}
 			}
 		`,

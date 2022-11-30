@@ -1,10 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useMemo } from "react";
-import { capitalize, ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
+import { ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { useArchives } from "../hooks/useArchives";
 import { useNetworks } from "../hooks/useNetworks";
+import { upperFirst } from "../utils/string";
 
 const selectStyle = css`
 	&.MuiInputBase-root {
@@ -63,11 +64,9 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 		return archives.map((archive) => {
 			const network = networks.find((network) => network.name === archive.network);
 
-			const label = network?.displayName.replace(/ relay chain/i, "") || capitalize(archive.network);
-
 			return {
 				value: archive.network,
-				label
+				label: network?.displayName || upperFirst(archive.network)
 			};
 		});
 	}, [archives, networks]);

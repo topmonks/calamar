@@ -1,42 +1,35 @@
-import { ReactNode } from "react";
+import { PaginatedResource } from "../../model/paginatedResource";
+import { getSignatureAddress } from "../../utils/signature";
 
-import { Pagination } from "../../hooks/usePagination";
-import { encodeAddress } from "../../utils/formatAddress";
-import { shortenHash } from "../../utils/shortenHash";
-
+import { AccountAddress } from "../AccountAddress";
+import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type ExtrinsicsTableProps = {
 	network: string;
-	items: any[];
-	pagination: Pagination;
+	extrinsics: PaginatedResource<any>,
+	showAccount?: boolean;
 	showTime?: boolean;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
 };
 
 function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 	const {
 		network,
-		items,
-		pagination,
+		extrinsics,
+		showAccount,
 		showTime,
-		loading,
-		notFound,
-		error
 	} = props;
 
 	return (
 		<ItemsTable
-			items={items}
-			loading={loading}
-			notFound={notFound}
+			data={extrinsics.data}
+			loading={extrinsics.loading}
+			notFound={extrinsics.notFound}
 			notFoundMessage="No extrinsics found"
-			error={error}
-			pagination={pagination}
+			error={extrinsics.error}
+			pagination={extrinsics.pagination}
 			data-test="extrinsics-table"
 		>
 			<ItemsTableAttribute
@@ -49,22 +42,29 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			/>
 			<ItemsTableAttribute
 				label="Name"
-				render={(extrinsic) => extrinsic.call.name}
-			/>
-			<ItemsTableAttribute
-				label="Account"
 				render={(extrinsic) =>
-					<Link
-						to={`/${network}/account/${extrinsic.signature?.address}`}
+					<ButtonLink
+						to={`/${network}/search?query=${extrinsic.call.name}`}
+						size="small"
+						color="secondary"
 					>
-						{shortenHash(
-							(network &&
-								encodeAddress(network, extrinsic.signature?.address)) ||
-							extrinsic.signature?.address
-						)}
-					</Link>
+						{extrinsic.call.name}
+					</ButtonLink>
 				}
 			/>
+			{showAccount &&
+				<ItemsTableAttribute
+					label="Account"
+					render={(extrinsic) =>
+						extrinsic.signature &&
+							<AccountAddress
+								network={network}
+								address={getSignatureAddress(extrinsic.signature)}
+								shorten
+							/>
+					}
+				/>
+			}
 			{showTime &&
 				<ItemsTableAttribute
 					label="Time"

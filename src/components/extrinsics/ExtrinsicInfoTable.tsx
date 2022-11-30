@@ -1,34 +1,44 @@
+import { Chip } from "@mui/material";
+
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
+import { getSignatureAddress, getSignatureValue } from "../../utils/signature";
 
+import { AccountAddress } from "../AccountAddress";
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
-import { Chip } from "@mui/material";
+import { ButtonLink } from "../ButtonLink";
+
+import { DecodedMetadata } from "../../model/decodedMetadata";
+import { Resource } from "../../model/resource";
+import { RuntimeSpec } from "../../model/runtimeSpec";
+import { getCallMetadataByName } from "../../utils/queryMetadata";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	extrinsic: Resource;
+	runtimeSpecs: Resource<RuntimeSpec[]>;
 }
 
+const ExtrinsicInfoTableAttribute = InfoTableAttribute<any, [DecodedMetadata]>;
+
 export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, extrinsic, runtimeSpecs} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={extrinsic.data}
+			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
+			loading={extrinsic.loading || runtimeSpecs.loading}
+			notFound={extrinsic.notFound}
 			notFoundMessage="No extrinsic found"
-			error={error}
+			error={extrinsic.error}
 		>
-			<InfoTableAttribute
+			<ExtrinsicInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.block.timestamp} timezone utc />
@@ -49,27 +59,23 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				label="Block"
 				render={(data) =>
 					<Link to={`/${network}/block/${data.block.id}`}>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.id}
+				copyToClipboard={(data) => data.block.height}
 			/>
 			<InfoTableAttribute
 				label="Account"
-				render={(data) => data.signature?.address &&
-					<Link
-						to={`/${network}/account/${data.signature.address}`}
-					>
-						{encodeAddress(network, data.signature?.address) || data.signature?.address}
-					</Link>
+				render={(data) => data.signature &&
+					<AccountAddress
+						network={network}
+						address={getSignatureAddress(data.signature)}
+					/>
 				}
-				copyToClipboard={(data) =>
-					encodeAddress(
-						network,
-						data.signature?.address
-					) || data.signature?.address
+				copyToClipboard={(data) => data.signature &&
+					encodeAddress(network, getSignatureAddress(data.signature))
 				}
-				hide={(data) => !data.signature?.address}
+				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute
 				label="Result"
@@ -83,17 +89,30 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Name"
-				render={(data) => data.call.name}
-			/>
-			<InfoTableAttribute
-				label="Parameters"
 				render={(data) =>
-					<ParamsTable args={data.call.args} />
+					<ButtonLink
+						to={`/${network}/search?query=${data.call.name}`}
+						size="small"
+						color="secondary"
+					>
+						{data.call.name}
+					</ButtonLink>
+				}
+			/>
+			<ExtrinsicInfoTableAttribute
+				label="Parameters"
+				render={(data, metadata) =>
+					<DataViewer
+						network={network}
+						data={data.call.args}
+						metadata={metadata && getCallMetadataByName(metadata, data.call.name)?.args}
+						copyToClipboard
+					/>
 				}
 			/>
 			<InfoTableAttribute
 				label="Error"
-				render={(data) => <ParamsTable args={data.error} />}
+				render={(data) => <DataViewer network={network} data={data.error} copyToClipboard />}
 				hide={(data) => !data.error}
 			/>
 			<InfoTableAttribute
@@ -103,8 +122,14 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Signature"
-				render={(data) => data.signature?.signature.value}
-				copyToClipboard={(data) => data.signature?.signature.value}
+				render={(data) =>
+					<DataViewer
+						simple
+						network={network}
+						data={getSignatureValue(data.signature)}
+						copyToClipboard
+					/>
+				}
 				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute

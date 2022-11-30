@@ -1,27 +1,26 @@
+import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
+import { AccountAddress } from "../AccountAddress";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type BlockInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	block: Resource<any>;
 }
 
 export const BlockInfoTable = (props: BlockInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, block} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={block.data}
+			loading={block.loading}
+			notFound={block.notFound}
 			notFoundMessage="No block found"
-			error={error}
+			error={block.error}
 		>
 			<InfoTableAttribute
 				label="Timestamp"
@@ -58,12 +57,14 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			<InfoTableAttribute
 				label="Validator"
 				render={(data) => data.validator &&
-					<Link to={`/${network}/account/${data.validator}`}>
-						{encodeAddress(network, data.validator) || data.validator}
-					</Link>
+					<AccountAddress network={network} address={data.validator} />
 				}
-				copyToClipboard={(data) => data.validator}
+				copyToClipboard={(data) => encodeAddress(network, data.validator)}
 				hide={(data) => !data.validator}
+			/>
+			<InfoTableAttribute
+				label="Spec version"
+				render={(data) => data.spec.specVersion}
 			/>
 		</InfoTable>
 

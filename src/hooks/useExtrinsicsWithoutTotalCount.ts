@@ -1,7 +1,7 @@
 import { FetchOptions } from "../model/fetchOptions";
 import { ExtrinsicsFilter, ExtrinsicsOrder, getExtrinsicsWithoutTotalCount } from "../services/extrinsicsService";
 
-import { useItems } from "./useItems";
+import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useExtrinsicsWithoutTotalCount(
 	network: string | undefined,
@@ -9,5 +9,5 @@ export function useExtrinsicsWithoutTotalCount(
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	return useItems(getExtrinsicsWithoutTotalCount, network, filter, order, options);
+	return usePaginatedResource(getExtrinsicsWithoutTotalCount, network, filter, order, options);
 }

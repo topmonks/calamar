@@ -1,7 +1,7 @@
 import { FetchOptions } from "../model/fetchOptions";
 import { EventsFilter, EventsOrder, getEventsWithoutTotalCount } from "../services/eventsService";
 
-import { useItems } from "./useItems";
+import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useEventsWithoutTotalCount(
 	network: string | undefined,
@@ -9,5 +9,5 @@ export function useEventsWithoutTotalCount(
 	order?: EventsOrder,
 	options?: FetchOptions
 ) {
-	return useItems(getEventsWithoutTotalCount, network, filter, order, options);
+	return usePaginatedResource(getEventsWithoutTotalCount, network, filter, order, options);
 }

@@ -1,6 +1,11 @@
-import { createTheme } from "@mui/material";
+import { alpha, createTheme, darken, lighten } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { css } from "@emotion/react";
+
+const customColors = {
+	//neutral: "#e9e9e9"
+	neutral: "#dddddd"
+};
 
 export const theme = createTheme({
 	palette: {
@@ -12,6 +17,13 @@ export const theme = createTheme({
 			main: "#14a1c0",
 			contrastText: "#ffffff"
 		},
+		neutral: {
+			main: customColors.neutral,
+			dark: darken(customColors.neutral, 0.1),
+			light: lighten(customColors.neutral, 0.1),
+			contrastText: "rgba(0, 0, 0, 0.7)"
+			//contrastText: "#ffffff"
+		}
 	},
 	typography: {
 		fontFamily: "\"Open Sans\", sans-serif",
@@ -27,17 +39,123 @@ export const theme = createTheme({
 				root: ({theme}) => css`
 					font-weight: 700;
 					font-family: "Google Sans", sans-serif;
-					color: ${theme.palette.secondary.main}
+					color: ${theme.palette.secondary.main};
 				`
 			}
 		},
 		MuiButton: {
 			defaultProps: {
+				color: "neutral",
 				disableElevation: true,
 			},
+			variants: [
+				{
+					props: {color: "neutral", variant: "text"},
+					style: ({theme}) => css`
+						color: ${alpha(theme.palette.neutral.contrastText, .6)};
+						background-color: ${alpha(theme.palette.neutral.main, .15)};
+
+						&:hover {
+							background-color: ${alpha(theme.palette.neutral.main, .45)};
+						}
+					`
+				}
+			],
 			styleOverrides: {
 				root: css`
 					padding: 6px 32px;
+				`,
+				sizeSmall: css`
+					padding: 2px 10px;
+					font-size: 16px;
+					font-weight: 400;
+				`,
+				text: ({theme, ownerState}) => css`
+					${ownerState.color && ownerState.color !== "inherit" && css`
+						${ownerState.size === "small" && css`
+							color: ${theme.palette[ownerState.color].dark};
+						`}
+
+						background-color: ${alpha(theme.palette[ownerState.color].main, .075)};
+
+						&:hover {
+							background-color: ${alpha(theme.palette[ownerState.color].main, .15)};
+						}
+					`}
+				`
+			}
+		},
+		MuiToggleButton: {
+			styleOverrides: {
+				root: ({ownerState}) => {
+					const color = (!ownerState.color || ownerState.color === "standard") ? "neutral" : ownerState.color;
+					return css`
+						border: none;
+						background-color: ${theme.palette.neutral.main};
+						padding: 6px 32px;
+
+						&:hover {
+							background-color: ${darken(theme.palette[color].main, 0.1)}
+						}
+					`;
+				},
+				selected: ({theme, ownerState}) => {
+					const color = (!ownerState.color || ownerState.color === "standard") ? "neutral" : ownerState.color;
+					return css`
+						background-color: ${theme.palette[color].main};
+
+						&:hover {
+							background-color: ${darken(theme.palette[color].main, 0.2)}
+						}
+					`;
+				}
+			}
+		},
+		MuiIconButton: {
+			styleOverrides: {
+				root: css`
+					padding: 4px;
+					border-radius: 4px;
+
+					> svg {
+						display: block;
+					}
+				`
+			}
+		},
+		MuiButtonGroup: {
+			defaultProps: {
+				disableElevation: true,
+			}
+		},
+		MuiToggleButtonGroup: {
+			styleOverrides: {
+				root: ({theme, ownerState}) => {
+					const color = (!ownerState.color || ownerState.color === "standard") ? "neutral" : ownerState.color;
+					return css`
+						.MuiButtonBase-root {
+							background-color: ${theme.palette.neutral.main};
+
+							&:hover {
+								background-color: ${darken(theme.palette.neutral.main, 0.05)};
+							}
+
+							&.Mui-selected {
+								color: ${theme.palette[color].contrastText};
+								background-color: ${color === "neutral" ? theme.palette.neutral.dark : theme.palette[color].main};
+
+								&:hover {
+									background-color: ${color === "neutral" ? theme.palette.neutral.dark : theme.palette[color].main};
+								}
+							}
+						}
+					`;
+				},
+				grouped: css`
+					&:not(:first-of-type) {
+						border-left: none;
+						margin-left: 0;
+					}
 				`
 			}
 		},
@@ -147,13 +265,17 @@ export const theme = createTheme({
 			styleOverrides: {
 				root: css`
 					border: none;
-					height: 24px;
+					height: auto;
 					font-size: 16px;
 					justify-content: flex-start;
 				`,
 				icon: css`
 					margin-left: 0;
 					margin-right: -4px;
+				`,
+				label: css`
+					padding-right: 0;
+					white-space: normal;
 				`
 			}
 		}

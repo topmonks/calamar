@@ -11,6 +11,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 type ExtrinsicPageParams = {
 	network: string;
@@ -24,7 +25,12 @@ function ExtrinsicPage() {
 	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
 	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
 
-	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
+	const specVersion = extrinsic.data?.block.spec.specVersion;
+	const runtimeSpecs = useRuntimeSpecs(network, specVersion ? [specVersion] : [], {
+		waitUntil: extrinsic.loading
+	});
+
+	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading && !runtimeSpecs.loading);
 
 	return (
 		<>
@@ -33,9 +39,13 @@ function ExtrinsicPage() {
 					Extrinsic #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
-				<ExtrinsicInfoTable network={network} {...extrinsic} />
+				<ExtrinsicInfoTable
+					network={network}
+					extrinsic={extrinsic}
+					runtimeSpecs={runtimeSpecs}
+				/>
 			</Card>
-			{extrinsic.data &&
+			{extrinsic.data && !runtimeSpecs.loading &&
 				<Card>
 					<TabbedContent>
 						<TabPane
@@ -45,7 +55,11 @@ function ExtrinsicPage() {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} {...events} />
+							<EventsTable
+								network={network}
+								events={events}
+								runtimeSpecs={runtimeSpecs}
+							/>
 						</TabPane>
 						<TabPane
 							label="Calls"
@@ -54,7 +68,7 @@ function ExtrinsicPage() {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} {...calls} />
+							<CallsTable network={network} calls={calls} />
 						</TabPane>
 					</TabbedContent>
 				</Card>

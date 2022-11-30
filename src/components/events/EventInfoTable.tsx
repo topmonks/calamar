@@ -1,26 +1,30 @@
+import { Resource } from "../../model/resource";
+import { RuntimeSpec } from "../../model/runtimeSpec";
+import { getEventMetadataByName } from "../../utils/queryMetadata";
+
+import { ButtonLink } from "../ButtonLink";
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import ParamsTable from "../ParamsTable";
 
 export type EventInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	event: Resource<any>;
+	runtimeSpecs: Resource<RuntimeSpec[]>;
 }
 
 export const EventInfoTable = (props: EventInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, event, runtimeSpecs} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={event.data}
+			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
+			loading={event.loading || runtimeSpecs.loading}
+			notFound={event.notFound}
 			notFoundMessage="No event found"
-			error={error}
+			error={event.error}
 		>
 			<InfoTableAttribute
 				label="Timestamp"
@@ -40,7 +44,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 					<Link
 						to={`/${network}/block/${data.block.id}`}
 					>
-						{data.block.id}
+						{data.block.height}
 					</Link>
 				}
 				copyToClipboard={(data) => data.block.height}
@@ -69,13 +73,27 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Name"
-				render={(data) => data.name}
+				render={(data) =>
+					<ButtonLink
+						to={`/${network}/search?query=${data.name}`}
+						size="small"
+						color="secondary"
+					>
+						{data.name}
+					</ButtonLink>
+				}
 			/>
 			<InfoTableAttribute
 				label="Parameters"
-				render={(data) =>
-					<ParamsTable args={data.args} />
+				render={(data, metadata) =>
+					<DataViewer
+						network={network}
+						data={data.args}
+						metadata={metadata && getEventMetadataByName(metadata, data.name)?.args}
+						copyToClipboard
+					/>
 				}
+				hide={(data) => !data.args}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

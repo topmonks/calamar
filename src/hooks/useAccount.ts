@@ -1,12 +1,12 @@
 import { FetchOptions } from "../model/fetchOptions";
 import { getAccount } from "../services/accountService";
 
-import { useItem } from "./useItem";
+import { useResource } from "./useResource";
 
 export function useAccount(
 	network: string | undefined,
 	address: string,
 	options?: FetchOptions
 ) {
-	return useItem(getAccount, network, address, options);
+	return useResource(getAccount, network, address, options);
 }
