@@ -1,30 +1,28 @@
 import { isEthereumAddress } from "@polkadot/util-crypto";
 
 import { useNetwork } from "../../hooks/useNetwork";
+import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
 import {InfoTable, InfoTableAttribute } from "../InfoTable";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	account: Resource<any>;
 }
 
 export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, account} = props;
 
 	const networkData = useNetwork(network);
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
-			notFoundMessage="No account found"
-			error={error}
+			data={account.data}
+			loading={account.loading}
+			notFound={account.notFound}
+			notFoundMessage="Account doesn't exist or haven't signed any extrinsic"
+			error={account.error}
 		>
 			<InfoTableAttribute
 				label={`${networkData?.displayName} address`}

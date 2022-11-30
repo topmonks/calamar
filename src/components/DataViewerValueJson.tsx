@@ -4,6 +4,10 @@ import { css, Theme } from "@emotion/react";
 
 import { CollapsibleRef, CollapsibleValue } from "./CollapsibleValue";
 
+const wrapperStyle = css`
+	font-size: 14px;
+`;
+
 const objectContentStyle = css`
 	padding-left: 32px;
 	border-left: dotted 1px rgba(0, 0, 0, .125);
@@ -99,7 +103,7 @@ const KeyValue = (props: KeyValueProps) => {
 					: <span css={stringKeyStyle}>&quot;{name}&quot;: </span>
 				}
 			</span>
-			<DataViewerValueJson value={value} ref={collapseRef} depth={depth} />
+			<DataViewerValueJsonInner value={value} ref={collapseRef} depth={depth} />
 			{!isLast && <span css={hiddenStyle}>,</span>}
 		</div>
 	);
@@ -110,7 +114,7 @@ export type DataViewerValueJsonProps = {
 	depth?: number;
 };
 
-export const DataViewerValueJson = forwardRef<CollapsibleRef, DataViewerValueJsonProps>((props, ref) => {
+export const DataViewerValueJsonInner = forwardRef<CollapsibleRef, DataViewerValueJsonProps>((props, ref) => {
 	const { value, depth = 0 } = props;
 
 	if (Array.isArray(value)) {
@@ -172,7 +176,15 @@ export const DataViewerValueJson = forwardRef<CollapsibleRef, DataViewerValueJso
 		return <span css={numberValueStyle}>{value}</span>;
 	}
 
-	return <span css={otherValueStyle}>{value}</span>;
+	return <span css={otherValueStyle}>{`${value}`}</span>;
 });
 
-DataViewerValueJson.displayName = "ParamsValueJson";
+DataViewerValueJsonInner.displayName = "DataViewerValueJsonInner";
+
+export const DataViewerValueJson = (props: DataViewerValueJsonProps) => {
+	return (
+		<div css={wrapperStyle}>
+			<DataViewerValueJsonInner {...props} />
+		</div>
+	);
+};

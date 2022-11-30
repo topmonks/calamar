@@ -13,6 +13,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 type BlockPageParams = {
 	network: string;
@@ -24,27 +25,17 @@ function BlockPage() {
 
 	const block = useBlock(network, { id_eq: id });
 
-	const extrinsics = useExtrinsics(
-		network,
-		{ block: { id_eq: id } },
-		"id_DESC"
-	);
+	const extrinsics = useExtrinsics(network, { block: { id_eq: id } }, "id_DESC");
+	const events = useEvents(network, { block: { id_eq: id } }, "id_DESC");
+	const calls = useCalls(network, { block: { id_eq: id } }, "id_DESC");
 
-	console.log("EX", extrinsics);
+	const specVersion = block.data?.spec.specVersion;
+	const runtimeSpecs = useRuntimeSpecs(network, specVersion ? [specVersion] : [], {
+		waitUntil: block.loading
+	});
 
-	const events = useEvents(
-		network,
-		{ block: { id_eq: id } },
-		"id_DESC"
-	);
 
-	const calls = useCalls(
-		network,
-		{ block: { id_eq: id } },
-		"id_DESC"
-	);
-
-	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
+	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading && !runtimeSpecs.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -60,9 +51,9 @@ function BlockPage() {
 					Block #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
-				<BlockInfoTable network={network} {...block} />
+				<BlockInfoTable network={network} block={block} />
 			</Card>
-			{block.data &&
+			{block.data && !runtimeSpecs.loading &&
 				<Card>
 					<TabbedContent>
 						<TabPane
@@ -72,7 +63,7 @@ function BlockPage() {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} {...extrinsics} showAccount />
+							<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount />
 						</TabPane>
 						<TabPane
 							label="Calls"
@@ -81,7 +72,7 @@ function BlockPage() {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} {...calls} />
+							<CallsTable network={network} calls={calls} />
 						</TabPane>
 						<TabPane
 							label="Events"
@@ -90,7 +81,7 @@ function BlockPage() {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} {...events} showExtrinsic />
+							<EventsTable network={network} events={events} runtimeSpecs={runtimeSpecs} showExtrinsic />
 						</TabPane>
 					</TabbedContent>
 				</Card>

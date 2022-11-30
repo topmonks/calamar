@@ -78,18 +78,21 @@ const copyButtonStyle = css`
 	margin-left: 16px;
 `;
 
-export type InfoTableAttributeProps<T> = {
+type InfoTableGetter<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
+
+export type InfoTableAttributeProps<T, A extends any[]> = {
 	name?: string;
-	label: ReactNode | ((data: T) => ReactNode);
+	label: ReactNode | InfoTableGetter<T, A, ReactNode>;
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
-	render: (data: T) => ReactNode;
-	copyToClipboard?: (data: T) => string|undefined;
-	hide?: (data: T) => boolean;
+	render: InfoTableGetter<T, A, ReactNode>;
+	copyToClipboard?: InfoTableGetter<T, A, string|undefined>;
+	hide?: InfoTableGetter<T, A, boolean>;
 	_data?: T;
+	_additionalData?: A;
 }
 
-export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttributeProps<T>) => {
+export const InfoTableAttribute = <T extends object = any, A extends any[] = []>(props: InfoTableAttributeProps<T, A>) => {
 	const {
 		label,
 		labelCss: labelCellStyleOverride,
@@ -97,10 +100,11 @@ export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttri
 		render,
 		copyToClipboard,
 		hide,
-		_data
+		_data,
+		_additionalData = [] as any
 	} = props;
 
-	if (!_data || hide?.(_data)) {
+	if (!_data || hide?.(_data, ..._additionalData)) {
 		return null;
 	}
 
@@ -108,17 +112,17 @@ export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttri
 		<TableRow css={attributeStyle}>
 			<TableCell css={[labelCellStyle, labelCellStyleOverride]}>
 				{typeof label === "function"
-					? label(_data)
+					? label(_data, ..._additionalData)
 					: label
 				}
 			</TableCell>
 			<TableCell css={[valueCellStyle, valueCellStyleOverride]}>
 				<div css={valueStyle}>
-					{render?.(_data)}
-					{copyToClipboard?.(_data) &&
+					{render?.(_data, ..._additionalData)}
+					{copyToClipboard?.(_data, ..._additionalData) &&
 						<CopyToClipboardButton
 							css={copyButtonStyle}
-							value={copyToClipboard(_data)}
+							value={copyToClipboard(_data, ..._additionalData)}
 						/>
 					}
 				</div>
@@ -127,19 +131,21 @@ export const InfoTableAttribute = <T extends object = any>(props: InfoTableAttri
 	);
 };
 
-export type InfoTableProps<T> = {
-	data: any;
+export type InfoTableProps<T extends object, A extends any[] = []> = {
+	data: T;
+	additionalData?: A;
 	loading?: boolean;
 	notFound?: boolean;
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
-	children: ReactElement<InfoTableAttributeProps<T>>|(ReactElement<InfoTableAttributeProps<T>>|false|undefined|null)[];
+	children: ReactElement<InfoTableAttributeProps<T, A>>|(ReactElement<InfoTableAttributeProps<T, A>>|false|undefined|null)[];
 };
 
-export const InfoTable = <T extends object>(props: InfoTableProps<T>) => {
+export const InfoTable = <T extends object, A extends any[] = []>(props: InfoTableProps<T, A>) => {
 	const {
 		data,
+		additionalData,
 		loading,
 		notFound,
 		notFoundMessage = "No item found",
@@ -172,7 +178,10 @@ export const InfoTable = <T extends object>(props: InfoTableProps<T>) => {
 				{data &&
 					<TableBody>
 						{Children.map(children, (child) =>
-							child && cloneElement(child, {_data: data}))
+							child && cloneElement(child, {
+								_data: data,
+								_additionalData: additionalData
+							}))
 						}
 					</TableBody>
 				}

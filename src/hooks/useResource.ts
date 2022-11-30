@@ -2,9 +2,10 @@ import { useRollbar } from "@rollbar/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FetchOptions } from "../model/fetchOptions";
+import { Resource } from "../model/resource";
 import { GraphQLError } from "../utils/fetchGraphql";
 
-export function useItem<T = any, F = any>(
+export function useResource<T = any, F = any>(
 	fetchItem: (network: string, filter: F) => T|Promise<T>,
 	network: string | undefined,
 	filter: F,
@@ -17,8 +18,8 @@ export function useItem<T = any, F = any>(
 	const [error, setError] = useState<any>();
 
 	const fetchData = useCallback(async () => {
-		if (!network) {
-			// don't do anything until network is set
+		if (!network || options?.waitUntil) {
+			// wait until all required condition are met
 			return;
 		}
 
@@ -37,7 +38,7 @@ export function useItem<T = any, F = any>(
 		}
 
 		setLoading(false);
-	}, [fetchItem, network, JSON.stringify(filter), options?.skip]);
+	}, [fetchItem, network, JSON.stringify(filter), options?.waitUntil, options?.skip]);
 
 	useEffect(() => {
 		setData(undefined);
@@ -50,10 +51,10 @@ export function useItem<T = any, F = any>(
 		() => ({
 			data,
 			loading,
-			refetch: fetchData,
 			notFound: !loading && !error && !data,
-			error
-		}),
+			error,
+			refetch: fetchData
+		}) as Resource<T>,
 		[data, loading, error, fetchData]
 	);
 }

@@ -1,12 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
-import { isAddress } from "@polkadot/util-crypto";
 
-import { useAccount } from "../hooks/useAccount";
+import { DecodedArg } from "../model/decodedMetadata";
+import { assert } from "../utils/assert";
+import { noCase } from "../utils/string";
 
 import { AccountAddress } from "./AccountAddress";
 import CopyToClipboardButton from "./CopyToClipboardButton";
+
+// found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51
+const ADDRESS_TYPES = ["AccountId", "AccountId20", "AccountId32", "Address", "LookupSource", "MultiAddress"];
 
 const valueTableStyle = css`
 	width: fit-content;
@@ -71,42 +75,114 @@ const copyButtonStyle = css`
 	margin-left: 12px;
 `;
 
-type MaybeAccountLinkValueProps = {
+type ValueOfKindProps = {
 	network: string;
-	value: string;
+	value: {
+		__kind: string,
+		value: any;
+	};
+	metadata?: DecodedArg;
 }
 
-const MaybeAccountLinkValue = (props: MaybeAccountLinkValueProps) => {
-	const {network, value} = props;
+const ValueOfKind = (props: ValueOfKindProps) => {
+	const {network, value, metadata} = props;
 
-	const account = useAccount(network, value);
+	assert(value, value.__kind && (Object.keys(value).length === 1 || (Object.keys(value).length === 2 && value.value)));
 
-	if (account.loading) {
-		return null;
+	return (
+		<Table size="small" css={valueTableStyle}>
+			<TableBody>
+				<TableRow>
+					<TableCell css={objectKeyCellStyle}>
+						<div css={[objectKeyStyle, kindStyle]}>{value.__kind}</div>
+					</TableCell>
+					<TableCell>
+						<DataViewerValueParsed
+							network={network}
+							value={value.value}
+							metadata={metadata}
+						/>
+					</TableCell>
+				</TableRow>
+			</TableBody>
+		</Table>
+	);
+};
+
+type MaybeAccountLinkValueProps = {
+	network: string;
+	value: any;
+	metadata: DecodedArg;
+}
+
+const AccountValue = (props: MaybeAccountLinkValueProps) => {
+	const {network, value, metadata} = props;
+
+	if (metadata.type === "MultiAddress") {
+		if (value.__kind === "Id") {
+			return <ValueOfKind
+				network={network}
+				value={value}
+				metadata={{
+					...metadata,
+					type: "AccountId"
+				}}
+			/>;
+		} else {
+			return (
+				<DataViewerValueParsed
+					network={network}
+					value={value}
+				/>
+			);
+		}
 	}
 
-	if (account.data) {
-		return (
-			<div css={valueStyle}>
-				<AccountAddress network={network} address={value} />
-				<CopyToClipboardButton value={value} css={copyButtonStyle} />
-			</div>
-		);
-	}
-
-	return <div css={valueStyle}>{value}</div>;
+	return (
+		<div css={valueStyle}>
+			<AccountAddress network={network} address={value} />
+			<CopyToClipboardButton value={value} css={copyButtonStyle} />
+		</div>
+	);
 };
 
 export type DataViewerValueParsedProps = {
 	network: string;
 	value: any;
+	metadata?: DecodedArg[]|DecodedArg;
 };
 
 export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
-	const { network } = props;
+	const { network, metadata } = props;
 	let { value } = props;
 
+	if (metadata && ADDRESS_TYPES.includes((metadata as DecodedArg).type)) {
+		return (
+			<AccountValue
+				network={network}
+				value={value}
+				metadata={metadata as DecodedArg}
+			/>
+		);
+	}
+
 	if (Array.isArray(value) && value.length > 0) {
+		const itemsMetadata = value.map((item, index) => {
+			if (Array.isArray(metadata)) {
+				return metadata.find(it => it.name === index.toString());
+			}
+
+			const vecType = metadata?.type.match(/^Vec<(.+)>$/);
+			if (vecType) {
+				return {
+					name: index.toString(),
+					type: vecType[1]
+				};
+			}
+
+			return undefined;
+		});
+
 		return (
 			<Table size="small" css={valueTableStyle}>
 				<TableBody>
@@ -116,7 +192,11 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 								<div css={arrayIndexStyle}>{index}</div>
 							</TableCell>
 							<TableCell>
-								<DataViewerValueParsed network={network} value={item} />
+								<DataViewerValueParsed
+									network={network}
+									value={item}
+									metadata={itemsMetadata[index]}
+								/>
 							</TableCell>
 						</TableRow>
 					))}
@@ -127,27 +207,11 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 		value = "[ ]";
 	} else if (value && typeof value === "object") {
 		if (value.__kind) {
-			const kind = value.__kind;
-			value = {...value};
-			delete value.__kind;
-
-			if (Object.keys(value).length === 1 && value.value) {
-				value = value.value;
-			}
-
 			return (
-				<Table size="small" css={valueTableStyle}>
-					<TableBody>
-						<TableRow>
-							<TableCell css={objectKeyCellStyle}>
-								<div css={[objectKeyStyle, kindStyle]}>{kind}</div>
-							</TableCell>
-							<TableCell>
-								<DataViewerValueParsed network={network} value={value} />
-							</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
+				<ValueOfKind
+					network={network}
+					value={value}
+				/>
 			);
 		}
 
@@ -163,15 +227,20 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 								<div css={objectKeyStyle}>{key}</div>
 							</TableCell>
 							<TableCell>
-								<DataViewerValueParsed network={network} value={value[key]} />
+								<DataViewerValueParsed
+									network={network}
+									value={value[key]}
+									metadata={Array.isArray(metadata)
+										? metadata?.find(it => noCase(it.name) === noCase(key))
+										: undefined
+									}
+								/>
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
 		);
-	} else if (isAddress(value) && value.length === 66) {
-		return <MaybeAccountLinkValue network={network} value={value} />;
 	} else if (typeof value === "boolean") {
 		value = value ? "true" : "false";
 	}

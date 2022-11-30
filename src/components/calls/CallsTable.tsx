@@ -1,4 +1,4 @@
-import { Pagination } from "../../hooks/usePagination";
+import { PaginatedResource } from "../../model/paginatedResource";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
@@ -7,24 +7,20 @@ import { Link } from "../Link";
 
 export type CallsTableProps = {
 	network: string;
-	items: any[];
-	pagination: Pagination;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	calls: PaginatedResource<any>;
 };
 
 export const CallsTable = (props: CallsTableProps) => {
-	const { network, items, pagination, loading, notFound, error } = props;
+	const { network, calls } = props;
 
 	return (
 		<ItemsTable
-			items={items}
-			loading={loading}
-			notFound={notFound}
+			data={calls.data}
+			loading={calls.loading}
+			notFound={calls.notFound}
 			notFoundMessage="No calls found"
-			error={error}
-			pagination={pagination}
+			error={calls.error}
+			pagination={calls.pagination}
 			data-test="calls-table"
 		>
 			<ItemsTableAttribute

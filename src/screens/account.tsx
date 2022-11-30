@@ -51,7 +51,7 @@ function AccountPage() {
 					}
 					Account #{address}
 				</CardHeader>
-				<AccountInfoTable network={network} {...account} />
+				<AccountInfoTable network={network} account={account} />
 			</Card>
 			{account.data &&
 				<Card>
@@ -63,7 +63,7 @@ function AccountPage() {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} {...extrinsics} showTime />
+							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
 					</TabbedContent>
 				</Card>

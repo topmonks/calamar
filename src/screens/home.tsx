@@ -9,6 +9,7 @@ import Background from "../assets/main-screen-bgr.svg";
 import { Link } from "../components/Link";
 import NetworkSelect from "../components/NetworkSelect";
 import SearchInput from "../components/SearchInput";
+import { DevtoolsIcon } from "../components/DevtoolsIcon";
 
 const containerStyle = css`
 	width: 100vw;
@@ -100,12 +101,14 @@ function HomePage() {
 			<div css={searchBoxStyle}>
 				<SearchInput
 					css={searchInputStyle}
+					defaultNetwork={"polkadot"}
 					onNetworkChange={setNetwork}
 					persistNetwork
 				/>
 			</div>
-			<div style={{ margin: "auto", width: "fit-content", marginTop: 24 }}>
-				<Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link>
+			<div style={{ margin: "auto", width: "fit-content", marginTop: 24, textAlign: "center" }}>
+				<div><Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link></div>
+				<div><DevtoolsIcon><Link to={`/${network}/runtime`}>Runtime specs</Link></DevtoolsIcon></div>
 			</div>
 		</div>
 	);

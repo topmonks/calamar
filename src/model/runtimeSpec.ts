@@ -1,3 +1,5 @@
+import { DecodedMetadata } from "./decodedMetadata";
+
 export type RuntimeSpec = {
 	id: string;
 	blockHash: string;
@@ -5,4 +7,5 @@ export type RuntimeSpec = {
 	specName: string;
 	specVersion: number;
 	hex: `0x${string}`;
+	metadata: DecodedMetadata;
 }

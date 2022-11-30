@@ -1,9 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
-import { Pagination } from "../../hooks/usePagination";
-import { ButtonLink } from "../ButtonLink";
+import { PaginatedResource } from "../../model/paginatedResource";
+import { Resource } from "../../model/resource";
+import { RuntimeSpec } from "../../model/runtimeSpec";
+import { getEventMetadataByName } from "../../utils/queryMetadata";
 
+import { ButtonLink } from "../ButtonLink";
 import DataViewer from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
@@ -14,25 +17,25 @@ const parametersColCss = (showExtrinsic?: boolean) => css`
 
 export type EventsTableProps = {
 	network: string;
-	items: any[];
-	pagination: Pagination;
+	events: PaginatedResource<any>;
+	runtimeSpecs?: Resource<RuntimeSpec[]>;
 	showExtrinsic?: boolean;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
 };
 
+const EventsItemsTableAttribute = ItemsTableAttribute<any, [RuntimeSpec[]]>;
+
 function EventsTable(props: EventsTableProps) {
-	const { network, items, pagination, showExtrinsic, loading, notFound, error } = props;
+	const { network, events, runtimeSpecs, showExtrinsic } = props;
 
 	return (
 		<ItemsTable
-			items={items}
-			loading={loading}
-			notFound={notFound}
+			data={events.data}
+			additionalData={[runtimeSpecs?.data]}
+			loading={events.loading || runtimeSpecs?.loading}
+			notFound={events.notFound}
 			notFoundMessage="No events found"
-			error={error}
-			pagination={pagination}
+			error={events.error}
+			pagination={events.pagination}
 			data-test="events-table"
 		>
 			<ItemsTableAttribute
@@ -65,10 +68,25 @@ function EventsTable(props: EventsTableProps) {
 					)}
 				/>
 			)}
-			<ItemsTableAttribute
+			<EventsItemsTableAttribute
 				label="Parameters"
 				colCss={parametersColCss(showExtrinsic)}
-				render={(event) => event.args && <DataViewer network={network} data={event.args} copyToClipboard />}
+				render={(event, runtimeSpecs) => {
+					if (!event.args) {
+						return null;
+					}
+
+					const metadata = runtimeSpecs?.find(it => it.specVersion === event.block.spec.specVersion)?.metadata;
+
+					return (
+						<DataViewer
+							network={network}
+							data={event.args}
+							metadata={metadata && getEventMetadataByName(metadata, event.name)?.args}
+							copyToClipboard
+						/>
+					);
+				}}
 			/>
 		</ItemsTable>
 	);

@@ -1,7 +1,7 @@
 import { FetchOptions } from "../model/fetchOptions";
 import { ExtrinsicsFilter, ExtrinsicsOrder, getExtrinsics } from "../services/extrinsicsService";
 
-import { useItems } from "./useItems";
+import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useExtrinsics(
 	network: string | undefined,
@@ -9,5 +9,5 @@ export function useExtrinsics(
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	return useItems(getExtrinsics, network, filter, order, options);
+	return usePaginatedResource(getExtrinsics, network, filter, order, options);
 }

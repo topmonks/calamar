@@ -23,7 +23,7 @@ test.describe("Account detail page", () => {
 
 		const errorMessage = page.getByTestId("not-found");
 		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText("No account found");
+		await expect(errorMessage).toHaveText("Account doesn't exist or haven't signed any extrinsic");
 
 		await takeScreenshot("account-not-found");
 	});
