@@ -11,11 +11,20 @@ import NotFoundPage from "../screens/notFound";
 
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
-import ContactLinks from "./ContactLinks";
+import { Card } from "./Card";
+import { Footer } from "./Footer";
+
+const containerStyle = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-height: 100vh;
+`;
 
 const backgroundStyle = css`
-	position: fixed;
+	position: absolute;
 	bottom: 0;
+	left: 0;
 	margin: 0;
 	width: 100%;
 	height: 100vh;
@@ -23,6 +32,7 @@ const backgroundStyle = css`
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-image: url(${Background});
+	z-index: -1;
 `;
 
 const topBarStyle = (theme: Theme) => css`
@@ -66,6 +76,7 @@ const contentStyle = (theme: Theme) => css`
 	padding-bottom: 20px;
 	width: 100%;
 	box-sizing: border-box;
+	flex: 1 1 auto;
 
 	${theme.breakpoints.up("md")} {
 		padding-left: 32px;
@@ -100,6 +111,14 @@ const searchInputStyle = css`
 	flex: 1 1 auto;
 `;
 
+const footerStyle = css`
+	background-color: #def9fb;
+
+	> div {
+		max-width: 1500px;
+	}
+`;
+
 type ResultLayoutParams = {
 	network: string;
 };
@@ -121,8 +140,7 @@ function ResultLayout() {
 	}, [networkParam, networkIsValid]);
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column"}}>
-			<div css={backgroundStyle} data-test="background" />
+		<div css={containerStyle}>
 			<div css={topBarStyle} data-test="top-bar">
 				<div css={topBarContentStyle}>
 					<div css={topBarRowStyle}>
@@ -136,14 +154,13 @@ function ResultLayout() {
 				</div>
 			</div>
 			<div css={contentStyle}>
+				<div css={backgroundStyle} data-test="background" />
 				<div css={contentInnerStyle}>
 					{networkIsValid && <Outlet />}
 					{!networkIsValid && <NotFoundPage />}
 				</div>
 			</div>
-			<div style={{ display: "flex", justifyContent: "center" }}>
-				<ContactLinks />
-			</div>
+			<Footer css={footerStyle} />
 		</div>
 	);
 }
