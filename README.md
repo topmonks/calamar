@@ -51,3 +51,19 @@ All you need is to setup the pages in your Github repo's settings:
 3. Edit the `.github/workflows/pages.yml` workflow file and uncomment the `push` subsection in `on` section to trigger the action on push to the branch
 
 Commit the edited files and push to the branch specified in the workflow file.
+
+## Docker
+
+You can also use docker to run the app. Build the image first
+
+```
+$ docker build -t calamar .
+```
+
+and then run it
+
+```
+$ docker run -it --rm -p 3000:3000 calamar
+```
+
+Now the production-ready application is available on url [https://localhost:3000](https://localhost:3000).
