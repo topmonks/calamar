@@ -1,6 +1,6 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { decodeMetadata } from "../utils/metadata";
+import { decodeMetadata } from "../utils/decodeMetadata";
 import { upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
@@ -52,9 +52,8 @@ export async function getEventsByName(
 
 	// try to fix casing according to latest runtime spec
 	const runtimeSpec = await getLatestRuntimeSpec(network);
-	const metadata = decodeMetadata(runtimeSpec.hex);
 
-	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
 	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === event.toLowerCase());
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback

@@ -1,7 +1,7 @@
 import { FetchOptions } from "../model/fetchOptions";
 import { EventsOrder, getEventsByName } from "../services/eventsService";
 
-import { useItems } from "./useItems";
+import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useEventsByName(
 	network: string | undefined,
@@ -9,5 +9,5 @@ export function useEventsByName(
 	order?: EventsOrder,
 	options?: FetchOptions
 ) {
-	return useItems(getEventsByName, network, name, order, options);
+	return usePaginatedResource(getEventsByName, network, name, order, options);
 }

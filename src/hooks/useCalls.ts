@@ -2,7 +2,7 @@ import { FetchOptions } from "../model/fetchOptions";
 import { getCalls } from "../services/callsService";
 import { EventsFilter, EventsOrder } from "../services/eventsService";
 
-import { useItems } from "./useItems";
+import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useCalls(
 	network: string | undefined,
@@ -10,5 +10,5 @@ export function useCalls(
 	order?: EventsOrder,
 	options?: FetchOptions,
 ) {
-	return useItems(getCalls, network, filter, order, options);
+	return usePaginatedResource(getCalls, network, filter, order, options);
 }

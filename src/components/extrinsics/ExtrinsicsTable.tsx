@@ -1,4 +1,5 @@
-import { Pagination } from "../../hooks/usePagination";
+import { PaginatedResource } from "../../model/paginatedResource";
+import { getSignatureAddress } from "../../utils/signature";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
@@ -8,35 +9,27 @@ import { Time } from "../Time";
 
 export type ExtrinsicsTableProps = {
 	network: string;
-	items: any[];
-	pagination: Pagination;
+	extrinsics: PaginatedResource<any>,
 	showAccount?: boolean;
 	showTime?: boolean;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
 };
 
 function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 	const {
 		network,
-		items,
-		pagination,
+		extrinsics,
 		showAccount,
 		showTime,
-		loading,
-		notFound,
-		error
 	} = props;
 
 	return (
 		<ItemsTable
-			items={items}
-			loading={loading}
-			notFound={notFound}
+			data={extrinsics.data}
+			loading={extrinsics.loading}
+			notFound={extrinsics.notFound}
 			notFoundMessage="No extrinsics found"
-			error={error}
-			pagination={pagination}
+			error={extrinsics.error}
+			pagination={extrinsics.pagination}
 			data-test="extrinsics-table"
 		>
 			<ItemsTableAttribute
@@ -63,10 +56,10 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				<ItemsTableAttribute
 					label="Account"
 					render={(extrinsic) =>
-						extrinsic.signature?.address &&
+						extrinsic.signature &&
 							<AccountAddress
 								network={network}
-								address={extrinsic.signature.address}
+								address={getSignatureAddress(extrinsic.signature)}
 								shorten
 							/>
 					}

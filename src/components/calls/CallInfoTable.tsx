@@ -3,7 +3,10 @@ import { Chip } from "@mui/material";
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
+import { Resource } from "../../model/resource";
+import { RuntimeSpec } from "../../model/runtimeSpec";
 import { encodeAddress } from "../../utils/formatAddress";
+import { getCallMetadataByName } from "../../utils/queryMetadata";
 
 import { AccountAddress } from "../AccountAddress";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
@@ -14,22 +17,21 @@ import { ButtonLink } from "../ButtonLink";
 
 export type CallInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	call: Resource<any>;
+	runtimeSpecs: Resource<RuntimeSpec[]>;
 }
 
 export const CallInfoTable = (props: CallInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, call, runtimeSpecs} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={call.data}
+			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
+			loading={call.loading || runtimeSpecs.loading}
+			notFound={call.notFound}
 			notFoundMessage="No call found"
-			error={error}
+			error={call.error}
 		>
 			<InfoTableAttribute
 				label="Timestamp"
@@ -110,9 +112,15 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				}
 			/>
 			<InfoTableAttribute
-				name="parameters"
 				label="Parameters"
-				render={(data) => <DataViewer network={network} data={data.args} copyToClipboard />}
+				render={(data, metadata) =>
+					<DataViewer
+						network={network}
+						data={data.args}
+						metadata={metadata && getCallMetadataByName(metadata, data.name)?.args}
+						copyToClipboard
+					/>
+				}
 			/>
 			<InfoTableAttribute
 				label="Spec version"

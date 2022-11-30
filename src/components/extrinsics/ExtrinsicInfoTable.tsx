@@ -1,9 +1,10 @@
-import { Button, Chip } from "@mui/material";
+import { Chip } from "@mui/material";
 
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { encodeAddress } from "../../utils/formatAddress";
+import { getSignatureAddress, getSignatureValue } from "../../utils/signature";
 
 import { AccountAddress } from "../AccountAddress";
 import DataViewer from "../DataViewer";
@@ -12,26 +13,32 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 import { ButtonLink } from "../ButtonLink";
 
+import { DecodedMetadata } from "../../model/decodedMetadata";
+import { Resource } from "../../model/resource";
+import { RuntimeSpec } from "../../model/runtimeSpec";
+import { getCallMetadataByName } from "../../utils/queryMetadata";
+
 export type ExtrinsicInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	extrinsic: Resource;
+	runtimeSpecs: Resource<RuntimeSpec[]>;
 }
 
+const ExtrinsicInfoTableAttribute = InfoTableAttribute<any, [DecodedMetadata]>;
+
 export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, extrinsic, runtimeSpecs} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={extrinsic.data}
+			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
+			loading={extrinsic.loading || runtimeSpecs.loading}
+			notFound={extrinsic.notFound}
 			notFoundMessage="No extrinsic found"
-			error={error}
+			error={extrinsic.error}
 		>
-			<InfoTableAttribute
+			<ExtrinsicInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.block.timestamp} timezone utc />
@@ -59,16 +66,16 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Account"
-				render={(data) => data.signature?.address &&
-					<AccountAddress network={network} address={data.signature.address} />
+				render={(data) => data.signature &&
+					<AccountAddress
+						network={network}
+						address={getSignatureAddress(data.signature)}
+					/>
 				}
-				copyToClipboard={(data) =>
-					encodeAddress(
-						network,
-						data.signature?.address
-					)
+				copyToClipboard={(data) => data.signature &&
+					encodeAddress(network, getSignatureAddress(data.signature))
 				}
-				hide={(data) => !data.signature?.address}
+				hide={(data) => !data.signature}
 			/>
 			<InfoTableAttribute
 				label="Result"
@@ -92,10 +99,15 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 					</ButtonLink>
 				}
 			/>
-			<InfoTableAttribute
+			<ExtrinsicInfoTableAttribute
 				label="Parameters"
-				render={(data) =>
-					<DataViewer network={network} data={data.call.args} copyToClipboard />
+				render={(data, metadata) =>
+					<DataViewer
+						network={network}
+						data={data.call.args}
+						metadata={metadata && getCallMetadataByName(metadata, data.call.name)?.args}
+						copyToClipboard
+					/>
 				}
 			/>
 			<InfoTableAttribute
@@ -114,7 +126,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 					<DataViewer
 						simple
 						network={network}
-						data={data.signature?.signature.value}
+						data={getSignatureValue(data.signature)}
 						copyToClipboard
 					/>
 				}

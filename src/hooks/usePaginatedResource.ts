@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FetchOptions } from "../model/fetchOptions";
+import { PaginatedResource } from "../model/paginatedResource";
 import { ItemsResponse } from "../model/itemsResponse";
 import { GraphQLError } from "../utils/fetchGraphql";
 
 import { usePagination } from "./usePagination";
 
-export function useItems<T = any, F = any>(
+export function usePaginatedResource<T = any, F = any>(
 	fetchItems: (network: string, limit: number, offset: number, filter: F, order?: string|string[]) => ItemsResponse<T>|Promise<ItemsResponse<T>>,
 	network: string | undefined,
 	filter: F,
@@ -66,13 +67,13 @@ export function useItems<T = any, F = any>(
 
 	return useMemo(
 		() => ({
-			items: data,
+			data,
 			loading,
 			notFound: !loading && !error && (!data || data.length === 0),
-			refetch: fetchData,
 			pagination,
-			error
-		}),
+			error,
+			refetch: fetchData
+		}) as PaginatedResource,
 		[data, loading, pagination, error, fetchData]
 	);
 }

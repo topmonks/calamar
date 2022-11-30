@@ -1,12 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { PropsWithChildren, useMemo, useState } from "react";
+import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import { css, Theme } from "@emotion/react";
 import { IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
+import { config } from "../config";
+
+import { DecodedArg } from "../model/decodedMetadata";
+
 import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
 import { DataViewerValueParsed }  from "./DataViewerValueParsed";
+import { Devtool } from "./Devtool";
 
 const dataViewerStyle = css`
 	display: flex;
@@ -120,12 +125,18 @@ const closeButtonStyle = css`
 	z-index: 10;
 `;
 
-export type DataViewerMode = "json" | "parsed";
+export type DataViewerMode = "json" | "parsed" | "meta";
 
-const modes: DataViewerMode[] = ["parsed", "json"];
-const modeLabels: Record<DataViewerMode, string> = {
+const MODES: (DataViewerMode|false)[] = [
+	"parsed",
+	"json",
+	config.devtools.enabled && "meta"
+];
+
+const modeLabels: Record<DataViewerMode, ReactNode> = {
 	parsed: "Parsed",
-	json: "Raw"
+	json: "Raw",
+	meta: <Devtool>Meta</Devtool>
 };
 
 type ModeSelectProps = {
@@ -143,7 +154,7 @@ const ModeSelect = (props: ModeSelectProps) => {
 			value={value}
 			onChange={(_, mode) => mode && onChange(mode)}
 		>
-			{modes.map(mode =>
+			{MODES.map(mode => mode &&
 				<ToggleButton key={mode} css={modeButtonStyle} value={mode}>
 					{modeLabels[mode]}
 				</ToggleButton>
@@ -193,6 +204,7 @@ const DataViewerModalHandle = (props: DataViewerModalHandleProps) => {
 export type DataViewerProps = {
 	network: string;
 	data: any;
+	metadata?: DecodedArg[];
 	modes?: DataViewerMode[];
 	defaultMode?: DataViewerMode;
 	simple?: boolean;
@@ -203,12 +215,13 @@ function DataViewer(props: DataViewerProps) {
 	const {
 		network,
 		data,
-		defaultMode = modes[0],
+		metadata,
+		defaultMode = MODES.find(Boolean),
 		simple,
 		copyToClipboard,
 	} = props;
 
-	const [mode, setMode] = useState<DataViewerMode>(defaultMode);
+	const [mode, setMode] = useState<DataViewerMode>(defaultMode || MODES.find(Boolean) as DataViewerMode);
 
 	console.log("render");
 
@@ -220,14 +233,12 @@ function DataViewer(props: DataViewerProps) {
 		return data;
 	}, [data]);
 
-	const jsonContent = useMemo(() => (
-		<div css={{fontSize: 14}}>
-			<DataViewerValueJson value={data} />
-		</div>
+	const jsonContent = useMemo(() => (!simple || defaultMode === "json") && (
+		<DataViewerValueJson value={data} />
 	), [data]);
 
-	const parsedContent = useMemo(() => (
-		<DataViewerValueParsed network={network} value={data} />
+	const parsedContent = useMemo(() => (!simple || defaultMode === "parsed") && (
+		<DataViewerValueParsed network={network} value={data} metadata={metadata} />
 	), [data]);
 
 	return (
@@ -252,6 +263,7 @@ function DataViewer(props: DataViewerProps) {
 							<div css={scrollAreaStyle}>
 								{mode === "json" && jsonContent}
 								{mode === "parsed" && parsedContent}
+								{metadata && mode === "meta" && <DataViewerValueJson value={metadata} />}
 							</div>
 						</div>
 					</DataViewerModalHandle>
@@ -260,6 +272,7 @@ function DataViewer(props: DataViewerProps) {
 			<div css={scrollAreaStyle}>
 				{mode === "json" && jsonContent}
 				{mode === "parsed" && parsedContent}
+				{mode === "meta" && <DataViewerValueJson value={metadata} />}
 			</div>
 		</div>
 	);

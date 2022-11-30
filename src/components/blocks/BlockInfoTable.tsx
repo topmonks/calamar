@@ -1,3 +1,4 @@
+import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
 import { AccountAddress } from "../AccountAddress";
@@ -7,22 +8,19 @@ import { Time } from "../Time";
 
 export type BlockInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	block: Resource<any>;
 }
 
 export const BlockInfoTable = (props: BlockInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, block} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={block.data}
+			loading={block.loading}
+			notFound={block.notFound}
 			notFoundMessage="No block found"
-			error={error}
+			error={block.error}
 		>
 			<InfoTableAttribute
 				label="Timestamp"
@@ -63,6 +61,10 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 				}
 				copyToClipboard={(data) => encodeAddress(network, data.validator)}
 				hide={(data) => !data.validator}
+			/>
+			<InfoTableAttribute
+				label="Spec version"
+				render={(data) => data.spec.specVersion}
 			/>
 		</InfoTable>
 

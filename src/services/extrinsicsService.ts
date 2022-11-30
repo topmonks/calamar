@@ -1,7 +1,6 @@
 import { ArchiveConnection } from "../model/archiveConnection";
-import { ItemsResponse } from "../model/itemsResponse";
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { decodeMetadata } from "../utils/metadata";
+import { decodeMetadata } from "../utils/decodeMetadata";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
@@ -9,19 +8,6 @@ import { getLatestRuntimeSpec } from "./runtimeService";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
-
-function unifyExtrinsics<T extends ItemsResponse>(response: T) {
-	return {
-		...response,
-		data: response.data.map((extrinsic: any) => {
-			const address = extrinsic.signature?.address;
-			if (typeof address === "object" && address.value) {
-				extrinsic.signature.address = address.value;
-			}
-			return extrinsic;
-		})
-	};
-}
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	const extrinsics = await getExtrinsicsWithoutTotalCount(network, 1, 0, filter);
@@ -39,9 +25,8 @@ export async function getExtrinsicsByName(
 
 	// try to fix casing according to latest runtime spec
 	const runtimeSpec = await getLatestRuntimeSpec(network);
-	const metadata = decodeMetadata(runtimeSpec.hex);
 
-	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
 	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === call.toLowerCase());
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
@@ -108,14 +93,14 @@ export async function getExtrinsicsWithoutTotalCount(
 		items.pop();
 	}
 
-	return unifyExtrinsics({
+	return {
 		data: items,
 		pagination: {
 			offset,
 			limit,
 			hasNextPage
 		}
-	});
+	};
 }
 
 export async function getExtrinsics(
@@ -174,6 +159,6 @@ export async function getExtrinsics(
 		}
 	);
 
-	return unifyExtrinsics(unifyConnection(response.extrinsicsConnection, limit, offset));
+	return unifyConnection(response.extrinsicsConnection, limit, offset);
 }
 

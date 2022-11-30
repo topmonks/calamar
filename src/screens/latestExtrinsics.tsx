@@ -28,7 +28,7 @@ function LatestExtrinsicsPage() {
 		<>
 			<Card>
 				<CardHeader>Latest extrinsics</CardHeader>
-				<ExtrinsicsTable network={network} {...extrinsics} showAccount showTime />
+				<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
 			</Card>
 		</>
 	);

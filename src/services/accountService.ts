@@ -1,5 +1,5 @@
 import { isAddress } from "@polkadot/util-crypto";
-import { decodeAddress, encodeAddress } from "../utils/formatAddress";
+import { decodeAddress } from "../utils/formatAddress";
 
 import { getExtrinsic } from "./extrinsicsService";
 
@@ -30,8 +30,6 @@ export async function getAccount(network: string, address: string) {
 
 	return {
 		id: address,
-		address,
-		networkEncodedAddress: encodeAddress(network, address),
-		networkEncodedAddress42: encodeAddress(network, address, 42)
+		address
 	};
 }

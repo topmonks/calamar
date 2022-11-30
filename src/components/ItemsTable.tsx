@@ -27,30 +27,38 @@ const cellStyle = css`
 	}
 `;
 
-export type ItemsTableAttributeProps<T = any> = {
-	label: string;
-	colCss?: Interpolation<Theme>;
-	render: (data: T) => ReactNode;
+type ItemsTableItem = {
+	id: string;
 }
 
-export const ItemsTableAttribute = <T extends object = any>(props: ItemsTableAttributeProps<T>) => {
+type ItemsTableGetter<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
+
+export type ItemsTableAttributeProps<T, A extends any[]> = {
+	label: string;
+	colCss?: Interpolation<Theme>;
+	render: ItemsTableGetter<T, A, ReactNode>;
+}
+
+export const ItemsTableAttribute = <T extends object = any, A extends any[] = []>(props: ItemsTableAttributeProps<T, A>) => {
 	return null;
 };
 
-export type ItemsTableProps<T extends {id: string}> = HTMLAttributes<HTMLDivElement> & {
-	items: T[];
+export type ItemsTableProps<T extends ItemsTableItem, A extends any[] = []> = HTMLAttributes<HTMLDivElement> & {
+	data?: T[];
+	additionalData?: A;
 	loading?: boolean;
 	notFound?: boolean;
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
 	pagination: Pagination;
-	children: ReactElement<ItemsTableAttributeProps<T>>|(ReactElement<ItemsTableAttributeProps<T>>|false|undefined|null)[];
+	children: ReactElement<ItemsTableAttributeProps<T, A>>|(ReactElement<ItemsTableAttributeProps<T, A>>|false|undefined|null)[];
 };
 
-export const ItemsTable = <T extends {id: string}>(props: ItemsTableProps<T>) => {
+export const ItemsTable = <T extends ItemsTableItem, A extends any[] = []>(props: ItemsTableProps<T, A>) => {
 	const {
-		items,
+		data,
+		additionalData,
 		loading,
 		notFound,
 		notFoundMessage = "No items found",
@@ -96,11 +104,11 @@ export const ItemsTable = <T extends {id: string}>(props: ItemsTableProps<T>) =>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{items.map(item =>
+						{data?.map(item =>
 							<TableRow key={item.id}>
 								{Children.map(children, (child) => child && (
 									<TableCell css={cellStyle}>
-										{child.props.render(item)}
+										{child.props.render(item, ...(additionalData || [] as any))}
 									</TableCell>
 								))}
 							</TableRow>

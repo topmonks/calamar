@@ -1,3 +1,7 @@
+import { Resource } from "../../model/resource";
+import { RuntimeSpec } from "../../model/runtimeSpec";
+import { getEventMetadataByName } from "../../utils/queryMetadata";
+
 import { ButtonLink } from "../ButtonLink";
 import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
@@ -6,22 +10,21 @@ import { Time } from "../Time";
 
 export type EventInfoTableProps = {
 	network: string;
-	data: any;
-	loading?: boolean;
-	notFound?: boolean;
-	error?: any;
+	event: Resource<any>;
+	runtimeSpecs: Resource<RuntimeSpec[]>;
 }
 
 export const EventInfoTable = (props: EventInfoTableProps) => {
-	const {network, data, loading, notFound, error} = props;
+	const {network, event, runtimeSpecs} = props;
 
 	return (
 		<InfoTable
-			data={data}
-			loading={loading}
-			notFound={notFound}
+			data={event.data}
+			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
+			loading={event.loading || runtimeSpecs.loading}
+			notFound={event.notFound}
 			notFoundMessage="No event found"
-			error={error}
+			error={event.error}
 		>
 			<InfoTableAttribute
 				label="Timestamp"
@@ -82,8 +85,13 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Parameters"
-				render={(data) =>
-					<DataViewer network={network} data={data.args} copyToClipboard />
+				render={(data, metadata) =>
+					<DataViewer
+						network={network}
+						data={data.args}
+						metadata={metadata && getEventMetadataByName(metadata, data.name)?.args}
+						copyToClipboard
+					/>
 				}
 				hide={(data) => !data.args}
 			/>

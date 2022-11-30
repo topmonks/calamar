@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import Identicon from "@polkadot/react-identicon";
 import { css } from "@emotion/react";
+import { isEthereumAddress } from "@polkadot/util-crypto";
 
 const identiconStyle = css`
 	cursor: default !important;
@@ -21,7 +22,7 @@ export const AccountAvatar = (props: AccountAvatarProps) => {
 			css={identiconStyle}
 			value={address}
 			size={size}
-			theme="polkadot"
+			theme={isEthereumAddress(address) ? "ethereum" : "polkadot"}
 			prefix={prefix}
 			className={className}
 		/>
