@@ -11,7 +11,7 @@ import { DecodedArg } from "../model/decodedMetadata";
 import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
 import { DataViewerValueParsed }  from "./DataViewerValueParsed";
-import { DevtoolsIcon } from "./DevtoolsIcon";
+import { Devtool } from "./Devtool";
 
 const dataViewerStyle = css`
 	display: flex;
@@ -136,7 +136,7 @@ const MODES: (DataViewerMode|false)[] = [
 const modeLabels: Record<DataViewerMode, ReactNode> = {
 	parsed: "Parsed",
 	json: "Raw",
-	meta: <DevtoolsIcon>Meta</DevtoolsIcon>
+	meta: <Devtool>Meta</Devtool>
 };
 
 type ModeSelectProps = {

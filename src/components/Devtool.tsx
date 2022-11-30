@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
+import { PropsWithChildren } from "react";
 import { Construction } from "@mui/icons-material";
 import { css } from "@emotion/react";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import styled from "@emotion/styled";
-import { PropsWithChildren } from "react";
+
 import { config } from "../config";
 
 const StyledTooltip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)`
@@ -28,7 +29,7 @@ const iconStyle = css`
 	vertical-align: text-bottom;
 `;
 
-export const DevtoolsIcon = (props: PropsWithChildren) => {
+export const Devtool = (props: PropsWithChildren) => {
 	if (!config.devtools.enabled) {
 		return null;
 	}
@@ -39,8 +40,7 @@ export const DevtoolsIcon = (props: PropsWithChildren) => {
 			title={
 				<>
 					<div><strong>Devtools</strong></div>
-					<p>Controlled by `devtools` query param (1 - enabled, 0 - disabled)</p>
-					<p>Enabled by default on localhost.</p>
+					<p>Controlled by `devtools` query param (1 - enable, 0 - disable)</p>
 				</>
 			}
 			placement="top"

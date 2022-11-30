@@ -2,7 +2,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { MenuItem, Select } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
-import { DevtoolsIcon } from "../components/DevtoolsIcon";
+import { Devtool } from "../components/Devtool";
 import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 import { useNetwork } from "../hooks/useNetwork";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
@@ -40,7 +40,7 @@ function RuntimePage() {
 		<>
 			<Card>
 				<CardHeader>
-					<DevtoolsIcon />{network.displayName} runtime
+					<Devtool />{network.displayName} runtime
 				</CardHeader>
 				<Select value={specVersion} onChange={e => navigate(`/${networkName}/runtime/${e.target.value}`)}>
 					{runtimeVersions.data?.map(version =>

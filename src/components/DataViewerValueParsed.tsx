@@ -85,21 +85,23 @@ type ValueOfKindProps = {
 }
 
 const ValueOfKind = (props: ValueOfKindProps) => {
-	const {network, value, metadata} = props;
-
-	assert(value, value.__kind && (Object.keys(value).length === 1 || (Object.keys(value).length === 2 && value.value)));
+	const {
+		network,
+		value: {__kind: kind, ...value},
+		metadata
+	} = props;
 
 	return (
 		<Table size="small" css={valueTableStyle}>
 			<TableBody>
 				<TableRow>
 					<TableCell css={objectKeyCellStyle}>
-						<div css={[objectKeyStyle, kindStyle]}>{value.__kind}</div>
+						<div css={[objectKeyStyle, kindStyle]}>{kind}</div>
 					</TableCell>
 					<TableCell>
 						<DataViewerValueParsed
 							network={network}
-							value={value.value}
+							value={value.value || value}
 							metadata={metadata}
 						/>
 					</TableCell>

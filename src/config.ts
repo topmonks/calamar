@@ -14,6 +14,6 @@ export const config = {
 		publishTimestamp: runtimeEnv.REACT_APP_PUBLISH_TIMESTAMP
 	},
 	devtools: {
-		enabled: (url.hostname === "localhost" && url.searchParams.get("devtools") !== "0") || url.searchParams.get("devtools") === "1"
+		enabled: localStorage.getItem("devtools") === "1"
 	}
 };

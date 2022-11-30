@@ -16,9 +16,9 @@ import RuntimePage from "./screens/runtime";
 import { theme } from "./theme";
 import { rollbar } from "./rollbar";
 import { config } from "./config";
+import { Devtools } from "./components/Devtools";
 
 function App() {
-	console.log(rollbar);
 	return (
 		<RollbarProvider instance={rollbar}>
 			<ThemeProvider theme={theme}>
@@ -45,6 +45,7 @@ function App() {
 							<Route element={<NotFoundPage />} index />
 						</Route>
 					</Routes>
+					<Devtools />
 				</BrowserRouter>
 			</ThemeProvider>
 		</RollbarProvider>
