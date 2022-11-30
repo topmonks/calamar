@@ -1,30 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 1512 544" style="enable-background:new 0 0 1512 544;" xml:space="preserve">
+<svg width="1512" height="540" version="1.1" viewBox="0 0 1512 540" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
 <style type="text/css">
 	.st0{clip-path:url(#SVGID_00000131337581743546924740000015761667356397278850_);}
 	.st1{fill:#DEF9FB;}
 	.st2{clip-path:url(#SVGID_00000161605147239233637210000001310094324039202978_);}
 	.st3{fill:none;stroke:#9AF0F7;stroke-width:17;}
 </style>
-<g>
-	<defs>
-		<rect id="SVGID_1_" y="0" width="1512" height="544"/>
-	</defs>
-	<clipPath id="SVGID_00000019655971400514367550000001501653844066617746_">
-		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
-	</clipPath>
-	<g style="clip-path:url(#SVGID_00000019655971400514367550000001501653844066617746_);">
-		<rect y="326" class="st1" width="1512" height="447"/>
-		<g>
-			<defs>
-				<rect id="SVGID_00000179621134857603557090000012950803292286704803_" y="0" width="1512" height="670"/>
-			</defs>
-			<clipPath id="SVGID_00000139285480898035540290000009093208211823894943_">
-				<use xlink:href="#SVGID_00000179621134857603557090000012950803292286704803_"  style="overflow:visible;"/>
-			</clipPath>
-			<g style="clip-path:url(#SVGID_00000139285480898035540290000009093208211823894943_);">
+
+	
+		<rect class="st1" y="326" width="1512" height="447"/>
+			
 				<circle class="st1" cx="100" cy="374" r="136"/>
 				<circle class="st1" cx="214" cy="483" r="136"/>
 				<circle class="st1" cx="583" cy="492" r="136"/>
@@ -37,7 +23,7 @@
 				<circle class="st1" cx="846" cy="294" r="72"/>
 				<circle class="st1" cx="516" cy="359" r="72"/>
 				<circle class="st1" cx="288" cy="359" r="72"/>
-				<circle class="st1" cx="0" cy="271" r="72"/>
+				<circle class="st1" cy="271" r="72"/>
 				<circle class="st1" cx="1512" cy="271" r="72"/>
 				<circle class="st3" cx="117" cy="239" r="63.5"/>
 				<circle class="st3" cx="342" cy="428" r="63.5"/>
@@ -49,8 +35,8 @@
 				<circle class="st3" cx="715" cy="224" r="32.5"/>
 				<circle class="st3" cx="442" cy="336" r="32.5"/>
 				<circle class="st3" cx="301" cy="167" r="32.5"/>
-			</g>
-		</g>
-	</g>
-</g>
+			
+
+	
+
 </svg>
