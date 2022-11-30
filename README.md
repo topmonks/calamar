@@ -67,3 +67,25 @@ $ docker run -it --rm -p 3000:3000 calamar
 ```
 
 Now the production-ready application is available on url [https://localhost:3000](https://localhost:3000).
+
+## Test
+
+Code contains E2E tests testing running instance. The tests are using [Playwright](https://playwright.dev/).
+
+Fist install the Playwright's dependencies
+
+```
+$ npx playwright install --with-deps
+```
+
+then you can run the test suite
+
+```
+$ npm run test
+```
+
+After the tests are finished (failed or succeeded), you can view the report by
+
+```
+$ npm run test:report
+```
