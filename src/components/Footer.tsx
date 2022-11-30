@@ -80,19 +80,19 @@ export const Footer = (props: HTMLAttributes<HTMLDivElement>) => {
 		<div css={footerStyle} {...props}>
 			<div css={contentStyle}>
 				<div css={creditsStyle}>
-					<div>Created by <a href="https://topmonks.com" target="_blank" rel="noreferrer">TopMonks</a></div>
+					<div>Created by <a href="https://topmonks.com">TopMonks</a></div>
 					<div css={separatorStyle}></div>
-					<div>Powered by <a href="https://subsquid.io" target="_blank" rel="noreferrer">Subsquid</a></div>
+					<div>Powered by <a href="https://subsquid.io">Subsquid</a></div>
 				</div>
 				<div css={linksStyle}>
-					{/*<a href="#">Docs</a> TODO */}
-					<a href="https://t.me/calamar_explorer" target="_blank" rel="noreferrer">
+					<a href="https://docs.calamar.app">Docs</a>
+					<a href="https://t.me/calamar_explorer">
 						<Telegram css={iconStyle} />
 					</a>
-					<a href="https://github.com/topmonks/calamar" target="_blank" rel="noreferrer">
+					<a href="https://github.com/topmonks/calamar">
 						<GitHub css={iconStyle} />
 					</a>
-					<a href="mailto:calamar@topmonks.com" target="_blank" rel="noreferrer">
+					<a href="mailto:calamar@topmonks.com">
 						<Email css={iconStyle} />
 					</a>
 				</div>
