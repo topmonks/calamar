@@ -1,6 +1,7 @@
 import { Pagination } from "../../hooks/usePagination";
 
 import { AccountAddress } from "../AccountAddress";
+import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 
@@ -36,7 +37,15 @@ export const CallsTable = (props: CallsTableProps) => {
 			/>
 			<ItemsTableAttribute
 				label="Name"
-				render={(call) => call.name}
+				render={(call) =>
+					<ButtonLink
+						to={`/${network}/search?query=${call.name}`}
+						size="small"
+						color="secondary"
+					>
+						{call.name}
+					</ButtonLink>
+				}
 			/>
 			<ItemsTableAttribute
 				label="Sender"

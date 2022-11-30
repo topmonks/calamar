@@ -1,6 +1,10 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { decodeMetadata } from "../utils/metadata";
+import { upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
+
+import { getLatestRuntimeSpec } from "./runtimeService";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
@@ -35,6 +39,33 @@ export async function getEvent(network: string, filter: EventsFilter) {
 	);
 
 	return response.events[0];
+}
+
+export async function getEventsByName(
+	network: string,
+	limit: number,
+	offset: number,
+	name: string,
+	order: EventsOrder = "id_DESC"
+) {
+	let [pallet, event = ""] = name.split(".");
+
+	// try to fix casing according to latest runtime spec
+	const runtimeSpec = await getLatestRuntimeSpec(network);
+	const metadata = decodeMetadata(runtimeSpec.hex);
+
+	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === event.toLowerCase());
+
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
+	event = runtimeEvent?.name.toString() || upperFirst(event);
+
+	const filter = {
+		name_eq: `${pallet}.${event}`
+	};
+
+	return getEventsWithoutTotalCount(network, limit, offset, filter, order);
 }
 
 export async function getEventsWithoutTotalCount(

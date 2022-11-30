@@ -1,7 +1,11 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { ItemsResponse } from "../model/itemsResponse";
 import { fetchGraphql } from "../utils/fetchGraphql";
+import { decodeMetadata } from "../utils/metadata";
+import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
+
+import { getLatestRuntimeSpec } from "./runtimeService";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
@@ -24,6 +28,35 @@ export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	return extrinsics.data[0];
 }
 
+export async function getExtrinsicsByName(
+	network: string,
+	limit: number,
+	offset: number,
+	name: string,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+	let [pallet, call = ""] = name.split(".");
+
+	// try to fix casing according to latest runtime spec
+	const runtimeSpec = await getLatestRuntimeSpec(network);
+	const metadata = decodeMetadata(runtimeSpec.hex);
+
+	const runtimePallet = metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === call.toLowerCase());
+
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
+	call = runtimeCall?.name.toString() || lowerFirst(call);
+
+	const filter = {
+		call: {
+			name_eq: `${pallet}.${call}`
+		}
+	};
+
+	return getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
+}
+
 export async function getExtrinsicsWithoutTotalCount(
 	network: string,
 	limit: number,
@@ -31,7 +64,7 @@ export async function getExtrinsicsWithoutTotalCount(
 	filter?: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql<{extrinsics: any}>(
+	const response = await fetchGraphql<{ extrinsics: any }>(
 		network,
 		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
 			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
@@ -94,7 +127,7 @@ export async function getExtrinsics(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{extrinsicsConnection: ArchiveConnection<any>}>(
+	const response = await fetchGraphql<{ extrinsicsConnection: ArchiveConnection<any> }>(
 		network,
 		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {

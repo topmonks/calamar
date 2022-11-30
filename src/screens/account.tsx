@@ -13,6 +13,7 @@ import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 const avatarStyle = css`
+	vertical-align: text-bottom;
 	margin-right: 8px;
 `;
 

@@ -51,14 +51,6 @@ const valueCellStyle = (theme: Theme) => css`
 	word-break: break-all;
 	padding-right: 0;
 
-	> img:only-child {
-		display: block;
-	}
-
-	> .MuiChip-root:only-child {
-		display: flex;
-	}
-
 	${theme.breakpoints.down("sm")} {
 		padding-left: 0;
 	}
@@ -66,6 +58,20 @@ const valueCellStyle = (theme: Theme) => css`
 
 const valueStyle = css`
 	display: flex;
+
+	> img:only-child {
+		display: block;
+	}
+
+	> .MuiButton-root:only-child {
+		&.MuiButton-sizeSmall {
+			margin: -4px 0;
+		}
+	}
+
+	> .MuiChip-root:only-child {
+		display: flex;
+	}
 `;
 
 const copyButtonStyle = css`

@@ -1,3 +1,4 @@
+import { ButtonLink } from "../ButtonLink";
 import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
@@ -69,7 +70,15 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			/>
 			<InfoTableAttribute
 				label="Name"
-				render={(data) => data.name}
+				render={(data) =>
+					<ButtonLink
+						to={`/${network}/search?query=${data.name}`}
+						size="small"
+						color="secondary"
+					>
+						{data.name}
+					</ButtonLink>
+				}
 			/>
 			<InfoTableAttribute
 				label="Parameters"
