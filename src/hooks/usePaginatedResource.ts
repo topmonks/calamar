@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRollbar } from "@rollbar/react";
 
 import { FetchOptions } from "../model/fetchOptions";
 import { PaginatedResource } from "../model/paginatedResource";
@@ -14,6 +15,8 @@ export function usePaginatedResource<T = any, F = any>(
 	order?: string|string[],
 	options?: FetchOptions
 ) {
+	const rollbar = useRollbar();
+
 	const [data, setData] = useState<T[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<any>();
@@ -40,6 +43,7 @@ export function usePaginatedResource<T = any, F = any>(
 				pagination.set(items.pagination);
 			} catch(e) {
 				if (e instanceof GraphQLError) {
+					rollbar.error(e);
 					setError(e);
 				} else {
 					throw e;
