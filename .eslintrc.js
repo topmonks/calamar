@@ -26,7 +26,7 @@ module.exports = {
 	"rules": {
 		"indent": "off",
 		"@typescript-eslint/indent": ["error", "tab"],
-		"linebreak-style": ["error", "unix"],
+		"linebreak-style": ["off"],
 		"quotes": ["error", "double"],
 		"semi": ["error", "always"],
 		"react/no-unknown-property": ["error", {
