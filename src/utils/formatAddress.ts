@@ -24,9 +24,8 @@ export function encodeAddress(
 	prefix?: number
 ) {
 	prefix = prefix || getPrefix(network);
-	console.log("prefix", prefix);
 
-	if (prefix) {
+	if (Number.isInteger(prefix)) {
 		try {
 			const keyring = new Keyring();
 
