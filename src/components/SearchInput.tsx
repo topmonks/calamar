@@ -5,7 +5,7 @@ import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { css, Theme } from "@emotion/react";
 
-import NetworkSelect from "./NetworkSelect";
+import NetworkSelect from "./network-select/NetworkSelect";
 
 const formGroupStyle = css`
 	flex-direction: row;
