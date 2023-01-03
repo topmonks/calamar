@@ -3,9 +3,10 @@ import { useCallback, useEffect, useMemo } from "react";
 import { ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
 import { css } from "@emotion/react";
 
-import { useArchives } from "../hooks/useArchives";
-import { useNetworks } from "../hooks/useNetworks";
-import { upperFirst } from "../utils/string";
+import { useArchives } from "../../hooks/useArchives";
+import { useNetworks } from "../../hooks/useNetworks";
+import { upperFirst } from "../../utils/string";
+import { icons } from "./icons";
 
 const selectStyle = css`
 	&.MuiInputBase-root {
@@ -31,7 +32,7 @@ const iconStyle = css`
 	width: 20px;
 	height: 20px;
 
-	border-radius: 4px;
+	border-radius: 0px;
 `;
 
 type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
@@ -71,6 +72,7 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 		});
 	}, [archives, networks]);
 
+	console.log(items);
 	return (
 		<Select
 			{...selectProps}
@@ -82,7 +84,7 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 				<MenuItem key={item.value} value={item.value}>
 					<ListItemIcon>
 						<img
-							src={`https://raw.githubusercontent.com/subsquid/archive-registry/main/ui/logos/networks/${item.value}.png`}
+							src={icons[item.value] as string}
 							css={iconStyle}
 						/>
 					</ListItemIcon>
