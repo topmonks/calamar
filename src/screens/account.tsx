@@ -2,15 +2,15 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { css } from "@emotion/react";
-
 import { AccountAvatar } from "../components/AccountAvatar";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
-import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useAccountPolkadotJs } from "../hooks/useAccountPolkadotJs";
+import { useAccount } from "../hooks/useAccount";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -25,14 +25,16 @@ type AccountPageParams = {
 function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
+	const accountPolkadotJs = useAccountPolkadotJs(network, address);
 	const account = useAccount(network, address);
+
 	const extrinsics = useExtrinsics(network, {
 		OR: [
 			{ signature_jsonContains: `{"address": "${address}" }` },
 			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
 		],
 	});
-
+	
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
 
 	useEffect(() => {
@@ -46,12 +48,12 @@ function AccountPage() {
 		<>
 			<Card>
 				<CardHeader>
-					{account.data &&
+					{(accountPolkadotJs.data || account.data) &&
 						<AccountAvatar address={address} size={32} css={avatarStyle} />
 					}
 					Account #{address}
 				</CardHeader>
-				<AccountInfoTable network={network} account={account} />
+				<AccountInfoTable network={network} account={accountPolkadotJs.data ? accountPolkadotJs : account} />
 			</Card>
 			{account.data &&
 				<Card>
