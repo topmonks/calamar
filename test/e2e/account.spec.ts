@@ -17,7 +17,7 @@ test.describe("Account detail page", () => {
 	});
 
 	test("shows not found message if account was not found", async ({ page, takeScreenshot }) => {
-		const id = "0x1234567890";
+		const id = "0x123456789";
 
 		await navigate(page, `/kusama/account/${id}`, {waitUntil: "data-loaded"});
 
