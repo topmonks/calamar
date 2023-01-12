@@ -9,8 +9,8 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useAccountPolkadotJs } from "../hooks/useAccountPolkadotJs";
 import { useAccount } from "../hooks/useAccount";
+import { isAddress } from "@polkadot/util-crypto";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -25,7 +25,6 @@ type AccountPageParams = {
 function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
-	const accountPolkadotJs = useAccountPolkadotJs(network, address);
 	const account = useAccount(network, address);
 
 	const extrinsics = useExtrinsics(network, {
@@ -48,14 +47,14 @@ function AccountPage() {
 		<>
 			<Card>
 				<CardHeader>
-					{(accountPolkadotJs.data || account.data) &&
+					{(isAddress(address) || account.data) &&
 						<AccountAvatar address={address} size={32} css={avatarStyle} />
 					}
-					Account #{address}
+					Account #{address} 
 				</CardHeader>
-				<AccountInfoTable network={network} account={accountPolkadotJs.data ? accountPolkadotJs : account} />
+				<AccountInfoTable network={network} account={account} address={address} />
 			</Card>
-			{account.data &&
+			{(account.data || isAddress(address)) &&
 				<Card>
 					<TabbedContent>
 						<TabPane
