@@ -1,0 +1,53 @@
+name: Get GitHub app token
+
+inputs:
+  appId:
+    type: string
+    required: true
+  appPrivateKey:
+    type: string
+    required: true
+
+outputs:
+  token:
+    value: ${{ steps.get-token.outputs.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate JWT
+      id: generate-jwt
+      shell: bash
+      run: |
+        NOW=$(date +%s)
+
+        IAT=$NOW
+        EXP=$(expr $NOW + 600)
+
+        HEADER_RAW='{"alg":"RS256"}'
+        HEADER=$(echo -n "${HEADER_RAW}" | openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n\r')
+
+        PAYLOAD_RAW='{"iat":'"${IAT}"',"exp":'"${EXP}"',"iss":'"${GITHUB_APP_ID}"'}'
+        PAYLOAD=$(echo -n "${PAYLOAD_RAW}" | openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n\r')
+
+        HEADER_PAYLOAD="${HEADER}.${PAYLOAD}"
+
+        SIGNATURE=$(openssl dgst -sha256 -sign <(echo -n "${GITHUB_APP_PRIVATE_KEY}") <(echo -n "${HEADER_PAYLOAD}") | openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n')
+
+        JWT="${HEADER_PAYLOAD}"."${SIGNATURE}"
+
+        echo "::add-mask::$JWT"
+        echo "jwt=$JWT" >> $GITHUB_OUTPUT
+      env:
+        GITHUB_APP_ID: ${{ inputs.appId }}
+        GITHUB_APP_PRIVATE_KEY: ${{ inputs.appPrivateKey }}
+    - name: Get app token
+      id: get-token
+      shell: bash
+      run: |
+        INSTALLATION_ID=$(curl -s -X GET -H "Authorization: Bearer ${JWT}" -H "Accept: application/vnd.github+json" https://api.github.com/app/installations | jq -r ".[0].id")
+        TOKEN=$(curl -s -X POST -H "Authorization: Bearer ${JWT}" -H "Accept: application/vnd.github+json" https://api.github.com/app/installations/${INSTALLATION_ID}/access_tokens | jq -r ".token")
+        echo "::add-mask::$TOKEN"
+        echo "token=$TOKEN" >> $GITHUB_OUTPUT
+      env:
+        JWT: ${{ steps.generate-jwt.outputs.jwt }}

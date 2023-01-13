@@ -10,7 +10,17 @@ jobs:
     name: Add issue to project
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get token
+        id: get-token
+        uses: ./.github/actions/app-auth
+        with:
+          appId: ${{ secrets.PROJECTS_AND_ISSUES_APP_ID }}
+          appPrivateKey: ${{ secrets.PROJECTS_AND_ISSUES_APP_PRIVATE_KEY }}
       - uses: actions/add-to-project@v0.4.0
         with:
           project-url: https://github.com/orgs/topmonks/projects/11
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.get-token.outputs.token }}
