@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
       - name: Get token
         id: get-token
-        uses: ./.github/actions/app-auth
+        uses: topmonks/app-auth-action
         with:
           appId: ${{ secrets.PROJECTS_AND_ISSUES_APP_ID }}
           appPrivateKey: ${{ secrets.PROJECTS_AND_ISSUES_APP_PRIVATE_KEY }}
