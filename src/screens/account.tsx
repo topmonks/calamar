@@ -10,7 +10,6 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useAccount } from "../hooks/useAccount";
-import { isAddress } from "@polkadot/util-crypto";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -47,14 +46,14 @@ function AccountPage() {
 		<>
 			<Card>
 				<CardHeader>
-					{(isAddress(address) || account.data) &&
+					{account.data &&
 						<AccountAvatar address={address} size={32} css={avatarStyle} />
 					}
-					Account #{address} 
+					Account #{address}
 				</CardHeader>
-				<AccountInfoTable network={network} account={account} address={address} />
+				<AccountInfoTable network={network} account={account} />
 			</Card>
-			{(account.data || isAddress(address)) &&
+			{account.data &&
 				<Card>
 					<TabbedContent>
 						<TabPane

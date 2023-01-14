@@ -25,7 +25,7 @@ export async function getAccount(network: string, address: string) {
 	const extrinsic = await getExtrinsic(network, filter);
 
 	if (!extrinsic) {
-		return null;
+		return { address: address };
 	}
 
 	return {
