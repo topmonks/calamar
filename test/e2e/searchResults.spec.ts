@@ -85,7 +85,7 @@ test.describe("Search results page", () => {
 	});
 
 	test("shows error message when search for extrinsic by hash fails", async ({ page, takeScreenshot }) => {
-		const hash = "0x162bd24c5f19b9fee4a33d11c2908d73d5b0d6c428cf0f1eecdf568c346b26b3";
+		const hash = "0x162bd24c5f19b9fee4a33d11c2908d73d5b0d6c428cf0f1eecdf568c346b26";
 
 		mockRequest(
 			page,
@@ -112,7 +112,7 @@ test.describe("Search results page", () => {
 	});
 
 	test("shows error message when search for block by hash fails", async ({ page, takeScreenshot }) => {
-		const hash = "0xe9bc2f7f23685d545bfcb71ea59140700f83868300123fcb04f4872b18979242";
+		const hash = "0xe9bc2f7f23685d545bfcb71ea59140700f83868300123fcb04f4872b189742";
 
 		mockRequest(
 			page,

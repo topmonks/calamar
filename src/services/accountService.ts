@@ -4,7 +4,7 @@ import { decodeAddress } from "../utils/formatAddress";
 import { getExtrinsic } from "./extrinsicsService";
 
 export async function getAccount(network: string, address: string) {
-	if (!isAddress(address)) {
+	if (!isAddress(address) || address.length !== 66) {
 		return null;
 	}
 
@@ -25,7 +25,7 @@ export async function getAccount(network: string, address: string) {
 	const extrinsic = await getExtrinsic(network, filter);
 
 	if (!extrinsic) {
-		return { address: address };
+		return { address: address, id: address };
 	}
 
 	return {
