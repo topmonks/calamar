@@ -4,12 +4,16 @@ import { decodeAddress } from "../utils/formatAddress";
 import { getExtrinsic } from "./extrinsicsService";
 
 export async function getAccount(network: string, address: string) {
-	if (!isAddress(address) || address.length !== 66) {
+	if (!isAddress(address)) {
 		return null;
 	}
 
 	// if the address is encoded, decode it
 	const decodedAddress = decodeAddress(address);
+
+	if(decodedAddress.length !== 66) {
+		return null;
+	}
 
 	if (decodedAddress) {
 		address = decodedAddress;
