@@ -102,7 +102,7 @@ function SearchPage() {
 			return <Navigate to={`/${network}/block/${blockByHash.data?.id || blockByHeight.data?.id}`} replace />;
 		}
 
-		if (account.data && account.data.id) {
+		if (account.data) {
 			return <Navigate to={`/${network}/account/${account.data.id}`} replace />;
 		}
 	}
