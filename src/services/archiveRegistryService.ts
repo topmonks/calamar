@@ -1,5 +1,6 @@
 import { ArchiveEntry, Network } from "@subsquid/archive-registry";
 import archivesJson from "@subsquid/archive-registry/archives.json";
+import callerArchivesJson from "./tempCallerArchives.json";
 import networksJson from "@subsquid/archive-registry/networks.json";
 
 const networks = networksJson.networks.map(network => ({
@@ -11,8 +12,16 @@ export function getArchives() {
 	return archivesJson.archives as ArchiveEntry[];
 }
 
+export function getCallerArchives() {
+	return callerArchivesJson.archives as ArchiveEntry[];
+}
+
 export function getArchive(network: string) {
 	return getArchives().find((archive) => archive.network === network);
+}
+
+export function getCallerArchive(network: string) {
+	return getCallerArchives().find((archive) => archive.network === network);
 }
 
 export function getNetworks() {

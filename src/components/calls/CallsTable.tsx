@@ -1,5 +1,4 @@
 import { PaginatedResource } from "../../model/paginatedResource";
-
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
@@ -8,10 +7,11 @@ import { Link } from "../Link";
 export type CallsTableProps = {
 	network: string;
 	calls: PaginatedResource<any>;
+	showAccount?: boolean;
 };
 
 export const CallsTable = (props: CallsTableProps) => {
-	const { network, calls } = props;
+	const { network, calls, showAccount } = props;
 
 	return (
 		<ItemsTable
@@ -43,18 +43,20 @@ export const CallsTable = (props: CallsTableProps) => {
 					</ButtonLink>
 				}
 			/>
-			<ItemsTableAttribute
-				label="Sender"
-				render={(call) =>
-					call.origin && call.origin.value.__kind !== "None" && (
-						<AccountAddress
-							network={network}
-							address={call.origin.value.value}
-							shorten
-						/>
-					)
-				}
-			/>
+			{showAccount && (
+				<ItemsTableAttribute
+					label="Sender"
+					render={(call) =>
+						(call.origin && call.origin.value.__kind !== "None") && (
+							<AccountAddress
+								network={network}
+								address={call.origin.value.value}
+								shorten
+							/>
+						)
+					}
+				/>)
+			}
 			<ItemsTableAttribute
 				label="Extrinsic"
 				render={(call) =>
