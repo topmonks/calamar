@@ -1,5 +1,5 @@
 import { getAccount } from "../../src/services/accountService";
-import { getExtrinsics } from "../../src/services/extrinsicsService";
+import { getExtrinsicsByAccount } from "../../src/services/extrinsicsService";
 
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
@@ -56,11 +56,8 @@ test.describe("Account detail page", () => {
 	test("shows error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsics("kusama", 10, 0, {
-				OR: [
-					{ signature_jsonContains: `{"address": "${address}" }` },
-					{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-				]
+			() => getExtrinsicsByAccount("kusama", 10, 0, {
+				signerPublicKey_eq: address
 			}),
 			(route) => route.fulfill({
 				status: 200,
