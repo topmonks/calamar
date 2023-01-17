@@ -17,9 +17,9 @@ jobs:
           appId: ${{ secrets.PROJECTS_AND_ISSUES_APP_ID }}
           appPrivateKey: ${{ secrets.PROJECTS_AND_ISSUES_APP_PRIVATE_KEY }}
       - name: Move issue to column
-        uses: alex-page/github-project-automation-plus@v0.8.1
+        uses: alex-page/github-project-automation-plus@v0.8.2
         with:
           project: Calamar
           project-url: https://github.com/orgs/topmonks/projects/11
-          column: ${{ github.event.issue.state_reason == "not_planned" && "Done" || "To Release" }}
+          column: ${{ github.event.issue.state_reason == 'not_planned' && 'Done' || 'To Release' }}
           repo-token: ${{ steps.get-token.outputs.token }}
