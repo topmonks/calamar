@@ -10,13 +10,9 @@ jobs:
     name: Add issue to project
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Get token
         id: get-token
-        uses: topmonks/app-auth-action@master
+        uses: topmonks/app-auth-action@v1
         with:
           appId: ${{ secrets.PROJECTS_AND_ISSUES_APP_ID }}
           appPrivateKey: ${{ secrets.PROJECTS_AND_ISSUES_APP_PRIVATE_KEY }}
