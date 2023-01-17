@@ -24,3 +24,8 @@ jobs:
           project_id: 11
           resource_node_id: ${{ github.event.issue.node_id }}
           status_value: ${{ github.event.issue.state_reason == 'not_planned' && 'Done' || 'To Release' }}
+      - name: Label issue
+        uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ github.event.issue.state_reason != 'not_planned' }}
+        with:
+          labels: to-release
