@@ -31,8 +31,6 @@ function AccountPage() {
 	const extrinsics = useAccountExtrinsics(network, address);
 	const calls = useAccountCalls(network, address);
 
-	console.warn(extrinsics);
-
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
 
 	useEffect(() => {
@@ -65,7 +63,7 @@ function AccountPage() {
 						>
 							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
-						<TabPane
+						{calls !== undefined && <TabPane
 							label="Calls"
 							count={calls.pagination.totalCount}
 							loading={calls.loading}
@@ -73,7 +71,7 @@ function AccountPage() {
 							value="calls"
 						>
 							<CallsTable network={network} calls={calls} />
-						</TabPane>
+						</TabPane>}
 					</TabbedContent>
 				</Card>
 			}
