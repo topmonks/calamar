@@ -39,10 +39,7 @@ function App() {
 							<Route element={<CallPage />} path="call/:id" />
 							<Route element={<AccountPage />} path="account/:address" />
 							<Route element={<EventPage />} path="event/:id" />
-							<Route element={<Navigate to={
-								window.location.pathname
-									.substring(0, window.location.pathname.substring(1).indexOf("/") + 1)
-							} replace />} path="latest-extrinsics" />
+							<Route element={<Navigate to=".." replace />} path="latest-extrinsics" />
 							{config.devtools.enabled && <Route element={<RuntimePage />} path="runtime" />}
 							{config.devtools.enabled && <Route element={<RuntimePage />} path="runtime/:specVersion" />}
 							<Route element={<NotFoundPage />} path="*" />
