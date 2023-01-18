@@ -10,21 +10,5 @@ export function useAccountExtrinsics(
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	const callerFilter = {
-		signerPublicKey_eq: address,
-	};
-
-	if (getCallerArchive(network)){
-		return usePaginatedResource(getExtrinsicsByAccount, network, callerFilter, order, options);
-	}
-
-
-
-	const archiveFilter = {
-		OR: [
-			{ signature_jsonContains: `{"address": "${address}" }` },
-			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-		],
-	};
-	return usePaginatedResource(getExtrinsics, network, archiveFilter, order, options);
+	return usePaginatedResource(getExtrinsicsByAccount, network, address, order, options);
 }

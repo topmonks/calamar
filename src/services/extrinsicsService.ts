@@ -7,7 +7,7 @@ import { unifyConnection } from "../utils/unifyConnection";
 import { getLatestRuntimeSpec } from "./runtimeService";
 
 export type ExtrinsicsFilter = any;
-export type ExtrinsicsByAccountFilter = any;
+export type ExtrinsicsCallerFilter = any;
 
 export type ExtrinsicsOrder = string | string[];
 
@@ -20,7 +20,33 @@ export async function getExtrinsicsByAccount(
 	network: string,
 	limit: number,
 	offset: number,
-	filter?: ExtrinsicsByAccountFilter,
+	address: string,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+	try {
+		const filter = {
+			signerPublicKey_eq: address
+		};
+		return await getExtrinsicsCaller(network, limit, offset, filter, order);
+	}
+	catch (e)
+	{
+		const filter = {
+			OR: [
+				{ signature_jsonContains: `{"address": "${address}" }` },
+				{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
+			],
+		};
+		return await getExtrinsics(network, limit, offset, filter, order);
+	}
+}
+
+
+export async function getExtrinsicsCaller(
+	network: string,
+	limit: number,
+	offset: number,
+	filter?: ExtrinsicsCallerFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
 	const after = offset === 0 ? null : offset.toString();
@@ -87,6 +113,76 @@ export async function getExtrinsicsByAccount(
 	return unifyConnection(data, limit, offset);
 }
 
+export async function getExtrinsicsCallerWithoutTotalCount(
+	network: string,
+	limit: number,
+	offset: number,
+	filter?: ExtrinsicsCallerFilter,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+	const response = await fetchGraphqlCaller<{ extrinsics: any }>(
+		network,
+		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
+			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
+				
+						id
+						block {
+							id
+							hash
+							height
+							timestamp
+						}
+						calls {
+							callName
+						}
+						indexInBlock
+						success
+						tip
+						fee
+						signerPublicKey
+        				signerAccount
+						error
+						version
+			}
+		}`,
+		{
+			limit: limit + 1, // get one item more to test if next page exists
+			offset,
+			filter,
+			order,
+		}
+	);
+
+	// unify the response
+	const items = response.extrinsics.map((item: any) => {
+		const itemData = {
+			...item,
+			call: {
+				name: item.calls[0].callName
+			},
+		};
+		return itemData;
+	});
+
+	
+	const hasNextPage = items.length > limit;
+
+	if (hasNextPage) {
+		// remove testing item from next page
+		items.pop();
+	}
+
+	return {
+		data: items,
+		pagination: {
+			offset,
+			limit,
+			hasNextPage
+		}
+	};
+}
+
+
 export async function getExtrinsicsByName(
 	network: string,
 	limit: number,
@@ -106,13 +202,23 @@ export async function getExtrinsicsByName(
 	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
 	call = runtimeCall?.name.toString() || lowerFirst(call);
 
-	const filter = {
-		call: {
-			name_eq: `${pallet}.${call}`
-		}
-	};
+	try {
+		const filter = {
+			calls_some: {
+				callName_eq: `${pallet}.${call}`
+			}
+		};
+		return await getExtrinsicsCallerWithoutTotalCount(network, limit, offset, filter, order);
+	}
+	catch {
+		const filter = {
+			call: {
+				name_eq: `${pallet}.${call}`
+			}
+		};
 
-	return getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
+		return await getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
+	}
 }
 
 export async function getExtrinsicsWithoutTotalCount(
