@@ -56,9 +56,7 @@ test.describe("Account detail page", () => {
 	test("shows error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsicsByAccount("kusama", 10, 0, {
-				signerPublicKey_eq: address
-			}),
+			() => getExtrinsicsByAccount("kusama", 10, 0, address),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
