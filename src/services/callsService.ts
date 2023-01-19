@@ -1,6 +1,7 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { fetchGraphql, fetchGraphqlCaller } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
+import { getCallerArchive } from "./archiveRegistryService";
 
 export type CallsFilter = any;
 export type CallsByAccountFilter = any;
@@ -45,6 +46,30 @@ export async function getCall(network: string, filter: CallsFilter) {
 
 
 export async function getCallsByAccount(
+	network: string,
+	limit: number,
+	offset: number,
+	address: string,
+	order: CallsOrder = "id_DESC"
+) {
+	
+	if (getCallerArchive(network)) {
+		const filter = {
+			callerPublicKey_eq: address,
+		};
+		return getCallsCaller(network, limit, offset, filter, order);
+	}
+	return {
+		data: [],
+		pagination: {
+			offset,
+			limit,
+			hasNextPage: false,
+		}
+	};
+}
+
+export async function getCallsCaller(
 	network: string,
 	limit: number,
 	offset: number,

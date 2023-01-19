@@ -5,6 +5,7 @@ import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
 import { getLatestRuntimeSpec } from "./runtimeService";
+import { getCallerArchive } from "./archiveRegistryService";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsCallerFilter = any;
@@ -23,24 +24,48 @@ export async function getExtrinsicsByAccount(
 	address: string,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	try {
+	if (getCallerArchive(network)){
 		const filter = {
 			signerPublicKey_eq: address
 		};
 		return await getExtrinsicsCaller(network, limit, offset, filter, order);
 	}
-	catch (e)
-	{
-		const filter = {
-			OR: [
-				{ signature_jsonContains: `{"address": "${address}" }` },
-				{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-			],
-		};
-		return await getExtrinsics(network, limit, offset, filter, order);
-	}
+	const filter = {
+		OR: [
+			{ signature_jsonContains: `{"address": "${address}" }` },
+			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
+		],
+	};
+	return await getExtrinsics(network, limit, offset, filter, order);
 }
 
+export async function getExtrinsicsByName(
+	network: string,
+	limit: number,
+	offset: number,
+	name: string,
+	order: ExtrinsicsOrder = "id_DESC"
+) {
+	let [pallet, call = ""] = name.split(".");
+
+	// try to fix casing according to latest runtime spec
+	const runtimeSpec = await getLatestRuntimeSpec(network);
+
+	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === call.toLowerCase());
+
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
+	call = runtimeCall?.name.toString() || lowerFirst(call);
+
+	const filter = {
+		call: {
+			name_eq: `${pallet}.${call}`
+		}
+	};
+
+	return getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
+}
 
 export async function getExtrinsicsCaller(
 	network: string,
@@ -113,113 +138,6 @@ export async function getExtrinsicsCaller(
 	return unifyConnection(data, limit, offset);
 }
 
-export async function getExtrinsicsCallerWithoutTotalCount(
-	network: string,
-	limit: number,
-	offset: number,
-	filter?: ExtrinsicsCallerFilter,
-	order: ExtrinsicsOrder = "id_DESC"
-) {
-	const response = await fetchGraphqlCaller<{ extrinsics: any }>(
-		network,
-		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
-			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
-				
-						id
-						block {
-							id
-							hash
-							height
-							timestamp
-						}
-						calls {
-							callName
-						}
-						indexInBlock
-						success
-						tip
-						fee
-						signerPublicKey
-        				signerAccount
-						error
-						version
-			}
-		}`,
-		{
-			limit: limit + 1, // get one item more to test if next page exists
-			offset,
-			filter,
-			order,
-		}
-	);
-
-	// unify the response
-	const items = response.extrinsics.map((item: any) => {
-		const itemData = {
-			...item,
-			call: {
-				name: item.calls[0].callName
-			},
-		};
-		return itemData;
-	});
-
-	
-	const hasNextPage = items.length > limit;
-
-	if (hasNextPage) {
-		// remove testing item from next page
-		items.pop();
-	}
-
-	return {
-		data: items,
-		pagination: {
-			offset,
-			limit,
-			hasNextPage
-		}
-	};
-}
-
-
-export async function getExtrinsicsByName(
-	network: string,
-	limit: number,
-	offset: number,
-	name: string,
-	order: ExtrinsicsOrder = "id_DESC"
-) {
-	let [pallet, call = ""] = name.split(".");
-
-	// try to fix casing according to latest runtime spec
-	const runtimeSpec = await getLatestRuntimeSpec(network);
-
-	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
-	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === call.toLowerCase());
-
-	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
-	call = runtimeCall?.name.toString() || lowerFirst(call);
-
-	try {
-		const filter = {
-			calls_some: {
-				callName_eq: `${pallet}.${call}`
-			}
-		};
-		return await getExtrinsicsCallerWithoutTotalCount(network, limit, offset, filter, order);
-	}
-	catch {
-		const filter = {
-			call: {
-				name_eq: `${pallet}.${call}`
-			}
-		};
-
-		return await getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
-	}
-}
 
 export async function getExtrinsicsWithoutTotalCount(
 	network: string,
