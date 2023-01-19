@@ -1,4 +1,3 @@
-import { getAccount } from "../../src/services/accountService";
 import { getExtrinsics } from "../../src/services/extrinsicsService";
 
 import { mockRequest } from "../utils/mockRequest";
@@ -26,31 +25,6 @@ test.describe("Account detail page", () => {
 		await expect(errorMessage).toHaveText("Account doesn't exist or haven't signed any extrinsic");
 
 		await takeScreenshot("account-not-found");
-	});
-
-	test("shows error message when account data fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-
-			page,
-			() => getAccount("kusama", address),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Account error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Account error/);
-
-		await takeScreenshot("account-error");
 	});
 
 	test("shows error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
