@@ -6,7 +6,7 @@ import { Resource } from "../model/resource";
 import { GraphQLError } from "../utils/fetchGraphql";
 
 export function useResource<T = any, F = any>(
-	fetchItem: (network: string, filter: F) => T|Promise<T>,
+	fetchItem: (network: string, filter: F) => T|undefined|Promise<T|undefined>,
 	network: string | undefined,
 	filter: F,
 	options?: FetchOptions

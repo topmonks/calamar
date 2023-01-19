@@ -4,7 +4,7 @@ import { useResource } from "./useResource";
 
 export function useRuntimeSpecs(
 	network: string | undefined,
-	specVersions: number[],
+	specVersions: number[] | undefined,
 	options?: FetchOptions
 ) {
 	return useResource(getRuntimeSpecs, network, specVersions, options);

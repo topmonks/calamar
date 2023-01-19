@@ -13,7 +13,6 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 type BlockPageParams = {
 	network: string;
@@ -29,13 +28,7 @@ function BlockPage() {
 	const events = useEvents(network, { block: { id_eq: id } }, "id_DESC");
 	const calls = useCalls(network, { block: { id_eq: id } }, "id_DESC");
 
-	const specVersion = block.data?.spec.specVersion;
-	const runtimeSpecs = useRuntimeSpecs(network, specVersion ? [specVersion] : [], {
-		waitUntil: block.loading
-	});
-
-
-	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading && !runtimeSpecs.loading);
+	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -51,9 +44,12 @@ function BlockPage() {
 					Block #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
-				<BlockInfoTable network={network} block={block} />
+				<BlockInfoTable
+					network={network}
+					block={block}
+				/>
 			</Card>
-			{block.data && !runtimeSpecs.loading &&
+			{block.data &&
 				<Card>
 					<TabbedContent>
 						<TabPane
@@ -81,7 +77,7 @@ function BlockPage() {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} events={events} runtimeSpecs={runtimeSpecs} showExtrinsic />
+							<EventsTable network={network} events={events} showExtrinsic />
 						</TabPane>
 					</TabbedContent>
 				</Card>

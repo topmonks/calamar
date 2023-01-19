@@ -5,7 +5,7 @@ import { format as formatTime, formatInTimeZone as formatTimeInTimeZone } from "
 import { Tooltip } from "@mui/material";
 
 export type TimeProps = {
-	time: Date|number;
+	time: string|Date|number;
 	format?: string;
 	fromNow?: boolean;
 	utc?: boolean;

@@ -11,7 +11,7 @@ import { AccountAvatar } from "./AccountAvatar";
 export type AccountLinkProps = {
 	network: string;
 	address: string;
-	prefix?: number;
+	prefix: number;
 	link?: boolean;
 	shorten?: boolean;
 }
@@ -26,7 +26,7 @@ export const AccountAddress = (props: AccountLinkProps) => {
 	} = props;
 
 	const content = useMemo(() => {
-		const encodedAddress = encodeAddress(network, address, prefix);
+		const encodedAddress = encodeAddress(address, prefix);
 		const content: ReactNode = shorten ? shortenHash(encodedAddress) : encodedAddress;
 
 		if (link) {

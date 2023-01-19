@@ -19,7 +19,7 @@ export async function fetchGraphql<T = any>(
 		throw new Error(`Archive for network '${network} not found`);
 	}
 
-	const response = await fetch(archive.providers[0].explorerUrl, {
+	const response = await fetch(archive.providers[0]!.explorerUrl, {
 		method: "POST",
 
 		headers: {

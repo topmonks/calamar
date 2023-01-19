@@ -1,3 +1,4 @@
+import { Call } from "../../model/call";
 import { PaginatedResource } from "../../model/paginatedResource";
 
 import { AccountAddress } from "../AccountAddress";
@@ -7,8 +8,10 @@ import { Link } from "../Link";
 
 export type CallsTableProps = {
 	network: string;
-	calls: PaginatedResource<any>;
+	calls: PaginatedResource<Call>;
 };
+
+const CallsTableAttribute = ItemsTableAttribute<Call>;
 
 export const CallsTable = (props: CallsTableProps) => {
 	const { network, calls } = props;
@@ -23,7 +26,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			pagination={calls.pagination}
 			data-test="calls-table"
 		>
-			<ItemsTableAttribute
+			<CallsTableAttribute
 				label="ID"
 				render={(call) =>
 					<Link to={`/${network}/call/${call.id}`}>
@@ -31,7 +34,7 @@ export const CallsTable = (props: CallsTableProps) => {
 					</Link>
 				}
 			/>
-			<ItemsTableAttribute
+			<CallsTableAttribute
 				label="Name"
 				render={(call) =>
 					<ButtonLink
@@ -43,19 +46,20 @@ export const CallsTable = (props: CallsTableProps) => {
 					</ButtonLink>
 				}
 			/>
-			<ItemsTableAttribute
+			<CallsTableAttribute
 				label="Sender"
 				render={(call) =>
 					call.origin && call.origin.value.__kind !== "None" && (
 						<AccountAddress
 							network={network}
 							address={call.origin.value.value}
+							prefix={call.runtimeSpec.metadata.ss58Prefix}
 							shorten
 						/>
 					)
 				}
 			/>
-			<ItemsTableAttribute
+			<CallsTableAttribute
 				label="Extrinsic"
 				render={(call) =>
 					<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>

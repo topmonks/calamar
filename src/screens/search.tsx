@@ -19,7 +19,6 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import NotFound from "../components/NotFound";
 import Loading from "../components/Loading";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -65,19 +64,14 @@ function SearchPage() {
 	const extrinsicsByName = useExtrinsicsByName(network, query, "id_DESC", { skip: !maybeName });
 	const eventsByName = useEventsByName(network, query, "id_DESC", { skip: !maybeName });
 
-	const runtimeSpecs = useRuntimeSpecs(network, eventsByName.data?.map(it => it.block.spec.specVersion) || [], {
-		waitUntil: eventsByName.loading
-	});
-
-	const allDataResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
-	const allResources = [...allDataResources, runtimeSpecs];
+	const allResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
 	const multipleResultsResources = [extrinsicsByName, eventsByName];
 
 	const showResults = multipleResultsResources.some(it => it.data?.length);
 	const showLoading = forceLoading || (allResources.some(it => it.loading) && !showResults);
-	const showNotFound = allDataResources.every(it => it.notFound);
-	const error = allDataResources.find(it => it.error)?.error;
-	const showError = error && allDataResources.every(it => it.error || it.notFound);
+	const showNotFound = allResources.every(it => it.notFound);
+	const error = allResources.find(it => it.error)?.error;
+	const showError = error && allResources.every(it => it.error || it.notFound);
 
 	useEffect(() => {
 		// show loading at least for 1s to prevent flickering
@@ -87,7 +81,7 @@ function SearchPage() {
 
 	useDOMEventTrigger("data-loaded", allResources.every(it => !it.loading));
 
-	console.log(allDataResources);
+	console.log(allResources);
 
 	if (!query) {
 		return <Navigate to="/" replace />;
@@ -163,7 +157,7 @@ function SearchPage() {
 						error={eventsByName.error}
 						value="events"
 					>
-						<EventsTable network={network} events={eventsByName} runtimeSpecs={runtimeSpecs} showExtrinsic />
+						<EventsTable network={network} events={eventsByName} showExtrinsic />
 					</TabPane>
 				}
 			</TabbedContent>

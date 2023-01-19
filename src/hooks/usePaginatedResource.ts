@@ -77,7 +77,7 @@ export function usePaginatedResource<T = any, F = any>(
 			pagination,
 			error,
 			refetch: fetchData
-		}) as PaginatedResource,
+		}) as PaginatedResource<T>,
 		[data, loading, pagination, error, fetchData]
 	);
 }

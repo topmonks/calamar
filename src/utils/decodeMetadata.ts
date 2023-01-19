@@ -49,37 +49,12 @@ export function decodeMetadata(hex: `0x${string}`) {
 
 	const latestMetadata = metadata.asLatest;
 
-	const expandedMetadata = expandMetadata(registry, metadata);
-
 	const decodedMetadata: DecodedMetadata = {
-		pallets: []
-	};
-
-	const decodedMetadataOld: DecodedMetadata = {
+		ss58Prefix: latestMetadata.registry.getChainProperties()?.ss58Format.unwrap()?.toNumber() || 42,
 		pallets: []
 	};
 
 	decodedMetadata.pallets = latestMetadata.pallets.map(pallet => {
-		const decodedPallet: DecodedPallet = {
-			name: pallet.name.toString(),
-			calls: [],
-			events: []
-		};
-
-		const expandedCalls = expandedMetadata.tx[lowerFirst(decodedPallet.name)];
-		if (expandedCalls) {
-			decodedPallet.calls = Object.values(expandedCalls).map((expandedCall) => expandedCall.toJSON() as DecodedCall);
-		}
-
-		const expandedEvents = expandedMetadata.events[lowerFirst(decodedPallet.name)];
-		if (expandedEvents) {
-			decodedPallet.events = Object.values(expandedEvents).map((expandedEvent) => expandedEvent.meta.toJSON() as DecodedEvent);
-		}
-
-		return decodedPallet;
-	});
-
-	decodedMetadataOld.pallets = latestMetadata.pallets.map(pallet => {
 		const decodedPallet: DecodedPallet = {
 			name: pallet.name.toString(),
 			calls: [],
@@ -99,7 +74,5 @@ export function decodeMetadata(hex: `0x${string}`) {
 		return decodedPallet;
 	});
 
-	console.log("Decoded metadata", decodedMetadata);
-
-	return decodedMetadataOld;
+	return decodedMetadata;
 }

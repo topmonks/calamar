@@ -21,5 +21,6 @@ export type DecodedPallet = {
 }
 
 export type DecodedMetadata = {
+	ss58Prefix: number;
 	pallets: DecodedPallet[];
 }

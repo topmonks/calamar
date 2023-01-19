@@ -24,7 +24,7 @@ function RuntimePage() {
 
 	const network = useNetwork(networkName)!;
 
-	const { metadata } = runtimeSpecs.data?.[0] || {};
+	const metadata = specVersion && runtimeSpecs.data?.[parseInt(specVersion)]!.metadata;
 
 	console.log(metadata);
 
