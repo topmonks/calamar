@@ -4,7 +4,7 @@
             "network": "polkadot",
             "providers": [
                 {
-                    "explorerUrl": "https://squid.subsquid.io/caller-squid-polkadot/v/v1/graphql"
+                    "explorerUrl": "https://squid.subsquid.io/caller-squid-polkadot/v/v2/graphql"
                 }
             ]
         },
@@ -12,7 +12,7 @@
             "network": "kusama",
             "providers": [
                 {
-                    "explorerUrl": "https://squid.subsquid.io/caller-squid-kusama/v/v1/graphql"
+                    "explorerUrl": "https://squid.subsquid.io/caller-squid-kusama/v/v3/graphql"
                 }
             ]
         }
