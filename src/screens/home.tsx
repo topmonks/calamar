@@ -97,7 +97,7 @@ function HomePage() {
 					/>
 				</div>
 				<div style={{ margin: "auto", width: "fit-content", marginTop: 24, textAlign: "center" }}>
-					<div><Link to={`/${network}/latest-extrinsics`}>Show latest extrinsics</Link></div>
+					<div><Link to={`/${network}`}>Show latest extrinsics</Link></div>
 					<div><Devtool><Link to={`/${network}/runtime`}>Runtime specs</Link></Devtool></div>
 				</div>
 			</div>
