@@ -32,7 +32,7 @@ function AccountPage() {
 	const extrinsics = useAccountExtrinsics(network, address);
 	const calls = useAccountCalls(network, address);
 
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
