@@ -68,7 +68,7 @@ function ExtrinsicPage() {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} />
+							<CallsTable network={network} calls={calls} showAccount />
 						</TabPane>
 					</TabbedContent>
 				</Card>
