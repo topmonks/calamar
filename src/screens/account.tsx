@@ -8,8 +8,8 @@ import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
-import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useAccount } from "../hooks/useAccount";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -32,7 +32,7 @@ function AccountPage() {
 			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
 		],
 	});
-	
+
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
 
 	useEffect(() => {
