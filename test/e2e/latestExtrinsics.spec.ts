@@ -7,6 +7,12 @@ import { test, expect } from "../utils/test";
 
 
 test.describe("Latest extrinsics page", () => {
+
+	test("redirects to /:network", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/latest-extrinsics", {waitUntil: "data-loaded"});
+		await page.waitForURL(/\/kusama/);
+	});
+
 	test("shows latest extrinsics page", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/polkadot/latest-extrinsics", {waitUntil: "data-loaded"});
 
