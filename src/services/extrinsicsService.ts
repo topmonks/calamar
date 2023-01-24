@@ -91,6 +91,7 @@ export async function getExtrinsicsCaller(
 						}
 						calls {
 							callName
+							palletName
 						}
 						indexInBlock
 						success
@@ -127,7 +128,7 @@ export async function getExtrinsicsCaller(
 				node: {
 					...item.node,
 					call: {
-						name: item.node.calls[0].callName
+						name: item.node.calls[0].palletName.concat(".", item.node.calls[0].callName)
 					},
 				}
 			};

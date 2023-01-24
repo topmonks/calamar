@@ -86,6 +86,7 @@ export async function getCallsCaller(
 					node {
 						id
 						callName
+						palletName
 						success
 						callerPublicKey
 						argsStr
@@ -124,7 +125,7 @@ export async function getCallsCaller(
 			const itemData = {
 				node: {
 					...item.node,
-					name: item.node.callName
+					name: item.node.palletName.concat(".", item.node.callName)
 				}
 			};
 			return itemData;
