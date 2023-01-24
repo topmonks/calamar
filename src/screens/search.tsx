@@ -58,7 +58,13 @@ function SearchPage() {
 
 	const extrinsicByHash = useExtrinsic(network, { hash_eq: query }, { skip: !maybeHash });
 	const blockByHash = useBlock(network, { hash_eq: query }, { skip: !maybeHash });
-	const account = useAccount(network, query, { skip: !maybeAddress });
+
+	const account = useAccount(network, query, {
+		// extrinsic and block has precedence before account because the hashes may collide
+		// so wait until they are resolved and we know it is not extrinsic or hash
+		skip: !maybeAddress || extrinsicByHash.error || blockByHash.error,
+		waitUntil: extrinsicByHash.loading || blockByHash.loading
+	});
 
 	const blockByHeight = useBlock(network, { height_eq: parseInt(query) }, { skip: !maybeHeight });
 
