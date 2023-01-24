@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import { Provider as RollbarProvider } from "@rollbar/react";
 
@@ -32,13 +32,14 @@ function App() {
 					<Routes>
 						<Route element={<HomePage />} path="/" />
 						<Route element={<ResultLayout />} path=":network">
+							<Route element={<LatestExtrinsicsPage />} index />
 							<Route element={<ExtrinsicPage />} path="extrinsic/:id" />
 							<Route element={<SearchPage />} path="search" />
 							<Route element={<BlockPage />} path="block/:id" />
 							<Route element={<CallPage />} path="call/:id" />
 							<Route element={<AccountPage />} path="account/:address" />
 							<Route element={<EventPage />} path="event/:id" />
-							<Route element={<LatestExtrinsicsPage />} path="latest-extrinsics" />
+							<Route element={<Navigate to=".." replace />} path="latest-extrinsics" />
 							{config.devtools.enabled && <Route element={<RuntimePage />} path="runtime" />}
 							{config.devtools.enabled && <Route element={<RuntimePage />} path="runtime/:specVersion" />}
 							<Route element={<NotFoundPage />} path="*" />
