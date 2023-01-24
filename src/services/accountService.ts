@@ -1,8 +1,6 @@
 import { isAddress } from "@polkadot/util-crypto";
 import { decodeAddress } from "../utils/formatAddress";
 
-import { getExtrinsic } from "./extrinsicsService";
-
 export async function getAccount(network: string, address: string) {
 	if (!isAddress(address)) {
 		return null;
@@ -15,21 +13,5 @@ export async function getAccount(network: string, address: string) {
 		address = decodedAddress;
 	}
 
-	const filter = {
-		OR: [
-			{ signature_jsonContains: `{"address": "${address}" }` },
-			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-		],
-	};
-
-	const extrinsic = await getExtrinsic(network, filter);
-
-	if (!extrinsic) {
-		return null;
-	}
-
-	return {
-		id: address,
-		address
-	};
+	return { address: address, id: address };
 }
