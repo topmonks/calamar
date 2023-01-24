@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { css } from "@emotion/react";
+
 import { AccountAvatar } from "../components/AccountAvatar";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
@@ -25,7 +26,6 @@ function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
 	const account = useAccount(network, address);
-
 	const extrinsics = useExtrinsics(network, {
 		OR: [
 			{ signature_jsonContains: `{"address": "${address}" }` },
