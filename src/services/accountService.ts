@@ -5,8 +5,6 @@ import { addRuntimeSpec } from "../utils/addRuntimeSpec";
 
 import { decodeAddress } from "../utils/formatAddress";
 
-import { getExtrinsic } from "./extrinsicsService";
-
 export async function getAccount(network: string, address: string): Promise<Account|undefined> {
 	if (!isAddress(address)) {
 		return undefined;
@@ -17,19 +15,6 @@ export async function getAccount(network: string, address: string): Promise<Acco
 
 	if (decodedAddress) {
 		address = decodedAddress;
-	}
-
-	const filter = {
-		OR: [
-			{ signature_jsonContains: `{"address": "${address}" }` },
-			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-		],
-	};
-
-	const extrinsic = await getExtrinsic(network, filter);
-
-	if (!extrinsic) {
-		return undefined;
 	}
 
 	return addRuntimeSpec(
