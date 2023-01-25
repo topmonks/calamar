@@ -2,17 +2,17 @@ import { ArchiveConnection } from "../model/archiveConnection";
 import { Event } from "../model/event";
 
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
-import { fetchGraphql } from "../utils/fetchGraphql";
 import { upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
+import { fetchArchive } from "./fetchService";
 import { getRuntimeSpec } from "./runtimeService";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
 
 export async function getEvent(network: string, filter: EventsFilter) {
-	const response = await fetchGraphql<{events: Omit<Event, "runtimeSpec">[]}>(
+	const response = await fetchArchive<{events: Omit<Event, "runtimeSpec">[]}>(
 		network,
 		`query ($filter: EventWhereInput) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
@@ -80,7 +80,7 @@ export async function getEventsWithoutTotalCount(
 	filter: EventsFilter,
 	order: EventsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql<{events: Omit<Event, "runtimeSpec">[]}>(
+	const response = await fetchArchive<{events: Omit<Event, "runtimeSpec">[]}>(
 		network,
 		`
 			query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
@@ -144,7 +144,7 @@ export async function getEvents(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{eventsConnection: ArchiveConnection<Omit<Event, "runtimeSpec">>}>(
+	const response = await fetchArchive<{eventsConnection: ArchiveConnection<Omit<Event, "runtimeSpec">>}>(
 		network,
 		`
 			query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {

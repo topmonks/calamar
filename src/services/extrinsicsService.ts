@@ -1,11 +1,10 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { Extrinsic } from "../model/extrinsic";
-import { ItemsResponse } from "../model/itemsResponse";
 import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
-import { fetchGraphql } from "../utils/fetchGraphql";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
+import { fetchArchive } from "./fetchService";
 import { getRuntimeSpec } from "./runtimeService";
 
 export type ExtrinsicsFilter = any;
@@ -51,7 +50,7 @@ export async function getExtrinsicsWithoutTotalCount(
 	filter?: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql<{ extrinsics: Omit<Extrinsic, "runtimeSpec">[] }>(
+	const response = await fetchArchive<{ extrinsics: Omit<Extrinsic, "runtimeSpec">[] }>(
 		network,
 		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
 			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
@@ -118,7 +117,7 @@ export async function getExtrinsics(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{ extrinsicsConnection: ArchiveConnection<Omit<Extrinsic, "runtimeSpec">> }>(
+	const response = await fetchArchive<{ extrinsicsConnection: ArchiveConnection<Omit<Extrinsic, "runtimeSpec">> }>(
 		network,
 		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {

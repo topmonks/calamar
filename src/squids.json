@@ -1,0 +1,74 @@
+{
+	"balances": [
+		{
+			"network": "acala",
+			"explorerUrl": "https://squid.subsquid.io/acala-balances/graphql"
+		},
+		{
+			"network": "bifrost",
+			"explorerUrl": "https://squid.subsquid.io/bifrost-balances/graphql"
+		},
+		{
+			"network": "karura",
+			"explorerUrl": "https://squid.subsquid.io/karura-balances/graphql"
+		},
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/kusama-balances/graphql"
+		},
+		{
+			"network": "moonbeam",
+			"explorerUrl": "https://squid.subsquid.io/moonbeam-balances/graphql"
+		},
+		{
+			"network": "phala",
+			"explorerUrl": "https://squid.subsquid.io/phala-balances/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/polkadot-balances/graphql"
+		}
+	],
+	"caller": [
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/caller-squid-kusama/v/v3/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/caller-squid-polkadot/v/v2/graphql"
+		}
+	],
+	"explorer": [
+		{
+			"network": "astar",
+			"explorerUrl": "https://squid.subsquid.io/astar-explorer/graphql"
+		},
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/kusama-explorer/graphql"
+		},
+		{
+			"network": "moonbeam",
+			"explorerUrl": "https://squid.subsquid.io/moonbeam-explorer/graphql"
+		},
+		{
+			"network": "moonriver",
+			"explorerUrl": "https://squid.subsquid.io/moonriver-explorer/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/polkadot-explorer/graphql"
+		}
+	],
+	"chainStats": [
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/chain-analytics-squid/v/polkadot-multi-parallel-2-0/graphql"
+		}
+	]
+}

@@ -1,7 +1,5 @@
 import { CustomError } from "ts-custom-error";
 
-import { getArchive } from "../services/archiveRegistryService";
-
 export class GraphQLError extends CustomError {
 	constructor(error: any) {
 		super(error.message);
@@ -9,17 +7,11 @@ export class GraphQLError extends CustomError {
 }
 
 export async function fetchGraphql<T = any>(
-	network: string,
+	url: string,
 	query: string,
 	variables: object = {}
 ): Promise<T> {
-	const archive = getArchive(network);
-
-	if (!archive) {
-		throw new Error(`Archive for network '${network} not found`);
-	}
-
-	const response = await fetch(archive.providers[0]!.explorerUrl, {
+	const response = await fetch(url, {
 		method: "POST",
 
 		headers: {
