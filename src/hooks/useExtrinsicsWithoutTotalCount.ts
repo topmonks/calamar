@@ -4,10 +4,10 @@ import { ExtrinsicsFilter, ExtrinsicsOrder, getExtrinsicsWithoutTotalCount } fro
 import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useExtrinsicsWithoutTotalCount(
-	network: string | undefined,
+	network: string,
 	filter: ExtrinsicsFilter,
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	return usePaginatedResource(getExtrinsicsWithoutTotalCount, network, filter, order, options);
+	return usePaginatedResource(getExtrinsicsWithoutTotalCount, [network, filter, order], options);
 }

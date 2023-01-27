@@ -1,5 +1,6 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { Event } from "../model/event";
+import { PaginationOptions } from "../model/paginationOptions";
 
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { upperFirst } from "../utils/string";
@@ -49,10 +50,9 @@ export async function getEvent(network: string, filter: EventsFilter) {
 
 export async function getEventsByName(
 	network: string,
-	limit: number,
-	offset: number,
 	name: string,
-	order: EventsOrder = "id_DESC"
+	order: EventsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
 	let [pallet = "", event = ""] = name.split(".");
 
@@ -70,15 +70,14 @@ export async function getEventsByName(
 		name_eq: `${pallet}.${event}`
 	};
 
-	return getEventsWithoutTotalCount(network, limit, offset, filter, order);
+	return getEventsWithoutTotalCount(network, filter, order, pagination);
 }
 
 export async function getEventsWithoutTotalCount(
 	network: string,
-	limit: number,
-	offset: number,
 	filter: EventsFilter,
-	order: EventsOrder = "id_DESC"
+	order: EventsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
 	const response = await fetchArchive<{events: Omit<Event, "runtimeSpec">[]}>(
 		network,
@@ -106,15 +105,15 @@ export async function getEventsWithoutTotalCount(
 			}
 		`,
 		{
-			limit: limit + 1, // get one item more to test if next page exists
-			offset,
+			limit: pagination.limit + 1, // get one item more to test if next page exists
+			offset: pagination.offset,
 			filter,
 			order,
 		}
 	);
 
 	const items = response.events;
-	const hasNextPage = items.length > limit;
+	const hasNextPage = items.length > pagination.limit;
 
 	if (hasNextPage) {
 		// remove testing item from next page
@@ -126,8 +125,7 @@ export async function getEventsWithoutTotalCount(
 		{
 			data: items,
 			pagination: {
-				offset,
-				limit,
+				...pagination,
 				hasNextPage
 			}
 		},
@@ -137,12 +135,11 @@ export async function getEventsWithoutTotalCount(
 
 export async function getEvents(
 	network: string,
-	limit: number,
-	offset: number,
 	filter: EventsFilter,
-	order: EventsOrder = "id_DESC"
+	order: EventsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
-	const after = offset === 0 ? null : offset.toString();
+	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
 	const response = await fetchArchive<{eventsConnection: ArchiveConnection<Omit<Event, "runtimeSpec">>}>(
 		network,
@@ -181,7 +178,7 @@ export async function getEvents(
 			}
 		`,
 		{
-			first: limit,
+			first: pagination.limit,
 			after,
 			filter,
 			order,
@@ -190,7 +187,11 @@ export async function getEvents(
 
 	return addRuntimeSpecs(
 		network,
-		unifyConnection(response?.eventsConnection, limit, offset),
+		unifyConnection(
+			response?.eventsConnection,
+			pagination.limit,
+			pagination.offset
+		),
 		it => it.block.spec.specVersion
 	);
 }

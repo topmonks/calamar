@@ -2,17 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRollbar } from "@rollbar/react";
 
 import { FetchOptions } from "../model/fetchOptions";
-import { PaginatedResource } from "../model/paginatedResource";
 import { ItemsResponse } from "../model/itemsResponse";
+import { PaginatedResource } from "../model/paginatedResource";
+import { PaginationOptions } from "../model/paginationOptions";
 import { GraphQLError } from "../utils/fetchGraphql";
 
 import { usePagination } from "./usePagination";
 
-export function usePaginatedResource<T = any, F = any>(
-	fetchItems: (network: string, limit: number, offset: number, filter: F, order?: string|string[]) => ItemsResponse<T>|Promise<ItemsResponse<T>>,
-	network: string | undefined,
-	filter: F,
-	order?: string|string[],
+export function usePaginatedResource<T = any, F extends any[] = any[]>(
+	fetchItems: (...args: [...F, PaginationOptions]) => ItemsResponse<T>|Promise<ItemsResponse<T>>,
+	args: F,
 	options?: FetchOptions
 ) {
 	const rollbar = useRollbar();
@@ -24,20 +23,17 @@ export function usePaginatedResource<T = any, F = any>(
 	const pagination = usePagination();
 
 	const fetchData = useCallback(async () => {
-		if (!network) {
-			// don't do anything until network is set
+		if (options?.waitUntil) {
+			// wait until all required condition are met
 			return;
 		}
 
 		if (!options?.skip) {
 			try {
-				const items = await fetchItems(
-					network,
-					pagination.limit,
-					pagination.offset,
-					filter,
-					order
-				);
+				const items = await fetchItems(...args, {
+					limit: pagination.limit,
+					offset: pagination.offset,
+				});
 
 				setData(items.data);
 				pagination.set(items.pagination);
@@ -54,9 +50,7 @@ export function usePaginatedResource<T = any, F = any>(
 		setLoading(false);
 	}, [
 		fetchItems,
-		network,
-		JSON.stringify(filter),
-		JSON.stringify(order),
+		JSON.stringify(args),
 		pagination.limit,
 		pagination.offset,
 		options?.skip,

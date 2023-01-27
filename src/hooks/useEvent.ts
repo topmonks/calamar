@@ -4,9 +4,9 @@ import { EventsFilter, getEvent } from "../services/eventsService";
 import { useResource } from "./useResource";
 
 export function useEvent(
-	network: string | undefined,
+	network: string,
 	filter: EventsFilter,
 	options?: FetchOptions
 ) {
-	return useResource(getEvent, network, filter, options);
+	return useResource(getEvent, [network, filter], options);
 }
