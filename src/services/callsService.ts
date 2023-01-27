@@ -2,14 +2,15 @@ import { ArchiveConnection } from "../model/archiveConnection";
 import { Call } from "../model/call";
 import { ItemsResponse } from "../model/itemsResponse";
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
-import { fetchGraphql } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
+
+import { fetchArchive } from "./fetchService";
 
 export type CallsFilter = any;
 export type CallsOrder = string | string[];
 
 export async function getCall(network: string, filter: CallsFilter) {
-	const response = await fetchGraphql<{calls: Omit<Call, "runtimeSpec">[]}>(
+	const response = await fetchArchive<{calls: Omit<Call, "runtimeSpec">[]}>(
 		network,
 		`query ($filter: CallWhereInput) {
 			calls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
@@ -57,7 +58,7 @@ export async function getCalls(
 ): Promise<ItemsResponse<Call>> {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{callsConnection: ArchiveConnection<Omit<Call, "runtimeSpec">>}>(
+	const response = await fetchArchive<{callsConnection: ArchiveConnection<Omit<Call, "runtimeSpec">>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {

@@ -1,12 +1,12 @@
 import { Block } from "../model/block";
-
 import { addRuntimeSpec } from "../utils/addRuntimeSpec";
-import { fetchGraphql } from "../utils/fetchGraphql";
+
+import { fetchArchive } from "./fetchService";
 
 export type BlocksFilter = any;
 
 export async function getBlock(network: string, filter: BlocksFilter) {
-	const response = await fetchGraphql<{blocks: Omit<Block, "runtimeSpec">[]}>(
+	const response = await fetchArchive<{blocks: Omit<Block, "runtimeSpec">[]}>(
 		network,
 		`
 			query ($filter: BlockWhereInput) {

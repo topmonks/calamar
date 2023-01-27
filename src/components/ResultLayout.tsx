@@ -6,7 +6,7 @@ import { css, Theme } from "@emotion/react";
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 
-import { getArchive } from "../services/archiveRegistryService";
+import { getArchive } from "../services/networksService";
 import NotFoundPage from "../screens/notFound";
 
 import SearchInput from "./SearchInput";
