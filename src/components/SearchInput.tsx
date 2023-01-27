@@ -48,25 +48,17 @@ const networkSelectStyle = (theme: Theme) => css`
 
 const textFieldStyle = css`
 	.MuiInputBase-root {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
+		border-radius: 0;
+
+		.MuiOutlinedInput-notchedOutline {
+			border-left: none;
+		}
 
 		&, &:hover, &.Mui-focused {
 			.MuiOutlinedInput-notchedOutline {
 				border-color: #c4cdd5;
 				border-right: none;
 			}
-		}
-	}
-
-	&:not(:first-child) {
-		.MuiInputBase-root {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-		}
-
-		.MuiOutlinedInput-notchedOutline {
-			border-left: none;
 		}
 	}
 `;
