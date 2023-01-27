@@ -48,9 +48,10 @@ export function decodeMetadata(hex: `0x${string}`) {
 	registry.setMetadata(metadata);
 
 	const latestMetadata = metadata.asLatest;
+	const ss58Prefix = latestMetadata.registry.getChainProperties()?.ss58Format.unwrap()?.toNumber();
 
 	const decodedMetadata: DecodedMetadata = {
-		ss58Prefix: latestMetadata.registry.getChainProperties()?.ss58Format.unwrap()?.toNumber() || 42,
+		ss58Prefix: typeof ss58Prefix === "number" ? ss58Prefix : 42,
 		pallets: []
 	};
 
