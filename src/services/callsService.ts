@@ -1,13 +1,15 @@
 import { ArchiveConnection } from "../model/archiveConnection";
+import { Call } from "../model/call";
+import { ItemsResponse } from "../model/itemsResponse";
+import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { fetchGraphql } from "../utils/fetchGraphql";
 import { unifyConnection } from "../utils/unifyConnection";
 
 export type CallsFilter = any;
 export type CallsOrder = string | string[];
 
-
 export async function getCall(network: string, filter: CallsFilter) {
-	const response = await fetchGraphql<{calls: any[]}>(
+	const response = await fetchGraphql<{calls: Omit<Call, "runtimeSpec">[]}>(
 		network,
 		`query ($filter: CallWhereInput) {
 			calls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
@@ -39,7 +41,11 @@ export async function getCall(network: string, filter: CallsFilter) {
 		}
 	);
 
-	return response.calls[0];
+	return addRuntimeSpec(
+		network,
+		response.calls[0],
+		it => it.block.spec.specVersion
+	);
 }
 
 export async function getCalls(
@@ -48,10 +54,10 @@ export async function getCalls(
 	offset: number,
 	filter: CallsFilter,
 	order: CallsOrder = "id_DESC"
-) {
+): Promise<ItemsResponse<Call>> {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{callsConnection: ArchiveConnection<any>}>(
+	const response = await fetchGraphql<{callsConnection: ArchiveConnection<Omit<Call, "runtimeSpec">>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -97,5 +103,9 @@ export async function getCalls(
 		}
 	);
 
-	return unifyConnection(response?.callsConnection, limit, offset);
+	return addRuntimeSpecs(
+		network,
+		unifyConnection(response?.callsConnection, limit, offset),
+		it => it.block.spec.specVersion
+	);
 }

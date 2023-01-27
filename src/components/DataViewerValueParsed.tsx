@@ -8,6 +8,7 @@ import { noCase } from "../utils/string";
 
 import { AccountAddress } from "./AccountAddress";
 import CopyToClipboardButton from "./CopyToClipboardButton";
+import { RuntimeSpec } from "../model/runtimeSpec";
 
 // found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51
 const ADDRESS_TYPES = ["AccountId", "AccountId20", "AccountId32", "Address", "LookupSource", "MultiAddress"];
@@ -81,14 +82,16 @@ type ValueOfKindProps = {
 		__kind: string,
 		value: any;
 	};
-	metadata?: DecodedArg;
+	valueMetadata?: DecodedArg;
+	runtimeSpec?: RuntimeSpec;
 }
 
 const ValueOfKind = (props: ValueOfKindProps) => {
 	const {
 		network,
 		value: {__kind: kind, ...value},
-		metadata
+		valueMetadata: metadata,
+		runtimeSpec
 	} = props;
 
 	return (
@@ -103,6 +106,7 @@ const ValueOfKind = (props: ValueOfKindProps) => {
 							network={network}
 							value={value.value || value}
 							metadata={metadata}
+							runtimeSpec={runtimeSpec}
 						/>
 					</TableCell>
 				</TableRow>
@@ -114,27 +118,30 @@ const ValueOfKind = (props: ValueOfKindProps) => {
 type MaybeAccountLinkValueProps = {
 	network: string;
 	value: any;
-	metadata: DecodedArg;
+	valueMetadata: DecodedArg;
+	runtimeSpec: RuntimeSpec;
 }
 
 const AccountValue = (props: MaybeAccountLinkValueProps) => {
-	const {network, value, metadata} = props;
+	const {network, value, valueMetadata, runtimeSpec} = props;
 
-	if (metadata.type === "MultiAddress") {
+	if (valueMetadata.type === "MultiAddress") {
 		if (value.__kind === "Id") {
 			return <ValueOfKind
 				network={network}
 				value={value}
-				metadata={{
-					...metadata,
+				valueMetadata={{
+					...valueMetadata,
 					type: "AccountId"
 				}}
+				runtimeSpec={runtimeSpec}
 			/>;
 		} else {
 			return (
 				<DataViewerValueParsed
 					network={network}
 					value={value}
+					runtimeSpec={runtimeSpec}
 				/>
 			);
 		}
@@ -142,7 +149,7 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 
 	return (
 		<div css={valueStyle}>
-			<AccountAddress network={network} address={value} />
+			<AccountAddress network={network} address={value} prefix={runtimeSpec.metadata.ss58Prefix} />
 			<CopyToClipboardButton value={value} css={copyButtonStyle} />
 		</div>
 	);
@@ -152,18 +159,20 @@ export type DataViewerValueParsedProps = {
 	network: string;
 	value: any;
 	metadata?: DecodedArg[]|DecodedArg;
+	runtimeSpec?: RuntimeSpec;
 };
 
 export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
-	const { network, metadata } = props;
+	const { network, metadata, runtimeSpec } = props;
 	let { value } = props;
 
-	if (metadata && ADDRESS_TYPES.includes((metadata as DecodedArg).type)) {
+	if (metadata && runtimeSpec && ADDRESS_TYPES.includes((metadata as DecodedArg).type)) {
 		return (
 			<AccountValue
 				network={network}
 				value={value}
-				metadata={metadata as DecodedArg}
+				valueMetadata={metadata as DecodedArg}
+				runtimeSpec={runtimeSpec}
 			/>
 		);
 	}
@@ -178,7 +187,7 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 			if (vecType) {
 				return {
 					name: index.toString(),
-					type: vecType[1]
+					type: vecType[1]!
 				};
 			}
 
@@ -198,6 +207,7 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 									network={network}
 									value={item}
 									metadata={itemsMetadata[index]}
+									runtimeSpec={runtimeSpec}
 								/>
 							</TableCell>
 						</TableRow>
@@ -213,6 +223,7 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 				<ValueOfKind
 					network={network}
 					value={value}
+					runtimeSpec={runtimeSpec}
 				/>
 			);
 		}
@@ -236,6 +247,7 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 										? metadata?.find(it => noCase(it.name) === noCase(key))
 										: undefined
 									}
+									runtimeSpec={runtimeSpec}
 								/>
 							</TableCell>
 						</TableRow>

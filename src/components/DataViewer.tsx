@@ -7,10 +7,11 @@ import { Close } from "@mui/icons-material";
 import { config } from "../config";
 
 import { DecodedArg } from "../model/decodedMetadata";
+import { RuntimeSpec } from "../model/runtimeSpec";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
-import { DataViewerValueParsed }  from "./DataViewerValueParsed";
+import { DataViewerValueParsed } from "./DataViewerValueParsed";
 import { Devtool } from "./Devtool";
 
 const dataViewerStyle = css`
@@ -205,6 +206,7 @@ export type DataViewerProps = {
 	network: string;
 	data: any;
 	metadata?: DecodedArg[];
+	runtimeSpec?: RuntimeSpec;
 	modes?: DataViewerMode[];
 	defaultMode?: DataViewerMode;
 	simple?: boolean;
@@ -216,10 +218,15 @@ function DataViewer(props: DataViewerProps) {
 		network,
 		data,
 		metadata,
+		runtimeSpec,
 		defaultMode = MODES.find(Boolean),
 		simple,
 		copyToClipboard,
 	} = props;
+
+	if (metadata && !runtimeSpec) {
+		console.warn("If <DataViewer> is used with metadata argument, runtimeSpec argument should be passed too.");
+	}
 
 	const [mode, setMode] = useState<DataViewerMode>(defaultMode || MODES.find(Boolean) as DataViewerMode);
 
@@ -238,7 +245,12 @@ function DataViewer(props: DataViewerProps) {
 	), [data]);
 
 	const parsedContent = useMemo(() => (!simple || defaultMode === "parsed") && (
-		<DataViewerValueParsed network={network} value={data} metadata={metadata} />
+		<DataViewerValueParsed
+			network={network}
+			value={data}
+			metadata={metadata}
+			runtimeSpec={runtimeSpec}
+		/>
 	), [data]);
 
 	return (

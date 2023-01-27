@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
+import { Event } from "../../model/event";
 import { PaginatedResource } from "../../model/paginatedResource";
-import { Resource } from "../../model/resource";
-import { RuntimeSpec } from "../../model/runtimeSpec";
+
 import { getEventMetadataByName } from "../../utils/queryMetadata";
 
 import { ButtonLink } from "../ButtonLink";
@@ -17,21 +17,19 @@ const parametersColCss = (showExtrinsic?: boolean) => css`
 
 export type EventsTableProps = {
 	network: string;
-	events: PaginatedResource<any>;
-	runtimeSpecs?: Resource<RuntimeSpec[]>;
+	events: PaginatedResource<Event>;
 	showExtrinsic?: boolean;
 };
 
-const EventsItemsTableAttribute = ItemsTableAttribute<any, [RuntimeSpec[]]>;
+const EventsItemsTableAttribute = ItemsTableAttribute<Event>;
 
 function EventsTable(props: EventsTableProps) {
-	const { network, events, runtimeSpecs, showExtrinsic } = props;
+	const { network, events, showExtrinsic } = props;
 
 	return (
 		<ItemsTable
 			data={events.data}
-			additionalData={[runtimeSpecs?.data]}
-			loading={events.loading || runtimeSpecs?.loading}
+			loading={events.loading}
 			notFound={events.notFound}
 			notFoundMessage="No events found"
 			error={events.error}
@@ -71,18 +69,17 @@ function EventsTable(props: EventsTableProps) {
 			<EventsItemsTableAttribute
 				label="Parameters"
 				colCss={parametersColCss(showExtrinsic)}
-				render={(event, runtimeSpecs) => {
+				render={(event) => {
 					if (!event.args) {
 						return null;
 					}
-
-					const metadata = runtimeSpecs?.find(it => it.specVersion === event.block.spec.specVersion)?.metadata;
 
 					return (
 						<DataViewer
 							network={network}
 							data={event.args}
-							metadata={metadata && getEventMetadataByName(metadata, event.name)?.args}
+							metadata={getEventMetadataByName(event.runtimeSpec.metadata, event.name)?.args}
+							runtimeSpec={event.runtimeSpec}
 							copyToClipboard
 						/>
 					);

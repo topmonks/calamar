@@ -11,6 +11,7 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -26,6 +27,7 @@ function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
 	const account = useAccount(network, address);
+
 	const extrinsics = useExtrinsics(network, {
 		OR: [
 			{ signature_jsonContains: `{"address": "${address}" }` },
@@ -51,7 +53,10 @@ function AccountPage() {
 					}
 					Account #{address}
 				</CardHeader>
-				<AccountInfoTable network={network} account={account} />
+				<AccountInfoTable
+					network={network}
+					account={account}
+				/>
 			</Card>
 			{account.data &&
 				<Card>
@@ -73,3 +78,4 @@ function AccountPage() {
 }
 
 export default AccountPage;
+

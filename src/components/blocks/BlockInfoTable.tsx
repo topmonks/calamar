@@ -1,3 +1,4 @@
+import { Block } from "../../model/block";
 import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
@@ -8,8 +9,10 @@ import { Time } from "../Time";
 
 export type BlockInfoTableProps = {
 	network: string;
-	block: Resource<any>;
+	block: Resource<Block>;
 }
+
+const BlockInfoTableAttribute = InfoTableAttribute<Block>;
 
 export const BlockInfoTable = (props: BlockInfoTableProps) => {
 	const {network, block} = props;
@@ -22,30 +25,30 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			notFoundMessage="No block found"
 			error={block.error}
 		>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.timestamp} utc />
 				}
 				hide={(data) => data.height === 0}
 			/>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Block time"
 				render={(data) =>
 					<Time time={data.timestamp} fromNow />
 				}
 				hide={(data) => data.height === 0}
 			/>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Block height"
 				render={(data) => data.height}
 			/>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Hash"
 				render={(data) => data.hash}
 				copyToClipboard={(data) => data.hash}
 			/>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Parent hash"
 				render={(data) =>
 					<Link to={`/${network}/search?query=${data.parentHash}`}>
@@ -54,15 +57,24 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 				}
 				copyToClipboard={(data) => data.parentHash}
 			/>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Validator"
 				render={(data) => data.validator &&
-					<AccountAddress network={network} address={data.validator} />
+					<AccountAddress
+						network={network}
+						address={data.validator}
+						prefix={data.runtimeSpec.metadata.ss58Prefix}
+					/>
 				}
-				copyToClipboard={(data) => encodeAddress(network, data.validator)}
+				copyToClipboard={(data) => data.validator &&
+					encodeAddress(
+						data.validator,
+						data.runtimeSpec.metadata.ss58Prefix
+					)
+				}
 				hide={(data) => !data.validator}
 			/>
-			<InfoTableAttribute
+			<BlockInfoTableAttribute
 				label="Spec version"
 				render={(data) => data.spec.specVersion}
 			/>

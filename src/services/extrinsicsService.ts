@@ -1,10 +1,12 @@
 import { ArchiveConnection } from "../model/archiveConnection";
+import { Extrinsic } from "../model/extrinsic";
+import { ItemsResponse } from "../model/itemsResponse";
+import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { decodeMetadata } from "../utils/decodeMetadata";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
-import { getLatestRuntimeSpec } from "./runtimeService";
+import { getRuntimeSpec } from "./runtimeService";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
@@ -21,12 +23,12 @@ export async function getExtrinsicsByName(
 	name: string,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	let [pallet, call = ""] = name.split(".");
+	let [pallet = "", call = ""] = name.split(".");
 
 	// try to fix casing according to latest runtime spec
-	const runtimeSpec = await getLatestRuntimeSpec(network);
+	const latestRuntimeSpec = await getRuntimeSpec(network, "latest");
 
-	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimePallet = latestRuntimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
 	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === call.toLowerCase());
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
@@ -49,7 +51,7 @@ export async function getExtrinsicsWithoutTotalCount(
 	filter?: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql<{ extrinsics: any }>(
+	const response = await fetchGraphql<{ extrinsics: Omit<Extrinsic, "runtimeSpec">[] }>(
 		network,
 		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
 			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
@@ -93,14 +95,18 @@ export async function getExtrinsicsWithoutTotalCount(
 		items.pop();
 	}
 
-	return {
-		data: items,
-		pagination: {
-			offset,
-			limit,
-			hasNextPage
-		}
-	};
+	return addRuntimeSpecs(
+		network,
+		{
+			data: items,
+			pagination: {
+				offset,
+				limit,
+				hasNextPage
+			}
+		},
+		it => it.block.spec.specVersion
+	);
 }
 
 export async function getExtrinsics(
@@ -112,7 +118,7 @@ export async function getExtrinsics(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{ extrinsicsConnection: ArchiveConnection<any> }>(
+	const response = await fetchGraphql<{ extrinsicsConnection: ArchiveConnection<Omit<Extrinsic, "runtimeSpec">> }>(
 		network,
 		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -159,6 +165,10 @@ export async function getExtrinsics(
 		}
 	);
 
-	return unifyConnection(response.extrinsicsConnection, limit, offset);
+	return addRuntimeSpecs(
+		network,
+		unifyConnection(response.extrinsicsConnection, limit, offset),
+		it => it.block.spec.specVersion
+	);
 }
 

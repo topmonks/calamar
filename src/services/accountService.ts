@@ -1,9 +1,13 @@
 import { isAddress } from "@polkadot/util-crypto";
+
+import { Account } from "../model/account";
+import { addRuntimeSpec } from "../utils/addRuntimeSpec";
+
 import { decodeAddress } from "../utils/formatAddress";
 
-export async function getAccount(network: string, address: string) {
+export async function getAccount(network: string, address: string): Promise<Account|undefined> {
 	if (!isAddress(address)) {
-		return null;
+		return undefined;
 	}
 
 	// if the address is encoded, decode it
@@ -13,5 +17,12 @@ export async function getAccount(network: string, address: string) {
 		address = decodedAddress;
 	}
 
-	return { address: address, id: address };
+	return addRuntimeSpec(
+		network,
+		{
+			id: address,
+			address,
+		},
+		() => "latest"
+	);
 }

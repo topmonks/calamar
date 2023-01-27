@@ -5,7 +5,6 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import { EventInfoTable } from "../components/events/EventInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useEvent } from "../hooks/useEvent";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 type EventPageParams = {
 	network: string;
@@ -17,12 +16,7 @@ export const EventPage: React.FC = () => {
 
 	const event = useEvent(network, { id_eq: id });
 
-	const specVersion = event.data?.block.spec.specVersion;
-	const runtimeSpecs = useRuntimeSpecs(network, specVersion ? [specVersion] : [], {
-		waitUntil: event.loading
-	});
-
-	useDOMEventTrigger("data-loaded", !event.loading && !runtimeSpecs.loading);
+	useDOMEventTrigger("data-loaded", !event.loading);
 
 	return (<>
 		<Card>
@@ -30,7 +24,7 @@ export const EventPage: React.FC = () => {
 				Event #{id}
 				<CopyToClipboardButton value={id} />
 			</CardHeader>
-			<EventInfoTable network={network} event={event} runtimeSpecs={runtimeSpecs} />
+			<EventInfoTable network={network} event={event} />
 		</Card>
 	</>);
 };

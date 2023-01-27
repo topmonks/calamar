@@ -1,16 +1,18 @@
 import { ArchiveConnection } from "../model/archiveConnection";
+import { Event } from "../model/event";
+
+import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { decodeMetadata } from "../utils/decodeMetadata";
 import { upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 
-import { getLatestRuntimeSpec } from "./runtimeService";
+import { getRuntimeSpec } from "./runtimeService";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
 
 export async function getEvent(network: string, filter: EventsFilter) {
-	const response = await fetchGraphql<{events: any}>(
+	const response = await fetchGraphql<{events: Omit<Event, "runtimeSpec">[]}>(
 		network,
 		`query ($filter: EventWhereInput) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
@@ -38,7 +40,11 @@ export async function getEvent(network: string, filter: EventsFilter) {
 		}
 	);
 
-	return response.events[0];
+	return addRuntimeSpec(
+		network,
+		response.events[0],
+		it => it.block.spec.specVersion
+	);
 }
 
 export async function getEventsByName(
@@ -48,12 +54,12 @@ export async function getEventsByName(
 	name: string,
 	order: EventsOrder = "id_DESC"
 ) {
-	let [pallet, event = ""] = name.split(".");
+	let [pallet = "", event = ""] = name.split(".");
 
 	// try to fix casing according to latest runtime spec
-	const runtimeSpec = await getLatestRuntimeSpec(network);
+	const latestRuntimeSpec = await getRuntimeSpec(network, "latest");
 
-	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimePallet = latestRuntimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
 	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === event.toLowerCase());
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
@@ -74,7 +80,7 @@ export async function getEventsWithoutTotalCount(
 	filter: EventsFilter,
 	order: EventsOrder = "id_DESC"
 ) {
-	const response = await fetchGraphql<{events: any[]}>(
+	const response = await fetchGraphql<{events: Omit<Event, "runtimeSpec">[]}>(
 		network,
 		`
 			query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
@@ -115,14 +121,18 @@ export async function getEventsWithoutTotalCount(
 		items.pop();
 	}
 
-	return {
-		data: items,
-		pagination: {
-			offset,
-			limit,
-			hasNextPage
-		}
-	};
+	return addRuntimeSpecs(
+		network,
+		{
+			data: items,
+			pagination: {
+				offset,
+				limit,
+				hasNextPage
+			}
+		},
+		it => it.block.spec.specVersion
+	);
 }
 
 export async function getEvents(
@@ -134,7 +144,7 @@ export async function getEvents(
 ) {
 	const after = offset === 0 ? null : offset.toString();
 
-	const response = await fetchGraphql<{eventsConnection: ArchiveConnection<any>}>(
+	const response = await fetchGraphql<{eventsConnection: ArchiveConnection<Omit<Event, "runtimeSpec">>}>(
 		network,
 		`
 			query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
@@ -178,5 +188,9 @@ export async function getEvents(
 		}
 	);
 
-	return unifyConnection(response?.eventsConnection, limit, offset);
+	return addRuntimeSpecs(
+		network,
+		unifyConnection(response?.eventsConnection, limit, offset),
+		it => it.block.spec.specVersion
+	);
 }
