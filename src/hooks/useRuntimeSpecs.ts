@@ -3,9 +3,9 @@ import { getRuntimeSpecs } from "../services/runtimeService";
 import { useResource } from "./useResource";
 
 export function useRuntimeSpecs(
-	network: string | undefined,
-	specVersions: number[],
+	network: string,
+	specVersions: number[] | undefined,
 	options?: FetchOptions
 ) {
-	return useResource(getRuntimeSpecs, network, specVersions, options);
+	return useResource(getRuntimeSpecs, [network, specVersions], options);
 }

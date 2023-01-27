@@ -7,6 +7,12 @@ import { test, expect } from "../utils/test";
 
 
 test.describe("Latest extrinsics page", () => {
+
+	test("redirects to /:network", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/latest-extrinsics", {waitUntil: "data-loaded"});
+		await page.waitForURL(/\/kusama/);
+	});
+
 	test("shows latest extrinsics page", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/polkadot/latest-extrinsics", {waitUntil: "data-loaded"});
 
@@ -17,7 +23,7 @@ test.describe("Latest extrinsics page", () => {
 	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("polkadot", 10, 0, undefined, "id_DESC"),
+			() => getExtrinsicsWithoutTotalCount("polkadot", undefined, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

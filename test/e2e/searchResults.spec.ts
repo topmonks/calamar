@@ -1,4 +1,3 @@
-import { getAccount } from "../../src/services/accountService";
 import { getBlock } from "../../src/services/blocksService";
 import { getEventsWithoutTotalCount } from "../../src/services/eventsService";
 import { getExtrinsic, getExtrinsicsWithoutTotalCount } from "../../src/services/extrinsicsService";
@@ -53,7 +52,7 @@ test.describe("Search results page", () => {
 	});
 
 	test("shows not found message if nothing was found by hash", async ({ page, takeScreenshot }) => {
-		const query = "0x1234567890";
+		const query = "0x123456789";
 
 		await navigate(page, `/kusama/search?query=${query}`, {waitUntil: "data-loaded"});
 
@@ -85,7 +84,7 @@ test.describe("Search results page", () => {
 	});
 
 	test("shows error message when search for extrinsic by hash fails", async ({ page, takeScreenshot }) => {
-		const hash = "0x162bd24c5f19b9fee4a33d11c2908d73d5b0d6c428cf0f1eecdf568c346b26b3";
+		const hash = "0x162bd24c5f19b9fee4a33d11c2908d73d5b0d6c428cf0f1eecdf568c346b26";
 
 		mockRequest(
 			page,
@@ -112,7 +111,7 @@ test.describe("Search results page", () => {
 	});
 
 	test("shows error message when search for block by hash fails", async ({ page, takeScreenshot }) => {
-		const hash = "0xe9bc2f7f23685d545bfcb71ea59140700f83868300123fcb04f4872b18979242";
+		const hash = "0xe9bc2f7f23685d545bfcb71ea59140700f83868300123fcb04f4872b189742";
 
 		mockRequest(
 			page,
@@ -165,66 +164,12 @@ test.describe("Search results page", () => {
 		await takeScreenshot("search-block-by-height-error");
 	});
 
-	test("shows error message when search for account by raw address fails", async ({ page, takeScreenshot }) => {
-		const address = "0x84f4045c97be387e116aad02946aa3972e06a169847cf15532a182c075818b6f";
-
-		mockRequest(
-			page,
-			() => getAccount("kusama", address),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Account search error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/search?query=${address}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(new RegExp(address));
-		await expect(errorMessage).toHaveText(/Account search error/);
-
-		await takeScreenshot("search-account-by-raw-address-error");
-	});
-
-	test("shows error message when search for account by encoded address fails", async ({ page, takeScreenshot }) => {
-		const address = "cg67PjybUeaEXyDzybvVDj6zeojYfDQGFK5YBK5HJn55MmQZG";
-
-		mockRequest(
-			page,
-			() => getAccount("kusama", address),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Account search error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/search?query=${address}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(new RegExp(address));
-		await expect(errorMessage).toHaveText(/Account search error/);
-
-		await takeScreenshot("search-account-by-encoded-address-error");
-	});
-
 	test("shows error message when search for extrinsics by name fails", async ({ page, takeScreenshot }) => {
 		const name = "Timestamp.set";
 
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("kusama", 10, 0, { call: { name_eq: name } }, "id_DESC"),
+			() => getExtrinsicsWithoutTotalCount("kusama", { call: { name_eq: name } }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -251,7 +196,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getEventsWithoutTotalCount("kusama", 10, 0, { name_eq: name }, "id_DESC"),
+			() => getEventsWithoutTotalCount("kusama", { name_eq: name }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -279,7 +224,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getEventsWithoutTotalCount("kusama", 10, 0, { name_eq: eventName }, "id_DESC"),
+			() => getEventsWithoutTotalCount("kusama", { name_eq: eventName }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -308,7 +253,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("kusama", 10, 0, { call: { name_eq: extrinsicsName } }, "id_DESC"),
+			() => getExtrinsicsWithoutTotalCount("kusama", { call: { name_eq: extrinsicsName } }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

@@ -4,9 +4,9 @@ import { CallsFilter, getCall } from "../services/callsService";
 import { useResource } from "./useResource";
 
 export function useCall(
-	network: string | undefined,
+	network: string,
 	filter: CallsFilter,
 	options?: FetchOptions
 ) {
-	return useResource(getCall, network, filter, options);
+	return useResource(getCall, [network, filter], options);
 }

@@ -1,4 +1,3 @@
-import { getAccount } from "../../src/services/accountService";
 import { getExtrinsicsByAccount } from "../../src/services/extrinsicsService";
 
 import { mockRequest } from "../utils/mockRequest";
@@ -17,7 +16,7 @@ test.describe("Account detail page", () => {
 	});
 
 	test("shows not found message if account was not found", async ({ page, takeScreenshot }) => {
-		const id = "0x1234567890";
+		const id = "0x123456789";
 
 		await navigate(page, `/kusama/account/${id}`, {waitUntil: "data-loaded"});
 
@@ -28,35 +27,10 @@ test.describe("Account detail page", () => {
 		await takeScreenshot("account-not-found");
 	});
 
-	test("shows error message when account data fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-
-			page,
-			() => getAccount("kusama", address),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Account error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Account error/);
-
-		await takeScreenshot("account-error");
-	});
-
 	test("shows error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsicsByAccount("kusama", 10, 0, address),
+			() => getExtrinsicsByAccount("kusama", address, undefined, {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

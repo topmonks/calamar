@@ -1,28 +1,16 @@
-import { fetchGraphql } from "../utils/fetchGraphql";
+import { Block } from "../model/block";
+import { addRuntimeSpec } from "../utils/addRuntimeSpec";
 
-export type BlocksFilter = any; /*Filter<{
-	id: string;
-	hash: string;
-	isSigned: boolean;
-	height: number;
-}>;*/
+import { fetchArchive } from "./fetchService";
+
+export type BlocksFilter = any;
 
 export async function getBlock(network: string, filter: BlocksFilter) {
-	const blocks = await getBlocks(network, 1, 0, filter);
-	return blocks?.[0];
-}
-
-export async function getBlocks(
-	network: string,
-	limit: number,
-	offset: number,
-	filter: BlocksFilter
-) {
-	const response = await fetchGraphql(
+	const response = await fetchArchive<{blocks: Omit<Block, "runtimeSpec">[]}>(
 		network,
 		`
-			query ($limit: Int!, $offset: Int!, $filter: BlockWhereInput) {
-				blocks(limit: $limit, offset: $offset, where: $filter, orderBy: id_DESC) {
+			query ($filter: BlockWhereInput) {
+				blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
 					id
 					hash
 					height
@@ -36,11 +24,13 @@ export async function getBlocks(
 			}
 		`,
 		{
-			limit,
-			offset,
 			filter,
 		}
 	);
 
-	return response.blocks;
+	return addRuntimeSpec(
+		network,
+		response.blocks[0],
+		it => it.spec.specVersion
+	);
 }

@@ -1,5 +1,5 @@
+import { Event } from "../../model/event";
 import { Resource } from "../../model/resource";
-import { RuntimeSpec } from "../../model/runtimeSpec";
 import { getEventMetadataByName } from "../../utils/queryMetadata";
 
 import { ButtonLink } from "../ButtonLink";
@@ -10,35 +10,35 @@ import { Time } from "../Time";
 
 export type EventInfoTableProps = {
 	network: string;
-	event: Resource<any>;
-	runtimeSpecs: Resource<RuntimeSpec[]>;
+	event: Resource<Event>;
 }
 
+const EventInfoTableAttribute = InfoTableAttribute<Event>;
+
 export const EventInfoTable = (props: EventInfoTableProps) => {
-	const {network, event, runtimeSpecs} = props;
+	const {network, event} = props;
 
 	return (
 		<InfoTable
 			data={event.data}
-			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
-			loading={event.loading || runtimeSpecs.loading}
+			loading={event.loading}
 			notFound={event.notFound}
 			notFoundMessage="No event found"
 			error={event.error}
 		>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.block.timestamp} utc />
 				}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Block time"
 				render={(data) =>
 					<Time time={data.block.timestamp} fromNow />
 				}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Block"
 				render={(data) =>
 					<Link
@@ -47,9 +47,9 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 						{data.block.height}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.height}
+				copyToClipboard={(data) => data.block.height.toString()}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Extrinsic"
 				render={(data) => data.extrinsic &&
 					<Link
@@ -60,7 +60,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				}
 				copyToClipboard={(data) => data.extrinsic?.id}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Call"
 				render={(data) => data.call &&
 					<Link
@@ -71,7 +71,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				}
 				copyToClipboard={(data) => data.call?.id}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Name"
 				render={(data) =>
 					<ButtonLink
@@ -83,19 +83,20 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 					</ButtonLink>
 				}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Parameters"
-				render={(data, metadata) =>
+				render={(data) =>
 					<DataViewer
 						network={network}
 						data={data.args}
-						metadata={metadata && getEventMetadataByName(metadata, data.name)?.args}
+						metadata={getEventMetadataByName(data.runtimeSpec.metadata, data.name)?.args}
+						runtimeSpec={data.runtimeSpec}
 						copyToClipboard
 					/>
 				}
 				hide={(data) => !data.args}
 			/>
-			<InfoTableAttribute
+			<EventInfoTableAttribute
 				label="Spec version"
 				render={(data) => data.block.spec.specVersion}
 			/>

@@ -71,7 +71,7 @@ test.describe("Block detail page", () => {
 	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsics("kusama", 10, 0, { block: { id_eq: blockId } }, "id_DESC"),
+			() => getExtrinsics("kusama", { block: { id_eq: blockId } }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -95,7 +95,7 @@ test.describe("Block detail page", () => {
 	test("show error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getCalls("kusama", 10, 0, { block: { id_eq: blockId } }, "id_DESC"),
+			() => getCalls("kusama", { block: { id_eq: blockId } }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -121,7 +121,7 @@ test.describe("Block detail page", () => {
 	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getEvents("kusama", 10, 0, { block: { id_eq: blockId } }, "id_DESC"),
+			() => getEvents("kusama", { block: { id_eq: blockId } }, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
