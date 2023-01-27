@@ -27,14 +27,6 @@ export function getBalancesSquid(network: string) {
 	return getBalancesSquids().find((squid) => squid.network === network);
 }
 
-export function getCallerSquids() {
-	return squidsJson.caller as SquidEntry[];
-}
-
-export function getCallerSquid(network: string) {
-	return getCallerSquids().find((squid) => squid.network === network);
-}
-
 export function getExplorerSquids() {
 	return squidsJson.explorer as SquidEntry[];
 }
@@ -43,12 +35,20 @@ export function getExplorerSquid(network: string) {
 	return getExplorerSquids().find((squid) => squid.network === network);
 }
 
-export function getChainStatsSquids() {
-	return squidsJson.chainStats as SquidEntry[];
+export function getMainSquids() {
+	return squidsJson.main as SquidEntry[];
 }
 
-export function getChainStatsSquid(network: string) {
-	return getChainStatsSquids().find((squid) => squid.network === network);
+export function getMainSquid(network: string) {
+	return getMainSquids().find((squid) => squid.network === network);
+}
+
+export function getStatsSquids() {
+	return squidsJson.stats as SquidEntry[];
+}
+
+export function getStatsSquid(network: string) {
+	return getStatsSquids().find((squid) => squid.network === network);
 }
 
 export function getNetworks() {
