@@ -23,7 +23,7 @@ test.describe("Latest extrinsics page", () => {
 	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("polkadot", 10, 0, undefined, "id_DESC"),
+			() => getExtrinsicsWithoutTotalCount("polkadot", undefined, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

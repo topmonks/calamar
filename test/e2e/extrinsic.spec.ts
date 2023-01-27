@@ -62,7 +62,7 @@ test.describe("Extrinsic detail page", () => {
 	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getEvents("kusama", 10, 0, { extrinsic: { id_eq: extrinsicId } }, "id_ASC"),
+			() => getEvents("kusama", { extrinsic: { id_eq: extrinsicId } }, "id_ASC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -86,7 +86,7 @@ test.describe("Extrinsic detail page", () => {
 	test("show error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getCalls("kusama", 10, 0, { extrinsic: { id_eq: extrinsicId } }, "id_ASC"),
+			() => getCalls("kusama", { extrinsic: { id_eq: extrinsicId } }, "id_ASC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

@@ -1,5 +1,6 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { Extrinsic } from "../model/extrinsic";
+import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
@@ -11,16 +12,18 @@ export type ExtrinsicsFilter = any;
 export type ExtrinsicsOrder = string | string[];
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
-	const extrinsics = await getExtrinsicsWithoutTotalCount(network, 1, 0, filter);
+	const extrinsics = await getExtrinsicsWithoutTotalCount(network, filter, undefined, {
+		offset: 0,
+		limit: 1
+	});
 	return extrinsics.data[0];
 }
 
 export async function getExtrinsicsByName(
 	network: string,
-	limit: number,
-	offset: number,
 	name: string,
-	order: ExtrinsicsOrder = "id_DESC"
+	order: ExtrinsicsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
 	let [pallet = "", call = ""] = name.split(".");
 
@@ -40,15 +43,14 @@ export async function getExtrinsicsByName(
 		}
 	};
 
-	return getExtrinsicsWithoutTotalCount(network, limit, offset, filter, order);
+	return getExtrinsicsWithoutTotalCount(network, filter, order, pagination);
 }
 
 export async function getExtrinsicsWithoutTotalCount(
 	network: string,
-	limit: number,
-	offset: number,
-	filter?: ExtrinsicsFilter,
-	order: ExtrinsicsOrder = "id_DESC"
+	filter: ExtrinsicsFilter,
+	order: ExtrinsicsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
 	const response = await fetchArchive<{ extrinsics: Omit<Extrinsic, "runtimeSpec">[] }>(
 		network,
@@ -79,15 +81,15 @@ export async function getExtrinsicsWithoutTotalCount(
 			}
 		}`,
 		{
-			limit: limit + 1, // get one item more to test if next page exists
-			offset,
+			limit: pagination.limit + 1, // get one item more to test if next page exists
+			offset: pagination.offset,
 			filter,
 			order,
 		}
 	);
 
 	const items = response.extrinsics;
-	const hasNextPage = items.length > limit;
+	const hasNextPage = items.length > pagination.limit;
 
 	if (hasNextPage) {
 		// remove testing item from next page
@@ -99,8 +101,7 @@ export async function getExtrinsicsWithoutTotalCount(
 		{
 			data: items,
 			pagination: {
-				offset,
-				limit,
+				...pagination,
 				hasNextPage
 			}
 		},
@@ -110,12 +111,11 @@ export async function getExtrinsicsWithoutTotalCount(
 
 export async function getExtrinsics(
 	network: string,
-	limit: number,
-	offset: number,
-	filter?: ExtrinsicsFilter,
-	order: ExtrinsicsOrder = "id_DESC"
+	filter: ExtrinsicsFilter,
+	order: ExtrinsicsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
-	const after = offset === 0 ? null : offset.toString();
+	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
 	const response = await fetchArchive<{ extrinsicsConnection: ArchiveConnection<Omit<Extrinsic, "runtimeSpec">> }>(
 		network,
@@ -157,7 +157,7 @@ export async function getExtrinsics(
 			}
 		}`,
 		{
-			first: limit,
+			first: pagination.limit,
 			after,
 			filter,
 			order,
@@ -166,7 +166,11 @@ export async function getExtrinsics(
 
 	return addRuntimeSpecs(
 		network,
-		unifyConnection(response.extrinsicsConnection, limit, offset),
+		unifyConnection(
+			response.extrinsicsConnection,
+			pagination.limit,
+			pagination.offset
+		),
 		it => it.block.spec.specVersion
 	);
 }

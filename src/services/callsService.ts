@@ -1,6 +1,7 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { Call } from "../model/call";
 import { ItemsResponse } from "../model/itemsResponse";
+import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { unifyConnection } from "../utils/unifyConnection";
 
@@ -51,12 +52,11 @@ export async function getCall(network: string, filter: CallsFilter) {
 
 export async function getCalls(
 	network: string,
-	limit: number,
-	offset: number,
 	filter: CallsFilter,
-	order: CallsOrder = "id_DESC"
+	order: CallsOrder = "id_DESC",
+	pagination: PaginationOptions
 ): Promise<ItemsResponse<Call>> {
-	const after = offset === 0 ? null : offset.toString();
+	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
 	const response = await fetchArchive<{callsConnection: ArchiveConnection<Omit<Call, "runtimeSpec">>}>(
 		network,
@@ -97,7 +97,7 @@ export async function getCalls(
 			}
 		}`,
 		{
-			first: limit,
+			first: pagination.limit,
 			after,
 			filter,
 			order,
@@ -106,7 +106,11 @@ export async function getCalls(
 
 	return addRuntimeSpecs(
 		network,
-		unifyConnection(response?.callsConnection, limit, offset),
+		unifyConnection(
+			response?.callsConnection,
+			pagination.limit,
+			pagination.offset
+		),
 		it => it.block.spec.specVersion
 	);
 }

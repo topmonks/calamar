@@ -5,10 +5,10 @@ import { EventsFilter, EventsOrder } from "../services/eventsService";
 import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useCalls(
-	network: string | undefined,
+	network: string,
 	filter: EventsFilter,
 	order?: EventsOrder,
 	options?: FetchOptions,
 ) {
-	return usePaginatedResource(getCalls, network, filter, order, options);
+	return usePaginatedResource(getCalls, [network, filter, order], options);
 }
