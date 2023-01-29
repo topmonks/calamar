@@ -1,13 +1,12 @@
 import { ArchiveConnection } from "../model/archiveConnection";
-import { Event } from "../model/event";
-import { PaginationOptions } from "../model/paginationOptions";
-
-import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
-
-import { fetchArchive } from "./fetchService";
+import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getRuntimeSpec } from "./runtimeService";
+import { getExplorerSquid } from "./networksService";
+import { PaginationOptions } from "../model/paginationOptions";
+import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { Event } from "../model/event";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
@@ -48,6 +47,7 @@ export async function getEvent(network: string, filter: EventsFilter) {
 	);
 }
 
+
 export async function getEventsByName(
 	network: string,
 	name: string,
@@ -57,9 +57,9 @@ export async function getEventsByName(
 	let [pallet = "", event = ""] = name.split(".");
 
 	// try to fix casing according to latest runtime spec
-	const latestRuntimeSpec = await getRuntimeSpec(network, "latest");
+	const runtimeSpec = await getRuntimeSpec(network, "latest");
 
-	const runtimePallet = latestRuntimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
+	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
 	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === event.toLowerCase());
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
@@ -79,7 +79,7 @@ export async function getEventsWithoutTotalCount(
 	order: EventsOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-	const response = await fetchArchive<{events: Omit<Event, "runtimeSpec">[]}>(
+	const response = await fetchArchive<{events: any[]}>(
 		network,
 		`
 			query ($limit: Int!, $offset: Int!, $filter: EventWhereInput, $order: [EventOrderByInput!]) {
@@ -116,21 +116,17 @@ export async function getEventsWithoutTotalCount(
 	const hasNextPage = items.length > pagination.limit;
 
 	if (hasNextPage) {
-		// remove testing item from next page
+		// remove testing item from next pages
 		items.pop();
 	}
 
-	return addRuntimeSpecs(
-		network,
-		{
-			data: items,
-			pagination: {
-				...pagination,
-				hasNextPage
-			}
-		},
-		it => it.block.spec.specVersion
-	);
+	return {
+		data: items,
+		pagination: {
+			...pagination,
+			hasNextPage
+		}
+	};
 }
 
 export async function getEvents(
@@ -141,7 +137,128 @@ export async function getEvents(
 ) {
 	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const response = await fetchArchive<{eventsConnection: ArchiveConnection<Omit<Event, "runtimeSpec">>}>(
+	if (getExplorerSquid(network)){
+
+		const response = await fetchExplorerSquid<{eventsConnection: ArchiveConnection<any>}>(
+			network,
+			`
+			query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
+				eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
+					edges {
+						node {
+							id
+							eventName
+							palletName
+							block {
+								id
+								height
+								timestamp
+								specVersion
+							}
+							extrinsic {
+								id
+							}
+							call {
+								id
+							}
+							argsStr
+						}
+					}
+					pageInfo {
+						endCursor
+						hasNextPage
+						hasPreviousPage
+						startCursor
+					}
+					totalCount
+				}
+			}
+		`,
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				order,
+			}
+		);
+
+		// unify the response
+		const data = {
+			...response.eventsConnection,
+			edges: response.eventsConnection.edges.map((item) => {
+				const itemData = {
+					node: {
+						...item.node,
+						args: item.node.argsStr,
+						name: item.node.palletName.concat(".", item.node.eventName),
+						block: {
+							...item.node.block,
+							spec: {
+								specVersion: item.node.block.specVersion,
+							}
+						}
+					}
+				};
+				return itemData;
+			}),
+		};
+
+		const response2 = await fetchArchive<{eventsConnection: ArchiveConnection<any>}>(
+			network,
+			`
+				query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
+					eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
+						edges {
+							node {
+								id
+								name
+								block {
+									id
+									height
+									timestamp
+									spec {
+										specVersion
+									}
+								}
+								extrinsic {
+									id
+								}
+								call {
+									id
+								}
+								args
+							}
+						}
+						pageInfo {
+							endCursor
+							hasNextPage
+							hasPreviousPage
+							startCursor
+						}
+						totalCount
+					}
+				}
+			`,
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				order,
+			}
+		);
+
+		return addRuntimeSpecs(
+			network,
+			unifyConnection(
+				data,
+				pagination.limit,
+				pagination.offset
+			),
+			it => it.block.spec.specVersion
+		);
+	}
+
+	const response = await fetchArchive<{eventsConnection: ArchiveConnection<any>}>(
 		network,
 		`
 			query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {

@@ -1,13 +1,13 @@
 import { ArchiveConnection } from "../model/archiveConnection";
+import { PaginationOptions } from "../model/paginationOptions";
+import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import {  } from "../utils/fetchGraphql";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
-
-import { getRuntimeSpec } from "./runtimeService";
-import { PaginationOptions } from "../model/paginationOptions";
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { Extrinsic } from "../model/extrinsic";
-import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { getExplorerSquid } from "./networksService";
+import { getRuntimeSpec } from "./runtimeService";
+import { Extrinsic } from "../model/extrinsic";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsCallerFilter = any;
@@ -15,7 +15,7 @@ export type ExtrinsicsCallerFilter = any;
 export type ExtrinsicsOrder = string | string[];
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
-	const extrinsics = await getExtrinsicsWithoutTotalCount(network, filter, undefined, {
+	const extrinsics = await getExtrinsics(network, filter, undefined, {
 		offset: 0,
 		limit: 1
 	});
@@ -28,11 +28,11 @@ export async function getExtrinsicsByAccount(
 	order: ExtrinsicsOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-	if (getExplorerSquid(network)){
+	if (getExplorerSquid(network)) {
 		const filter = {
 			signerPublicKey_eq: address
 		};
-		return await getExtrinsicsCaller(network, filter, order, pagination);
+		return await getExtrinsics(network, filter, order, pagination);
 	}
 	const filter = {
 		OR: [
@@ -47,7 +47,7 @@ export async function getExtrinsicsByName(
 	network: string,
 	name: string,
 	order: ExtrinsicsOrder = "id_DESC",
-	pagination: PaginationOptions
+	pagination: PaginationOptions,
 ) {
 	let [pallet = "", call = ""] = name.split(".");
 
@@ -70,17 +70,19 @@ export async function getExtrinsicsByName(
 	return getExtrinsicsWithoutTotalCount(network, filter, order, pagination);
 }
 
-export async function getExtrinsicsCaller(
+export async function getExtrinsics(
 	network: string,
-	filter: ExtrinsicsCallerFilter,
+	filter: ExtrinsicsFilter,
 	order: ExtrinsicsOrder = "id_DESC",
-	pagination: PaginationOptions
+	pagination: PaginationOptions,
 ) {
 	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const response = await fetchExplorerSquid<{ extrinsicsConnection: ArchiveConnection<any> }>(
-		network,
-		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
+	if (getExplorerSquid(network)) {
+
+		const response = await fetchExplorerSquid<{ extrinsicsConnection: ArchiveConnection<any> }>(
+			network,
+			`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
 				edges {
 					node {
@@ -90,10 +92,12 @@ export async function getExtrinsicsCaller(
 							hash
 							height
 							timestamp
+							specVersion
 						}
 						calls {
 							callName
 							palletName
+							argsStr
 						}
 						indexInBlock
 						success
@@ -113,106 +117,49 @@ export async function getExtrinsicsCaller(
 				totalCount
 			}
 		}`,
-		{
-			first: pagination.limit,
-			after,
-			filter,
-			order,
-		}
-	);
-
-	// unify the response
-	const data = {
-		...response.extrinsicsConnection,
-		edges: response.extrinsicsConnection.edges.map((item) => {
-			const itemData = {
-				node: {
-					...item.node,
-					call: {
-						name: item.node.calls[0].palletName.concat(".", item.node.calls[0].callName)
-					},
-				}
-			};
-			return itemData;
-		}),
-	};
-
-	return unifyConnection(data, pagination.limit, pagination.offset);
-}
-
-
-export async function getExtrinsicsWithoutTotalCount(
-	network: string,
-	filter: ExtrinsicsFilter,
-	order: ExtrinsicsOrder = "id_DESC",
-	pagination: PaginationOptions
-) {
-	const response = await fetchArchive<{ extrinsics: Omit<Extrinsic, "runtimeSpec">[] }>(
-		network,
-		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
-			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
-				id
-				hash
-				call {
-					name
-					args
-				}
-				block {
-					id
-					hash
-					height
-					timestamp
-					spec {
-						specVersion
-					}
-				}
-				signature
-				indexInBlock
-				success
-				tip
-				fee
-				error
-				version
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				order,
 			}
-		}`,
-		{
-			limit: pagination.limit + 1, // get one item more to test if next page exists
-			offset: pagination.offset,
-			filter,
-			order,
-		}
-	);
+		);
 
-	const items = response.extrinsics;
-	const hasNextPage = items.length > pagination.limit;
+		// unify the response
+		const data = {
+			...response.extrinsicsConnection,
+			edges: response.extrinsicsConnection.edges.map((item) => {
+				const itemData = {
+					node: {
+						...item.node,
+						block: {
+							...item.node.block,
+							spec: {
+								specVersion: item.node.block.specVersion,
+							}
+						},
+						call: {
+							name: item.node.calls[0].palletName.concat(".", item.node.calls[0].callName),
+							args: item.node.calls[0].argsStr,
+						},
+					}
+				};
+				return itemData;
+			}),
+		};
 
-	if (hasNextPage) {
-		// remove testing item from next page
-		items.pop();
+		return addRuntimeSpecs(
+			network,
+			unifyConnection(
+				data,
+				pagination.limit,
+				pagination.offset
+			),
+			it => it.block.spec.specVersion
+		);
 	}
 
-	return addRuntimeSpecs(
-		network,
-		{
-			data: items,
-			pagination: {
-				...pagination,
-				hasNextPage
-			}
-		},
-		it => it.block.spec.specVersion
-	);
-}
-
-export async function getExtrinsics(
-	network: string,
-	filter: ExtrinsicsFilter,
-	order: ExtrinsicsOrder = "id_DESC",
-	pagination: PaginationOptions
-) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
-
-	const response = await fetchArchive<{ extrinsicsConnection: ArchiveConnection<Omit<Extrinsic, "runtimeSpec">> }>(
+	const response = await fetchArchive<{ extrinsicsConnection: ArchiveConnection<any> }>(
 		network,
 		`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {
 			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -270,3 +217,66 @@ export async function getExtrinsics(
 	);
 }
 
+
+export async function getExtrinsicsWithoutTotalCount(
+	network: string,
+	filter: ExtrinsicsFilter,
+	order: ExtrinsicsOrder = "id_DESC",
+	pagination: PaginationOptions,
+) {
+	const response = await fetchArchive<{ extrinsics: Extrinsic[] }>(
+		network,
+		`query ($limit: Int!, $offset: Int!, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]) {
+			extrinsics(limit: $limit, offset: $offset, where: $filter, orderBy: $order) {
+				id
+				hash
+				call {
+					name
+					args
+				}
+				block {
+					id
+					hash
+					height
+					timestamp
+					spec {
+						specVersion
+					}
+				}
+				signature
+				indexInBlock
+				success
+				tip
+				fee
+				error
+				version
+			}
+		}`,
+		{
+			limit: pagination.limit + 1, // get one item more to test if next page exists
+			offset: pagination.offset,
+			filter,
+			order,
+		}
+	);
+
+	const items: Extrinsic[] = response.extrinsics;
+	const hasNextPage = items.length > pagination.limit;
+
+	if (hasNextPage) {
+		// remove testing item from next page
+		items.pop();
+	}
+
+	return addRuntimeSpecs(
+		network,
+		{
+			data: items,
+			pagination: {
+				...pagination,
+				hasNextPage
+			}
+		},
+		it => it.block.spec.specVersion
+	);
+}

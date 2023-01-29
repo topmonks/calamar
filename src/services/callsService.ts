@@ -1,10 +1,8 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { Call } from "../model/call";
-import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { unifyConnection } from "../utils/unifyConnection";
-
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getExplorerSquid } from "./networksService";
 
@@ -52,19 +50,18 @@ export async function getCall(network: string, filter: CallsFilter) {
 	);
 }
 
-
 export async function getCallsByAccount(
 	network: string,
 	address: string,
 	order: CallsOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-
+	
 	if (getExplorerSquid(network)) {
 		const filter = {
 			callerPublicKey_eq: address,
 		};
-		return getCallsCaller(network, filter, order, pagination);
+		return getCalls(network, filter, order, pagination);
 	}
 	return {
 		data: [],
@@ -75,17 +72,18 @@ export async function getCallsByAccount(
 	};
 }
 
-export async function getCallsCaller(
+export async function getCalls(
 	network: string,
-	filter: CallsByAccountFilter,
+	filter: CallsFilter,
 	order: CallsOrder = "id_DESC",
-	pagination: PaginationOptions
+	pagination: PaginationOptions,
 ) {
 	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const response = await fetchExplorerSquid<{callsConnection: ArchiveConnection<any>}>(
-		network,
-		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
+	if(getExplorerSquid(network)) {
+		const response = await fetchExplorerSquid<{callsConnection: ArchiveConnection<any>}>(
+			network,
+			`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
 				edges {
 					node {
@@ -99,6 +97,7 @@ export async function getCallsCaller(
 							timestamp
 							id
 							height
+							specVersion
 						}
 						extrinsic {
 							id
@@ -115,40 +114,46 @@ export async function getCallsCaller(
 				totalCount
 			}
 		}`,
-		{
-			first: pagination.limit,
-			after,
-			filter,
-			order,
-		}
-	);
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				order,
+			}
+		);
 
-	// unify the response
-	const data = {
-		...response.callsConnection,
-		edges: response.callsConnection.edges.map((item) => {
-			const itemData = {
-				node: {
-					...item.node,
-					name: item.node.palletName.concat(".", item.node.callName)
-				}
-			};
-			return itemData;
-		}),
-	};
+		// unify the response
+		const data = {
+			...response.callsConnection,
+			edges: response.callsConnection.edges.map((item) => {
+				const itemData = {
+					node: {
+						...item.node,
+						name: item.node.palletName.concat(".", item.node.callName),
+						block: {
+							...item.node.block,
+							spec: {
+								specVersion: item.node.block.specVersion,
+							}
+						}
+					}
+				};
+				return itemData;
+			}),
+		};
 
-	return unifyConnection(data, pagination.limit, pagination.offset);
-}
+		return addRuntimeSpecs(
+			network,
+			unifyConnection(
+				data,
+				pagination.limit,
+				pagination.offset
+			),
+			it => it.block.spec.specVersion
+		);
+	}
 
-export async function getCalls(
-	network: string,
-	filter: CallsFilter,
-	order: CallsOrder = "id_DESC",
-	pagination: PaginationOptions
-): Promise<ItemsResponse<Call>> {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
-
-	const response = await fetchArchive<{callsConnection: ArchiveConnection<Omit<Call, "runtimeSpec">>}>(
+	const response = await fetchArchive<{callsConnection: ArchiveConnection<any>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
