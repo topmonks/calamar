@@ -3,49 +3,50 @@ import { Chip } from "@mui/material";
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
+import { Call } from "../../model/call";
 import { Resource } from "../../model/resource";
-import { RuntimeSpec } from "../../model/runtimeSpec";
+
 import { encodeAddress } from "../../utils/formatAddress";
 import { getCallMetadataByName } from "../../utils/queryMetadata";
 
 import { AccountAddress } from "../AccountAddress";
+import { ButtonLink } from "../ButtonLink";
+import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
-import DataViewer from "../DataViewer";
-import { ButtonLink } from "../ButtonLink";
 
 export type CallInfoTableProps = {
 	network: string;
-	call: Resource<any>;
-	runtimeSpecs: Resource<RuntimeSpec[]>;
+	call: Resource<Call>;
 }
 
+const CallInfoTableAttribute = InfoTableAttribute<Call>;
+
 export const CallInfoTable = (props: CallInfoTableProps) => {
-	const {network, call, runtimeSpecs} = props;
+	const {network, call} = props;
 
 	return (
 		<InfoTable
 			data={call.data}
-			additionalData={[runtimeSpecs.data?.[0]?.metadata]}
-			loading={call.loading || runtimeSpecs.loading}
+			loading={call.loading}
 			notFound={call.notFound}
 			notFoundMessage="No call found"
 			error={call.error}
 		>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.block.timestamp} utc />
 				}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Block time"
 				render={(data) =>
 					<Time time={data.block.timestamp} fromNow />
 				}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Block"
 				render={(data) =>
 					<Link to={`/${network}/block/${data.block.id}`}>
@@ -54,7 +55,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				}
 				copyToClipboard={(data) => data.block.id}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Extrinsic"
 				render={(data) =>
 					<Link to={`/${network}/extrinsic/${data.extrinsic.id}`}>
@@ -63,7 +64,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				}
 				copyToClipboard={(data) => data.extrinsic.id}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Parent call"
 				render={(data) => data.parent &&
 					<Link to={`/${network}/call/${data.parent.id}`}>
@@ -73,23 +74,27 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				copyToClipboard={(data) => data.parent?.id}
 				hide={(data) => !data.parent}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Sender"
 				render={(data) =>
 					data.origin && data.origin.value.__kind !== "None" && (
-						<AccountAddress network={network} address={data.origin.value.value} />
+						<AccountAddress
+							network={network}
+							address={data.origin.value.value}
+							prefix={data.runtimeSpec.metadata.ss58Prefix}
+						/>
 					)
 				}
 				copyToClipboard={(data) =>
 					data.origin && data.origin.value.__kind !== "None" &&
 					encodeAddress(
-						network,
-						data.origin.value.value
+						data.origin.value.value,
+						data.runtimeSpec.metadata.ss58Prefix
 					)
 				}
 				hide={(data) => !data.origin || data.origin.value.__kind === "None"}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Result"
 				render={(data) =>
 					<Chip
@@ -99,7 +104,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 					/>
 				}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Name"
 				render={(data) =>
 					<ButtonLink
@@ -111,18 +116,24 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 					</ButtonLink>
 				}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Parameters"
-				render={(data, metadata) =>
+				render={(data) =>
 					<DataViewer
 						network={network}
 						data={data.args}
-						metadata={metadata && getCallMetadataByName(metadata, data.name)?.args}
+						metadata={
+							getCallMetadataByName(
+								data.runtimeSpec.metadata,
+								data.name
+							)?.args
+						}
+						runtimeSpec={data.runtimeSpec}
 						copyToClipboard
 					/>
 				}
 			/>
-			<InfoTableAttribute
+			<CallInfoTableAttribute
 				label="Spec version"
 				render={(data) => data.block.spec.specVersion}
 			/>

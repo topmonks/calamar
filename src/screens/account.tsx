@@ -13,7 +13,7 @@ import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useAccountExtrinsics } from "../hooks/useAccountExtrinsics";
 import { useAccountCalls } from "../hooks/useAccountCalls";
 import { CallsTable } from "../components/calls/CallsTable";
-import { getCallerArchive } from "../services/archiveRegistryService";
+import { getExplorerSquid } from "../services/networksService";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -50,7 +50,10 @@ function AccountPage() {
 					}
 					Account #{address}
 				</CardHeader>
-				<AccountInfoTable network={network} account={account} />
+				<AccountInfoTable
+					network={network}
+					account={account}
+				/>
 			</Card>
 			{account.data &&
 				<Card>
@@ -64,7 +67,7 @@ function AccountPage() {
 						>
 							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
-						{getCallerArchive(network) !== undefined && <TabPane
+						{getExplorerSquid(network) !== undefined && <TabPane
 							label="Calls"
 							count={calls.pagination.totalCount}
 							loading={calls.loading}
@@ -81,3 +84,4 @@ function AccountPage() {
 }
 
 export default AccountPage;
+

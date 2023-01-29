@@ -132,7 +132,7 @@ export const InfoTableAttribute = <T extends object = any, A extends any[] = []>
 };
 
 export type InfoTableProps<T extends object, A extends any[] = []> = {
-	data: T;
+	data?: T;
 	additionalData?: A;
 	loading?: boolean;
 	notFound?: boolean;

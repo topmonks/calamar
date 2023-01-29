@@ -1,4 +1,4 @@
-import { getNetworks } from "../services/archiveRegistryService";
+import { getNetworks } from "../services/networksService";
 
 export function useNetworks() {
 	return getNetworks();

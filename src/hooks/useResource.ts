@@ -5,10 +5,9 @@ import { FetchOptions } from "../model/fetchOptions";
 import { Resource } from "../model/resource";
 import { GraphQLError } from "../utils/fetchGraphql";
 
-export function useResource<T = any, F = any>(
-	fetchItem: (network: string, filter: F) => T|Promise<T>,
-	network: string | undefined,
-	filter: F,
+export function useResource<T = any, F extends any[] = any[]>(
+	fetchItem: (...args: F) => T|undefined|Promise<T|undefined>,
+	args: F,
 	options?: FetchOptions
 ) {
 	const rollbar = useRollbar();
@@ -18,14 +17,14 @@ export function useResource<T = any, F = any>(
 	const [error, setError] = useState<any>();
 
 	const fetchData = useCallback(async () => {
-		if (!network || options?.waitUntil) {
+		if (options?.waitUntil) {
 			// wait until all required condition are met
 			return;
 		}
 
 		if (!options?.skip) {
 			try {
-				const data = await fetchItem(network, filter);
+				const data = await fetchItem(...args);
 				setData(data);
 			} catch(e) {
 				if (e instanceof GraphQLError) {
@@ -38,7 +37,7 @@ export function useResource<T = any, F = any>(
 		}
 
 		setLoading(false);
-	}, [fetchItem, network, JSON.stringify(filter), options?.waitUntil, options?.skip]);
+	}, [fetchItem, JSON.stringify(args), options?.waitUntil, options?.skip]);
 
 	useEffect(() => {
 		setData(undefined);

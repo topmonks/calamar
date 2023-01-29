@@ -1,15 +1,19 @@
 import { ArchiveConnection } from "../model/archiveConnection";
-import { fetchGraphql, fetchGraphqlCaller } from "../utils/fetchGraphql";
+import { Call } from "../model/call";
+import { ItemsResponse } from "../model/itemsResponse";
+import { PaginationOptions } from "../model/paginationOptions";
+import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { unifyConnection } from "../utils/unifyConnection";
-import { getCallerArchive } from "./archiveRegistryService";
+
+import { fetchArchive, fetchExplorerSquid } from "./fetchService";
+import { getExplorerSquid } from "./networksService";
 
 export type CallsFilter = any;
 export type CallsByAccountFilter = any;
 export type CallsOrder = string | string[];
 
-
 export async function getCall(network: string, filter: CallsFilter) {
-	const response = await fetchGraphql<{calls: any[]}>(
+	const response = await fetchArchive<{calls: Omit<Call, "runtimeSpec">[]}>(
 		network,
 		`query ($filter: CallWhereInput) {
 			calls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
@@ -41,29 +45,31 @@ export async function getCall(network: string, filter: CallsFilter) {
 		}
 	);
 
-	return response.calls[0];
+	return addRuntimeSpec(
+		network,
+		response.calls[0],
+		it => it.block.spec.specVersion
+	);
 }
 
 
 export async function getCallsByAccount(
 	network: string,
-	limit: number,
-	offset: number,
 	address: string,
-	order: CallsOrder = "id_DESC"
+	order: CallsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
-	
-	if (getCallerArchive(network)) {
+
+	if (getExplorerSquid(network)) {
 		const filter = {
 			callerPublicKey_eq: address,
 		};
-		return getCallsCaller(network, limit, offset, filter, order);
+		return getCallsCaller(network, filter, order, pagination);
 	}
 	return {
 		data: [],
 		pagination: {
-			offset,
-			limit,
+			...pagination,
 			hasNextPage: false,
 		}
 	};
@@ -71,14 +77,13 @@ export async function getCallsByAccount(
 
 export async function getCallsCaller(
 	network: string,
-	limit: number,
-	offset: number,
 	filter: CallsByAccountFilter,
-	order: CallsOrder = "id_DESC"
+	order: CallsOrder = "id_DESC",
+	pagination: PaginationOptions
 ) {
-	const after = offset === 0 ? null : offset.toString();
+	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const response = await fetchGraphqlCaller<{callsConnection: ArchiveConnection<any>}>(
+	const response = await fetchExplorerSquid<{callsConnection: ArchiveConnection<any>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -111,7 +116,7 @@ export async function getCallsCaller(
 			}
 		}`,
 		{
-			first: limit,
+			first: pagination.limit,
 			after,
 			filter,
 			order,
@@ -132,19 +137,18 @@ export async function getCallsCaller(
 		}),
 	};
 
-	return unifyConnection(data, limit, offset);
+	return unifyConnection(data, pagination.limit, pagination.offset);
 }
 
 export async function getCalls(
 	network: string,
-	limit: number,
-	offset: number,
 	filter: CallsFilter,
-	order: CallsOrder = "id_DESC"
-) {
-	const after = offset === 0 ? null : offset.toString();
+	order: CallsOrder = "id_DESC",
+	pagination: PaginationOptions
+): Promise<ItemsResponse<Call>> {
+	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const response = await fetchGraphql<{callsConnection: ArchiveConnection<any>}>(
+	const response = await fetchArchive<{callsConnection: ArchiveConnection<Omit<Call, "runtimeSpec">>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -183,12 +187,20 @@ export async function getCalls(
 			}
 		}`,
 		{
-			first: limit,
+			first: pagination.limit,
 			after,
 			filter,
 			order,
 		}
 	);
 
-	return unifyConnection(response?.callsConnection, limit, offset);
+	return addRuntimeSpecs(
+		network,
+		unifyConnection(
+			response?.callsConnection,
+			pagination.limit,
+			pagination.offset
+		),
+		it => it.block.spec.specVersion
+	);
 }

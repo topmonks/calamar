@@ -50,7 +50,7 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 		const archive = archives.find((it) => it.network === value);
 
 		if (!archive && onChange && archives.length > 0) {
-			onChange(archives[0].network, false);
+			onChange(archives[0]!.network, false);
 		}
 	}, [value, onChange, archives]);
 

@@ -10,5 +10,5 @@ export function useAccountCalls(
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	return usePaginatedResource(getCallsByAccount, network, address, order, options);
+	return usePaginatedResource(getCallsByAccount, [network, address, order], options);
 }

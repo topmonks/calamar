@@ -1,3 +1,4 @@
+import { Extrinsic } from "../../model/extrinsic";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { getSignatureAddress } from "../../utils/signature";
 
@@ -9,10 +10,12 @@ import { Time } from "../Time";
 
 export type ExtrinsicsTableProps = {
 	network: string;
-	extrinsics: PaginatedResource<any>,
+	extrinsics: PaginatedResource<Extrinsic>,
 	showAccount?: boolean;
 	showTime?: boolean;
 };
+
+const ExtrinsicsTableAttribute = ItemsTableAttribute<Extrinsic>;
 
 function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 	const {
@@ -32,7 +35,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			pagination={extrinsics.pagination}
 			data-test="extrinsics-table"
 		>
-			<ItemsTableAttribute
+			<ExtrinsicsTableAttribute
 				label="ID"
 				render={(extrinsic) =>
 					<Link to={`/${network}/extrinsic/${extrinsic.id}`}>
@@ -40,7 +43,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 					</Link>
 				}
 			/>
-			<ItemsTableAttribute
+			<ExtrinsicsTableAttribute
 				label="Name"
 				render={(extrinsic) =>
 					<ButtonLink
@@ -53,20 +56,21 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				}
 			/>
 			{showAccount &&
-				<ItemsTableAttribute
+				<ExtrinsicsTableAttribute
 					label="Account"
 					render={(extrinsic) =>
 						extrinsic.signature &&
 							<AccountAddress
 								network={network}
 								address={getSignatureAddress(extrinsic.signature)}
+								prefix={extrinsic.runtimeSpec.metadata.ss58Prefix}
 								shorten
 							/>
 					}
 				/>
 			}
 			{showTime &&
-				<ItemsTableAttribute
+				<ExtrinsicsTableAttribute
 					label="Time"
 					render={(extrinsic) =>
 						<Time time={extrinsic.block.timestamp} fromNow tooltip utc />

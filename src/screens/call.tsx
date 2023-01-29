@@ -8,7 +8,6 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 
 type CallPageParams = {
 	network: string;
@@ -21,13 +20,7 @@ export const CallPage: React.FC = () => {
 	const call = useCall(network, { id_eq: id });
 	const events = useEvents(network, { call: { id_eq: id } }, "id_ASC");
 
-	const specVersion = call.data?.block.spec.specVersion;
-	const runtimeSpecs = useRuntimeSpecs(network, specVersion ? [specVersion] : [], {
-		waitUntil: call.loading
-	});
-
-
-	useDOMEventTrigger("data-loaded", !call.loading && !events.loading && !runtimeSpecs.loading);
+	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
 
 	return (
 		<>
@@ -36,9 +29,9 @@ export const CallPage: React.FC = () => {
 					Call #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
-				<CallInfoTable network={network} call={call} runtimeSpecs={runtimeSpecs} />
+				<CallInfoTable network={network} call={call} />
 			</Card>
-			{call.data && !runtimeSpecs.loading &&
+			{call.data &&
 				<Card>
 					<TabbedContent>
 						<TabPane
@@ -48,7 +41,7 @@ export const CallPage: React.FC = () => {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} events={events} runtimeSpecs={runtimeSpecs} />
+							<EventsTable network={network} events={events} />
 						</TabPane>
 					</TabbedContent>
 				</Card>

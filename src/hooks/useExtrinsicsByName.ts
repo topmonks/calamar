@@ -4,10 +4,10 @@ import { ExtrinsicsOrder, getExtrinsicsByName } from "../services/extrinsicsServ
 import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useExtrinsicsByName(
-	network: string | undefined,
+	network: string,
 	name: string,
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	return usePaginatedResource(getExtrinsicsByName, network, name, order, options);
+	return usePaginatedResource(getExtrinsicsByName, [network, name, order], options);
 }

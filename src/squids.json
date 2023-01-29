@@ -1,0 +1,154 @@
+{
+	"balances": [
+		{
+			"network": "acala",
+			"explorerUrl": "https://squid.subsquid.io/acala-balances/graphql"
+		},
+		{
+			"network": "bifrost",
+			"explorerUrl": "https://squid.subsquid.io/bifrost-balances/graphql"
+		},
+		{
+			"network": "karura",
+			"explorerUrl": "https://squid.subsquid.io/karura-balances/graphql"
+		},
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/kusama-balances/graphql"
+		},
+		{
+			"network": "moonbeam",
+			"explorerUrl": "https://squid.subsquid.io/moonbeam-balances/graphql"
+		},
+		{
+			"network": "phala",
+			"explorerUrl": "https://squid.subsquid.io/phala-balances/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/polkadot-balances/graphql"
+		}
+	],
+	"explorer": [
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-kusama/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-polkadot/graphql"
+		},
+		{
+			"network": "moonbeam",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-moonbeam/graphql"
+		},
+		{
+			"network": "moonriver",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-moonriver/graphql"
+		},
+		{
+			"network": "moonbase",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-moonbase/graphql"
+		},
+		{
+			"network": "acala",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-acala/graphql"
+		},
+		{
+			"network": "karura",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-karura/graphql"
+		},
+		{
+			"network": "statemine",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-statemine/graphql"
+		},
+		{
+			"network": "statemint",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-statemint/graphql"
+		},
+		{
+			"network": "astar",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-astar/graphql"
+		},
+		{
+			"network": "shiden",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-shiden/graphql"
+		},
+		{
+			"network": "shibuya",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-shibuya/graphql"
+		},
+		{
+			"network": "khala",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-khala/graphql"
+		},
+		{
+			"network": "phala",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-phala/graphql"
+		},
+		{
+			"network": "bifrost",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-bifrost/graphql"
+		},
+		{
+			"network": "calamari",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-calamari/graphql"
+		},
+		{
+			"network": "gmordie",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-gmordie/graphql"
+		},
+		{
+			"network": "subsocial",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-subsocial/graphql"
+		},
+		{
+			"network": "efinity",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-efinity/graphql"
+		},
+		{
+			"network": "rococo",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-rococo/graphql"
+		},
+		{
+			"network": "interlay",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-interlay/graphql"
+		},
+		{
+			"network": "hydradx",
+			"explorerUrl": "https://squid.subsquid.io/gs-explorer-hydradx/graphql"
+		}
+	],
+	"main": [
+		{
+			"network": "astar",
+			"explorerUrl": "https://squid.subsquid.io/astar-explorer/graphql"
+		},
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/kusama-explorer/graphql"
+		},
+		{
+			"network": "moonbeam",
+			"explorerUrl": "https://squid.subsquid.io/moonbeam-explorer/graphql"
+		},
+		{
+			"network": "moonriver",
+			"explorerUrl": "https://squid.subsquid.io/moonriver-explorer/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/polkadot-explorer/graphql"
+		}
+	],
+	"stats": [
+		{
+			"network": "kusama",
+			"explorerUrl": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql"
+		},
+		{
+			"network": "polkadot",
+			"explorerUrl": "https://squid.subsquid.io/chain-analytics-squid/v/polkadot-multi-parallel-2-0/graphql"
+		}
+	]
+}

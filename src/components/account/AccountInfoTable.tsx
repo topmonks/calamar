@@ -1,6 +1,7 @@
 import { isEthereumAddress } from "@polkadot/util-crypto";
 
 import { useNetwork } from "../../hooks/useNetwork";
+import { Account } from "../../model/account";
 import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
@@ -8,8 +9,10 @@ import {InfoTable, InfoTableAttribute } from "../InfoTable";
 
 export type ExtrinsicInfoTableProps = {
 	network: string;
-	account: Resource<any>;
+	account: Resource<Account>;
 }
+
+const AccountInfoTableAttribute = InfoTableAttribute<Account>;
 
 export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 	const {network, account} = props;
@@ -24,16 +27,16 @@ export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 			notFoundMessage="Account doesn't exist or haven't signed any extrinsic"
 			error={account.error}
 		>
-			<InfoTableAttribute
+			<AccountInfoTableAttribute
 				label={`${networkData?.displayName} address`}
-				render={(data) => encodeAddress(network, data.address)}
-				copyToClipboard={(data) => encodeAddress(network, data.address)}
+				render={(data) => encodeAddress(data.address, data.runtimeSpec.metadata.ss58Prefix)}
+				copyToClipboard={(data) => encodeAddress(data.address, data.runtimeSpec.metadata.ss58Prefix)}
 				hide={(data) => isEthereumAddress(data.address)}
 			/>
-			<InfoTableAttribute
+			<AccountInfoTableAttribute
 				label="Substrate address"
-				render={(data) => encodeAddress(network, data.address, 42)}
-				copyToClipboard={(data) => encodeAddress(network, data.address, 42)}
+				render={(data) => encodeAddress(data.address, 42)}
+				copyToClipboard={(data) => encodeAddress(data.address, 42)}
 				hide={(data) => isEthereumAddress(data.address)}
 			/>
 			<InfoTableAttribute

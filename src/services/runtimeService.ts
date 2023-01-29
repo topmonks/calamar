@@ -1,9 +1,10 @@
 import { RuntimeSpec } from "../model/runtimeSpec";
 import { decodeMetadata } from "../utils/decodeMetadata";
-import { fetchGraphql } from "../utils/fetchGraphql";
+
+import { fetchArchive } from "./fetchService";
 
 export async function getRuntimeSpecVersions(network: string) {
-	const response = await fetchGraphql<{metadata: {specVersion: number}[]}>(
+	const response = await fetchArchive<{metadata: {specVersion: number}[]}>(
 		network, `
 			query {
 				metadata(orderBy: specVersion_DESC) {
@@ -16,33 +17,48 @@ export async function getRuntimeSpecVersions(network: string) {
 	return response.metadata.map(it => it.specVersion);
 }
 
-export async function getLatestRuntimeSpec(network: string) {
-	const response = await fetchGraphql<{spec: RuntimeSpec[]}>(
-		network, `
-			query {
-				spec: metadata(orderBy: specVersion_DESC, limit: 1) {
-					id
-					blockHash
-					blockHeight
-					specName
-					specVersion
-					hex
+export async function getRuntimeSpec(network: string, specVersion: "latest"): Promise<RuntimeSpec>;
+export async function getRuntimeSpec(network: string, specVersion: number|"latest"): Promise<RuntimeSpec|undefined>;
+export async function getRuntimeSpec(network: string, specVersion: number|"latest"): Promise<RuntimeSpec|undefined> {
+	if (specVersion === "latest") {
+		const response = await fetchArchive<{spec: Omit<RuntimeSpec, "metadata">[]}>(
+			network, `
+				query {
+					spec: metadata(orderBy: specVersion_DESC, limit: 1) {
+						id
+						blockHash
+						blockHeight
+						specName
+						specVersion
+						hex
+					}
 				}
-			}
-		`
-	);
+			`
+		);
 
-	const spec = response.spec[0];
-	spec.metadata = decodeMetadata(spec.hex);
+		const spec = response.spec[0]!;
 
-	return spec;
+		return {
+			...spec,
+			metadata: decodeMetadata(spec.hex)
+		};
+	}
+
+	const specs = await getRuntimeSpecs(network, [specVersion]);
+	return specs[specVersion];
 }
 
 export async function getRuntimeSpecs(
 	network: string,
-	specVersions: number[]
+	specVersions: number[] | undefined
 ) {
-	const response = await fetchGraphql<{specs: RuntimeSpec[]}>(
+	if (specVersions == undefined || specVersions.length === 0) {
+		specVersions = [];
+	}
+
+	const specs: Record<number, RuntimeSpec> = {};
+
+	const response = await fetchArchive<{specs: Omit<RuntimeSpec, "metadata">[]}>(
 		network, `
 			query ($specVersions: [Int!]!) {
 				specs: metadata(where: {specVersion_in: $specVersions}, orderBy: specVersion_DESC) {
@@ -60,8 +76,13 @@ export async function getRuntimeSpecs(
 		}
 	);
 
-	return response.specs.map<RuntimeSpec>(spec => ({
-		...spec,
-		metadata: decodeMetadata(spec.hex)
-	}));
+
+	for (const spec of response.specs) {
+		specs[spec.specVersion] = {
+			...spec,
+			metadata: decodeMetadata(spec.hex)
+		};
+	}
+
+	return specs;
 }
