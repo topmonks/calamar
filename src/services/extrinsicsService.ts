@@ -1,6 +1,6 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { PaginationOptions } from "../model/paginationOptions";
-import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import {  } from "../utils/fetchGraphql";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
@@ -15,11 +15,45 @@ export type ExtrinsicsCallerFilter = any;
 export type ExtrinsicsOrder = string | string[];
 
 export async function getExtrinsic(network: string, filter?: ExtrinsicsFilter) {
-	const extrinsics = await getExtrinsics(network, filter, undefined, {
-		offset: 0,
-		limit: 1
-	});
-	return extrinsics.data[0];
+	const response = await fetchArchive<{extrinsics: Omit<Extrinsic, "runtimeSpec">[]}>(
+		network,
+		`query ($filter: ExtrinsicWhereInput) {
+			extrinsics(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
+						id
+						hash
+						call {
+							name
+							args
+						}
+						block {
+							id
+							hash
+							height
+							timestamp
+							spec {
+								specVersion
+							}
+						}
+						signature
+						indexInBlock
+						success
+						tip
+						fee
+						error
+						version
+				
+			}
+		}`,
+		{
+			filter,
+		}
+	);
+		
+	return addRuntimeSpec(
+		network,
+		response.extrinsics[0],
+		it => it.block.spec.specVersion
+	);
 }
 
 export async function getExtrinsicsByAccount(
@@ -106,6 +140,7 @@ export async function getExtrinsics(
 						signerPublicKey
 						error
 						version
+						extrinsicHash
 					}
 				}
 				pageInfo {
@@ -132,6 +167,7 @@ export async function getExtrinsics(
 				const itemData = {
 					node: {
 						...item.node,
+						hash: item.node.extrinsicHash,
 						block: {
 							...item.node.block,
 							spec: {

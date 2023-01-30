@@ -161,7 +161,6 @@ export async function getEvents(
 							call {
 								id
 							}
-							argsStr
 						}
 					}
 					pageInfo {
@@ -182,14 +181,33 @@ export async function getEvents(
 			}
 		);
 
+		const eventIds = response.eventsConnection.edges.map((item) => item.node.id);
+
+		const args = await fetchArchive(
+			network,
+			`
+				query($ids: [String!]) {
+					events(where: { id_in: $ids }) {
+						args
+					}
+				}
+			`,
+			{
+				ids: eventIds,
+			}
+		);
+
+		console.log(args);
+		
+
 		// unify the response
 		const data = {
 			...response.eventsConnection,
-			edges: response.eventsConnection.edges.map((item) => {
+			edges: response.eventsConnection.edges.map((item, index) => {
 				const itemData = {
 					node: {
 						...item.node,
-						args: item.node.argsStr,
+						args: args.events[index].args,
 						name: item.node.palletName.concat(".", item.node.eventName),
 						block: {
 							...item.node.block,
@@ -202,50 +220,6 @@ export async function getEvents(
 				return itemData;
 			}),
 		};
-
-		const response2 = await fetchArchive<{eventsConnection: ArchiveConnection<any>}>(
-			network,
-			`
-				query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
-					eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
-						edges {
-							node {
-								id
-								name
-								block {
-									id
-									height
-									timestamp
-									spec {
-										specVersion
-									}
-								}
-								extrinsic {
-									id
-								}
-								call {
-									id
-								}
-								args
-							}
-						}
-						pageInfo {
-							endCursor
-							hasNextPage
-							hasPreviousPage
-							startCursor
-						}
-						totalCount
-					}
-				}
-			`,
-			{
-				first: pagination.limit,
-				after,
-				filter,
-				order,
-			}
-		);
 
 		return addRuntimeSpecs(
 			network,
