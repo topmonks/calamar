@@ -1,6 +1,6 @@
 import { getBlock } from "../../src/services/blocksService";
-import { getEventsWithoutTotalCount } from "../../src/services/eventsService";
-import { getExtrinsic, getExtrinsicsWithoutTotalCount } from "../../src/services/extrinsicsService";
+import { getEventsByName } from "../../src/services/eventsService";
+import { getExtrinsic, getExtrinsicsByName } from "../../src/services/extrinsicsService";
 import { mockRequest } from "../utils/mockRequest";
 
 import { navigate } from "../utils/navigate";
@@ -169,7 +169,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("kusama", { call: { name_eq: name } }, "id_DESC", {offset: 0, limit: 10}),
+			() => getExtrinsicsByName("kusama", name, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -196,7 +196,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getEventsWithoutTotalCount("kusama", { name_eq: name }, "id_DESC", {offset: 0, limit: 10}),
+			() => getEventsByName("kusama", name, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -224,7 +224,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getEventsWithoutTotalCount("kusama", { name_eq: eventName }, "id_DESC", {offset: 0, limit: 10}),
+			() => getEventsByName("kusama", eventName, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -253,7 +253,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("kusama", { call: { name_eq: extrinsicsName } }, "id_DESC", {offset: 0, limit: 10}),
+			() => getExtrinsicsByName("kusama", extrinsicsName, "id_DESC", {offset: 0, limit: 10}),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
