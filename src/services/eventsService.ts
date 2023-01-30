@@ -122,56 +122,77 @@ export async function getEventsByName(
 			}
 		);
 
-		const eventIds = response.eventsConnection.edges.map((item) => item.node.id);
+		// if the items exist, return them
+		if (response.itemsCounterById !== null && response.itemsCounterById.total !== null) {
+			const eventIds = response.eventsConnection.edges.map((item) => item.node.id);
 
-		const args = await fetchArchive(
-			network,
-			`
+			const args = await fetchArchive(
+				network,
+				`
 				query($ids: [String!]) {
 					events(where: { id_in: $ids }) {
 						args
 					}
 				}
 			`,
-			{
-				ids: eventIds,
-			}
-		);
+				{
+					ids: eventIds,
+				}
+			);
 		
 
-		// unify the response
-		const data = {
-			...response.eventsConnection,
-			totalCount: response.itemsCounterById.total,
-			edges: response.eventsConnection.edges.map((item, index) => {
-				const itemData = {
-					node: {
-						...item.node,
-						args: args.events[index].args,
-						name: item.node.palletName.concat(".", item.node.eventName),
-						block: {
-							...item.node.block,
-							spec: {
-								specVersion: item.node.block.specVersion,
+			// unify the response
+			const data = {
+				...response.eventsConnection,
+				totalCount: response.itemsCounterById.total,
+				edges: response.eventsConnection.edges.map((item, index) => {
+					const itemData = {
+						node: {
+							...item.node,
+							args: args.events[index].args,
+							name: item.node.palletName.concat(".", item.node.eventName),
+							block: {
+								...item.node.block,
+								spec: {
+									specVersion: item.node.block.specVersion,
+								}
 							}
 						}
-					}
-				};
-				return itemData;
-			}),
-		};
+					};
+					return itemData;
+				}),
+			};
 
+			return addRuntimeSpecs(
+				network,
+				unifyConnection(
+					data,
+					pagination.limit,
+					pagination.offset
+				),
+				it => it.block.spec.specVersion
+			);
+		}
+
+		// empty response
 		return addRuntimeSpecs(
 			network,
 			unifyConnection(
-				data,
+				{
+					edges:[],
+					pageInfo: {
+						endCursor: "",
+						hasNextPage: false,
+						hasPreviousPage: false,
+						startCursor: ""
+					},
+					totalCount: 0,
+				},
 				pagination.limit,
 				pagination.offset
 			),
 			it => it.block.spec.specVersion
 		);
-
-		return getEvents(network, filter, order, pagination);
 	}
 
 	// the old search

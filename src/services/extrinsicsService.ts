@@ -156,35 +156,61 @@ export async function getExtrinsicsByName(
 			}
 		);
 
-		// unify the response
-		const data = {
-			...response.extrinsicsConnection,
-			totalCount: response.itemsCounterById.total,
-			edges: response.extrinsicsConnection.edges.map((item) => {
-				const itemData = {
-					node: {
-						...item.node,
-						hash: item.node.extrinsicHash,
-						block: {
-							...item.node.block,
-							spec: {
-								specVersion: item.node.block.specVersion,
-							}
-						},
-						call: {
-							name: item.node.calls[0].palletName.concat(".", item.node.calls[0].callName),
-							args: item.node.calls[0].argsStr,
-						},
-					}
-				};
-				return itemData;
-			}),
-		};
+		// if the items exist, return them
+		if (response.itemsCounterById !== null && response.itemsCounterById.total !== null) {
 
+			// unify the response
+			const data = {
+				...response.extrinsicsConnection,
+				totalCount: response.itemsCounterById.total,
+				edges: response.extrinsicsConnection.edges.map((item) => {
+					const itemData = {
+						node: {
+							...item.node,
+							hash: item.node.extrinsicHash,
+							block: {
+								...item.node.block,
+								spec: {
+									specVersion: item.node.block.specVersion,
+								}
+							},
+							call: {
+								name: item.node.calls[0].palletName.concat(".", item.node.calls[0].callName),
+								args: item.node.calls[0].argsStr,
+							},
+						}
+					};
+					return itemData;
+				}),
+			};
+
+			{
+				return addRuntimeSpecs(
+					network,
+					unifyConnection(
+						data,
+						pagination.limit,
+						pagination.offset
+					),
+					it => it.block.spec.specVersion
+				);
+			}
+		}
+
+		// empty response
 		return addRuntimeSpecs(
 			network,
 			unifyConnection(
-				data,
+				{
+					edges:[],
+					pageInfo: {
+						endCursor: "",
+						hasNextPage: false,
+						hasPreviousPage: false,
+						startCursor: ""
+					},
+					totalCount: 0,
+				},
 				pagination.limit,
 				pagination.offset
 			),
