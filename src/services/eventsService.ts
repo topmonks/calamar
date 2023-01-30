@@ -7,6 +7,7 @@ import { getExplorerSquid } from "./networksService";
 import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { Event } from "../model/event";
+import { ItemsCounter } from "../model/itemsCounter";
 
 export type EventsFilter = any;
 export type EventsOrder = string | string[];
@@ -56,9 +57,9 @@ export async function getEventsByName(
 ) {
 	let [pallet = "", event = ""] = name.split(".");
 
-	// try to fix casing according to latest runtime spec
 	const runtimeSpec = await getRuntimeSpec(network, "latest");
 
+	// try to fix casing according to latest runtime spec
 	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === pallet.toLowerCase());
 	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === event.toLowerCase());
 
@@ -66,6 +67,114 @@ export async function getEventsByName(
 	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
 	event = runtimeEvent?.name.toString() || upperFirst(event);
 
+	if (getExplorerSquid(network)) {
+		const after = pagination.offset === 0 ? null : pagination.offset.toString();
+
+		const filter = {
+			palletName_eq: pallet,
+			eventName_eq: event,
+		};
+
+		const counterFilter = `Events.${pallet}.${event}`;
+		
+		const response = await fetchExplorerSquid<{eventsConnection: ArchiveConnection<any>, itemsCounterById: ItemsCounter}>(
+			network,
+			`
+			query ($first: Int!, $after: String, $filter: EventWhereInput, $counterFilter: String!, $order: [EventOrderByInput!]!) {
+				eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
+					edges {
+						node {
+							id
+							eventName
+							palletName
+							block {
+								id
+								height
+								timestamp
+								specVersion
+							}
+							extrinsic {
+								id
+							}
+							call {
+								id
+							}
+						}
+					}
+					pageInfo {
+						endCursor
+						hasNextPage
+						hasPreviousPage
+						startCursor
+					}
+				}
+				itemsCounterById(id: $counterFilter) {
+					total
+				}
+			}
+		`,
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				counterFilter,
+				order,
+			}
+		);
+
+		const eventIds = response.eventsConnection.edges.map((item) => item.node.id);
+
+		const args = await fetchArchive(
+			network,
+			`
+				query($ids: [String!]) {
+					events(where: { id_in: $ids }) {
+						args
+					}
+				}
+			`,
+			{
+				ids: eventIds,
+			}
+		);
+		
+
+		// unify the response
+		const data = {
+			...response.eventsConnection,
+			totalCount: response.itemsCounterById.total,
+			edges: response.eventsConnection.edges.map((item, index) => {
+				const itemData = {
+					node: {
+						...item.node,
+						args: args.events[index].args,
+						name: item.node.palletName.concat(".", item.node.eventName),
+						block: {
+							...item.node.block,
+							spec: {
+								specVersion: item.node.block.specVersion,
+							}
+						}
+					}
+				};
+				return itemData;
+			}),
+		};
+
+		return addRuntimeSpecs(
+			network,
+			unifyConnection(
+				data,
+				pagination.limit,
+				pagination.offset
+			),
+			it => it.block.spec.specVersion
+		);
+
+		return getEvents(network, filter, order, pagination);
+	}
+
+	// the old search
 	const filter = {
 		name_eq: `${pallet}.${event}`
 	};
@@ -120,13 +229,17 @@ export async function getEventsWithoutTotalCount(
 		items.pop();
 	}
 
-	return {
-		data: items,
-		pagination: {
-			...pagination,
-			hasNextPage
-		}
-	};
+	return addRuntimeSpecs(
+		network,
+		{
+			data: items,
+			pagination: {
+				...pagination,
+				hasNextPage
+			}
+		},
+		it => it.block.spec.specVersion
+	);
 }
 
 export async function getEvents(
@@ -196,8 +309,6 @@ export async function getEvents(
 				ids: eventIds,
 			}
 		);
-
-		console.log(args);
 		
 
 		// unify the response

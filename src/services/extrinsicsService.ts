@@ -1,13 +1,13 @@
 import { ArchiveConnection } from "../model/archiveConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
-import {  } from "../utils/fetchGraphql";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { unifyConnection } from "../utils/unifyConnection";
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getExplorerSquid } from "./networksService";
 import { getRuntimeSpec } from "./runtimeService";
 import { Extrinsic } from "../model/extrinsic";
+import { ItemsCounter } from "../model/itemsCounter";
 
 export type ExtrinsicsFilter = any;
 export type ExtrinsicsCallerFilter = any;
@@ -94,6 +94,103 @@ export async function getExtrinsicsByName(
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
 	pallet = runtimePallet?.name.toString() || upperFirst(pallet);
 	call = runtimeCall?.name.toString() || lowerFirst(call);
+
+	if(getExplorerSquid(network)) {
+		const after = pagination.offset === 0 ? null : pagination.offset.toString();
+
+		const filter = {
+			mainCall: {
+				palletName_eq: pallet,
+				callName_eq: call,
+			}
+		};
+
+		const counterFilter = `Extrinsics.${pallet}.${call}`;
+
+		const response = await fetchExplorerSquid<{ extrinsicsConnection: ArchiveConnection<any>, itemsCounterById: ItemsCounter}>(
+			network,
+			`query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $counterFilter: String!, $order: [ExtrinsicOrderByInput!]!) {
+			extrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
+				edges {
+					node {
+						id
+						block {
+							id
+							hash
+							height
+							timestamp
+							specVersion
+						}
+						calls {
+							callName
+							palletName
+							argsStr
+						}
+						indexInBlock
+						success
+						tip
+						fee
+						signerPublicKey
+						error
+						version
+						extrinsicHash
+					}
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
+				}
+			}
+			itemsCounterById(id: $counterFilter) {
+				total
+			}
+		}`,
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				counterFilter,
+				order,
+			}
+		);
+
+		// unify the response
+		const data = {
+			...response.extrinsicsConnection,
+			totalCount: response.itemsCounterById.total,
+			edges: response.extrinsicsConnection.edges.map((item) => {
+				const itemData = {
+					node: {
+						...item.node,
+						hash: item.node.extrinsicHash,
+						block: {
+							...item.node.block,
+							spec: {
+								specVersion: item.node.block.specVersion,
+							}
+						},
+						call: {
+							name: item.node.calls[0].palletName.concat(".", item.node.calls[0].callName),
+							args: item.node.calls[0].argsStr,
+						},
+					}
+				};
+				return itemData;
+			}),
+		};
+
+		return addRuntimeSpecs(
+			network,
+			unifyConnection(
+				data,
+				pagination.limit,
+				pagination.offset
+			),
+			it => it.block.spec.specVersion
+		);
+	}
 
 	const filter = {
 		call: {
