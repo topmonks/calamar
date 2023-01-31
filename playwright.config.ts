@@ -5,6 +5,8 @@ type Config = PlaywrightTestConfig & {
 	screenshotsDir: string;
 };
 
+console.log(process.env);
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -47,6 +49,10 @@ const config: Config = {
 		trace: process.env.CI ? "retain-on-failure" : "on",
 
 		testIdAttribute: "data-test",
+
+		launchOptions: {
+			devtools: process.env.PWDEBUG ? true : false
+		}
 	},
 	/* Configure projects for major browsers */
 	projects: [

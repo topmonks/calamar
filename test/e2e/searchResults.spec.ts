@@ -232,7 +232,8 @@ test.describe("Search results page", () => {
 						message: "Events search error"
 					}]
 				})
-			})
+			}),
+			(url, options) => !!options.body?.toString().match("eventsConnection")
 		);
 
 		await navigate(page, `/kusama/search?query=${extrinsicsName}`, {waitUntil: "data-loaded"});
@@ -261,7 +262,8 @@ test.describe("Search results page", () => {
 						message: "Extrinsics search error"
 					}]
 				})
-			})
+			}),
+			(url, options) => !!options.body?.toString().match("extrinsicsConnection")
 		);
 
 		await navigate(page, `/kusama/search?query=${eventName}`, {waitUntil: "data-loaded"});
