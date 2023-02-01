@@ -1,7 +1,3 @@
-import { getExtrinsic } from "../../src/services/extrinsicsService";
-import { getEvents } from "../../src/services/eventsService";
-import { getCalls } from "../../src/services/callsService";
-
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { test, expect } from "../utils/test";
@@ -38,7 +34,7 @@ test.describe("Extrinsic detail page", () => {
 	test("show error message when item data fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsic("kusama", {id_eq: extrinsicId}),
+			(request) => request.postData()?.match("extrinsic"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -62,7 +58,7 @@ test.describe("Extrinsic detail page", () => {
 	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getEvents("kusama", { extrinsic: { id_eq: extrinsicId } }, "id_ASC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("events"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -86,7 +82,7 @@ test.describe("Extrinsic detail page", () => {
 	test("show error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getCalls("kusama", { extrinsic: { id_eq: extrinsicId } }, "id_ASC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("calls"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

@@ -5,8 +5,6 @@ type Config = PlaywrightTestConfig & {
 	screenshotsDir: string;
 };
 
-console.log(process.env);
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */

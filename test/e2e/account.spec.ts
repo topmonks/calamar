@@ -1,5 +1,3 @@
-import { getExtrinsicsByAccount } from "../../src/services/extrinsicsService";
-
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { removeContent } from "../utils/removeContent";
@@ -30,7 +28,7 @@ test.describe("Account detail page", () => {
 	test("shows error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getExtrinsicsByAccount("kusama", address, undefined, {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("extrinsics"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
