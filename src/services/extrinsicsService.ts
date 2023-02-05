@@ -83,6 +83,8 @@ export async function getExtrinsicsByName(
 	order: ExtrinsicsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
+
+
 	let [pallet = "", call = ""] = name.split(".");
 
 	// try to fix casing according to latest runtime spec
@@ -98,14 +100,19 @@ export async function getExtrinsicsByName(
 	if(getExplorerSquid(network)) {
 		const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-		const filter = {
-			mainCall: {
-				palletName_eq: pallet,
-				callName_eq: call,
-			}
-		};
+		const filter = call !== "undefined" ? 
+			{
+				mainCall: {
+					palletName_eq: pallet,
+					callName_eq: call,
+				}
+			} : {
+				mainCall: {
+					palletName_eq: pallet,
+				}
+			};
 
-		const counterFilter = `Extrinsics.${pallet}.${call}`;
+		const counterFilter = call !== "undefined" ? `Extrinsics.${pallet}.${call}` : `Extrinsics.${pallet}`;
 
 		const response = await fetchExplorerSquid<{ extrinsicsConnection: ArchiveConnection<any>, itemsCounterById: ItemsCounter}>(
 			network,

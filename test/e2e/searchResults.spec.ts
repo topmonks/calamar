@@ -39,6 +39,15 @@ test.describe("Search results page", () => {
 		await takeScreenshot("search-extrinsics-by-name");
 	});
 
+	test("shows found extrinsics by pallet name", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/search?query=balances", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("extrinsics-tab").click();
+
+		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
+		await takeScreenshot("search-extrinsics-by-pallet-name");
+	});
+
 	test("shows found events by name", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/kusama/search?query=balances.transfer", {waitUntil: "data-loaded"});
 
@@ -48,9 +57,18 @@ test.describe("Search results page", () => {
 		await takeScreenshot("search-events-by-name");
 	});
 
+	test("shows found events by pallet name", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/search?query=balances", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("events-tab").click();
+
+		await removeContent(page.locator("[data-test=events-table] tr td"));
+		await takeScreenshot("search-events-by-pallet-name");
+	});
+
 	test("shows not found message if nothing was found by hash", async ({ page, takeScreenshot }) => {
 		const query = "0x123456789";
-
+		
 		await navigate(page, `/kusama/search?query=${query}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("not-found");
