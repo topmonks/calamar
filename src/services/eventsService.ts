@@ -80,6 +80,7 @@ export async function getEventsByName(
 		
 		const counterFilter = event !== "undefined" ? `Events.${pallet}.${event}` : `Events.${pallet}`;
 
+		// this call is divided on purpose, otherwise it would timeout when there are no events found.
 		const countResponse = await fetchExplorerSquid<{itemsCounterById: ItemsCounter}>(
 			network,
 			`
