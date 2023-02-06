@@ -55,6 +55,10 @@ export function getNetworks() {
 	return networks;
 }
 
+export function getSupportedNetworks() {
+	return networks.filter((network) => getArchive(network.name));
+}
+
 export function getNetwork(name: string) {
 	return getNetworks().find((network) => network.name === name);
 }

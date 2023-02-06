@@ -32,6 +32,7 @@ module.exports = {
 		"react/no-unknown-property": ["error", {
 			"ignore": ["css"]
 		}],
+		"react/no-unescaped-entities": ["warn"],
 		"@emotion/jsx-import": ["error", {
 			"runtime": "automatic"
 		}],

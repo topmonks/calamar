@@ -12,6 +12,7 @@ export type AccountLinkProps = {
 	network: string;
 	address: string;
 	prefix: number;
+	icon?: boolean;
 	link?: boolean;
 	shorten?: boolean;
 }
@@ -21,6 +22,7 @@ export const AccountAddress = (props: AccountLinkProps) => {
 		network,
 		address,
 		prefix,
+		icon = true,
 		link = true,
 		shorten
 	} = props;
@@ -39,6 +41,10 @@ export const AccountAddress = (props: AccountLinkProps) => {
 
 		return content;
 	}, [network, address, link]);
+
+	if (!icon) {
+		return <>{content}</>;
+	}
 
 	return (
 		<>

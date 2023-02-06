@@ -4,14 +4,15 @@ import { useParams } from "react-router-dom";
 import { css } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
+import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
+import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
+import { useAccountBalances } from "../hooks/useAccountBalances";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -27,6 +28,7 @@ function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
 	const account = useAccount(network, address);
+	const balances = useAccountBalances(address);
 
 	const extrinsics = useExtrinsics(network, {
 		OR: [
@@ -61,6 +63,15 @@ function AccountPage() {
 			{account.data &&
 				<Card>
 					<TabbedContent>
+						<TabPane
+							label="Balances"
+							count={balances.data?.length}
+							loading={balances.loading}
+							error={balances.error}
+							value="balances"
+						>
+							<AccountBalancesTable balances={balances} />
+						</TabPane>
 						<TabPane
 							label="Extrinsics"
 							count={extrinsics.pagination.totalCount}

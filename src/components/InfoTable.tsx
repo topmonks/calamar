@@ -78,16 +78,16 @@ const copyButtonStyle = css`
 	margin-left: 16px;
 `;
 
-type InfoTableGetter<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
+type InfoTableDataFn<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
 
 export type InfoTableAttributeProps<T, A extends any[]> = {
 	name?: string;
-	label: ReactNode | InfoTableGetter<T, A, ReactNode>;
+	label: ReactNode | InfoTableDataFn<T, A, ReactNode>;
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
-	render: InfoTableGetter<T, A, ReactNode>;
-	copyToClipboard?: InfoTableGetter<T, A, string|undefined>;
-	hide?: InfoTableGetter<T, A, boolean>;
+	render: InfoTableDataFn<T, A, ReactNode>;
+	copyToClipboard?: InfoTableDataFn<T, A, string|undefined>;
+	hide?: InfoTableDataFn<T, A, boolean>;
 	_data?: T;
 	_additionalData?: A;
 }
@@ -118,7 +118,7 @@ export const InfoTableAttribute = <T extends object = any, A extends any[] = []>
 			</TableCell>
 			<TableCell css={[valueCellStyle, valueCellStyleOverride]}>
 				<div css={valueStyle}>
-					{render?.(_data, ..._additionalData)}
+					{render(_data, ..._additionalData)}
 					{copyToClipboard?.(_data, ..._additionalData) &&
 						<CopyToClipboardButton
 							css={copyButtonStyle}

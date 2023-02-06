@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Children, HTMLAttributes, ReactElement, ReactNode } from "react";
+import { Children, cloneElement, HTMLAttributes, ReactElement, ReactNode } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { css, Interpolation, Theme } from "@emotion/react";
 
@@ -31,16 +31,38 @@ type ItemsTableItem = {
 	id: string;
 }
 
-type ItemsTableGetter<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
+type ItemsTableDataFn<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
 
 export type ItemsTableAttributeProps<T, A extends any[]> = {
 	label: string;
 	colCss?: Interpolation<Theme>;
-	render: ItemsTableGetter<T, A, ReactNode>;
+	render: ItemsTableDataFn<T, A, ReactNode>;
+	colSpan?: ItemsTableDataFn<T, A, number>;
+	hide?: ItemsTableDataFn<T, A, boolean>;
+	_data?: T;
+	_additionalData?: A;
 }
 
 export const ItemsTableAttribute = <T extends object = any, A extends any[] = []>(props: ItemsTableAttributeProps<T, A>) => {
-	return null;
+	const {
+		label,
+		colCss,
+		colSpan,
+		render,
+		hide,
+		_data,
+		_additionalData = [] as any
+	} = props;
+
+	if (!_data || hide?.(_data, ..._additionalData)) {
+		return null;
+	}
+
+	return (
+		<TableCell css={cellStyle} colSpan={colSpan?.(_data, ..._additionalData)}>
+			{render(_data, ..._additionalData)}
+		</TableCell>
+	);
 };
 
 export type ItemsTableProps<T extends ItemsTableItem, A extends any[] = []> = HTMLAttributes<HTMLDivElement> & {
@@ -51,7 +73,7 @@ export type ItemsTableProps<T extends ItemsTableItem, A extends any[] = []> = HT
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
-	pagination: Pagination;
+	pagination?: Pagination;
 	children: ReactElement<ItemsTableAttributeProps<T, A>>|(ReactElement<ItemsTableAttributeProps<T, A>>|false|undefined|null)[];
 };
 
@@ -106,17 +128,18 @@ export const ItemsTable = <T extends ItemsTableItem, A extends any[] = []>(props
 					<TableBody>
 						{data?.map(item =>
 							<TableRow key={item.id}>
-								{Children.map(children, (child) => child && (
-									<TableCell css={cellStyle}>
-										{child.props.render(item, ...(additionalData || [] as any))}
-									</TableCell>
-								))}
+								{Children.map(children, (child) =>
+									child && cloneElement(child, {
+										_data: item,
+										_additionalData: additionalData
+									}))
+								}
 							</TableRow>
 						)}
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination {...pagination} />
+			{pagination && <TablePagination {...pagination} />}
 		</div>
 	);
 };
