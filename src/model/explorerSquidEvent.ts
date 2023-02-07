@@ -10,8 +10,8 @@ export type ExplorerSquidEvent = {
 	};
 	extrinsic: {
 		id: string;
-	};
+	} | null;
 	call: {
 		id: string;
-	};
+	} | null;
 }

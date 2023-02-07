@@ -347,8 +347,8 @@ function unifyArchiveEvent(event: ArchiveEvent): Omit<Event, "runtimeSpec"> {
 		timestamp: event.block.timestamp,
 		palletName,
 		eventName,
-		extrinsicId: event.extrinsic.id,
-		callId: event.call.id,
+		extrinsicId: event.extrinsic?.id || null,
+		callId: event.call?.id || null,
 		args: null,
 		specVersion: event.block.spec.specVersion,
 	};
@@ -360,8 +360,8 @@ function unifyExplorerSquidEvent(event: ExplorerSquidEvent): Omit<Event, "runtim
 		blockId: event.block.id,
 		blockHeight: event.block.height,
 		timestamp: event.block.timestamp,
-		extrinsicId: event.extrinsic.id,
-		callId: event.call.id,
+		extrinsicId: event.extrinsic?.id || null,
+		callId: event.call?.id || null,
 		args: null,
 		specVersion: event.block.specVersion,
 	};

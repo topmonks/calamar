@@ -8,8 +8,8 @@ export type Event = {
 	blockHeight: number;
 	timestamp: string;
 	specVersion: number;
-	extrinsicId: string;
-	callId: string;
+	extrinsicId: string|null;
+	callId: string|null;
 	args: any|null;
 	runtimeSpec: RuntimeSpec;
 }

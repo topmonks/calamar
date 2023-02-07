@@ -11,9 +11,9 @@ export type ArchiveEvent = {
 	};
 	extrinsic: {
 		id: string;
-	}
+	} | null
 	call: {
 		id: string;
-	}
+	} | null
 	args: any|null;
 }
