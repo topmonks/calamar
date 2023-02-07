@@ -1,4 +1,4 @@
-export type ArchiveConnection<T = any> = {
+export type ItemsConnection<T = any> = {
 	edges: {
 		node: T
 	}[],

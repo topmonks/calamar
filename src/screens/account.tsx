@@ -4,16 +4,16 @@ import { useParams } from "react-router-dom";
 import { css } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
+import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useAccountExtrinsics } from "../hooks/useAccountExtrinsics";
-import { useAccountCalls } from "../hooks/useAccountCalls";
-import { CallsTable } from "../components/calls/CallsTable";
-import { getExplorerSquid } from "../services/networksService";
+import { useExtrinsics } from "../hooks/useExtrinsics";
+import { useCalls } from "../hooks/useCalls";
+import { hasSupport } from "../services/networksService";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -29,8 +29,8 @@ function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
 	const account = useAccount(network, address);
-	const extrinsics = useAccountExtrinsics(network, address);
-	const calls = useAccountCalls(network, address);
+	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
+	const calls = useCalls(network, { callerPublicKey_eq: address });
 
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
@@ -67,15 +67,17 @@ function AccountPage() {
 						>
 							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
-						{getExplorerSquid(network) !== undefined && <TabPane
-							label="Calls"
-							count={calls.pagination.totalCount}
-							loading={calls.loading}
-							error={calls.error}
-							value="calls"
-						>
-							<CallsTable network={network} calls={calls} />
-						</TabPane>}
+						{hasSupport(network, "explorer-squid") &&
+							<TabPane
+								label="Calls"
+								count={calls.pagination.totalCount}
+								loading={calls.loading}
+								error={calls.error}
+								value="calls"
+							>
+								<CallsTable network={network} calls={calls} />
+							</TabPane>
+						}
 					</TabbedContent>
 				</Card>
 			}

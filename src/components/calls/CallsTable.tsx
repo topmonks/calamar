@@ -38,34 +38,32 @@ export const CallsTable = (props: CallsTableProps) => {
 				label="Name"
 				render={(call) =>
 					<ButtonLink
-						to={`/${network}/search?query=${call.name}`}
+						to={`/${network}/search?query=${call.palletName}.${call.callName}`}
 						size="small"
 						color="secondary"
 					>
-						{call.name}
+						{call.palletName}.{call.callName}
 					</ButtonLink>
 				}
 			/>
 			{showAccount && (
 				<CallsTableAttribute
 					label="Sender"
-					render={(call) =>
-						call.origin && call.origin.value.__kind !== "None" && (
-							<AccountAddress
-								network={network}
-								address={call.origin.value.value}
-								prefix={call.runtimeSpec.metadata.ss58Prefix}
-								shorten
-							/>
-						)
+					render={(call) => call.caller &&
+						<AccountAddress
+							network={network}
+							address={call.caller}
+							prefix={call.runtimeSpec.metadata.ss58Prefix}
+							shorten
+						/>
 					}
 				/>
 			)}
 			<CallsTableAttribute
 				label="Extrinsic"
 				render={(call) =>
-					<Link to={`/${network}/extrinsic/${call.extrinsic.id}`}>
-						{call.extrinsic.id}
+					<Link to={`/${network}/extrinsic/${call.extrinsicId}`}>
+						{call.extrinsicId}
 					</Link>
 				}
 			/>

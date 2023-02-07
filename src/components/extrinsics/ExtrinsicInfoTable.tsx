@@ -8,7 +8,6 @@ import { Resource } from "../../model/resource";
 
 import { encodeAddress } from "../../utils/formatAddress";
 import { getCallMetadataByName } from "../../utils/queryMetadata";
-import { getSignatureAddress, getSignatureValue } from "../../utils/signature";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
@@ -38,13 +37,13 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<ExtrinsicInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
-					<Time time={data.block.timestamp} timezone utc />
+					<Time time={data.timestamp} timezone utc />
 				}
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Block time"
 				render={(data) =>
-					<Time time={data.block.timestamp} fromNow />
+					<Time time={data.timestamp} fromNow />
 				}
 			/>
 			<ExtrinsicInfoTableAttribute
@@ -55,28 +54,25 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<ExtrinsicInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network}/block/${data.block.id}`}>
-						{data.block.height}
+					<Link to={`/${network}/block/${data.blockId}`}>
+						{data.blockHeight}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.height.toString()}
+				copyToClipboard={(data) => data.blockHeight.toString()}
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Account"
-				render={(data) => data.signature &&
+				render={(data) => data.signer &&
 					<AccountAddress
 						network={network}
-						address={getSignatureAddress(data.signature)}
+						address={data.signer}
 						prefix={data.runtimeSpec.metadata.ss58Prefix}
 					/>
 				}
-				copyToClipboard={(data) => data.signature &&
-					encodeAddress(
-						getSignatureAddress(data.signature),
-						data.runtimeSpec.metadata.ss58Prefix
-					)
+				copyToClipboard={(data) => data.signer &&
+					encodeAddress(data.signer, data.runtimeSpec.metadata.ss58Prefix)
 				}
-				hide={(data) => !data.signature}
+				hide={(data) => !data.signer}
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Result"
@@ -92,11 +88,11 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.call.name}`}
+						to={`/${network}/search?query=${data.palletName}.${data.callName}`}
 						size="small"
 						color="secondary"
 					>
-						{data.call.name}
+						{data.palletName}.{data.callName}
 					</ButtonLink>
 				}
 			/>
@@ -105,8 +101,8 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				render={(data) =>
 					<DataViewer
 						network={network}
-						data={data.call.args}
-						metadata={getCallMetadataByName(data.runtimeSpec.metadata, data.call.name)?.args}
+						data={data.args}
+						metadata={getCallMetadataByName(data.runtimeSpec.metadata, data.palletName, data.callName)?.args}
 						runtimeSpec={data.runtimeSpec}
 						copyToClipboard
 					/>
@@ -119,16 +115,16 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Fee"
-				render={(data) => data.fee}
-				hide={(data) => !Number.isInteger(data.fee)}
+				render={(data) => data.fee?.toString()}
+				hide={(data) => !data.fee || data.fee === BigInt(0)}
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Signature"
-				render={(data) =>
+				render={(data) => data.signature &&
 					<DataViewer
 						simple
 						network={network}
-						data={getSignatureValue(data.signature)}
+						data={data.signature}
 						runtimeSpec={data.runtimeSpec}
 						copyToClipboard
 					/>
@@ -137,7 +133,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.block.spec.specVersion}
+				render={(data) => data.specVersion}
 			/>
 		</InfoTable>
 	);

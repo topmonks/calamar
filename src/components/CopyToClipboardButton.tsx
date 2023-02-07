@@ -7,8 +7,8 @@ const buttonStyle = css`
 	padding: 0;
 `;
 
-export type CopyToClipboardButtonProps = IconButtonProps & {
-	value?: string;
+export type CopyToClipboardButtonProps = Omit<IconButtonProps, "value"> & {
+	value: string|null|undefined;
 }
 
 const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {

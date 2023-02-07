@@ -24,9 +24,9 @@ function BlockPage() {
 
 	const block = useBlock(network, { id_eq: id });
 
-	const extrinsics = useExtrinsics(network, { block: { id_eq: id } }, "id_DESC");
-	const events = useEvents(network, { block: { id_eq: id } }, "id_DESC");
-	const calls = useCalls(network, { block: { id_eq: id } }, "id_DESC");
+	const extrinsics = useExtrinsics(network, { blockId_eq: id }, "id_DESC");
+	const events = useEvents(network, { blockId_eq: id }, "id_DESC");
+	const calls = useCalls(network, { blockId_eq: id }, "id_DESC");
 
 	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
 

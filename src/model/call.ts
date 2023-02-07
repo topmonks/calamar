@@ -2,25 +2,16 @@ import { RuntimeSpec } from "./runtimeSpec";
 
 export type Call = {
 	id: string;
-	name: string;
+	callName: string;
+	palletName: string;
+	blockId: string;
+	blockHeight: number;
+	timestamp: string;
+	parentId: string|null;
+	extrinsicId: string;
+	caller: string|null;
+	args: any|null;
 	success: boolean;
-	origin?: any;
-	args?: any;
-	block: {
-		id: string;
-		height: number;
-		timestamp: string;
-		spec: {
-			specVersion: number;
-		}
-	};
-	parent: {
-		id: string;
-		name: string;
-	};
-	extrinsic: {
-		id: string;
-		version: number;
-	}
+	specVersion: number;
 	runtimeSpec: RuntimeSpec;
 }

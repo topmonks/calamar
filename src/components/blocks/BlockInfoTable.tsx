@@ -76,7 +76,7 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			/>
 			<BlockInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.spec.specVersion}
+				render={(data) => data.specVersion}
 			/>
 		</InfoTable>
 
