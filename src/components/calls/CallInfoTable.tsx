@@ -37,62 +37,56 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
-					<Time time={data.block.timestamp} utc />
+					<Time time={data.timestamp} utc />
 				}
 			/>
 			<CallInfoTableAttribute
 				label="Block time"
 				render={(data) =>
-					<Time time={data.block.timestamp} fromNow />
+					<Time time={data.timestamp} fromNow />
 				}
 			/>
 			<CallInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network}/block/${data.block.id}`}>
-						{data.block.height}
+					<Link to={`/${network}/block/${data.blockId}`}>
+						{data.blockHeight}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.id}
+				copyToClipboard={(data) => data.blockId}
 			/>
 			<CallInfoTableAttribute
 				label="Extrinsic"
 				render={(data) =>
-					<Link to={`/${network}/extrinsic/${data.extrinsic.id}`}>
-						{data.extrinsic.id}
+					<Link to={`/${network}/extrinsic/${data.extrinsicId}`}>
+						{data.extrinsicId}
 					</Link>
 				}
-				copyToClipboard={(data) => data.extrinsic.id}
+				copyToClipboard={(data) => data.extrinsicId}
 			/>
 			<CallInfoTableAttribute
 				label="Parent call"
-				render={(data) => data.parent &&
-					<Link to={`/${network}/call/${data.parent.id}`}>
-						{data.parent.id}
+				render={(data) => data.parentId &&
+					<Link to={`/${network}/call/${data.parentId}`}>
+						{data.parentId}
 					</Link>
 				}
-				copyToClipboard={(data) => data.parent?.id}
-				hide={(data) => !data.parent}
+				copyToClipboard={(data) => data.parentId}
+				hide={(data) => !data.parentId}
 			/>
 			<CallInfoTableAttribute
 				label="Sender"
-				render={(data) =>
-					data.origin && data.origin.value.__kind !== "None" && (
-						<AccountAddress
-							network={network}
-							address={data.origin.value.value}
-							prefix={data.runtimeSpec.metadata.ss58Prefix}
-						/>
-					)
+				render={(data) => data.caller &&
+					<AccountAddress
+						network={network}
+						address={data.caller}
+						prefix={data.runtimeSpec.metadata.ss58Prefix}
+					/>
 				}
-				copyToClipboard={(data) =>
-					data.origin && data.origin.value.__kind !== "None" &&
-					encodeAddress(
-						data.origin.value.value,
-						data.runtimeSpec.metadata.ss58Prefix
-					)
+				copyToClipboard={(data) => data.caller &&
+					encodeAddress(data.caller, data.runtimeSpec.metadata.ss58Prefix)
 				}
-				hide={(data) => !data.origin || data.origin.value.__kind === "None"}
+				hide={(data) => !data.caller}
 			/>
 			<CallInfoTableAttribute
 				label="Result"
@@ -108,11 +102,11 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.name}`}
+						to={`/${network}/search?query=${data.palletName}.${data.callName}`}
 						size="small"
 						color="secondary"
 					>
-						{data.name}
+						{data.palletName}.{data.callName}
 					</ButtonLink>
 				}
 			/>
@@ -125,7 +119,8 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 						metadata={
 							getCallMetadataByName(
 								data.runtimeSpec.metadata,
-								data.name
+								data.palletName,
+								data.callName
 							)?.args
 						}
 						runtimeSpec={data.runtimeSpec}
@@ -135,7 +130,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			/>
 			<CallInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.block.spec.specVersion}
+				render={(data) => data.specVersion}
 			/>
 		</InfoTable>
 	);

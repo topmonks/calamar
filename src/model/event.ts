@@ -2,21 +2,14 @@ import { RuntimeSpec } from "./runtimeSpec";
 
 export type Event = {
 	id: string;
-	name: string;
-	block: {
-		id: string;
-		height: number;
-		timestamp: string;
-		spec: {
-			specVersion: number;
-		}
-	};
-	extrinsic: {
-		id: string;
-	}
-	call: {
-		id: string;
-	}
-	args?: any;
+	eventName: string;
+	palletName: string;
+	blockId: string;
+	blockHeight: number;
+	timestamp: string;
+	specVersion: number;
+	extrinsicId: string|null;
+	callId: string|null;
+	args: any|null;
 	runtimeSpec: RuntimeSpec;
 }

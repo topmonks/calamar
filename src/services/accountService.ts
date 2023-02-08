@@ -17,12 +17,12 @@ export async function getAccount(network: string, address: string): Promise<Acco
 		address = decodedAddress;
 	}
 
-	return addRuntimeSpec(
-		network,
-		{
-			id: address,
-			address,
-		},
-		() => "latest"
-	);
+	const data = {
+		id: address,
+		address,
+	};
+
+	const account = await addRuntimeSpec(network, data, () => "latest");
+
+	return account;
 }

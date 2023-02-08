@@ -1,5 +1,3 @@
-import { getEvent } from "../../src/services/eventsService";
-
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { test, expect } from "../utils/test";
@@ -28,7 +26,7 @@ test.describe("Event detail page", () => {
 	test("show error message when event data fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getEvent("kusama", { id_eq: eventId }),
+			(request) => request.postData()?.match("event"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({

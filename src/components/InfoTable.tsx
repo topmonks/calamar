@@ -86,7 +86,7 @@ export type InfoTableAttributeProps<T, A extends any[]> = {
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
 	render: InfoTableGetter<T, A, ReactNode>;
-	copyToClipboard?: InfoTableGetter<T, A, string|undefined>;
+	copyToClipboard?: InfoTableGetter<T, A, string|null|undefined>;
 	hide?: InfoTableGetter<T, A, boolean>;
 	_data?: T;
 	_additionalData?: A;

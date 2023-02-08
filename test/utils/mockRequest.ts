@@ -1,18 +1,10 @@
-import { Page, Route } from "@playwright/test";
+import { Page, Request, Route } from "@playwright/test";
 
-import { recordFetchRequest } from "./recordRequest";
-
-export async function mockRequest(page: Page, requestGenerator: () => unknown|Promise<unknown>, fulfill: (route: Route) => any) {
-	const recordedRequest = await recordFetchRequest(requestGenerator);
-
+export async function mockRequest(page: Page, requestMatcher: (request: Request) => boolean|any, fulfill: (route: Route) => any) {
 	await page.route("**/*", (route) => {
 		const request = route.request();
 
-		if (
-			request.url() === recordedRequest[0]
-			&& request.method() === recordedRequest[1].method
-			&& request.postData() === recordedRequest[1].body
-		) {
+		if (requestMatcher(request)) {
 			fulfill(route);
 		} else {
 			route.continue();

@@ -40,6 +40,7 @@
     "start:test": "serve ./build -s",
     "build": "cross-env CI=false react-scripts build",
     "test": "playwright test",
+    "test:debug": "playwright test --debug",
     "test:report": "playwright show-report test/report",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"

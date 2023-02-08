@@ -29,57 +29,57 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<EventInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
-					<Time time={data.block.timestamp} utc />
+					<Time time={data.timestamp} utc />
 				}
 			/>
 			<EventInfoTableAttribute
 				label="Block time"
 				render={(data) =>
-					<Time time={data.block.timestamp} fromNow />
+					<Time time={data.timestamp} fromNow />
 				}
 			/>
 			<EventInfoTableAttribute
 				label="Block"
 				render={(data) =>
 					<Link
-						to={`/${network}/block/${data.block.id}`}
+						to={`/${network}/block/${data.blockId}`}
 					>
-						{data.block.height}
+						{data.blockHeight}
 					</Link>
 				}
-				copyToClipboard={(data) => data.block.height.toString()}
+				copyToClipboard={(data) => data.blockHeight.toString()}
 			/>
 			<EventInfoTableAttribute
 				label="Extrinsic"
-				render={(data) => data.extrinsic &&
+				render={(data) => data.extrinsicId &&
 					<Link
-						to={`/${network}/extrinsic/${data.extrinsic.id}`}
+						to={`/${network}/extrinsic/${data.extrinsicId}`}
 					>
-						{data.extrinsic.id}
+						{data.extrinsicId}
 					</Link>
 				}
-				copyToClipboard={(data) => data.extrinsic?.id}
+				copyToClipboard={(data) => data.extrinsicId}
 			/>
 			<EventInfoTableAttribute
 				label="Call"
-				render={(data) => data.call &&
+				render={(data) => data.callId &&
 					<Link
-						to={`/${network}/call/${data.call.id}`}
+						to={`/${network}/call/${data.callId}`}
 					>
-						{data.call.id}
+						{data.callId}
 					</Link>
 				}
-				copyToClipboard={(data) => data.call?.id}
+				copyToClipboard={(data) => data.callId}
 			/>
 			<EventInfoTableAttribute
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.name}`}
+						to={`/${network}/search?query=${data.palletName}.${data.eventName}`}
 						size="small"
 						color="secondary"
 					>
-						{data.name}
+						{data.palletName}.{data.eventName}
 					</ButtonLink>
 				}
 			/>
@@ -89,7 +89,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 					<DataViewer
 						network={network}
 						data={data.args}
-						metadata={getEventMetadataByName(data.runtimeSpec.metadata, data.name)?.args}
+						metadata={getEventMetadataByName(data.runtimeSpec.metadata, data.palletName, data.eventName)?.args}
 						runtimeSpec={data.runtimeSpec}
 						copyToClipboard
 					/>
@@ -98,7 +98,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			/>
 			<EventInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.block.spec.specVersion}
+				render={(data) => data.specVersion}
 			/>
 		</InfoTable>
 	);

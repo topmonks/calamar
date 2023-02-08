@@ -4,14 +4,16 @@ import { useParams } from "react-router-dom";
 import { css } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
+import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useExtrinsics } from "../hooks/useExtrinsics";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
+import { useExtrinsics } from "../hooks/useExtrinsics";
+import { useCalls } from "../hooks/useCalls";
+import { hasSupport } from "../services/networksService";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -27,15 +29,10 @@ function AccountPage() {
 	const { network, address } = useParams() as AccountPageParams;
 
 	const account = useAccount(network, address);
+	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
+	const calls = useCalls(network, { callerPublicKey_eq: address });
 
-	const extrinsics = useExtrinsics(network, {
-		OR: [
-			{ signature_jsonContains: `{"address": "${address}" }` },
-			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-		],
-	});
-
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -70,6 +67,17 @@ function AccountPage() {
 						>
 							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
+						{hasSupport(network, "explorer-squid") &&
+							<TabPane
+								label="Calls"
+								count={calls.pagination.totalCount}
+								loading={calls.loading}
+								error={calls.error}
+								value="calls"
+							>
+								<CallsTable network={network} calls={calls} />
+							</TabPane>
+						}
 					</TabbedContent>
 				</Card>
 			}

@@ -1,6 +1,5 @@
 import { Extrinsic } from "../../model/extrinsic";
 import { PaginatedResource } from "../../model/paginatedResource";
-import { getSignatureAddress } from "../../utils/signature";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
@@ -47,11 +46,11 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				label="Name"
 				render={(extrinsic) =>
 					<ButtonLink
-						to={`/${network}/search?query=${extrinsic.call.name}`}
+						to={`/${network}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
 						size="small"
 						color="secondary"
 					>
-						{extrinsic.call.name}
+						{extrinsic.palletName}.{extrinsic.callName}
 					</ButtonLink>
 				}
 			/>
@@ -59,10 +58,10 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				<ExtrinsicsTableAttribute
 					label="Account"
 					render={(extrinsic) =>
-						extrinsic.signature &&
+						extrinsic.signer &&
 							<AccountAddress
 								network={network}
-								address={getSignatureAddress(extrinsic.signature)}
+								address={extrinsic.signer}
 								prefix={extrinsic.runtimeSpec.metadata.ss58Prefix}
 								shorten
 							/>
@@ -73,7 +72,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				<ExtrinsicsTableAttribute
 					label="Time"
 					render={(extrinsic) =>
-						<Time time={extrinsic.block.timestamp} fromNow tooltip utc />
+						<Time time={extrinsic.timestamp} fromNow tooltip utc />
 					}
 				/>
 			}

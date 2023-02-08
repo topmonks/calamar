@@ -1,6 +1,3 @@
-import { getCall } from "../../src/services/callsService";
-import { getEvents } from "../../src/services/eventsService";
-
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { test, expect } from "../utils/test";
@@ -29,7 +26,7 @@ test.describe("Call detail page", () => {
 	test("show error message when call data fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getCall("kusama", { id_eq: callId }),
+			(request) => request.postData()?.match("call"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -53,7 +50,7 @@ test.describe("Call detail page", () => {
 	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
-			() => getEvents("kusama", { call: { id_eq: callId } }, "id_ASC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("events"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
