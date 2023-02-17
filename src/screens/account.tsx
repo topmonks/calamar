@@ -6,13 +6,18 @@ import { css } from "@emotion/react";
 import { AccountAvatar } from "../components/AccountAvatar";
 import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
+import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useExtrinsics } from "../hooks/useExtrinsics";
+
 import { useAccount } from "../hooks/useAccount";
-import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useAccountBalances } from "../hooks/useAccountBalances";
+import { useCalls } from "../hooks/useCalls";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useExtrinsics } from "../hooks/useExtrinsics";
+
+import { hasSupport } from "../services/networksService";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -29,15 +34,10 @@ function AccountPage() {
 
 	const account = useAccount(network, address);
 	const balances = useAccountBalances(address);
+	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
+	const calls = useCalls(network, { callerPublicKey_eq: address });
 
-	const extrinsics = useExtrinsics(network, {
-		OR: [
-			{ signature_jsonContains: `{"address": "${address}" }` },
-			{ signature_jsonContains: `{"address": { "value": "${address}"} }` },
-		],
-	});
-
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -81,6 +81,17 @@ function AccountPage() {
 						>
 							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
+						{hasSupport(network, "explorer-squid") &&
+							<TabPane
+								label="Calls"
+								count={calls.pagination.totalCount}
+								loading={calls.loading}
+								error={calls.error}
+								value="calls"
+							>
+								<CallsTable network={network} calls={calls} />
+							</TabPane>
+						}
 					</TabbedContent>
 				</Card>
 			}

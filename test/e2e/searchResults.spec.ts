@@ -1,6 +1,3 @@
-import { getBlock } from "../../src/services/blocksService";
-import { getEventsWithoutTotalCount } from "../../src/services/eventsService";
-import { getExtrinsic, getExtrinsicsWithoutTotalCount } from "../../src/services/extrinsicsService";
 import { mockRequest } from "../utils/mockRequest";
 
 import { navigate } from "../utils/navigate";
@@ -42,6 +39,15 @@ test.describe("Search results page", () => {
 		await takeScreenshot("search-extrinsics-by-name");
 	});
 
+	test("shows found extrinsics by pallet name", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/search?query=balances", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("extrinsics-tab").click();
+
+		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
+		await takeScreenshot("search-extrinsics-by-pallet-name");
+	});
+
 	test("shows found events by name", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/kusama/search?query=balances.transfer", {waitUntil: "data-loaded"});
 
@@ -51,9 +57,18 @@ test.describe("Search results page", () => {
 		await takeScreenshot("search-events-by-name");
 	});
 
+	test("shows found events by pallet name", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/search?query=balances", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("events-tab").click();
+
+		await removeContent(page.locator("[data-test=events-table] tr td"));
+		await takeScreenshot("search-events-by-pallet-name");
+	});
+
 	test("shows not found message if nothing was found by hash", async ({ page, takeScreenshot }) => {
 		const query = "0x123456789";
-
+		
 		await navigate(page, `/kusama/search?query=${query}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("not-found");
@@ -88,7 +103,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getExtrinsic("kusama", { hash_eq: hash }),
+			(request) => request.postData()?.match("extrinsic"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -115,7 +130,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getBlock("kusama", { hash_eq: hash }),
+			(request) => request.postData()?.match("block"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -142,7 +157,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getBlock("kusama", { height_eq: height }),
+			(request) => request.postData()?.match("block"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -169,7 +184,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("kusama", { call: { name_eq: name } }, "id_DESC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("extrinsicsConnection"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -196,7 +211,7 @@ test.describe("Search results page", () => {
 
 		mockRequest(
 			page,
-			() => getEventsWithoutTotalCount("kusama", { name_eq: name }, "id_DESC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("eventsConnection"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -220,11 +235,10 @@ test.describe("Search results page", () => {
 
 	test("shows error message in events tab when events search by name fails while searching for extrinsics by name", async ({ page, takeScreenshot }) => {
 		const extrinsicsName = "Balances.transfer";
-		const eventName = "Balances.Transfer";
 
 		mockRequest(
 			page,
-			() => getEventsWithoutTotalCount("kusama", { name_eq: eventName }, "id_DESC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("eventsConnection"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -232,7 +246,7 @@ test.describe("Search results page", () => {
 						message: "Events search error"
 					}]
 				})
-			})
+			}),
 		);
 
 		await navigate(page, `/kusama/search?query=${extrinsicsName}`, {waitUntil: "data-loaded"});
@@ -249,11 +263,10 @@ test.describe("Search results page", () => {
 
 	test("shows error message in extrinsics tab when extrinsics search by name fails while searching for events by name", async ({ page, takeScreenshot }) => {
 		const eventName = "Balances.Transfer";
-		const extrinsicsName = "Balances.transfer";
 
 		mockRequest(
 			page,
-			() => getExtrinsicsWithoutTotalCount("kusama", { call: { name_eq: extrinsicsName } }, "id_DESC", {offset: 0, limit: 10}),
+			(request) => request.postData()?.match("extrinsicsConnection"),
 			(route) => route.fulfill({
 				status: 200,
 				body: JSON.stringify({
@@ -261,7 +274,7 @@ test.describe("Search results page", () => {
 						message: "Extrinsics search error"
 					}]
 				})
-			})
+			}),
 		);
 
 		await navigate(page, `/kusama/search?query=${eventName}`, {waitUntil: "data-loaded"});

@@ -36,7 +36,7 @@ function EventsTable(props: EventsTableProps) {
 			pagination={events.pagination}
 			data-test="events-table"
 		>
-			<ItemsTableAttribute
+			<EventsItemsTableAttribute
 				label="ID"
 				render={(event) => (
 					<Link to={`/${network}/event/${event.id}`}>
@@ -44,24 +44,24 @@ function EventsTable(props: EventsTableProps) {
 					</Link>
 				)}
 			/>
-			<ItemsTableAttribute
+			<EventsItemsTableAttribute
 				label="Name"
 				render={(event) =>
 					<ButtonLink
-						to={`/${network}/search?query=${event.name}`}
+						to={`/${network}/search?query=${event.palletName}.${event.eventName}`}
 						size="small"
 						color="secondary"
 					>
-						{event.name}
+						{event.palletName}.{event.eventName}
 					</ButtonLink>
 				}
 			/>
 			{showExtrinsic && (
-				<ItemsTableAttribute
+				<EventsItemsTableAttribute
 					label="Extrinsic"
-					render={(event) => event.extrinsic?.id && (
-						<Link to={`/${network}/extrinsic/${event.extrinsic.id}`}>
-							{event.extrinsic.id}
+					render={(event) => event.extrinsicId && (
+						<Link to={`/${network}/extrinsic/${event.extrinsicId}`}>
+							{event.extrinsicId}
 						</Link>
 					)}
 				/>
@@ -78,7 +78,11 @@ function EventsTable(props: EventsTableProps) {
 						<DataViewer
 							network={network}
 							data={event.args}
-							metadata={getEventMetadataByName(event.runtimeSpec.metadata, event.name)?.args}
+							metadata={getEventMetadataByName(
+								event.runtimeSpec.metadata,
+								event.palletName,
+								event.eventName
+							)?.args}
 							runtimeSpec={event.runtimeSpec}
 							copyToClipboard
 						/>

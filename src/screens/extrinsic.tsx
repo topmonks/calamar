@@ -21,8 +21,8 @@ function ExtrinsicPage() {
 	const { network, id } = useParams() as ExtrinsicPageParams;
 
 	const extrinsic = useExtrinsic(network, { id_eq: id });
-	const events = useEvents(network, { extrinsic: { id_eq: id } }, "id_ASC");
-	const calls = useCalls(network, { extrinsic: { id_eq: id } }, "id_ASC");
+	const events = useEvents(network, { extrinsicId_eq: id }, "id_ASC");
+	const calls = useCalls(network, { extrinsicId_eq: id }, "id_ASC");
 
 	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
 
@@ -60,7 +60,7 @@ function ExtrinsicPage() {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} />
+							<CallsTable network={network} calls={calls} showAccount />
 						</TabPane>
 					</TabbedContent>
 				</Card>

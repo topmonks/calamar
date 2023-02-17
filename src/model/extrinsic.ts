@@ -3,25 +3,20 @@ import { RuntimeSpec } from "./runtimeSpec";
 export type Extrinsic = {
 	id: string;
 	hash: string;
-	call: {
-		name: string;
-		args?: any;
-	};
-	block: {
-		id: string;
-		hash: string;
-		height: number;
-		timestamp: string;
-		spec: {
-			specVersion: number;
-		}
-	};
-	signature?: any;
+	blockId: string;
+	blockHeight: number;
+	callName: string;
+	palletName: string;
+	args: object|null;
+	timestamp: string;
+	signer: string|null;
+	signature: string|null;
 	indexInBlock: number;
 	success: boolean;
-	tip?: number;
-	fee?: number;
-	error?: any;
+	tip: bigint|null;
+	fee: bigint|null;
+	error: object|null;
 	version: number;
+	specVersion: number;
 	runtimeSpec: RuntimeSpec;
 }

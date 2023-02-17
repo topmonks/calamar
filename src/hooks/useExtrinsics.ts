@@ -9,5 +9,5 @@ export function useExtrinsics(
 	order?: ExtrinsicsOrder,
 	options?: FetchOptions
 ) {
-	return usePaginatedResource(getExtrinsics, [network, filter, order], options);
+	return usePaginatedResource(getExtrinsics, [network, filter, order, true], options);
 }

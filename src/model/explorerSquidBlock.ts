@@ -1,6 +1,4 @@
-import { RuntimeSpec } from "./runtimeSpec";
-
-export type Block = {
+export type ExplorerSquidBlock = {
 	id: string;
 	hash: string;
 	height: number;
@@ -8,5 +6,4 @@ export type Block = {
 	parentHash: string;
 	validator: string|null;
 	specVersion: number;
-	runtimeSpec: RuntimeSpec;
 }

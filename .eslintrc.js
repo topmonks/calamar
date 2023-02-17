@@ -39,6 +39,7 @@ module.exports = {
 		"@typescript-eslint/no-empty-interface": ["off"],
 		"@typescript-eslint/no-empty-function": ["off"],
 		"prefer-const": ["warn"],
-		"no-debugger": ["warn"]
+		"no-debugger": ["warn"],
+		"no-constant-condition": ["warn"]
 	}
 };

@@ -87,8 +87,6 @@ function SearchPage() {
 
 	useDOMEventTrigger("data-loaded", allResources.every(it => !it.loading));
 
-	console.log(allResources);
-
 	if (!query) {
 		return <Navigate to="/" replace />;
 	}

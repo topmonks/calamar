@@ -86,7 +86,7 @@ export type InfoTableAttributeProps<T, A extends any[]> = {
 	labelCss?: Interpolation<Theme>;
 	valueCss?: Interpolation<Theme>;
 	render: InfoTableDataFn<T, A, ReactNode>;
-	copyToClipboard?: InfoTableDataFn<T, A, string|undefined>;
+	copyToClipboard?: InfoTableDataFn<T, A, string|null|undefined>;
 	hide?: InfoTableDataFn<T, A, boolean>;
 	_data?: T;
 	_additionalData?: A;

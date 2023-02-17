@@ -18,7 +18,7 @@ export const CallPage: React.FC = () => {
 	const { network, id } = useParams() as CallPageParams;
 
 	const call = useCall(network, { id_eq: id });
-	const events = useEvents(network, { call: { id_eq: id } }, "id_ASC");
+	const events = useEvents(network, { callId_eq: id }, "id_ASC");
 
 	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
 
