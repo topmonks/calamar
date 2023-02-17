@@ -1,4 +1,4 @@
-import { ArchiveEntry, Network } from "@subsquid/archive-registry";
+import { ArchiveEntrySubstrate, NetworkSubstrate } from "@subsquid/archive-registry";
 import archivesJson from "@subsquid/archive-registry/archives.json";
 import networksJson from "@subsquid/archive-registry/networks.json";
 
@@ -9,10 +9,10 @@ import { SquidEntry } from "../model/squid";
 const networks = networksJson.networks.map(network => ({
 	...network,
 	displayName: network.displayName.replace(/ relay chain/i, "")
-})) as Network[];
+})) as NetworkSubstrate[];
 
 export function getArchives() {
-	return archivesJson.archives as ArchiveEntry[];
+	return archivesJson.archives as ArchiveEntrySubstrate[];
 }
 
 export function getArchive(network: string) {
