@@ -135,6 +135,10 @@ function SearchInput(props: SearchInputProps) {
 	);
 
 	useEffect(() => {
+		setSearch(query || "");
+	}, [query]);
+
+	useEffect(() => {
 		if (persistNetwork) {
 			const network = localStorage.getItem("network");
 			network && setNetwork(network);
