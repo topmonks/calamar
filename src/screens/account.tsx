@@ -14,6 +14,10 @@ import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useCalls } from "../hooks/useCalls";
 import { hasSupport } from "../services/networksService";
+import TransfersTable from "../components/transfers/TransfersTable";
+import { useTransfers } from "../hooks/useTransfers";
+import { encodeAddress } from "@polkadot/util-crypto";
+import { createTypeReferenceDirectiveResolutionCache } from "typescript";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -32,6 +36,15 @@ function AccountPage() {
 	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
 	const calls = useCalls(network, { callerPublicKey_eq: address });
 
+	const transferFilter = {
+		account: {
+			id_eq: encodeAddress(
+				address, account.data ? account.data.runtimeSpec.metadata.ss58Prefix : 42)
+		}
+	};
+	const transfers = useTransfers(network, transferFilter);
+
+	
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
 	useEffect(() => {
@@ -76,6 +89,17 @@ function AccountPage() {
 								value="calls"
 							>
 								<CallsTable network={network} calls={calls} />
+							</TabPane>
+						}
+						{hasSupport(network, "main-squid") &&
+							<TabPane
+								label="Transfers"
+								count={transfers.pagination.totalCount}
+								loading={transfers.loading}
+								error={transfers.error}
+								value="transfers"
+							>
+								<TransfersTable network={network} transfers={transfers} showTime />
 							</TabPane>
 						}
 					</TabbedContent>

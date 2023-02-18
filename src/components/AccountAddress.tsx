@@ -11,7 +11,7 @@ import { AccountAvatar } from "./AccountAvatar";
 export type AccountLinkProps = {
 	network: string;
 	address: string;
-	prefix: number;
+	prefix?: number;
 	link?: boolean;
 	shorten?: boolean;
 }
@@ -26,7 +26,9 @@ export const AccountAddress = (props: AccountLinkProps) => {
 	} = props;
 
 	const content = useMemo(() => {
-		const encodedAddress = encodeAddress(address, prefix);
+		// Id there is no prefix, do not encode the address
+		// This way you can imput the encoded address right away without any need for encoding
+		const encodedAddress = prefix ? encodeAddress(address, prefix) : address;
 		const content: ReactNode = shorten ? shortenHash(encodedAddress) : encodedAddress;
 
 		if (link) {
