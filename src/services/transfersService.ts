@@ -2,12 +2,13 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { MainSquidTransfer } from "../model/mainSquidTransfer";
 import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
+import { addLatestRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { fetchMainSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
 
 export type TransfersFilter =
-	{ account: { id_eq: string } };
+	{ account: { publicKey_eq: string } };
 
 export type TransfersOrder = string | string[];
 
@@ -42,10 +43,10 @@ async function getMainSquidTransfers(
 ) {
 	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const response = await fetchMainSquid<{accountTransfersConnection: ItemsConnection<MainSquidTransfer>}>(
+	const response = await fetchMainSquid<{transfersConnection: ItemsConnection<MainSquidTransfer>}>(
 		network,
-		`query ($first: Int!, $after: String, $filter: AccountTransferWhereInput, $order: [AccountTransferOrderByInput!]!) {
-			accountTransfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
+		`query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {
+			transfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
 				edges {
                     node {
                         id
@@ -56,14 +57,14 @@ async function getMainSquidTransfers(
                             timestamp
                             extrinsicHash
                             to {
-                                id
+								publicKey
                             }
                             from {
-                                id
+                                publicKey
                             }
                         }
                         account {
-                            id
+                            publicKey
                         }
                         direction
                     }
@@ -85,26 +86,24 @@ async function getMainSquidTransfers(
 		}
 	);
 
+	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer);
 
-	
-	console.log("HERE: ", response.accountTransfersConnection);
-	console.log(filter);
+	const transfer = await addLatestRuntimeSpecs(network, items);
 
-
-	return extractConnectionItems(response.accountTransfersConnection, pagination, unifyMainSquidTransfer);
+	return transfer;
 }
 
-function unifyMainSquidTransfer(transfer: MainSquidTransfer): Transfer {
+function unifyMainSquidTransfer(transfer: MainSquidTransfer): Omit<Transfer, "runtimeSpec"> {
 	return {
 		...transfer,
-		accountId: transfer.account.id,
+		accountPublicKey: transfer.account.publicKey,
 		blockNumber: transfer.transfer.blockNumber,
 		timestamp: transfer.transfer.timestamp,
 		extrinsicHash: transfer.transfer.extrinsicHash,
 		amount: transfer.transfer.amount,
 		success: transfer.transfer.success,
-		fromId: transfer.transfer.from.id,
-		toId: transfer.transfer.to.id,
+		fromPublicKey: transfer.transfer.from.publicKey,
+		toPublicKey: transfer.transfer.to.publicKey,
 	};
 }
 

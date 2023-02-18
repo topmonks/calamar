@@ -50,7 +50,8 @@ function TransfersTable(props: TransfersTableProps) {
 				render={(transfer) =>
 					<AccountAddress
 						network={network}
-						address={transfer.fromId}
+						address={transfer.fromPublicKey}
+						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
 					/>
 				}
@@ -60,7 +61,8 @@ function TransfersTable(props: TransfersTableProps) {
 				render={(transfer) =>
 					<AccountAddress
 						network={network}
-						address={transfer.toId}
+						address={transfer.toPublicKey}
+						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
 					/>
 				}

@@ -44,7 +44,7 @@
     "test:report": "playwright show-report test/report",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "update-squids": "ts-node update-squids.js"
+    "update-squids": "node update-squids.js"
   },
   "eslintConfig": {
     "extends": [

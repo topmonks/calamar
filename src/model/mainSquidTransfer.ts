@@ -2,17 +2,17 @@ export type MainSquidTransfer = {
 	id: string;
 	direction: string;
 	account: {
-		id: string;
+		publicKey: string;
 	};
 	transfer: {
 		blockNumber: number;
 		timestamp: string;
 		extrinsicHash: string;
 		from: {
-			id: string;
+			publicKey: string;
 		};
 		to: {
-			id: string;
+			publicKey: string;
 		};
 		amount: number;
 		success: boolean;

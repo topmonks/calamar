@@ -16,8 +16,6 @@ import { useCalls } from "../hooks/useCalls";
 import { hasSupport } from "../services/networksService";
 import TransfersTable from "../components/transfers/TransfersTable";
 import { useTransfers } from "../hooks/useTransfers";
-import { encodeAddress } from "@polkadot/util-crypto";
-import { createTypeReferenceDirectiveResolutionCache } from "typescript";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -35,15 +33,7 @@ function AccountPage() {
 	const account = useAccount(network, address);
 	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
 	const calls = useCalls(network, { callerPublicKey_eq: address });
-
-	const transferFilter = {
-		account: {
-			id_eq: encodeAddress(
-				address, account.data ? account.data.runtimeSpec.metadata.ss58Prefix : 42)
-		}
-	};
-	const transfers = useTransfers(network, transferFilter);
-
+	const transfers = useTransfers(network, { account: { publicKey_eq: address}});
 	
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
