@@ -38,6 +38,7 @@ module.exports = {
 		}],
 		"@typescript-eslint/no-empty-interface": ["off"],
 		"@typescript-eslint/no-empty-function": ["off"],
+		"@typescript-eslint/no-var-requires": ["off"],
 		"prefer-const": ["warn"],
 		"no-debugger": ["warn"],
 		"no-constant-condition": ["warn"]
