@@ -1,6 +1,6 @@
-import { ArchiveBlock } from "../model/archiveBlock";
+import { ArchiveBlock } from "../model/archive/archiveBlock";
 import { Block } from "../model/block";
-import { ExplorerSquidBlock } from "../model/explorerSquidBlock";
+import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { addRuntimeSpec } from "../utils/addRuntimeSpec";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";

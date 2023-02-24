@@ -1,4 +1,9 @@
+import Decimal from "decimal.js";
+
 import { AccountBalance } from "../model/accountBalance";
+import { ExplorerSquidAccountBalance } from "../model/explorer-squid/explorerSquidAccountBalance";
+import { ExplorerSquidChainInfo } from "../model/explorer-squid/explorerSquidChainInfo";
+import { SquidEntry } from "../model/squid";
 import { encodeAddress } from "../utils/formatAddress";
 
 import { fetchBalancesSquid } from "./fetchService";
@@ -11,7 +16,7 @@ export async function getBalances(address: string) {
 	const accountBalances = networks.map<AccountBalance>((network) => ({
 		id: `${address}_${network.name}`,
 		network: network.name,
-		balanceSupported: !!getBalancesSquid(network.name)
+		balanceSupported: !!getBalancesSquid(network.name),
 	}));
 
 	const response = await Promise.allSettled(networks.map(async (network, index) => {
@@ -26,26 +31,32 @@ export async function getBalances(address: string) {
 		const balancesSquid = getBalancesSquid(network.name);
 
 		if (balancesSquid) {
-			try {
-				const response = await fetchBalancesSquid<{balance: AccountBalance["balance"]}>(balancesSquid.network, `
-					query ($address: String!) {
-						balance: accountById(id: $address) {
-							free
-							reserved
-							total
-							updatedAt
+			const chainInfo = await getChainInfo(balancesSquid);
+			accountBalance.chainDecimals = parseInt(chainInfo?.tokens[0]?.decimals || "12");
+			accountBalance.chainToken = chainInfo?.tokens[0]?.symbol;
+
+			const response = await fetchBalancesSquid<ExplorerSquidAccountBalance>(balancesSquid.network, `
+				query ($address: String!) {
+					balance: accountById(id: $address) {
+						free
+						reserved
+						total
+						updatedAt
+					}
+					chainInfo {
+						tokens {
+							decimals
+							symbol
 						}
 					}
-				`, {
-					address: encodedAddress
-				});
+				}
+			`, {
+				address: encodedAddress
+			});
 
-				console.log("balance", balancesSquid.network, response.balance?.total);
+			console.log("balance", balancesSquid.network, response.balance?.total);
 
-				accountBalance.balance = response.balance;
-			} catch (e: any) {
-				accountBalance.error = e.message;
-			}
+			accountBalance.balance = unifyExplorerSquidAccountBalance(response);
 		}
 	}));
 
@@ -58,4 +69,31 @@ export async function getBalances(address: string) {
 	});
 
 	return accountBalances;
+}
+
+async function getChainInfo(balancesSquid: SquidEntry) {
+	const response = await fetchBalancesSquid<{chainInfo: ExplorerSquidChainInfo}>(balancesSquid.network, `
+		query {
+			chainInfo {
+				tokens {
+					decimals
+					symbol
+				}
+			}
+		}
+	`);
+
+	return response.chainInfo;
+}
+
+function unifyExplorerSquidAccountBalance(accountBalance: ExplorerSquidAccountBalance): AccountBalance["balance"] {
+	const decimals = new Decimal(accountBalance.chainInfo.tokens[0]?.decimals || 12);
+	const scale = new Decimal(10).pow(decimals.neg());
+
+	return {
+		free: new Decimal(accountBalance.balance?.free || 0).mul(scale),
+		reserved: new Decimal(accountBalance.balance?.reserved || 0).mul(scale),
+		total: new Decimal(accountBalance.balance?.total || 0).mul(scale),
+		updatedAt: accountBalance.balance?.updatedAt
+	};
 }

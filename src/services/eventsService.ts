@@ -1,6 +1,6 @@
-import { ArchiveEvent } from "../model/archiveEvent";
+import { ArchiveEvent } from "../model/archive/archiveEvent";
+import { ExplorerSquidEvent } from "../model/explorer-squid/explorerSquidEvent";
 import { Event } from "../model/event";
-import { ExplorerSquidEvent } from "../model/explorerSquidEvent";
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { ItemsResponse } from "../model/itemsResponse";
