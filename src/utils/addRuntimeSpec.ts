@@ -34,3 +34,18 @@ export async function addRuntimeSpecs<T>(network: string, response: ItemsRespons
 		data: items
 	};
 }
+
+export async function addLatestRuntimeSpecs<T>(network: string, response: ItemsResponse<T>) {
+	const spec = await getRuntimeSpec(network, "latest");
+
+	const items = response.data.map(it => ({
+		...it,
+		runtimeSpec: spec,
+	}));
+
+
+	return {
+		...response,
+		data: items
+	};
+}
