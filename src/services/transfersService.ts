@@ -43,8 +43,6 @@ async function getMainSquidTransfers(
 ) {
 	const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-	const totalCountWithFilter = (filter != undefined) ?  "totalCount" : "";
-
 	const response = await fetchMainSquid<{transfersConnection: ItemsConnection<MainSquidTransfer>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {
