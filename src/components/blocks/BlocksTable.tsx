@@ -2,7 +2,6 @@ import { Block } from "../../model/block";
 import { PaginatedResource } from "../../model/paginatedResource";
 
 import { AccountAddress } from "../AccountAddress";
-import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
