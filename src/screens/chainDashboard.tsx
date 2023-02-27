@@ -12,6 +12,8 @@ import { useNetworks } from "../hooks/useNetworks";
 import { useTransfers } from "../hooks/useTransfers";
 import TransfersTable from "../components/transfers/TransfersTable";
 import { hasSupport } from "../services/networksService";
+import { useBlocks } from "../hooks/useBlocks";
+import BlocksTable from "../components/blocks/BlocksTable";
 
 type ChainDashboardPageParams = {
 	network: string;
@@ -21,7 +23,9 @@ function ChainDashboardPage() {
     
 	const { network } = useParams() as ChainDashboardPageParams;
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
+	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
+	
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading);
 
@@ -53,6 +57,17 @@ function ChainDashboardPage() {
 					>
 						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
 					</TabPane>
+					{hasSupport(network, "explorer-squid") &&
+					<TabPane
+						label="Blocks"
+						count={blocks.pagination.totalCount}
+						loading={blocks.loading}
+						error={blocks.error}
+						value="blocks"
+					>
+						<BlocksTable network={network} blocks={blocks} showValidator showTime />
+					</TabPane>
+					}
 
 					{hasSupport(network, "main-squid") &&
 							<TabPane
