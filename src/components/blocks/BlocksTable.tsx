@@ -36,7 +36,7 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 			<BlocksTableAttribute
 				label="Height"
 				render={(block) =>
-					<Link to={`/${network}/extrinsic/${block.id}`}>
+					<Link to={`/${network}/block/${block.id}`}>
 						{block.height}
 					</Link>
 				}
