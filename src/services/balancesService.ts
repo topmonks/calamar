@@ -1,6 +1,7 @@
-import { Balance } from "@polkadot/types/interfaces";
+import { Balance } from "../model/balance";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
+import { addLatestRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { fetchBalancesSquid} from "./fetchService";
 import { hasSupport } from "./networksService";
@@ -19,7 +20,7 @@ export async function getBalances(
 	if (hasSupport(network, "balances-squid")) {
 		const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-		const response = await fetchBalancesSquid<{accountsConnection: ItemsConnection<Balance>}>(
+		const response = await fetchBalancesSquid<{accountsConnection: ItemsConnection<Omit<Balance, "runtimeSpec">>}>(
 			network,
 			`query ($first: Int!, $after: String, $filter: AccountWhereInput, $order: [AccountOrderByInput!]!) {
                 accountsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -49,9 +50,10 @@ export async function getBalances(
 			}
 		);
         
-		const data = extractConnectionItems(response.accountsConnection, pagination, unifyBalance);
-
-		return data;
+		const items = extractConnectionItems(response.accountsConnection, pagination, unifyBalance);
+		const balances = await addLatestRuntimeSpecs(network, items);
+		
+		return balances;
 	}
 
 	return {
@@ -67,7 +69,7 @@ export async function getBalances(
 
 /*** PRIVATE ***/
 
-function unifyBalance(balance: Balance): Balance {
+function unifyBalance(balance: Omit<Balance, "runtimeSpec">): Omit<Balance, "runtimeSpec"> {
 	return balance;
 }
 

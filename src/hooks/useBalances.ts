@@ -1,5 +1,5 @@
 import { FetchOptions } from "../model/fetchOptions";
-import { BalancesFilter, BalancesOrder, getBalances } from "../services/BalancesService";
+import { BalancesFilter, BalancesOrder, getBalances } from "../services/balancesService";
 import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useBalances(
