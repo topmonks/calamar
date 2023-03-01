@@ -48,27 +48,27 @@ async function getMainSquidTransfers(
 		`query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {
 			transfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
 				edges {
-                    node {
-                        id
-                        transfer {
-                            amount
-                            blockNumber
-                            success
-                            timestamp
-                            extrinsicHash
-                            to {
+					node {
+						id
+						transfer {
+							amount
+							blockNumber
+							success
+							timestamp
+							extrinsicHash
+							to {
 								publicKey
-                            }
-                            from {
-                                publicKey
-                            }
-                        }
-                        account {
-                            publicKey
-                        }
-                        direction
-                    }
-                }
+							}
+							from {
+								publicKey
+							}
+						}
+						account {
+							publicKey
+						}
+						direction
+					}
+				}
 				pageInfo {
 					endCursor
 					hasNextPage
