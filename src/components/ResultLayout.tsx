@@ -6,7 +6,7 @@ import { css, Theme } from "@emotion/react";
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 
-import { getArchive } from "../services/networksService";
+import { getArchive, getNetwork } from "../services/networksService";
 import NotFoundPage from "../screens/notFound";
 
 import SearchInput from "./SearchInput";
@@ -129,7 +129,7 @@ function ResultLayout() {
 	const [network, setNetwork] = useState<string | undefined>();
 
 	const networkIsValid = useMemo(
-		() => Boolean(getArchive(networkParam)),
+		() => Boolean(getNetwork(networkParam)),
 		[networkParam]
 	);
 

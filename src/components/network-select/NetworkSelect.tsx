@@ -1,12 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
 import { css } from "@emotion/react";
 
-import { useArchives } from "../../hooks/useArchives";
 import { useNetworks } from "../../hooks/useNetworks";
-import { upperFirst } from "../../utils/string";
-import { icons } from "./icons";
 
 const selectStyle = css`
 	&.MuiInputBase-root {
@@ -43,52 +40,39 @@ type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
 const NetworkSelect = (props: NetworkSelectProps) => {
 	const { value, onChange, ...selectProps } = props;
 
-	const archives = useArchives();
 	const networks = useNetworks();
 
 	useEffect(() => {
-		const archive = archives.find((it) => it.network === value);
+		const network = networks.find((it) => it.name === value);
 
-		if (!archive && onChange && archives.length > 0) {
-			onChange(archives[0]!.network, false);
+		if (!network && onChange && networks.length > 0) {
+			onChange(networks[0]!.name, false);
 		}
-	}, [value, onChange, archives]);
+	}, [value, onChange, networks]);
 
-	const handleArchiveChange = useCallback(
+	const handleNetworkChange = useCallback(
 		(e: any) => {
 			onChange && onChange(e.target.value, true);
 		},
 		[onChange]
 	);
 
-	const items = useMemo(() => {
-		return archives.map((archive) => {
-			const network = networks.find((network) => network.name === archive.network);
-
-			return {
-				value: archive.network,
-				label: network?.displayName || upperFirst(archive.network)
-			};
-		});
-	}, [archives, networks]);
-
-	console.log(items);
 	return (
 		<Select
 			{...selectProps}
-			onChange={handleArchiveChange}
+			onChange={handleNetworkChange}
 			value={value || ""}
 			css={selectStyle}
 		>
-			{items.map((item) => (
-				<MenuItem key={item.value} value={item.value}>
+			{networks.map((network) => (
+				<MenuItem key={network.name} value={network.name}>
 					<ListItemIcon>
 						<img
-							src={icons[item.value] as string}
+							src={network.icon}
 							css={iconStyle}
 						/>
 					</ListItemIcon>
-					<ListItemText>{item.label}</ListItemText>
+					<ListItemText>{network.displayName}</ListItemText>
 				</MenuItem>
 			))}
 		</Select>
