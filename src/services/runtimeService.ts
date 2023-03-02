@@ -50,7 +50,7 @@ export async function getRuntimeSpec(network: string, specVersion: number|"lates
 
 export async function getRuntimeSpecs(
 	network: string,
-	specVersions: number[] | undefined
+	specVersions: number[]| string[] | undefined
 ) {
 	if (specVersions == undefined || specVersions.length === 0) {
 		specVersions = [];
