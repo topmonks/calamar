@@ -1,0 +1,514 @@
+[
+    {
+        "name": "acala",
+        "displayName": "Acala",
+        "icon": "/assets/network-icons/acala.svg",
+        "prefix": 10,
+        "decimals": 12,
+        "symbol": "ACA",
+        "squids": {
+            "archive": "https://acala.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/acala-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-acala/graphql",
+            "main": "https://squid.subsquid.io/gs-main-acala/graphql"
+        }
+    },
+    {
+        "name": "amplitude",
+        "displayName": "Amplitude",
+        "icon": "/assets/network-icons/amplitude.svg",
+        "prefix": 57,
+        "decimals": 12,
+        "symbol": "AMPE",
+        "squids": {
+            "archive": "https://amplitude.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "astar",
+        "displayName": "Astar Network",
+        "icon": "/assets/network-icons/astar.png",
+        "prefix": 5,
+        "decimals": 18,
+        "symbol": "ASTR",
+        "squids": {
+            "archive": "https://astar.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-astar/graphql",
+            "main": "https://squid.subsquid.io/gs-main-astar/graphql"
+        }
+    },
+    {
+        "name": "bajun",
+        "displayName": "Bajun Network",
+        "icon": "/assets/network-icons/bajun.png",
+        "prefix": 1337,
+        "decimals": 12,
+        "symbol": "BAJU",
+        "squids": {
+            "archive": "https://bajun.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "bifrost",
+        "displayName": "Bifrost Kusama",
+        "icon": "/assets/network-icons/bifrost.svg",
+        "prefix": 6,
+        "decimals": 12,
+        "symbol": "BNC",
+        "squids": {
+            "archive": "https://bifrost.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/bifrost-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-bifrost/graphql",
+            "main": "https://squid.subsquid.io/gs-main-bifrost/graphql"
+        }
+    },
+    {
+        "name": "calamari",
+        "displayName": "Calamari Network",
+        "icon": "/assets/network-icons/calamari.png",
+        "prefix": 78,
+        "decimals": 12,
+        "symbol": "KMA",
+        "squids": {
+            "archive": "https://calamari.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-calamari/graphql",
+            "main": "https://squid.subsquid.io/gs-main-calamari/graphql"
+        }
+    },
+    {
+        "name": "crust",
+        "displayName": "Crust Network",
+        "icon": "/assets/network-icons/crust.svg",
+        "prefix": 66,
+        "decimals": 12,
+        "symbol": "CRU",
+        "squids": {
+            "archive": "https://crust.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "efinity",
+        "displayName": "Efinity",
+        "icon": "/assets/network-icons/efinity.svg",
+        "prefix": 1110,
+        "decimals": 18,
+        "symbol": "EFI",
+        "squids": {
+            "archive": "https://efinity.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-efinity/graphql",
+            "main": "https://squid.subsquid.io/gs-main-efinity/graphql"
+        }
+    },
+    {
+        "name": "equilibrium",
+        "displayName": "Equilibrium",
+        "icon": "/assets/network-icons/equilibrium.png",
+        "prefix": 68,
+        "decimals": 9,
+        "symbol": "EQ",
+        "squids": {
+            "archive": "https://equilibrium.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "gemini-2a-testnet",
+        "displayName": "Gemini 2a Testnet",
+        "icon": "/assets/network-icons/gemini-2a-testnet.svg",
+        "prefix": 2254,
+        "decimals": 18,
+        "symbol": "tSSC",
+        "squids": {
+            "archive": "https://gemini-2a-testnet.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "gmordie",
+        "displayName": "GM",
+        "icon": "/assets/network-icons/gmordie.png",
+        "prefix": 7013,
+        "decimals": 12,
+        "symbol": "FREN",
+        "squids": {
+            "archive": "https://gmordie.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-gmordie/graphql",
+            "main": "https://squid.subsquid.io/gs-main-gmordie/graphql"
+        }
+    },
+    {
+        "name": "hydradx",
+        "displayName": "HydraDX",
+        "icon": "/assets/network-icons/hydradx.svg",
+        "prefix": 63,
+        "decimals": 12,
+        "symbol": "HDX",
+        "squids": {
+            "archive": "https://hydradx.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-hydradx/graphql",
+            "main": "https://squid.subsquid.io/gs-main-hydradx/graphql"
+        }
+    },
+    {
+        "name": "interlay",
+        "displayName": "Interlay",
+        "icon": "/assets/network-icons/interlay.svg",
+        "prefix": 2032,
+        "decimals": 10,
+        "symbol": "INTR",
+        "squids": {
+            "archive": "https://interlay.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-interlay/graphql",
+            "main": "https://squid.subsquid.io/gs-main-interlay/graphql"
+        }
+    },
+    {
+        "name": "invarch-tinkernet",
+        "displayName": "InvArch Tinkernet",
+        "icon": "/assets/network-icons/invarch-tinkernet.svg",
+        "prefix": 117,
+        "decimals": 12,
+        "symbol": "TNKR",
+        "squids": {
+            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "joystream",
+        "displayName": "Joystream",
+        "icon": "/assets/network-icons/joystream.svg",
+        "prefix": 126,
+        "decimals": 10,
+        "symbol": "JOY",
+        "squids": {
+            "archive": "https://joystream.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "karura",
+        "displayName": "Karura",
+        "icon": "/assets/network-icons/karura.svg",
+        "prefix": 8,
+        "decimals": 12,
+        "symbol": "KAR",
+        "squids": {
+            "archive": "https://karura.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/karura-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-karura/graphql",
+            "main": "https://squid.subsquid.io/gs-main-karura/graphql"
+        }
+    },
+    {
+        "name": "khala",
+        "displayName": "Khala Network",
+        "icon": "/assets/network-icons/khala.svg",
+        "prefix": 30,
+        "decimals": 12,
+        "symbol": "PHA",
+        "squids": {
+            "archive": "https://khala.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-khala/graphql",
+            "main": "https://squid.subsquid.io/gs-main-khala/graphql"
+        }
+    },
+    {
+        "name": "kintsugi",
+        "displayName": "Kintsugi",
+        "icon": "/assets/network-icons/kintsugi.svg",
+        "prefix": 2092,
+        "decimals": 12,
+        "symbol": "KINT",
+        "squids": {
+            "archive": "https://kintsugi.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "kusama",
+        "displayName": "Kusama",
+        "icon": "/assets/network-icons/kusama.svg",
+        "prefix": 2,
+        "decimals": 12,
+        "symbol": "KSM",
+        "squids": {
+            "archive": "https://kusama.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/kusama-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+            "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
+            "stats": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql"
+        }
+    },
+    {
+        "name": "litentry",
+        "displayName": "Litentry",
+        "icon": "/assets/network-icons/litentry.svg",
+        "prefix": 31,
+        "decimals": 12,
+        "symbol": "LIT",
+        "squids": {
+            "archive": "https://litentry.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "litmus",
+        "displayName": "Litmus",
+        "icon": "/assets/network-icons/litmus.webp",
+        "prefix": 131,
+        "decimals": 12,
+        "symbol": "LIT",
+        "squids": {
+            "archive": "https://litmus.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "moonbase",
+        "displayName": "Moonbase Alpha",
+        "icon": "/assets/network-icons/moonbase.png",
+        "prefix": 1287,
+        "decimals": 18,
+        "symbol": "DEV",
+        "squids": {
+            "archive": "https://moonbase.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "moonbeam",
+        "displayName": "Moonbeam",
+        "icon": "/assets/network-icons/moonbeam.png",
+        "prefix": 1284,
+        "decimals": 18,
+        "symbol": "GLMR",
+        "squids": {
+            "archive": "https://moonbeam.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/moonbeam-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-moonbeam/graphql",
+            "main": "https://squid.subsquid.io/gs-main-moonbeam/graphql"
+        }
+    },
+    {
+        "name": "moonriver",
+        "displayName": "Moonriver",
+        "icon": "/assets/network-icons/moonriver.png",
+        "prefix": 1285,
+        "decimals": 18,
+        "symbol": "MOVR",
+        "squids": {
+            "archive": "https://moonriver.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/moonriver-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-moonriver/graphql",
+            "main": "https://squid.subsquid.io/gs-main-moonriver/graphql"
+        }
+    },
+    {
+        "name": "opal",
+        "displayName": "Opal",
+        "icon": "/assets/network-icons/opal.png",
+        "prefix": 42,
+        "decimals": 18,
+        "symbol": "OPL",
+        "squids": {
+            "archive": "https://archive.unique.network/opal/explorer/graphql"
+        }
+    },
+    {
+        "name": "peaq",
+        "displayName": "peaq",
+        "icon": "/assets/network-icons/peaq.svg",
+        "prefix": 1221,
+        "decimals": 18,
+        "symbol": "PEAQ",
+        "squids": {
+            "archive": "https://peaq.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "pendulum",
+        "displayName": "Pendulum",
+        "icon": "/assets/network-icons/pendulum.svg",
+        "prefix": 56,
+        "decimals": 12,
+        "symbol": "PEN",
+        "squids": {
+            "archive": "https://pendulum.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "phala",
+        "displayName": "Phala",
+        "icon": "/assets/network-icons/phala.svg",
+        "prefix": 30,
+        "decimals": 12,
+        "symbol": "PHA",
+        "squids": {
+            "archive": "https://phala.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/phala-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-phala/graphql",
+            "main": "https://squid.subsquid.io/gs-main-phala/graphql"
+        }
+    },
+    {
+        "name": "polkadot",
+        "displayName": "Polkadot",
+        "icon": "/assets/network-icons/polkadot.svg",
+        "prefix": 0,
+        "decimals": 10,
+        "symbol": "DOT",
+        "squids": {
+            "archive": "https://polkadot.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/polkadot-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+            "main": "https://squid.subsquid.io/gs-main-polkadot/graphql",
+            "stats": "https://squid.subsquid.io/chain-analytics-squid/v/polkadot-multi-parallel-2-0/graphql"
+        }
+    },
+    {
+        "name": "quartz",
+        "displayName": "Quartz",
+        "icon": "/assets/network-icons/quartz.png",
+        "prefix": 255,
+        "decimals": 18,
+        "symbol": "QTZ",
+        "squids": {
+            "archive": "https://archive.unique.network/quartz/explorer/graphql"
+        }
+    },
+    {
+        "name": "robonomics",
+        "displayName": "Robonomics",
+        "icon": "/assets/network-icons/robonomics.svg",
+        "prefix": 32,
+        "decimals": 9,
+        "symbol": "XRT",
+        "squids": {
+            "archive": "https://robonomics.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "rococo",
+        "displayName": "Rococo",
+        "icon": "/assets/network-icons/rococo.svg",
+        "prefix": 42,
+        "decimals": 12,
+        "symbol": "ROC",
+        "squids": {
+            "archive": "https://rococo.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-rococo/graphql"
+        }
+    },
+    {
+        "name": "shibuya",
+        "displayName": "Shibuya",
+        "icon": "/assets/network-icons/shibuya.webp",
+        "prefix": 5,
+        "decimals": 18,
+        "symbol": "SBY",
+        "squids": {
+            "archive": "https://shibuya.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-shibuya/graphql"
+        }
+    },
+    {
+        "name": "shiden",
+        "displayName": "Shiden Network",
+        "icon": "/assets/network-icons/shiden.webp",
+        "prefix": 5,
+        "decimals": 18,
+        "symbol": "SDN",
+        "squids": {
+            "archive": "https://shiden.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-shiden/graphql",
+            "main": "https://squid.subsquid.io/gs-main-shiden/graphql"
+        }
+    },
+    {
+        "name": "snow",
+        "displayName": "SNOW",
+        "icon": "/assets/network-icons/snow.svg",
+        "prefix": 2207,
+        "decimals": 18,
+        "symbol": "ICZ",
+        "squids": {
+            "archive": "https://snow.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "statemine",
+        "displayName": "Statemine",
+        "icon": "/assets/network-icons/statemine.png",
+        "prefix": 2,
+        "decimals": 12,
+        "symbol": "KSM",
+        "squids": {
+            "archive": "https://statemine.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-statemine/graphql",
+            "main": "https://squid.subsquid.io/gs-main-statemine/graphql"
+        }
+    },
+    {
+        "name": "statemint",
+        "displayName": "Statemint",
+        "icon": "/assets/network-icons/statemint.png",
+        "prefix": 0,
+        "decimals": 10,
+        "symbol": "DOT",
+        "squids": {
+            "archive": "https://statemint.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-statemint/graphql",
+            "main": "https://squid.subsquid.io/gs-main-statemint/graphql"
+        }
+    },
+    {
+        "name": "subsocial",
+        "displayName": "Subsocial",
+        "icon": "/assets/network-icons/subsocial.png",
+        "prefix": 28,
+        "decimals": 10,
+        "symbol": "SUB",
+        "squids": {
+            "archive": "https://subsocial.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-subsocial/graphql",
+            "main": "https://squid.subsquid.io/gs-main-subsocial/graphql"
+        }
+    },
+    {
+        "name": "t0rn",
+        "displayName": "t0rn",
+        "icon": "/assets/network-icons/t0rn.png",
+        "prefix": 42,
+        "decimals": 12,
+        "symbol": "T0RN",
+        "squids": {
+            "archive": "https://t0rn.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "unique",
+        "displayName": "Unique",
+        "icon": "/assets/network-icons/unique.png",
+        "prefix": 7391,
+        "decimals": 18,
+        "symbol": "UNQ",
+        "squids": {
+            "archive": "https://archive.unique.network/unique/explorer/graphql"
+        }
+    },
+    {
+        "name": "vara",
+        "displayName": "Vara",
+        "icon": "/assets/network-icons/vara.svg",
+        "prefix": 137,
+        "decimals": 12,
+        "symbol": "VARA",
+        "squids": {
+            "archive": "https://vara.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "xx-network",
+        "displayName": "xx network",
+        "icon": "/assets/network-icons/xx-network.svg",
+        "prefix": 55,
+        "decimals": 9,
+        "symbol": "XX",
+        "squids": {
+            "archive": "https://xx-network.explorer.subsquid.io/graphql"
+        }
+    }
+]
