@@ -1,12 +1,12 @@
 import Decimal from "decimal.js";
 
+import { Network } from "./network";
+
 export type AccountBalance = {
 	id: string;
-	network: string;
+	network: Network;
 	encodedAddress?: string;
 	ss58prefix?: number;
-	chainDecimals?: number;
-	chainToken?: string;
 	balanceSupported: boolean;
 	balance?: {
 		free: Decimal;

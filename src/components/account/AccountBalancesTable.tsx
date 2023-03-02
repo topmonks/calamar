@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert } from "@mui/material";
+import { css } from "@emotion/react";
 
 import { usePagination } from "../../hooks/usePagination";
 import { AccountBalance } from "../../model/accountBalance";
@@ -16,8 +17,21 @@ import { Currency } from "../Currency";
 import { ErrorMessage } from "../ErrorMessage";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 
-const SortProperties: Record<string, SortProperty<AccountBalance>> = {
-	NAME: (balance: AccountBalance) => getNetwork(balance.network)?.displayName,
+const networkStyle = css`
+	display: flex;
+	align-items: center;
+`;
+
+const networkIconStyle = css`
+	width: 42px;
+	height: 42px;
+	object-fit: contain;
+	margin-right: 16px;
+	float: left;
+`;
+
+const SortProperties = {
+	NAME: (balance: AccountBalance) => balance.network.displayName,
 	PREFIX: (balance: AccountBalance) => balance.ss58prefix,
 	TOTAL: (balance: AccountBalance) => balance.balance?.total, // TODO sort by USD value
 	FREE: (balance: AccountBalance) => balance.balance?.free, // TODO sort by USD value
@@ -34,8 +48,8 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 	const { balances } = props;
 
 	const [sort, setSort] = useState<SortOrder<SortProperty<AccountBalance>>>({
-		property: SortProperties.NAME,
-		direction: SortDirection.ASC
+		property: SortProperties.TOTAL,
+		direction: SortDirection.DESC
 	});
 
 	const pagination = usePagination();
@@ -96,19 +110,22 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					]}
 					onSortChange={handleSortSelected}
 					render={(balance) => (
-						<div>
-							<div>{getNetwork(balance.network)?.displayName}</div>
-							{balance.encodedAddress && Number.isInteger(balance.ss58prefix) &&
-								<div>
-									<AccountAddress
-										address={balance.encodedAddress}
-										network={balance.network}
-										prefix={balance.ss58prefix!}
-										icon={false}
-										shorten
-									/> (prefix: {balance.ss58prefix})
-								</div>
-							}
+						<div css={networkStyle}>
+							<img src={balance.network.icon} css={networkIconStyle} />
+							<div>
+								<div>{balance.network.displayName}</div>
+								{balance.encodedAddress && Number.isInteger(balance.ss58prefix) &&
+									<div>
+										<AccountAddress
+											address={balance.encodedAddress}
+											network={balance.network.name}
+											prefix={balance.ss58prefix!}
+											icon={false}
+											shorten
+										/> (prefix: {balance.ss58prefix})
+									</div>
+								}
+							</div>
 						</div>
 					)}
 				/>
@@ -121,7 +138,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					render={(balance) => (
 						<>
 							{balance.balanceSupported && !balance.error && balance.balance &&
-								<Currency amount={balance.balance.total} symbol={balance.chainToken} />
+								<Currency amount={balance.balance.total} symbol={balance.network.symbol} />
 							}
 							{!balance.balanceSupported &&
 								<Alert severity="warning">
@@ -145,7 +162,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					startDirection={SortDirection.DESC}
 					onSortChange={handleSortSelected}
 					render={(balance) => balance.balance &&
-						<Currency amount={balance.balance.free} symbol={balance.chainToken} />
+						<Currency amount={balance.balance.free} symbol={balance.network.symbol} />
 					}
 					hide={(balance) => !balance.balanceSupported || balance.error}
 				/>
@@ -156,7 +173,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					startDirection={SortDirection.DESC}
 					onSortChange={handleSortSelected}
 					render={(balance) => balance.balance &&
-						<Currency amount={balance.balance.reserved} symbol={balance.chainToken} />
+						<Currency amount={balance.balance.reserved} symbol={balance.network.symbol} />
 					}
 					hide={(balance) => !balance.balanceSupported || balance.error}
 				/>

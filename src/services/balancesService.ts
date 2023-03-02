@@ -2,21 +2,20 @@ import Decimal from "decimal.js";
 
 import { AccountBalance } from "../model/accountBalance";
 import { ExplorerSquidAccountBalance } from "../model/explorer-squid/explorerSquidAccountBalance";
-import { ExplorerSquidChainInfo } from "../model/explorer-squid/explorerSquidChainInfo";
-import { SquidEntry } from "../model/squid";
+import { Network } from "../model/network";
 import { encodeAddress } from "../utils/formatAddress";
 
 import { fetchBalancesSquid } from "./fetchService";
-import { getBalancesSquid, getSupportedNetworks } from "./networksService";
+import { getNetworks, hasSupport } from "./networksService";
 import { getRuntimeSpec } from "./runtimeService";
 
 export async function getBalances(address: string) {
-	const networks = getSupportedNetworks();
+	const networks = getNetworks();
 
 	const accountBalances = networks.map<AccountBalance>((network) => ({
 		id: `${address}_${network.name}`,
-		network: network.name,
-		balanceSupported: !!getBalancesSquid(network.name),
+		network,
+		balanceSupported: !!hasSupport(network.name, "balances-squid"),
 	}));
 
 	const response = await Promise.allSettled(networks.map(async (network, index) => {
@@ -28,14 +27,8 @@ export async function getBalances(address: string) {
 		accountBalance.encodedAddress = encodedAddress;
 		accountBalance.ss58prefix = runtimeSpec.metadata.ss58Prefix;
 
-		const balancesSquid = getBalancesSquid(network.name);
-
-		if (balancesSquid) {
-			const chainInfo = await getChainInfo(balancesSquid);
-			accountBalance.chainDecimals = parseInt(chainInfo?.tokens[0]?.decimals || "12");
-			accountBalance.chainToken = chainInfo?.tokens[0]?.symbol;
-
-			const response = await fetchBalancesSquid<ExplorerSquidAccountBalance>(balancesSquid.network, `
+		if (accountBalance.balanceSupported) {
+			const response = await fetchBalancesSquid<ExplorerSquidAccountBalance>(network.name, `
 				query ($address: String!) {
 					balance: accountById(id: $address) {
 						free
@@ -43,20 +36,14 @@ export async function getBalances(address: string) {
 						total
 						updatedAt
 					}
-					chainInfo {
-						tokens {
-							decimals
-							symbol
-						}
-					}
 				}
 			`, {
 				address: encodedAddress
 			});
 
-			console.log("balance", balancesSquid.network, response.balance?.total);
+			console.log("balance", network, response.balance?.total);
 
-			accountBalance.balance = unifyExplorerSquidAccountBalance(response);
+			accountBalance.balance = unifyExplorerSquidAccountBalance(response, network);
 		}
 	}));
 
@@ -71,24 +58,8 @@ export async function getBalances(address: string) {
 	return accountBalances;
 }
 
-async function getChainInfo(balancesSquid: SquidEntry) {
-	const response = await fetchBalancesSquid<{chainInfo: ExplorerSquidChainInfo}>(balancesSquid.network, `
-		query {
-			chainInfo {
-				tokens {
-					decimals
-					symbol
-				}
-			}
-		}
-	`);
-
-	return response.chainInfo;
-}
-
-function unifyExplorerSquidAccountBalance(accountBalance: ExplorerSquidAccountBalance): AccountBalance["balance"] {
-	const decimals = new Decimal(accountBalance.chainInfo.tokens[0]?.decimals || 12);
-	const scale = new Decimal(10).pow(decimals.neg());
+function unifyExplorerSquidAccountBalance(accountBalance: ExplorerSquidAccountBalance, network: Network): AccountBalance["balance"] {
+	const scale = new Decimal(10).pow(network.decimals * -1);
 
 	return {
 		free: new Decimal(accountBalance.balance?.free || 0).mul(scale),
