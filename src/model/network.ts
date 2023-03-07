@@ -6,4 +6,5 @@ export type Network = {
 	decimals: number;
 	symbol: string;
 	squids: Record<string, string|undefined>;
+	coinGeckoId?: string;
 }
