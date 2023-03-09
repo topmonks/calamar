@@ -23,6 +23,11 @@ const networkStyle = css`
 	align-items: center;
 `;
 
+const prefixStyle = css`
+	font-size: 15px;
+	opacity: .75;
+`;
+
 const networkIconStyle = css`
 	width: 42px;
 	height: 42px;
@@ -141,9 +146,10 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 												prefix={balance.network.prefix}
 												icon={false}
 												shorten
+												copyToClipboard="small"
 											/>
 										</div>
-										<div>(prefix: {balance.network.prefix})</div>
+										<div css={prefixStyle}>prefix: {balance.network.prefix}</div>
 									</>
 								}
 							</div>

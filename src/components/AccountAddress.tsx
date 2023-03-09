@@ -1,12 +1,27 @@
 /** @jsxImportSource @emotion/react */
 import { ReactNode, useMemo } from "react";
-import { Chip } from "@mui/material";
+import { Chip, Tooltip } from "@mui/material";
+import { css } from "@emotion/react";
 
 import { encodeAddress } from "../utils/formatAddress";
 import { shortenHash } from "../utils/shortenHash";
 
 import { Link } from "./Link";
 import { AccountAvatar } from "./AccountAvatar";
+import CopyToClipboardButton, { CopyToClipboardButtonProps } from "./CopyToClipboardButton";
+
+const accountAddressStyle = css`
+	display: inline-flex;
+	align-items: center;
+`;
+
+const iconStyle = css`
+	margin-right: 8px;
+`;
+
+const copyToClipboardStyle = css`
+	margin-left: 8px;
+`;
 
 export type AccountLinkProps = {
 	network: string;
@@ -15,6 +30,7 @@ export type AccountLinkProps = {
 	icon?: boolean;
 	link?: boolean;
 	shorten?: boolean;
+	copyToClipboard?: CopyToClipboardButtonProps["size"];
 }
 
 export const AccountAddress = (props: AccountLinkProps) => {
@@ -24,35 +40,61 @@ export const AccountAddress = (props: AccountLinkProps) => {
 		prefix,
 		icon = true,
 		link = true,
-		shorten
+		shorten,
+		copyToClipboard = "small"
 	} = props;
 
+	const encodedAddress = useMemo(() => encodeAddress(address, prefix), [address]);
+
 	const content = useMemo(() => {
-		const encodedAddress = encodeAddress(address, prefix);
-		const content: ReactNode = shorten ? shortenHash(encodedAddress) : encodedAddress;
+		let content = <span>{shorten ? shortenHash(encodedAddress) : encodedAddress}</span>;
 
 		if (link) {
-			return (
+			content = (
 				<Link to={`/${network}/account/${address}`}>
 					{content}
 				</Link>
 			);
 		}
 
-		return content;
-	}, [network, address, link]);
+		if (shorten) {
+			content = (
+				<Tooltip
+					arrow
+					placement="top"
+					enterTouchDelay={0}
+					title={encodedAddress}
+				>
+					{content}
+				</Tooltip>
+			);
+		}
 
-	if (!icon) {
+		return content;
+	}, [network, address, encodeAddress, link]);
+
+	/*if (!icon) {
 		return <>{content}</>;
-	}
+	}*/
 
 	return (
-		<>
-			<Chip
-				variant="outlined"
-				icon={<AccountAvatar address={address} prefix={prefix} size={20} />}
-				label={content}
-			/>
-		</>
+		<div css={accountAddressStyle}>
+			{icon && (
+				<AccountAvatar
+					css={iconStyle}
+					address={address}
+					prefix={prefix}
+					size={20}
+				/>
+			)}
+			{content}
+			{copyToClipboard && (
+				<CopyToClipboardButton
+					css={copyToClipboardStyle}
+					value={encodedAddress}
+					size={copyToClipboard}
+				/>
+			)}
+		</div>
 	);
 };
