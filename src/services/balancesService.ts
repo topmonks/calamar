@@ -7,7 +7,6 @@ import { encodeAddress } from "../utils/formatAddress";
 
 import { fetchBalancesSquid } from "./fetchService";
 import { getNetworks, hasSupport } from "./networksService";
-import { getRuntimeSpec } from "./runtimeService";
 
 export async function getBalances(address: string) {
 	const networks = getNetworks();
@@ -21,11 +20,9 @@ export async function getBalances(address: string) {
 	const response = await Promise.allSettled(networks.map(async (network, index) => {
 		const accountBalance = accountBalances[index]!;
 
-		const runtimeSpec = await getRuntimeSpec(network.name, "latest");
-		const encodedAddress = encodeAddress(address, runtimeSpec.metadata.ss58Prefix);
+		const encodedAddress = encodeAddress(address, network.prefix);
 
 		accountBalance.encodedAddress = encodedAddress;
-		accountBalance.ss58prefix = runtimeSpec.metadata.ss58Prefix;
 
 		if (accountBalance.balanceSupported) {
 			const response = await fetchBalancesSquid<ExplorerSquidAccountBalance>(network.name, `

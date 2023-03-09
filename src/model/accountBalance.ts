@@ -6,7 +6,6 @@ export type AccountBalance = {
 	id: string;
 	network: Network;
 	encodedAddress?: string;
-	ss58prefix?: number;
 	balanceSupported: boolean;
 	balance?: {
 		free: Decimal;

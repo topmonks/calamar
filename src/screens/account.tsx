@@ -16,6 +16,7 @@ import { useAccountBalances } from "../hooks/useAccountBalances";
 import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
+import { useUSDRates } from "../hooks/useUSDRates";
 
 import { hasSupport } from "../services/networksService";
 
@@ -36,6 +37,8 @@ function AccountPage() {
 	const balances = useAccountBalances(address);
 	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
 	const calls = useCalls(network, { callerPublicKey_eq: address });
+
+	const usdRates = useUSDRates();
 
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
 
@@ -70,7 +73,7 @@ function AccountPage() {
 							error={balances.error}
 							value="balances"
 						>
-							<AccountBalancesTable balances={balances} />
+							<AccountBalancesTable balances={balances} usdRates={usdRates} />
 						</TabPane>
 						<TabPane
 							label="Extrinsics"

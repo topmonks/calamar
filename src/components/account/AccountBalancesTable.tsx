@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert } from "@mui/material";
 import { css } from "@emotion/react";
+import Decimal from "decimal.js";
 
 import { usePagination } from "../../hooks/usePagination";
 import { AccountBalance } from "../../model/accountBalance";
@@ -9,7 +10,7 @@ import { SortDirection } from "../../model/sortDirection";
 import { SortOrder } from "../../model/sortOrder";
 import { SortProperty } from "../../model/sortProperty";
 import { Resource } from "../../model/resource";
-import { getNetwork } from "../../services/networksService";
+import { USDRates } from "../../model/usdRates";
 import { compareProps } from "../../utils/compare";
 
 import { AccountAddress } from "../AccountAddress";
@@ -30,24 +31,41 @@ const networkIconStyle = css`
 	float: left;
 `;
 
+type AccountBalanceWithUsdRate = AccountBalance & {
+	usdRate?: Decimal
+};
+
 const SortProperties = {
-	NAME: (balance: AccountBalance) => balance.network.displayName,
-	PREFIX: (balance: AccountBalance) => balance.ss58prefix,
-	TOTAL: (balance: AccountBalance) => balance.balance?.total, // TODO sort by USD value
-	FREE: (balance: AccountBalance) => balance.balance?.free, // TODO sort by USD value
-	RESERVED: (balance: AccountBalance) => balance.balance?.reserved // TODO sort by USD value
+	NAME: (balance: AccountBalanceWithUsdRate) => balance.network.displayName,
+	PREFIX: (balance: AccountBalanceWithUsdRate) => balance.network.prefix,
+	TOTAL: (balance: AccountBalanceWithUsdRate) => balance.balance && [
+		// positive with usd rate first, positive without usd rate second, zero third
+		balance.balance.total.greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
+		balance.balance.total.mul(balance.usdRate || 0)
+	],
+	FREE: (balance: AccountBalanceWithUsdRate) => balance.balance && [
+		// positive with usd rate first, positive without usd rate second, zero third
+		balance.balance.free.greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
+		balance.balance.free.mul(balance.usdRate || 0)
+	],
+	RESERVED: (balance: AccountBalanceWithUsdRate) => balance.balance && [
+		// positive with usd rate first, positive without usd rate second, zero third
+		balance.balance.reserved.greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
+		balance.balance.reserved.mul(balance.usdRate || 0)
+	],
 };
 
 export type AccountBalanceOverview = {
 	balances: Resource<AccountBalance[]>;
+	usdRates: Resource<USDRates>;
 }
 
-const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>>;
+const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [USDRates]>;
 
 export const AccountBalancesTable = (props: AccountBalanceOverview) => {
-	const { balances } = props;
+	const { balances, usdRates } = props;
 
-	const [sort, setSort] = useState<SortOrder<SortProperty<AccountBalance>>>({
+	const [sort, setSort] = useState<SortOrder<SortProperty<AccountBalanceWithUsdRate>>>({
 		property: SortProperties.TOTAL,
 		direction: SortDirection.DESC
 	});
@@ -55,12 +73,16 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 	const pagination = usePagination();
 
 	const data = useMemo(() => {
-		return [...(balances.data || [])]
+		return balances.data
+			?.map(it => ({
+				...it,
+				usdRate: usdRates.data?.[it.network.name]
+			}))
 			.sort((a, b) =>
 				compareProps(a, b, sort.property, sort.direction)
 					|| compareProps(a, b, SortProperties.NAME, SortDirection.ASC)
-			);
-	}, [balances.data, sort]);
+			) || [];
+	}, [balances, usdRates, sort]);
 
 	const pageData = useMemo(() => {
 		return data?.slice(pagination.offset, pagination.offset + pagination.limit);
@@ -68,11 +90,6 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 
 	useEffect(() => {
 		if (data) {
-			console.log("set pagination", {
-				...pagination,
-				hasNextPage: pagination.offset + pagination.limit < data.length
-			});
-			console.log(pagination.offset + pagination.limit, data.length);
 			pagination.set({
 				...pagination,
 				hasNextPage: pagination.offset + pagination.limit < data.length
@@ -93,7 +110,8 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 		<div>
 			<ItemsTable
 				data={pageData}
-				loading={balances.loading}
+				additionalData={[usdRates.data]}
+				loading={balances.loading || usdRates.loading}
 				error={balances.error}
 				pagination={pagination}
 				sort={sort}
@@ -114,16 +132,19 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							<img src={balance.network.icon} css={networkIconStyle} />
 							<div>
 								<div>{balance.network.displayName}</div>
-								{balance.encodedAddress && Number.isInteger(balance.ss58prefix) &&
-									<div>
-										<AccountAddress
-											address={balance.encodedAddress}
-											network={balance.network.name}
-											prefix={balance.ss58prefix!}
-											icon={false}
-											shorten
-										/> (prefix: {balance.ss58prefix})
-									</div>
+								{balance.encodedAddress &&
+									<>
+										<div>
+											<AccountAddress
+												address={balance.encodedAddress}
+												network={balance.network.name}
+												prefix={balance.network.prefix}
+												icon={false}
+												shorten
+											/>
+										</div>
+										<div>(prefix: {balance.network.prefix})</div>
+									</>
 								}
 							</div>
 						</div>
@@ -135,10 +156,17 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					sortProperty={SortProperties.TOTAL}
 					startDirection={SortDirection.DESC}
 					onSortChange={handleSortSelected}
-					render={(balance) => (
+					render={(balance, usdRates) => (
 						<>
 							{balance.balanceSupported && !balance.error && balance.balance &&
-								<Currency amount={balance.balance.total} symbol={balance.network.symbol} />
+								<Currency
+									amount={balance.balance.total}
+									symbol={balance.network.symbol}
+									autoDecimalPlaces
+									usdRate={usdRates[balance.network.name]}
+									showUSDValue
+									showFullInTooltip
+								/>
 							}
 							{!balance.balanceSupported &&
 								<Alert severity="warning">
@@ -161,8 +189,15 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					sortProperty={SortProperties.FREE}
 					startDirection={SortDirection.DESC}
 					onSortChange={handleSortSelected}
-					render={(balance) => balance.balance &&
-						<Currency amount={balance.balance.free} symbol={balance.network.symbol} />
+					render={(balance, usdRates) => balance.balance &&
+						<Currency
+							amount={balance.balance.free}
+							symbol={balance.network.symbol}
+							autoDecimalPlaces
+							usdRate={usdRates[balance.network.name]}
+							showUSDValue
+							showFullInTooltip
+						/>
 					}
 					hide={(balance) => !balance.balanceSupported || balance.error}
 				/>
@@ -172,8 +207,15 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					sortProperty={SortProperties.RESERVED}
 					startDirection={SortDirection.DESC}
 					onSortChange={handleSortSelected}
-					render={(balance) => balance.balance &&
-						<Currency amount={balance.balance.reserved} symbol={balance.network.symbol} />
+					render={(balance, usdRates) => balance.balance &&
+						<Currency
+							amount={balance.balance.reserved}
+							symbol={balance.network.symbol}
+							autoDecimalPlaces
+							usdRate={usdRates[balance.network.name]}
+							showUSDValue
+							showFullInTooltip
+						/>
 					}
 					hide={(balance) => !balance.balanceSupported || balance.error}
 				/>
