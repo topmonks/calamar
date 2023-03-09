@@ -16,6 +16,19 @@ import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
 import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
+import { useStats } from "../hooks/useStats";
+import { StatsInfoTable } from "../components/stats/StatsInfoTable";
+import { StatsGraph } from "../components/stats/StatsGraphs";
+import styled from "@emotion/styled";
+
+const ChainDashboardLayout = styled.div`
+	display: flex;
+	flex-direction: row;
+
+	@media (max-width: 800px) {
+		flex-direction: column;
+	}
+`;
 
 type ChainDashboardPageParams = {
 	network: string;
@@ -28,6 +41,10 @@ function ChainDashboardPage() {
 	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
 	const topHolders = useBalances(network, undefined, "free_DESC");
+
+	const stats = useStats(network, undefined);
+
+	console.log(stats.data);
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading);
 
@@ -47,6 +64,11 @@ function ChainDashboardPage() {
 				<CardHeader>
 					{networkData?.displayName} dashboard
 				</CardHeader>
+
+				<ChainDashboardLayout>
+					<StatsInfoTable stats={stats} />
+					<StatsGraph stats={stats} />
+				</ChainDashboardLayout>
 			</Card>
 			<Card>
 				<TabbedContent>
