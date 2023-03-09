@@ -85,7 +85,7 @@ async function fetchUSDRates() {
 	const response = await fetch(apiUrl);
 
 	if (response.status !== 200) {
-		throw new Error("CoinGecko non 200 status");
+		throw new Error(`CoinGecko non 200 reponse status: ${response.status}`);
 	}
 
 	const data = await response.json();
