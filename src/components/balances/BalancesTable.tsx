@@ -26,7 +26,7 @@ function BalancesTable(props: BalancesTableProps) {
 			data-test="balances-table"
 		>
 			<BalancesItemsTableAttribute
-				label="ID"
+				label="Account"
 				render={(balance) => 
 					<AccountAddress
 						network={network}
