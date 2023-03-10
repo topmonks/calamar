@@ -14,7 +14,7 @@ export type BalancesOrder = string | string[];
 export async function getBalances(
 	network: string,
 	filter: BalancesFilter|undefined,
-	order: BalancesOrder = "free_DESC",
+	order: BalancesOrder = "total_DESC",
 	pagination: PaginationOptions,
 ) {
 	if (hasSupport(network, "balances-squid")) {

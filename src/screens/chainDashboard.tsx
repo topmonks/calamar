@@ -27,7 +27,7 @@ function ChainDashboardPage() {
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
 	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
-	const topHolders = useBalances(network, undefined, "free_DESC");
+	const topHolders = useBalances(network, undefined, "total_DESC");
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading);
 
