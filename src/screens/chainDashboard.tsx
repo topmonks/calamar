@@ -57,7 +57,6 @@ function ChainDashboardPage() {
 					>
 						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
 					</TabPane>
-					{hasSupport(network, "explorer-squid") &&
 					<TabPane
 						label="Blocks"
 						count={blocks.pagination.totalCount}
@@ -67,7 +66,7 @@ function ChainDashboardPage() {
 					>
 						<BlocksTable network={network} blocks={blocks} showValidator showTime />
 					</TabPane>
-					}
+					
 
 					{hasSupport(network, "main-squid") &&
 							<TabPane
