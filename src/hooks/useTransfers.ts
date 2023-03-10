@@ -5,7 +5,7 @@ import { usePaginatedResource } from "./usePaginatedResource";
 
 export function useTransfers(
 	network: string,
-	filter: TransfersFilter,
+	filter: TransfersFilter | undefined,
 	order?: TransfersOrder,
 	options?: FetchOptions
 ) {

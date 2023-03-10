@@ -17,7 +17,7 @@ export type TransfersOrder = string | string[];
 
 export async function getTransfers(
 	network: string,
-	filter: TransfersFilter,
+	filter: TransfersFilter | undefined,
 	order: TransfersOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
@@ -40,7 +40,7 @@ export async function getTransfers(
 
 async function getMainSquidTransfers(
 	network: string,
-	filter: TransfersFilter,
+	filter: TransfersFilter | undefined,
 	order: TransfersOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
@@ -78,7 +78,7 @@ async function getMainSquidTransfers(
 					hasPreviousPage
 					startCursor
 				}
-				totalCount
+				${(filter != undefined) ?  "totalCount" : ""}
 			}
 		}`,
 		{
