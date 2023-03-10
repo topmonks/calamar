@@ -35,6 +35,14 @@ function BalancesTable(props: BalancesTableProps) {
 						shorten
 					/>}
 			/>
+			
+			<BalancesItemsTableAttribute
+				label="Total"
+				render={(balance) =>
+					<>{balance.total}</>
+				}
+			/>
+
 			<BalancesItemsTableAttribute
 				label="Free"
 				render={(balance) =>
@@ -46,13 +54,6 @@ function BalancesTable(props: BalancesTableProps) {
 				label="Reserved"
 				render={(balance) =>
 					<>{balance.reserved}</>
-				}
-			/>
-			
-			<BalancesItemsTableAttribute
-				label="Total"
-				render={(balance) =>
-					<>{balance.total}</>
 				}
 			/>
 
