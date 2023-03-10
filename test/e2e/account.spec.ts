@@ -9,6 +9,8 @@ test.describe("Account detail page", () => {
 	test("shows account detail page with extrinsics", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
+		await page.getByTestId("extrinsics-tab").click();
+
 		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
 		await takeScreenshot("account-with-extrinsics");
 	});
@@ -40,6 +42,8 @@ test.describe("Account detail page", () => {
 		);
 
 		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+
+		await page.getByTestId("extrinsics-tab").click();
 
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();

@@ -40,7 +40,7 @@ function AccountPage() {
 
 	const usdRates = useUSDRates();
 
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !usdRates.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
