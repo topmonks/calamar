@@ -1,7 +1,7 @@
 import { Balance } from "../model/balance";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
-import { addLatestRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { fetchBalancesSquid} from "./fetchService";
 import { hasSupport } from "./networksService";
@@ -51,7 +51,7 @@ export async function getBalances(
 		);
 		
 		const items = extractConnectionItems(response.accountsConnection, pagination, unifyBalance);
-		const balances = await addLatestRuntimeSpecs(network, items);
+		const balances = await addRuntimeSpecs(network, items, () => "latest");
 		
 		return balances;
 	}
