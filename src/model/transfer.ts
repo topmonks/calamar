@@ -12,4 +12,7 @@ export type Transfer = {
 	amount: number;
 	success: boolean;
 	runtimeSpec: RuntimeSpec;
+	extrinsic: {
+		id: string;
+	}
 }

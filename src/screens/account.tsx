@@ -35,7 +35,7 @@ function AccountPage() {
 	const calls = useCalls(network, { callerPublicKey_eq: address });
 	const transfers = useTransfers(network, { account: { publicKey_eq: address}});
 	
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
