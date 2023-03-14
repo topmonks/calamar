@@ -14,6 +14,8 @@ import TransfersTable from "../components/transfers/TransfersTable";
 import { hasSupport } from "../services/networksService";
 import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
+import { useBalances } from "../hooks/useBalances";
+import BalancesTable from "../components/balances/BalancesTable";
 
 type ChainDashboardPageParams = {
 	network: string;
@@ -25,7 +27,7 @@ function ChainDashboardPage() {
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
 	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
-	
+	const topHolders = useBalances(network, undefined, "total_DESC");
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading);
 
@@ -77,6 +79,17 @@ function ChainDashboardPage() {
 								value="transfers"
 							>
 								<TransfersTable network={network} transfers={transfers} showTime />
+							</TabPane>
+					}
+					{hasSupport(network, "balances-squid") &&
+							<TabPane
+								label="Top holders"
+								count={topHolders.pagination.totalCount}
+								loading={topHolders.loading}
+								error={topHolders.error}
+								value="top-holders"
+							>
+								<BalancesTable network={network} balances={topHolders} />
 							</TabPane>
 					}
 				</TabbedContent>

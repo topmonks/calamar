@@ -38,6 +38,15 @@ test.describe("Chain dashboard page", () => {
 		await takeScreenshot("chain-dashboard-latest-transfers");
 	});
 
+	test("shows top holders tab", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("top-holders-tab").click();
+
+		await removeContent(page.locator("[data-test=balances-table] tr td"));
+		await takeScreenshot("chain-dashboard-top-holders");
+	});
+
 	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
 		mockRequest(
 			page,
@@ -112,6 +121,32 @@ test.describe("Chain dashboard page", () => {
 		await expect(errorMessage).toHaveText(/Transfers error/);
 
 		await takeScreenshot("chain-dashboard-latest-transfers-error");
+	});
+
+	test("show error message when top holders items fetch fails", async ({ page, takeScreenshot }) => {
+		mockRequest(
+			page,
+			(request) => request.postData()?.match("accounts"),
+			(route) => route.fulfill({
+				status: 200,
+				body: JSON.stringify({
+					errors: [{
+						message: "Top holders error"
+					}]
+				})
+			})
+		);
+
+		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("top-holders-tab").click();
+        
+		const errorMessage = page.getByTestId("error");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText(/Unexpected error/);
+		await expect(errorMessage).toHaveText(/Top holders error/);
+
+		await takeScreenshot("chain-dashboard-top-holders-error");
 	});
 });
 
