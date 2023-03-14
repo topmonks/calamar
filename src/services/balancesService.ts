@@ -23,25 +23,25 @@ export async function getBalances(
 		const response = await fetchBalancesSquid<{accountsConnection: ItemsConnection<Omit<Balance, "runtimeSpec">>}>(
 			network,
 			`query ($first: Int!, $after: String, $filter: AccountWhereInput, $order: [AccountOrderByInput!]!) {
-                accountsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-                    edges {
-                        node {
-                            free
-                            id
-                            reserved
-                            total
-                            updatedAt
-                        }
-                    }
-                    pageInfo {
-                        endCursor
-                        hasNextPage
-                        hasPreviousPage
-                        startCursor
-                    }
-                    ${filter !== undefined ? "totalCount" : "" }
-                }
-            }`,
+				accountsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
+					edges {
+						node {
+							free
+							id
+							reserved
+							total
+							updatedAt
+						}
+					}
+					pageInfo {
+						endCursor
+						hasNextPage
+						hasPreviousPage
+						startCursor
+					}
+					${filter !== undefined ? "totalCount" : "" }
+				}
+			}`,
 			{
 				first: pagination.limit,
 				after,
@@ -49,7 +49,7 @@ export async function getBalances(
 				order,
 			}
 		);
-        
+		
 		const items = extractConnectionItems(response.accountsConnection, pagination, unifyBalance);
 		const balances = await addLatestRuntimeSpecs(network, items);
 		
@@ -72,4 +72,3 @@ export async function getBalances(
 function unifyBalance(balance: Omit<Balance, "runtimeSpec">): Omit<Balance, "runtimeSpec"> {
 	return balance;
 }
-
