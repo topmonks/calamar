@@ -20,6 +20,15 @@ test.describe("Chain dashboard page", () => {
 		await takeScreenshot("chain-dashboard-latest-extrinsics");
 	});
 
+	test("shows latest blocks tab", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("blocks-tab").click();
+
+		await removeContent(page.locator("[data-test=blocks-table] tr td"));
+		await takeScreenshot("chain-dashboard-latest-blocks");
+	});
+
 	test("shows latest transfers tab", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
 
@@ -51,6 +60,32 @@ test.describe("Chain dashboard page", () => {
 		await expect(errorMessage).toHaveText(/Extrinsics error/);
 
 		await takeScreenshot("chain-dashboard-latest-extrinsics-error");
+	});
+
+	test("show error message when blocks items fetch fails", async ({ page, takeScreenshot }) => {
+		mockRequest(
+			page,
+			(request) => request.postData()?.match("blocks"),
+			(route) => route.fulfill({
+				status: 200,
+				body: JSON.stringify({
+					errors: [{
+						message: "Blocks error"
+					}]
+				})
+			})
+		);
+
+		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
+
+		await page.getByTestId("blocks-tab").click();
+        
+		const errorMessage = page.getByTestId("error");
+		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toHaveText(/Unexpected error/);
+		await expect(errorMessage).toHaveText(/Blocks error/);
+
+		await takeScreenshot("chain-dashboard-latest-blocks-error");
 	});
 
 	test("show error message when transfers items fetch fails", async ({ page, takeScreenshot }) => {
