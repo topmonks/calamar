@@ -25,7 +25,7 @@ export async function getUSDRates() {
 			storeUSDRates(usdRates);
 			storeUSDRatesUpdatedAt(Date.now());
 		} catch(e: any) {
-			// probably rate limit exceede wait 2 minutes
+			// probably rate limit exceeded, wait 2 minutes
 			storeCoinGeckoWaitUntil(Date.now() + 120000);
 			rollbar.error("CoinGecko error", e);
 			console.error("CoinGecko error", e);
