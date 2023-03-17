@@ -42,7 +42,7 @@ const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
 				{...restProps}
 				css={buttonStyle}
 				onClick={copyToClipboard}
-				data-name="copy-button"
+				data-class="copy-button"
 			>
 				{size === "normal" && (
 					<svg

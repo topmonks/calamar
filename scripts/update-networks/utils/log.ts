@@ -13,7 +13,7 @@ export function log(...args: any[]) {
 
 log.ok = colors.green("OK");
 log.warn = colors.yellow("WARN");
-log.error = colors.red("ERROR");
+log.error = colors.red("ERR");
 
 log.flush = (delimiter = "") => {
 	if (logPrinted) {

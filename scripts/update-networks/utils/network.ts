@@ -3,8 +3,12 @@ import path from "path";
 import colors from "colors";
 import archivesJson from "@subsquid/archive-registry/archives.json";
 
-import { archiveRegistryArchiveNetworkNames, coinGeckoId, forceSquidUrl, squidTypes, squidUrlTemplates } from "../config";
-import { CoinGeckoCoin, Network, SourceData, SourceType } from "../model";
+import { forceSquidUrl, squidTypes, squidUrlTemplates } from "../config/squids";
+import { archiveRegistryArchiveNetworkNames } from "../config/archive-registry";
+import { coinGeckoId } from "../config/coingecko";
+
+import { CoinGeckoCoin, Network, NetworkResolvableProps, SourceData, SourceType } from "../model";
+
 import { log } from "./log";
 
 export function resolveIcon(network: Network) {
@@ -18,7 +22,7 @@ export function resolveIcon(network: Network) {
 	}
 }
 
-export function resolveProperty<K extends keyof Pick<Network, "prefix"|"decimals"|"symbol">>(network: Network, prop: K, sources: SourceData[], path: SourceType[], forceSource?: SourceType) {
+export function resolveProperty<K extends keyof NetworkResolvableProps>(network: Network, prop: K, sources: SourceData[], path: SourceType[], forceSource?: SourceType) {
 	const values = path.map(type => {
 		const source = sources.find(source => source.type === type);
 		if (!source) {
@@ -105,8 +109,10 @@ export function checkNetwork(network: Network) {
 	log.flush();
 
 	const checkPropsGroups: (keyof Omit<Network, "type"|"squids">)[][] = [
-		["name", "displayName", "icon"],
-		["prefix", "decimals", "symbol", "coinGeckoCoin"]
+		["name", "displayName", "parachainId", "relayChain"],
+		["prefix", "decimals", "symbol"],
+		["icon", "color", "website"],
+		["coinGeckoCoin"]
 	];
 
 	const requiredProps = ["name", "displayName", "icon", "prefix", "decimals", "symbol"];
