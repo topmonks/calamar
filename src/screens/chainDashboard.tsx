@@ -22,18 +22,18 @@ type ChainDashboardPageParams = {
 };
 
 function ChainDashboardPage() {
-    
+
 	const { network } = useParams() as ChainDashboardPageParams;
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
 	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
 	const topHolders = useBalances(network, undefined, "total_DESC");
 
-	useDOMEventTrigger("data-loaded", !extrinsics.loading);
+	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading);
 
 	const networks = useNetworks();
 	const networkData = networks.find((item) => item.name === network);
-    
+
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
@@ -68,7 +68,7 @@ function ChainDashboardPage() {
 					>
 						<BlocksTable network={network} blocks={blocks} showValidator showTime />
 					</TabPane>
-					
+
 
 					{hasSupport(network, "main-squid") &&
 							<TabPane
