@@ -8,7 +8,7 @@ import { encodeAddress } from "../utils/formatAddress";
 import { fetchBalancesSquid } from "./fetchService";
 import { getNetworks, hasSupport } from "./networksService";
 
-export async function getBalances(address: string) {
+export async function getAccountBalances(address: string) {
 	const networks = getNetworks();
 
 	const accountBalances = networks.map<AccountBalance>((network) => ({
