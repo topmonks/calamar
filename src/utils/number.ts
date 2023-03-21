@@ -1,6 +1,13 @@
 import Decimal from "decimal.js";
 
+import { Network } from "../model/network";
+
 const supportedFiatCurrencies = ["USD"];
+
+export function rawAmountToDecimal(network: Network, amount: string|undefined) {
+	const scale = new Decimal(10).pow(network.decimals * -1);
+	return new Decimal(amount || 0).mul(scale);
+}
 
 export function formatNumber(value: number|Decimal) {
 	if (!(value instanceof Decimal)) {

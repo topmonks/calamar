@@ -9,6 +9,7 @@ import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { encodeAddress } from "../utils/formatAddress";
+import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchBalancesSquid } from "./fetchService";
 import { getNetwork, getNetworks, hasSupport } from "./networksService";
@@ -106,8 +107,6 @@ export async function getAccountBalances(address: string) {
 				address: encodedAddress
 			});
 
-			console.log("balance", network, response.balance?.total);
-
 			accountBalance.balance = response.balance
 				? unifyBalancesSquidBalance(response.balance, network.name)
 				: {
@@ -134,13 +133,12 @@ export async function getAccountBalances(address: string) {
 
 function unifyBalancesSquidBalance(balance: BalancesSquidBalance, networkName: string): Omit<Balance, "runtimeSpec"> {
 	const network = getNetwork(networkName)!;
-	const scale = new Decimal(10).pow(network.decimals * -1);
 
 	return {
 		id: balance.id,
-		free: new Decimal(balance.free || 0).mul(scale),
-		reserved: new Decimal(balance.reserved || 0).mul(scale),
-		total: new Decimal(balance.total || 0).mul(scale),
+		free: rawAmountToDecimal(network, balance.free),
+		reserved: rawAmountToDecimal(network, balance.reserved),
+		total: rawAmountToDecimal(network, balance.total),
 		updatedAt: balance.updatedAt
 	};
 }
