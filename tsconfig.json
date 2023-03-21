@@ -23,6 +23,12 @@
     "noUncheckedIndexedAccess": true
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "scripts"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

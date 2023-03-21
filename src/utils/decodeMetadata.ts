@@ -1,8 +1,7 @@
-import { TypeRegistry, Metadata, expandMetadata, PortableRegistry } from "@polkadot/types";
+import { TypeRegistry, Metadata, PortableRegistry } from "@polkadot/types";
 import { Si1Variant } from "@polkadot/types/interfaces";
 import { getSiName } from "@polkadot/types/metadata/util";
 import { DecodedCall, DecodedEvent, DecodedMetadata, DecodedPallet } from "../model/decodedMetadata";
-import { lowerFirst, upperFirst } from "./string";
 
 function decodeCall(lookup: PortableRegistry, call: Si1Variant) {
 	const { fields } = call;
@@ -59,7 +58,7 @@ export function decodeMetadata(hex: `0x${string}`) {
 		const decodedPallet: DecodedPallet = {
 			name: pallet.name.toString(),
 			calls: [],
-			events: []
+			events: [],
 		};
 
 		if (pallet.calls.isSome) {
