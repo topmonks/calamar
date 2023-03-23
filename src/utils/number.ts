@@ -1,0 +1,35 @@
+import Decimal from "decimal.js";
+
+import { Network } from "../model/network";
+
+const supportedFiatCurrencies = ["USD"];
+
+export function rawAmountToDecimal(network: Network, amount: string|undefined) {
+	const scale = new Decimal(10).pow(network.decimals * -1);
+	return new Decimal(amount || 0).mul(scale);
+}
+
+export function formatNumber(value: number|Decimal) {
+	if (!(value instanceof Decimal)) {
+		value = new Decimal(value);
+	}
+
+	const valueString = value.toString();
+
+	const [units] = valueString.split(".") as [string];
+
+	return valueString.replace(units, Intl.NumberFormat("en-US").format(BigInt(units)));
+}
+
+export function formatCurrency(value: number|Decimal, currency: string) {
+	const formattedNumber = formatNumber(value);
+
+	// Intl formats fiat currencies using proper symbols like $
+	if (supportedFiatCurrencies.includes(currency.toUpperCase())) {
+		const template = Intl.NumberFormat("en-US", {style: "currency", currency}).format(0);
+		return template.replace(/[0-9]+\.[0-9]+/, formattedNumber);
+	}
+
+	// cryptocurrencies are formatted simply using the code (KSM)
+	return `${formattedNumber} ${currency}`;
+}

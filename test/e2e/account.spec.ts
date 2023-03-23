@@ -1,13 +1,67 @@
+import { getNetwork } from "../../src/services/networksService";
+
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { removeContent } from "../utils/removeContent";
 import { test, expect } from "../utils/test";
 
+import fixtures from "./account.fixture.json";
+
 test.describe("Account detail page", () => {
-	const address = "0x885f84242d71e6e44ddbe5345d5050a9c1b4dcc908cb2b84102a27035177fe22";
+	const address = "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840";
+
+	test("shows account detail page with balances", async ({ page, takeScreenshot }) => {
+		await page.route("**/*", (route, request) => {
+			for (const balanceFixture of fixtures.balances) {
+				if (request.url().match(`${balanceFixture.network}-balances`)) {
+					return route.fulfill({
+						status: 200,
+						body: JSON.stringify(balanceFixture.response)
+					});
+				}
+			}
+
+			route.continue();
+		});
+
+		await page.route("https://api.coingecko.com/api/v3/simple/price", (route, request) => {
+			route.fulfill({
+				status: 200,
+				body: JSON.stringify(fixtures.usdRates)
+			});
+		});
+
+		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+
+		await page.getByTestId("balances-tab").click();
+
+		for (const balanceFixture of fixtures.balances) {
+			const network = getNetwork(balanceFixture.network)!;
+
+			if (balanceFixture.response.data) {
+				for (const type of ["total", "free", "reserved"]) {
+					const balance = page.getByTestId(`${balanceFixture.network}-balance-${type}`);
+					await expect(balance).toBeVisible();
+					await expect(balance).toContainText(balanceFixture.display?.[type]);
+					// TODO USD values
+				}
+			}
+
+			if (balanceFixture.response.errors) {
+				const errorMessage = page.getByTestId(`${network.name}-balance-error`);
+				await expect(errorMessage).toBeVisible();
+				await expect(errorMessage).toHaveText(/Unexpected error/);
+				await expect(errorMessage).toHaveText(/Kusama balance error/);
+			}
+		}
+
+		await takeScreenshot("account-with-balances");
+	});
 
 	test("shows account detail page with extrinsics", async ({ page, takeScreenshot }) => {
 		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+
+		await page.getByTestId("extrinsics-tab").click();
 
 		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
 		await takeScreenshot("account-with-extrinsics");
@@ -59,6 +113,8 @@ test.describe("Account detail page", () => {
 
 		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
+		await page.getByTestId("extrinsics-tab").click();
+
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText(/Unexpected error/);
@@ -84,7 +140,7 @@ test.describe("Account detail page", () => {
 		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("calls-tab").click();
-		
+
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText(/Unexpected error/);
@@ -110,7 +166,7 @@ test.describe("Account detail page", () => {
 		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
 
 		await page.getByTestId("transfers-tab").click();
-		
+
 		const errorMessage = page.getByTestId("error");
 		await expect(errorMessage).toBeVisible();
 		await expect(errorMessage).toHaveText(/Unexpected error/);

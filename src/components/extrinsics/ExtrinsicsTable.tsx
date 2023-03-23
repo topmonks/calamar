@@ -64,6 +64,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 								address={extrinsic.signer}
 								prefix={extrinsic.runtimeSpec.metadata.ss58Prefix}
 								shorten
+								copyToClipboard="small"
 							/>
 					}
 				/>

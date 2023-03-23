@@ -53,6 +53,7 @@ function TransfersTable(props: TransfersTableProps) {
 						address={transfer.fromPublicKey}
 						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
+						copyToClipboard="small"
 					/>
 				}
 			/>
@@ -64,6 +65,7 @@ function TransfersTable(props: TransfersTableProps) {
 						address={transfer.toPublicKey}
 						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
+						copyToClipboard="small"
 					/>
 				}
 			/>

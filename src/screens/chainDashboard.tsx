@@ -16,20 +16,23 @@ import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
 import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
+import { useUSDRates } from "../hooks/useUSDRates";
 
 type ChainDashboardPageParams = {
 	network: string;
 };
 
 function ChainDashboardPage() {
-
 	const { network } = useParams() as ChainDashboardPageParams;
+
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
 	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
 	const topHolders = useBalances(network, undefined, "total_DESC");
 
-	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading);
+	const usdRates = useUSDRates();
+
+	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
 
 	const networks = useNetworks();
 	const networkData = networks.find((item) => item.name === network);
@@ -89,7 +92,7 @@ function ChainDashboardPage() {
 								error={topHolders.error}
 								value="top-holders"
 							>
-								<BalancesTable network={network} balances={topHolders} />
+								<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
 							</TabPane>
 					}
 				</TabbedContent>

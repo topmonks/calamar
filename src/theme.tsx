@@ -250,9 +250,9 @@ export const theme = createTheme({
 			styleOverrides: {
 				tooltip: css`
 					line-height: 20px;
-					padding: 8px 16px;
+					padding: 8px 12px;
 
-					font-size: 16px;
+					font-size: 14px;
 					color: white;
 					background-color: black;
 				`,
@@ -274,8 +274,13 @@ export const theme = createTheme({
 					margin-right: -4px;
 				`,
 				label: css`
+					padding-left: 0;
 					padding-right: 0;
 					white-space: normal;
+
+					.MuiChip-icon + & {
+						padding-left: 12px;
+					}
 				`
 			}
 		}

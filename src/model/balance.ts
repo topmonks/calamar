@@ -1,10 +1,12 @@
+import Decimal from "decimal.js";
+
 import { RuntimeSpec } from "./runtimeSpec";
 
 export type Balance = {
 	id: string;
-	free: number;
-	reserved: number;
-	total: number;
-	updatedAt: number;
+	free: Decimal;
+	reserved: Decimal;
+	total: Decimal;
+	updatedAt?: number;
 	runtimeSpec: RuntimeSpec;
 }

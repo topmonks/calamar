@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { ReactNode } from "react";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertProps, AlertTitle } from "@mui/material";
 import { css } from "@emotion/react";
 
 const alertStyle = css`
@@ -23,17 +23,17 @@ const detailsStyle = css`
 	}
 `;
 
-export type ErrorMessageProps = {
+export type ErrorMessageProps = AlertProps & {
 	message: ReactNode;
 	details?: ReactNode;
 	showReported?: boolean;
 }
 
 export const ErrorMessage = (props: ErrorMessageProps) => {
-	const {message, details, showReported} = props;
+	const {message, details, showReported, ...alertProps} = props;
 
 	return (
-		<Alert severity="error" css={alertStyle} data-test="error">
+		<Alert severity="error" css={alertStyle} data-test="error" {...alertProps}>
 			<AlertTitle>{message}</AlertTitle>
 			{showReported &&
 				<div css={reportedStyle}>

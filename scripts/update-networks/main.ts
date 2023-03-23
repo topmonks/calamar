@@ -11,11 +11,12 @@ import { Network, SourceData, SourceType } from "./model";
 
 import { getSS58RegistryData } from "./sources/ss58-registry";
 import { getArchiveRegistryData } from "./sources/archive-registry";
+import { getCoinGeckoCoins } from "./sources/coingecko";
 import { getRPCData } from "./sources/rpc";
 import { getRuntimeSpecData } from "./sources/runtime-spec";
 
 import { log } from "./utils/log";
-import { checkNetwork, resolveIcon, resolveProperty, resolveSquids } from "./utils/network";
+import { checkNetwork, resolveCoinGeckoCoin, resolveIcon, resolveProperty, resolveSquids } from "./utils/network";
 
 async function main() {
 	const networks: Network[] = networksJson.networks.map(it => ({
@@ -25,6 +26,7 @@ async function main() {
 		prefix: undefined,
 		decimals: undefined,
 		symbol: undefined,
+		coinGeckoCoin: undefined,
 		squids: {}
 	}));
 
@@ -37,6 +39,7 @@ async function main() {
 				prefix: undefined,
 				decimals: undefined,
 				symbol: undefined,
+				coinGeckoCoin: undefined,
 				squids: {}
 			};
 
@@ -47,6 +50,8 @@ async function main() {
 	}
 
 	networks.sort((a, b) => a.name.localeCompare(b.name));
+
+	const coinGeckoCoins = await getCoinGeckoCoins();
 
 	for (const network of networks) {
 		log.flush("\n---------------------------\n");
@@ -98,6 +103,8 @@ async function main() {
 			forceSource[network.name]?.symbol
 		);
 
+		resolveCoinGeckoCoin(network, coinGeckoCoins);
+
 		await resolveSquids(network);
 
 		checkNetwork(network);
@@ -111,17 +118,31 @@ async function main() {
 	if (validNetworks.length > 0) {
 		log.flush();
 		log(`Valid networks (${validNetworks.length}):\n`);
-		validNetworks.forEach(it => log(`- ${it.name}`, log.ok));
+		validNetworks.forEach(it => log(`- ${it.name}`,
+			it.hasWarnings
+				? `${log.warn}: ${it.hasWarnings.join(", ")}`
+				: log.ok
+		));
 	}
 
 	if (invalidNetworks.length > 0) {
 		log.flush();
 		log(`Invalid networks (${invalidNetworks.length}):\n`);
-		invalidNetworks.forEach(it => log(`- ${it.name}`, log.error, ":", it.hasErrors!.join(", ")));
+		invalidNetworks.forEach(it => log(
+			`- ${it.name}\n`
+			+ (it.hasWarnings ? `  ${log.warn}: ${it.hasWarnings.join(", ")}\n` : "")
+			+ (it.hasErrors ? `  ${log.error}: ${it.hasErrors.join(", ")}` : "")
+		));
 	}
 
 	const networksFile = path.join(__dirname, "..", "..", "src", "networks.json");
-	fs.writeFileSync(networksFile, JSON.stringify(networks.filter(it => !it.hasErrors), null, 4));
+	const exportData = networks.filter(it => !it.hasErrors).map(it => ({
+		...it,
+		coinGeckoId: it.coinGeckoCoin?.id,
+		coinGeckoCoin: undefined,
+		hasWarnings: undefined
+	}));
+	fs.writeFileSync(networksFile, JSON.stringify(exportData, null, 4));
 
 	log.flush();
 	log(log.ok, `Writing valid networks into ${networksFile} file`);

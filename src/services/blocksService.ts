@@ -1,8 +1,9 @@
-import { ArchiveBlock } from "../model/archiveBlock";
+import { ArchiveBlock } from "../model/archive/archiveBlock";
 import { Block } from "../model/block";
-import { ExplorerSquidBlock } from "../model/explorerSquidBlock";
+import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
+
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
@@ -180,7 +181,7 @@ async function getExplorerSquidBlocks(
 	);
 
 	const data = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
-	
+
 	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
 
 	return blocks;

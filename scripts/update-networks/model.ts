@@ -5,7 +5,9 @@ export type Network = {
 	prefix: number|undefined;
 	decimals: number|undefined;
 	symbol: string|undefined;
+	coinGeckoCoin: CoinGeckoCoin|undefined;
 	squids: Record<string, string|undefined>;
+	hasWarnings?: string[];
 	hasErrors?: string[];
 }
 
@@ -19,3 +21,9 @@ export enum SourceType {
 export type SourceData = {
 	type: SourceType;
 } & Partial<Pick<Network, "prefix"|"decimals"|"symbol">>;
+
+export type CoinGeckoCoin = {
+	id: string;
+	name: string;
+	symbol: string;
+}

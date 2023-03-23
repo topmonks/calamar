@@ -1,14 +1,18 @@
 /** @jsxImportSource @emotion/react */
-import { Children, HTMLAttributes, ReactElement, ReactNode } from "react";
+import { Children, cloneElement, HTMLAttributes, ReactElement, ReactNode } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { css, Interpolation, Theme } from "@emotion/react";
 
 import { Pagination } from "../hooks/usePagination";
+import { SortDirection } from "../model/sortDirection";
+import { SortOrder } from "../model/sortOrder";
 
+import { ErrorMessage } from "./ErrorMessage";
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 import { TablePagination } from "./TablePagination";
-import { ErrorMessage } from "./ErrorMessage";
+import { TableSortOptions, TableSortOptionsProps } from "./TableSortOptions";
+import { TableSortToggle } from "./TableSortToggle";
 
 const tableStyle = css`
 	table-layout: fixed;
@@ -31,19 +35,46 @@ type ItemsTableItem = {
 	id: string;
 }
 
-type ItemsTableGetter<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
+type ItemsTableDataFn<T, A extends any[], R> = (data: T, ...additionalData: A) => R;
 
-export type ItemsTableAttributeProps<T, A extends any[]> = {
-	label: string;
+export type ItemsTableAttributeProps<T, A extends any[], S> = {
+	label: ReactNode;
 	colCss?: Interpolation<Theme>;
-	render: ItemsTableGetter<T, A, ReactNode>;
+	sortable?: boolean;
+	sortProperty?: S;
+	startDirection?: SortDirection;
+	sortOptions?: TableSortOptionsProps<S>["options"];
+	onSortChange?: (sortOrder: SortOrder<S>) => void;
+	render: ItemsTableDataFn<T, A, ReactNode>;
+	colSpan?: ItemsTableDataFn<T, A, number>;
+	hide?: ItemsTableDataFn<T, A, boolean>;
+	_data?: T;
+	_additionalData?: A;
 }
 
-export const ItemsTableAttribute = <T extends object = any, A extends any[] = []>(props: ItemsTableAttributeProps<T, A>) => {
-	return null;
+export const ItemsTableAttribute = <T extends object = any, S = any, A extends any[] = []>(props: ItemsTableAttributeProps<T, A, S>) => {
+	const {
+		label,
+		colCss,
+		colSpan,
+		render,
+		hide,
+		_data,
+		_additionalData = [] as any
+	} = props;
+
+	if (!_data || hide?.(_data, ..._additionalData)) {
+		return null;
+	}
+
+	return (
+		<TableCell css={cellStyle} colSpan={colSpan?.(_data, ..._additionalData)}>
+			{render(_data, ..._additionalData)}
+		</TableCell>
+	);
 };
 
-export type ItemsTableProps<T extends ItemsTableItem, A extends any[] = []> = HTMLAttributes<HTMLDivElement> & {
+export type ItemsTableProps<T extends ItemsTableItem, S = any, A extends any[] = []> = HTMLAttributes<HTMLDivElement> & {
 	data?: T[];
 	additionalData?: A;
 	loading?: boolean;
@@ -51,11 +82,12 @@ export type ItemsTableProps<T extends ItemsTableItem, A extends any[] = []> = HT
 	notFoundMessage?: string;
 	error?: any;
 	errorMessage?: string;
-	pagination: Pagination;
-	children: ReactElement<ItemsTableAttributeProps<T, A>>|(ReactElement<ItemsTableAttributeProps<T, A>>|false|undefined|null)[];
+	sort?: SortOrder<any>;
+	pagination?: Pagination;
+	children: ReactElement<ItemsTableAttributeProps<T, A, S>>|(ReactElement<ItemsTableAttributeProps<T, A, S>>|false|undefined|null)[];
 };
 
-export const ItemsTable = <T extends ItemsTableItem, A extends any[] = []>(props: ItemsTableProps<T, A>) => {
+export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = []>(props: ItemsTableProps<T, S, A>) => {
 	const {
 		data,
 		additionalData,
@@ -64,6 +96,7 @@ export const ItemsTable = <T extends ItemsTableItem, A extends any[] = []>(props
 		notFoundMessage = "No items found",
 		error,
 		errorMessage = "Unexpected error occured while fetching items",
+		sort,
 		pagination,
 		children,
 		...restProps
@@ -99,6 +132,25 @@ export const ItemsTable = <T extends ItemsTableItem, A extends any[] = []>(props
 							{Children.map(children, (child) => child && (
 								<TableCell css={cellStyle}>
 									{child.props.label}
+									{child.props.sortable &&
+										<>
+											{child.props.sortOptions &&
+												<TableSortOptions
+													options={child.props.sortOptions}
+													value={sort}
+													onChange={child.props.onSortChange}
+												/>
+											}
+											{!child.props.sortOptions &&
+												<TableSortToggle
+													sortProperty={child.props.sortProperty}
+													startDirection={child.props.startDirection}
+													value={sort}
+													onChange={child.props.onSortChange}
+												/>
+											}
+										</>
+									}
 								</TableCell>
 							))}
 						</TableRow>
@@ -106,17 +158,18 @@ export const ItemsTable = <T extends ItemsTableItem, A extends any[] = []>(props
 					<TableBody>
 						{data?.map(item =>
 							<TableRow key={item.id}>
-								{Children.map(children, (child) => child && (
-									<TableCell css={cellStyle}>
-										{child.props.render(item, ...(additionalData || [] as any))}
-									</TableCell>
-								))}
+								{Children.map(children, (child) =>
+									child && cloneElement(child, {
+										_data: item,
+										_additionalData: additionalData
+									}))
+								}
 							</TableRow>
 						)}
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination {...pagination} />
+			{pagination && <TablePagination {...pagination} />}
 		</div>
 	);
 };

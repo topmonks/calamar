@@ -3,8 +3,8 @@ import path from "path";
 import colors from "colors";
 import archivesJson from "@subsquid/archive-registry/archives.json";
 
-import { archiveRegistryArchiveNetworkNames, forceSquidUrl, squidTypes, squidUrlTemplates } from "../config";
-import { Network, SourceData, SourceType } from "../model";
+import { archiveRegistryArchiveNetworkNames, coinGeckoId, forceSquidUrl, squidTypes, squidUrlTemplates } from "../config";
+import { CoinGeckoCoin, Network, SourceData, SourceType } from "../model";
 import { log } from "./log";
 
 export function resolveIcon(network: Network) {
@@ -49,6 +49,36 @@ export function resolveProperty<K extends keyof Pick<Network, "prefix"|"decimals
 	network[prop] = value as Network[K];
 }
 
+export async function resolveCoinGeckoCoin(network: Network, coins: CoinGeckoCoin[]) {
+	const symbolMatchingCoins = coins.filter(coin => coin.symbol.toLowerCase() === network.symbol?.toLowerCase());
+	const nameMatchingCoins = symbolMatchingCoins.filter(it => it.id === (coinGeckoId[network.name] || network.name));
+
+	if (symbolMatchingCoins.length === 0) {
+		log(log.warn, "No CoinGecko coin found by symbol");
+		return;
+	}
+
+	if (symbolMatchingCoins.length > 1) {
+		log(log.warn, "Multiple CoinGecko coins found by symbol");
+	}
+
+	if (nameMatchingCoins.length !== 1) {
+		log(log.warn, "No CoinGecko coin found by symbol match the network name");
+	}
+
+	if (symbolMatchingCoins.length > 1 || nameMatchingCoins.length !== 1) {
+		for (const coin of symbolMatchingCoins) {
+			log(` - ${coin.id} (${coin.name})`);
+		}
+	}
+
+	if (nameMatchingCoins.length !== 1) {
+		return;
+	}
+
+	network.coinGeckoCoin = nameMatchingCoins[0]!;
+}
+
 export async function resolveSquids(network: Network) {
 	for (const squidType of squidTypes) {
 		let squidUrl: string|undefined = squidUrlTemplates[squidType]?.(network.name);
@@ -76,8 +106,11 @@ export function checkNetwork(network: Network) {
 
 	const checkPropsGroups: (keyof Omit<Network, "type"|"squids">)[][] = [
 		["name", "displayName", "icon"],
-		["prefix", "decimals", "symbol"]
+		["prefix", "decimals", "symbol", "coinGeckoCoin"]
 	];
+
+	const requiredProps = ["name", "displayName", "icon", "prefix", "decimals", "symbol"];
+	const requiredSquidTypes = ["archive"];
 
 	for (const checkProps of checkPropsGroups) {
 		for(const prop of checkProps) {
@@ -85,11 +118,21 @@ export function checkNetwork(network: Network) {
 			let color = colors.green;
 
 			if (value === undefined) {
-				color = colors.red;
 				value = "not resolved";
 
-				network.hasErrors ??= [];
-				network.hasErrors.push(prop);
+				if (requiredProps.includes(prop)) {
+					color = colors.red;
+
+					network.hasErrors ??= [];
+					network.hasErrors.push(prop);
+				} else {
+					color = color.yellow;
+
+					network.hasWarnings ??= [];
+					network.hasWarnings.push(prop);
+				}
+			} else if (prop === "coinGeckoCoin") {
+				value = `${(value as CoinGeckoCoin).id} (${(value as CoinGeckoCoin).name})`;
 			}
 
 			log(`${prop}:`.padEnd(14), color(value.toString()));
@@ -105,13 +148,16 @@ export function checkNetwork(network: Network) {
 		let color = colors.green;
 
 		if (!squidUrl) {
-			if (squidType === "archive") {
+			if (requiredSquidTypes.includes(squidType)) {
 				color = color.red;
 
 				network.hasErrors ??= [];
-				network.hasErrors.push("squids/archive");
+				network.hasErrors.push(`squids/${squidType}`);
 			} else {
 				color = color.yellow;
+
+				network.hasWarnings ??= [];
+				network.hasWarnings.push(`squids/${squidType}`);
 			}
 
 			squidUrl = "not resolved";
