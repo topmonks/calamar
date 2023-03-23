@@ -16,7 +16,7 @@ import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
 import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
-import { useUsdRates } from "../hooks/useUsdRates";
+import { useUsdRates } from "../hooks/useUsdRatesX";
 
 type ChainDashboardPageParams = {
 	network: string;
