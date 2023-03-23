@@ -1,10 +1,4 @@
-import { CustomError } from "ts-custom-error";
-
-export class GraphQLError extends CustomError {
-	constructor(error: any) {
-		super(error.message);
-	}
-}
+import { DataError } from "./error";
 
 export async function fetchGraphql<T = any>(
 	url: string,
@@ -28,7 +22,7 @@ export async function fetchGraphql<T = any>(
 
 	if (jsonResult.errors && !jsonResult.data) {
 		const error = jsonResult.errors[0];
-		throw new GraphQLError(error);
+		throw new DataError(error.message);
 	}
 
 	return jsonResult.data;

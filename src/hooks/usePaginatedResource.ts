@@ -5,7 +5,7 @@ import { FetchOptions } from "../model/fetchOptions";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginatedResource } from "../model/paginatedResource";
 import { PaginationOptions } from "../model/paginationOptions";
-import { GraphQLError } from "../utils/fetchGraphql";
+import { DataError } from "../utils/error";
 
 import { usePagination } from "./usePagination";
 
@@ -38,7 +38,7 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 				setData(items.data);
 				pagination.set(items.pagination);
 			} catch(e) {
-				if (e instanceof GraphQLError) {
+				if (e instanceof DataError) {
 					rollbar.error(e);
 					setError(e);
 				} else {

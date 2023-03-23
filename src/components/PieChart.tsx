@@ -77,6 +77,16 @@ export const PieChart = (props: PieChartProps) => {
 		if (containerRef.current) {
 			echartRef.current = echarts.init(containerRef.current);
 
+			echartRef.current.on("finished", () => {
+				console.log("finished");
+				window.dispatchEvent(new CustomEvent("chart-finished", {
+					detail: {
+						echartRef: echartRef.current,
+						containerRef: containerRef.current
+					}
+				}));
+			});
+
 			return () => {
 				echartRef.current?.dispose();
 				echartRef.current = undefined;

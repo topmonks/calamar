@@ -1,4 +1,11 @@
 {
+	"portfolio": {
+		"display": {
+			"total": "$90,599.25",
+			"free": "$89,482.25",
+			"reserved": "$1,116.99"
+		}
+	},
 	"balances": [
 		{
 			"network": "polkadot",
@@ -14,17 +21,28 @@
 				}
 			},
 			"display": {
-				"total": "8,865.5486 DOT",
-				"free": "8,740.2906 DOT",
-				"reserved": "125.258 DOT"
+				"total": ["8,865.549 DOT", "$54,958.89"],
+				"free": ["8,740.291 DOT", "$54,182.4"],
+				"reserved": ["125.258 DOT", "$776.49"]
 			}
 		},
 		{
 			"network": "kusama",
 			"response": {
-				"errors": [{
-					"message": "Kusama balance error"
-				}]
+				"data": {
+					"balance": {
+						"id": "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE",
+						"free": "1036706567490360",
+						"reserved": "10000000000000",
+						"total": "1046706567490360",
+						"updatedAt": 15120699
+					}
+				}
+			},
+			"display": {
+				"total": ["1,046.7066 KSM", "$35,640.36"],
+				"free": ["1,036.7066 KSM", "$35,299.86"],
+				"reserved": ["10 KSM", "$340.5"]
 			}
 		},
 		{
@@ -35,9 +53,9 @@
 				}
 			},
 			"display": {
-				"total": "0 MOVR",
-				"free": "0 MOVR",
-				"reserved": "0 MOVR"
+				"total": ["0 MOVR"],
+				"free": ["0 MOVR"],
+				"reserved": ["0 MOVR"]
 			}
 		}
 	],

@@ -77,7 +77,7 @@ function AccountPage() {
 	return (
 		<>
 			<CardRow>
-				<Card>
+				<Card data-test="account-info">
 					<CardHeader>
 						{account.data &&
 							<AccountAvatar address={address} size={32} css={avatarStyle} />
@@ -89,7 +89,7 @@ function AccountPage() {
 						account={account}
 					/>
 				</Card>
-				<Card css={portfolioStyle}>
+				<Card css={portfolioStyle} data-test="account-portfolio">
 					<CardHeader>
 						Portfolio
 						<Tooltip
@@ -108,7 +108,7 @@ function AccountPage() {
 				</Card>
 			</CardRow>
 			{account.data &&
-				<Card>
+				<Card data-test="account-related-items">
 					<TabbedContent>
 						<TabPane
 							label="Balances"

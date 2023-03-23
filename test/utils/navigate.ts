@@ -1,7 +1,6 @@
 import { Page } from "@playwright/test";
 
-import { capturePageEvents } from "./captureEvents";
-import { waitForPageEvent } from "./waitForPageEvent";
+import { capturePageEvents, waitForPageEvent } from "./events";
 
 interface GotoOptions {
 	referrer?: string;
@@ -9,7 +8,7 @@ interface GotoOptions {
 	waitUntil?: "data-loaded"|"load"|"domcontentloaded"|"networkidle"|"commit";
 }
 
-const customEvents = ["data-loaded"];
+const customEvents = ["data-loaded", "chart-finished"];
 
 export async function navigate(page: Page, url: string, options: GotoOptions = {}) {
 	let customEvent: string|undefined = undefined;
@@ -24,7 +23,7 @@ export async function navigate(page: Page, url: string, options: GotoOptions = {
 	await page.goto(url, options as any);
 
 	if (customEvent) {
-		await waitForPageEvent(page, customEvent, {timeout: options.timeout});
+		await waitForPageEvent(page, customEvent, undefined, {timeout: options.timeout});
 	}
 
 	await page.evaluate(() => document.fonts.ready);

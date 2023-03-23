@@ -24,7 +24,7 @@ export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 			data={account.data}
 			loading={account.loading}
 			notFound={account.notFound}
-			notFoundMessage="Account doesn't exist or haven't signed any extrinsic"
+			notFoundMessage="Account doesn't exist"
 			error={account.error}
 		>
 			<AccountInfoTableAttribute

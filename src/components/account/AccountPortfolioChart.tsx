@@ -47,18 +47,18 @@ const chartStyle = (theme: Theme) => css`
 	}
 `;
 
-export enum AccountBalanceChartMode {
+export enum AccountPortfolioChartMode {
 	BY_NETWORK = "BY_NETWORK",
 	BY_TYPE = "BY_TYPE"
 }
 
-export type AccountBalancesChartProps = HTMLAttributes<HTMLDivElement> & {
+export type AccountPortfolioChartProps = HTMLAttributes<HTMLDivElement> & {
 	balances: AccountBalance[];
 	usdRates: UsdRates;
-	mode: AccountBalanceChartMode;
+	mode: AccountPortfolioChartMode;
 };
 
-export const AccountBalancesChart = (props: AccountBalancesChartProps) => {
+export const AccountPortfolioChart = (props: AccountPortfolioChartProps) => {
 	const {balances, usdRates, mode, ...divProps} = props;
 
 	const theme = useTheme();
@@ -69,7 +69,7 @@ export const AccountBalancesChart = (props: AccountBalancesChartProps) => {
 			return [];
 		}
 
-		if (mode === AccountBalanceChartMode.BY_NETWORK) {
+		if (mode === AccountPortfolioChartMode.BY_NETWORK) {
 			return balances
 				.filter(balance => balance.balance?.total.greaterThan(0) && usdRates[balance.network.name])
 				.map(balance => {
@@ -145,7 +145,7 @@ export const AccountBalancesChart = (props: AccountBalancesChartProps) => {
 					const {name, data, percent} = params as CallbackDataParams;
 					const {network, formatted, formattedUsdValue} = (data as any).additionalData;
 
-					if (mode === AccountBalanceChartMode.BY_NETWORK) {
+					if (mode === AccountPortfolioChartMode.BY_NETWORK) {
 						return `
 							<div data-class="title">
 								<img src="${network.icon}" data-class="icon" />
@@ -186,6 +186,11 @@ export const AccountBalancesChart = (props: AccountBalancesChartProps) => {
 	}, [totalData, isSmallScreen, mode]);
 
 	return (
-		<PieChart options={options} css={chartStyle} {...divProps} />
+		<PieChart
+			options={options}
+			css={chartStyle}
+			data-test={`account-portfolio-chart-${mode.toLowerCase()}`}
+			{...divProps}
+		/>
 	);
 };
