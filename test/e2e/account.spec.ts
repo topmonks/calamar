@@ -95,7 +95,7 @@ test.describe("Account detail page", () => {
 
 		const notFoundMessage = portfolio.getByTestId("not-found");
 		await expect(notFoundMessage).toBeVisible();
-		await expect(notFoundMessage).toHaveText("No positive balances with conversionrate to USD found");
+		await expect(notFoundMessage).toHaveText("No positive balances with conversion rate to USD found");
 
 		await takeScreenshot("account-porfolio-not-found", portfolio);
 	});
