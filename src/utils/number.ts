@@ -1,6 +1,13 @@
 import Decimal from "decimal.js";
 
+import { Network } from "../model/network";
+
 const supportedFiatCurrencies = ["USD"];
+
+export function rawAmountToDecimal(network: Network, amount: string|undefined) {
+	const scale = new Decimal(10).pow(network.decimals * -1);
+	return new Decimal(amount || 0).mul(scale);
+}
 
 export type FormatNumberOptions = {
 	decimalPlaces?: number;
@@ -50,29 +57,6 @@ export function formatCurrency(value: number|Decimal, currency: string, options:
 	return `${formattedNumber} ${currency}`;
 }
 
-
-/*let roundToDecimalPlaces = decimalPlaces;
-
-if (autoDecimalPlaces) {
-	if (usdRate) {
-		// if USD rate is specified, round to most significant decimal place of approx $0.01 value
-		const usdValueOfOneHundredth = new Decimal("0.01").div(usdRate);
-		const mostSignificantDecimalPlace = usdValueOfOneHundredth.log().neg().ceil().toNumber();
-		roundToDecimalPlaces = mostSignificantDecimalPlace;
-	} else if (symbol?.toUpperCase() === "USD") {
-		// otherwise use default decimal places for USD
-		roundToDecimalPlaces = 2;
-	} else {
-		// otherwise use default decimal places for crypto
-		roundToDecimalPlaces = 4;
-	}
-}
-
-if (!roundToDecimalPlaces) {
-	return amount;
-}
-
-return amount.toDecimalPlaces(roundToDecimalPlaces, Decimal.ROUND_HALF_UP);*/
 
 /**
  * Get optimal decimal places for a cryptocurrency to able

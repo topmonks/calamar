@@ -41,7 +41,7 @@ export const AccountAddress = (props: AccountLinkProps) => {
 		icon = true,
 		link = true,
 		shorten,
-		copyToClipboard = "small"
+		copyToClipboard
 	} = props;
 
 	const encodedAddress = useMemo(() => encodeAddress(address, prefix), [address]);

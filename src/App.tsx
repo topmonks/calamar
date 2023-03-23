@@ -8,7 +8,6 @@ import BlockPage from "./screens/block";
 import AccountPage from "./screens/account";
 import NotFoundPage from "./screens/notFound";
 import SearchPage from "./screens/search";
-import LatestExtrinsicsPage from "./screens/latestExtrinsics";
 import ResultLayout from "./components/ResultLayout";
 import { CallPage } from "./screens/call";
 import { EventPage } from "./screens/event";
@@ -17,6 +16,7 @@ import { theme } from "./theme";
 import { rollbar } from "./rollbar";
 import { config } from "./config";
 import { Devtools } from "./components/Devtools";
+import ChainDashboardPage from "./screens/chainDashboard";
 
 function App() {
 	return (
@@ -32,7 +32,7 @@ function App() {
 					<Routes>
 						<Route element={<HomePage />} path="/" />
 						<Route element={<ResultLayout />} path=":network">
-							<Route element={<LatestExtrinsicsPage />} index />
+							<Route element={<ChainDashboardPage />} index />
 							<Route element={<ExtrinsicPage />} path="extrinsic/:id" />
 							<Route element={<SearchPage />} path="search" />
 							<Route element={<BlockPage />} path="block/:id" />

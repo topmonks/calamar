@@ -22,6 +22,8 @@ import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useUsdRates } from "../hooks/useUsdRates";
 
 import { hasSupport } from "../services/networksService";
+import TransfersTable from "../components/transfers/TransfersTable";
+import { useTransfers } from "../hooks/useTransfers";
 
 import { shortenHash } from "../utils/shortenHash";
 
@@ -59,10 +61,11 @@ function AccountPage() {
 	const balances = useAccountBalances(address);
 	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
 	const calls = useCalls(network, { callerPublicKey_eq: address });
+	const transfers = useTransfers(network, { account: { publicKey_eq: address}});
 
 	const usdRates = useUsdRates();
 
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !usdRates.loading);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -134,6 +137,17 @@ function AccountPage() {
 								value="calls"
 							>
 								<CallsTable network={network} calls={calls} />
+							</TabPane>
+						}
+						{hasSupport(network, "main-squid") &&
+							<TabPane
+								label="Transfers"
+								count={transfers.pagination.totalCount}
+								loading={transfers.loading}
+								error={transfers.error}
+								value="transfers"
+							>
+								<TransfersTable network={network} transfers={transfers} showTime />
 							</TabPane>
 						}
 					</TabbedContent>

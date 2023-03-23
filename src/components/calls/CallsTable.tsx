@@ -55,6 +55,7 @@ export const CallsTable = (props: CallsTableProps) => {
 							address={call.caller}
 							prefix={call.runtimeSpec.metadata.ss58Prefix}
 							shorten
+							copyToClipboard="small"
 						/>
 					}
 				/>

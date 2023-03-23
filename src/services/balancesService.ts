@@ -1,14 +1,82 @@
 import Decimal from "decimal.js";
 
 import { AccountBalance } from "../model/accountBalance";
-import { ExplorerSquidAccountBalance } from "../model/explorer-squid/explorerSquidAccountBalance";
-import { Network } from "../model/network";
+import { Balance } from "../model/balance";
+import { BalancesSquidBalance } from "../model/explorer-squid/explorerSquidAccountBalance";
+import { ItemsConnection } from "../model/itemsConnection";
+import { PaginationOptions } from "../model/paginationOptions";
+
+import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { encodeAddress } from "../utils/formatAddress";
+import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchBalancesSquid } from "./fetchService";
-import { getNetworks, hasSupport } from "./networksService";
+import { getNetwork, getNetworks, hasSupport } from "./networksService";
 
-export async function getBalances(address: string) {
+
+export type BalancesFilter =
+	{ id_eq: string; }
+
+export type BalancesOrder = string | string[];
+
+export async function getBalances(
+	network: string,
+	filter: BalancesFilter|undefined,
+	order: BalancesOrder = "total_DESC",
+	pagination: PaginationOptions,
+) {
+	if (hasSupport(network, "balances-squid")) {
+		const after = pagination.offset === 0 ? null : pagination.offset.toString();
+
+		const response = await fetchBalancesSquid<{accountsConnection: ItemsConnection<BalancesSquidBalance>}>(
+			network,
+			`query ($first: Int!, $after: String, $filter: AccountWhereInput, $order: [AccountOrderByInput!]!) {
+				accountsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
+					edges {
+						node {
+							id
+							free
+							reserved
+							total
+							updatedAt
+						}
+					}
+					pageInfo {
+						endCursor
+						hasNextPage
+						hasPreviousPage
+						startCursor
+					}
+					${filter !== undefined ? "totalCount" : "" }
+				}
+			}`,
+			{
+				first: pagination.limit,
+				after,
+				filter,
+				order,
+			}
+		);
+
+		const items = extractConnectionItems(response.accountsConnection, pagination, unifyBalancesSquidBalance, network);
+		const balances = await addRuntimeSpecs(network, items, () => "latest");
+
+		return balances;
+	}
+
+	return {
+		data: [],
+		pagination: {
+			offset: 0,
+			limit: 0,
+			hasNextPage: false,
+			totalCount: 0,
+		}
+	};
+}
+
+export async function getAccountBalances(address: string) {
 	const networks = getNetworks();
 
 	const accountBalances = networks.map<AccountBalance>((network) => ({
@@ -25,9 +93,10 @@ export async function getBalances(address: string) {
 		accountBalance.encodedAddress = encodedAddress;
 
 		if (accountBalance.balanceSupported) {
-			const response = await fetchBalancesSquid<ExplorerSquidAccountBalance>(network.name, `
+			const response = await fetchBalancesSquid<{balance?: BalancesSquidBalance}>(network.name, `
 				query ($address: String!) {
 					balance: accountById(id: $address) {
+						id
 						free
 						reserved
 						total
@@ -38,9 +107,14 @@ export async function getBalances(address: string) {
 				address: encodedAddress
 			});
 
-			console.log("balance", network, response.balance?.total);
-
-			accountBalance.balance = unifyExplorerSquidAccountBalance(response, network);
+			accountBalance.balance = response.balance
+				? unifyBalancesSquidBalance(response.balance, network.name)
+				: {
+					id: address,
+					total: new Decimal(0),
+					free: new Decimal(0),
+					reserved: new Decimal(0),
+				};
 		}
 	}));
 
@@ -55,13 +129,16 @@ export async function getBalances(address: string) {
 	return accountBalances;
 }
 
-function unifyExplorerSquidAccountBalance(accountBalance: ExplorerSquidAccountBalance, network: Network): AccountBalance["balance"] {
-	const scale = new Decimal(10).pow(network.decimals * -1);
+/*** PRIVATE ***/
+
+function unifyBalancesSquidBalance(balance: BalancesSquidBalance, networkName: string): Omit<Balance, "runtimeSpec"> {
+	const network = getNetwork(networkName)!;
 
 	return {
-		free: new Decimal(accountBalance.balance?.free || 0).mul(scale),
-		reserved: new Decimal(accountBalance.balance?.reserved || 0).mul(scale),
-		total: new Decimal(accountBalance.balance?.total || 0).mul(scale),
-		updatedAt: accountBalance.balance?.updatedAt
+		id: balance.id,
+		free: rawAmountToDecimal(network, balance.free),
+		reserved: rawAmountToDecimal(network, balance.reserved),
+		total: rawAmountToDecimal(network, balance.total),
+		updatedAt: balance.updatedAt
 	};
 }

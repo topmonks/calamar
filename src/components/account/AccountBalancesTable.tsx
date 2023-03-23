@@ -17,6 +17,7 @@ import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";
 import { ErrorMessage } from "../ErrorMessage";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
+import { Balance } from "../../model/balance";
 
 const networkStyle = css`
 	display: flex;
@@ -40,24 +41,26 @@ type AccountBalanceWithUsdRate = AccountBalance & {
 	usdRate?: Decimal
 };
 
+function balanceSort(balance: AccountBalanceWithUsdRate, type: "total"|"free"|"reserved") {
+	if (balance.balance) {
+		// defined balance on top
+		return [
+			// positive with usd rate first, positive without usd rate second, zero third
+			balance.balance[type].greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
+			balance.balance[type].mul(balance.usdRate || 0)
+		];
+	}
+
+	// undefined balance on bottom, errors on top
+	return [undefined, (balance.error ? 1 : undefined)];
+}
+
 const SortProperties = {
 	NAME: (balance: AccountBalanceWithUsdRate) => balance.network.displayName,
 	PREFIX: (balance: AccountBalanceWithUsdRate) => balance.network.prefix,
-	TOTAL: (balance: AccountBalanceWithUsdRate) => balance.balance && [
-		// positive with usd rate first, positive without usd rate second, zero third
-		balance.balance.total.greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
-		balance.balance.total.mul(balance.usdRate || 0)
-	],
-	FREE: (balance: AccountBalanceWithUsdRate) => balance.balance && [
-		// positive with usd rate first, positive without usd rate second, zero third
-		balance.balance.free.greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
-		balance.balance.free.mul(balance.usdRate || 0)
-	],
-	RESERVED: (balance: AccountBalanceWithUsdRate) => balance.balance && [
-		// positive with usd rate first, positive without usd rate second, zero third
-		balance.balance.reserved.greaterThan(0) ? (balance.usdRate ? 3 : 2) : 1,
-		balance.balance.reserved.mul(balance.usdRate || 0)
-	],
+	TOTAL: (balance: AccountBalanceWithUsdRate) => balanceSort(balance, "total"),
+	FREE: (balance: AccountBalanceWithUsdRate) => balanceSort(balance, "free"),
+	RESERVED: (balance: AccountBalanceWithUsdRate) => balanceSort(balance, "reserved")
 };
 
 export type AccountBalanceOverview = {
@@ -172,6 +175,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 									usdRate={usdRates[balance.network.name]}
 									showFullInTooltip
 									showUsdValue
+									data-test={`${balance.network.name}-balance-total`}
 								/>
 							}
 							{!balance.balanceSupported &&
@@ -183,6 +187,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 								<ErrorMessage
 									message="Unexpected error occured while fetching data"
 									details={balance.error.message}
+									data-test={`${balance.network.name}-balance-error`}
 								/>
 							}
 						</>
@@ -203,6 +208,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							usdRate={usdRates[balance.network.name]}
 							showFullInTooltip
 							showUsdValue
+							data-test={`${balance.network.name}-balance-free`}
 						/>
 					}
 					hide={(balance) => !balance.balanceSupported || balance.error}
@@ -221,6 +227,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							usdRate={usdRates[balance.network.name]}
 							showFullInTooltip
 							showUsdValue
+							data-test={`${balance.network.name}-balance-reserved`}
 						/>
 					}
 					hide={(balance) => !balance.balanceSupported || balance.error}
