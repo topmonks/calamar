@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { PropsWithChildren } from "react";
+import { HTMLAttributes } from "react";
 import { css } from "@emotion/react";
 
 const notFoundMessageStyle = css`
@@ -7,14 +7,12 @@ const notFoundMessageStyle = css`
 	text-align: center;
 `;
 
-export type NotFoundProps = {
-	message: string;
-};
+export type NotFoundProps = HTMLAttributes<HTMLDivElement>;
 
-const NotFound = (props: PropsWithChildren) => {
-	const { children } = props;
+const NotFound = (props: NotFoundProps) => {
+	const {children, ...divProps} = props;
 
-	return <div css={notFoundMessageStyle} data-test="not-found">{children}</div>;
+	return <div css={notFoundMessageStyle} data-test="not-found" {...divProps}>{children}</div>;
 };
 
 export default NotFound;

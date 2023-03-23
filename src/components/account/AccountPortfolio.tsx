@@ -83,6 +83,11 @@ const chartStyle = css`
 	margin-top: 32px;
 `;
 
+const notFoundStyle = css`
+	margin: 0 auto;
+	max-width: 300px;
+`;
+
 export type AccountPortfolioProps = HTMLAttributes<HTMLDivElement> & {
 	balances: Resource<AccountBalance[]>;
 	usdRates: Resource<UsdRates>;
@@ -106,7 +111,7 @@ export const AccountPortfolio = (props: AccountPortfolioProps) => {
 	}
 
 	if (balances.notFound || stats.total.eq(0)) {
-		return <NotFound>No positive balances with conversion<br />rate to USD found</NotFound>;
+		return <NotFound css={notFoundStyle}>No positive balances with conversion rate to USD found</NotFound>;
 	}
 
 	if (balances.error) {

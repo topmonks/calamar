@@ -1,4 +1,4 @@
-import { capturePageEvents, clearCapturedPageEvents, waitForPageEvent, waitForPageEvent2 } from "../utils/events";
+import { clearCapturedPageEvents, waitForPageEvent } from "../utils/events";
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
 import { removeContent } from "../utils/removeContent";
@@ -71,6 +71,33 @@ test.describe("Account detail page", () => {
 		});
 
 		await takeScreenshot("account-porfolio-by-type", portfolio);
+	});
+
+	test("shows portfolio not found message if no account balances found", async ({ page, takeScreenshot }) => {
+		await page.route("**/*", (route, request) => {
+			if (request.url().match(/[a-z]+-balances/)) {
+				return route.fulfill({
+					status: 200,
+					body: JSON.stringify({
+						data: {
+							balance: null
+						}
+					})
+				});
+			}
+
+			route.fallback();
+		});
+
+		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+
+		const portfolio = page.getByTestId("account-portfolio");
+
+		const notFoundMessage = portfolio.getByTestId("not-found");
+		await expect(notFoundMessage).toBeVisible();
+		await expect(notFoundMessage).toHaveText("No positive balances with conversionrate to USD found");
+
+		await takeScreenshot("account-porfolio-not-found", portfolio);
 	});
 
 	test("shows account balances", async ({ page, takeScreenshot }) => {
@@ -162,6 +189,21 @@ test.describe("Account detail page", () => {
 
 	test("shows error message if account address is not valid", async ({ page, takeScreenshot }) => {
 		const id = "0x123456789";
+
+		await page.route("**/*", (route, request) => {
+			if (request.url().match(/[a-z]+-balances/)) {
+				return route.fulfill({
+					status: 200,
+					body: JSON.stringify({
+						data: {
+							balance: null
+						}
+					})
+				});
+			}
+
+			route.fallback();
+		});
 
 		await navigate(page, `/kusama/account/${id}`, {waitUntil: "data-loaded"});
 
