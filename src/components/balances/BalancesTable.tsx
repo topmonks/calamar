@@ -39,6 +39,7 @@ function BalancesTable(props: BalancesTableProps) {
 						address={decodeAddress(balance.id)}
 						prefix={balance.runtimeSpec.metadata.ss58Prefix}
 						shorten
+						copyToClipboard="small"
 					/>}
 			/>
 

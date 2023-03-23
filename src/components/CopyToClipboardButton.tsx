@@ -7,7 +7,7 @@ const buttonStyle = css`
 	padding: 0;
 `;
 
-export type CopyToClipboardButtonProps = Omit<IconButtonProps, "value"> & {
+export type CopyToClipboardButtonProps = Omit<IconButtonProps, "value"|"size"> & {
 	value: string|null|undefined;
 	size?: "normal"|"small";
 }

@@ -149,8 +149,12 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 
 	return (
 		<div css={valueStyle}>
-			<AccountAddress network={network} address={value} prefix={runtimeSpec.metadata.ss58Prefix} />
-			<CopyToClipboardButton value={value} css={copyButtonStyle} />
+			<AccountAddress
+				network={network}
+				address={value}
+				prefix={runtimeSpec.metadata.ss58Prefix}
+				copyToClipboard="small"
+			/>
 		</div>
 	);
 };
