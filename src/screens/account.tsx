@@ -19,7 +19,7 @@ import { useAccountBalances } from "../hooks/useAccountBalances";
 import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { useUsdRates } from "../hooks/useUsdRatesX";
+import { useUsdRates } from "../hooks/useUsdRates";
 
 import { hasSupport } from "../services/networksService";
 import TransfersTable from "../components/transfers/TransfersTable";
