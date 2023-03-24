@@ -70,7 +70,7 @@
   "devDependencies": {
     "@argos-ci/cli": "^0.4.4",
     "@emotion/eslint-plugin": "^11.10.0",
-    "@playwright/test": "^1.32.0",
+    "@playwright/test": "^1.30.0",
     "@polkadot/api": "^10.1.4",
     "@polkadot/apps-config": "^0.124.1",
     "@subsquid/archive-registry": "^2.1.9",
