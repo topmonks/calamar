@@ -6,23 +6,22 @@ import { Devtool } from "../components/Devtool";
 import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 import { useNetwork } from "../hooks/useNetwork";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
-type RuntimeParams = {
-	network: string;
+export type RuntimeParams = {
 	specVersion?: string;
 };
 
-function RuntimePage() {
-	const { network: networkName, specVersion } = useParams() as RuntimeParams;
+export const RuntimePage = () => {
+	const { network } = useRootLoaderData();
+	const { specVersion } = useParams() as RuntimeParams;
 
 	const navigate = useNavigate();
 
-	const runtimeVersions = useRuntimeSpecVersions(networkName);
-	const runtimeSpecs = useRuntimeSpecs(networkName, specVersion ? [parseInt(specVersion)] : [], {
+	const runtimeVersions = useRuntimeSpecVersions(network.name);
+	const runtimeSpecs = useRuntimeSpecs(network.name, specVersion ? [parseInt(specVersion)] : [], {
 		skip: !specVersion
 	});
-
-	const network = useNetwork(networkName)!;
 
 	const metadata = specVersion && runtimeSpecs.data?.[parseInt(specVersion)]!.metadata;
 
@@ -33,7 +32,7 @@ function RuntimePage() {
 	}
 
 	if (!specVersion) {
-		return <Navigate to={`/${networkName}/runtime/${runtimeVersions.data![0]}`} />;
+		return <Navigate to={`/${network.name}/runtime/${runtimeVersions.data![0]}`} />;
 	}
 
 	return (
@@ -42,7 +41,7 @@ function RuntimePage() {
 				<CardHeader>
 					<Devtool />{network.displayName} runtime
 				</CardHeader>
-				<Select value={specVersion} onChange={e => navigate(`/${networkName}/runtime/${e.target.value}`)}>
+				<Select value={specVersion} onChange={e => navigate(`/${network.name}/runtime/${e.target.value}`)}>
 					{runtimeVersions.data?.map(version =>
 						<MenuItem key={version} value={version}>
 							{version}
@@ -102,6 +101,4 @@ function RuntimePage() {
 			</Card>
 		</>
 	);
-}
-
-export default RuntimePage;
+};

@@ -1,24 +1,25 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
-import { Navigate, useParams, useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { css } from "@emotion/react";
 import { isHex } from "@polkadot/util";
 import { isAddress } from "@polkadot/util-crypto";
+
+import { Card, CardHeader } from "../components/Card";
+import { ErrorMessage } from "../components/ErrorMessage";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import EventsTable from "../components/events/EventsTable";
+import Loading from "../components/Loading";
+import NotFound from "../components/NotFound";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
 
 import { useAccount } from "../hooks/useAccount";
 import { useBlock } from "../hooks/useBlock";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useExtrinsicsByName } from "../hooks/useExtrinsicsByName";
 import { useEventsByName } from "../hooks/useEventsByName";
-
-import { Card, CardHeader } from "../components/Card";
-import { ErrorMessage } from "../components/ErrorMessage";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import EventsTable from "../components/events/EventsTable";
-import { TabbedContent, TabPane } from "../components/TabbedContent";
-import NotFound from "../components/NotFound";
-import Loading from "../components/Loading";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -38,12 +39,8 @@ const loadingStyle = css`
 	word-break: break-all;
 `;
 
-type SearchPageParams = {
-	network: string;
-};
-
-function SearchPage() {
-	const { network } = useParams() as SearchPageParams;
+export const SearchPage = () => {
+	const { network } = useRootLoaderData();
 
 	const [qs] = useSearchParams();
 	const query = qs.get("query") || "";
@@ -55,20 +52,20 @@ function SearchPage() {
 	const maybeAddress = isAddress(query);
 	const maybeName = query && !maybeHash && !maybeHeight;
 
-	const extrinsicByHash = useExtrinsic(network, { hash_eq: query }, { skip: !maybeHash });
-	const blockByHash = useBlock(network, { hash_eq: query }, { skip: !maybeHash });
+	const extrinsicByHash = useExtrinsic(network.name, { hash_eq: query }, { skip: !maybeHash });
+	const blockByHash = useBlock(network.name, { hash_eq: query }, { skip: !maybeHash });
 
-	const account = useAccount(network, query, {
+	const account = useAccount(network.name, query, {
 		// extrinsic and block has precedence before account because the hashes may collide
 		// so wait until they are resolved and we know it is not extrinsic or hash
 		skip: !maybeAddress || extrinsicByHash.error || blockByHash.error,
 		waitUntil: extrinsicByHash.loading || blockByHash.loading
 	});
 
-	const blockByHeight = useBlock(network, { height_eq: parseInt(query) }, { skip: !maybeHeight });
+	const blockByHeight = useBlock(network.name, { height_eq: parseInt(query) }, { skip: !maybeHeight });
 
-	const extrinsicsByName = useExtrinsicsByName(network, query, "id_DESC", { skip: !maybeName });
-	const eventsByName = useEventsByName(network, query, "id_DESC", { skip: !maybeName });
+	const extrinsicsByName = useExtrinsicsByName(network.name, query, "id_DESC", { skip: !maybeName });
+	const eventsByName = useEventsByName(network.name, query, "id_DESC", { skip: !maybeName });
 
 	const allResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
 	const multipleResultsResources = [extrinsicsByName, eventsByName];
@@ -150,7 +147,7 @@ function SearchPage() {
 						error={extrinsicsByName.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network} extrinsics={extrinsicsByName} showAccount showTime />
+						<ExtrinsicsTable network={network.name} extrinsics={extrinsicsByName} showAccount showTime />
 					</TabPane>
 				}
 				{!eventsByName.notFound &&
@@ -161,12 +158,10 @@ function SearchPage() {
 						error={eventsByName.error}
 						value="events"
 					>
-						<EventsTable network={network} events={eventsByName} showExtrinsic />
+						<EventsTable network={network.name} events={eventsByName} showExtrinsic />
 					</TabPane>
 				}
 			</TabbedContent>
 		</Card>
 	);
-}
-
-export default SearchPage;
+};

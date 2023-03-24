@@ -24,6 +24,7 @@ import { useUsdRates } from "../hooks/useUsdRates";
 import { hasSupport } from "../services/networksService";
 import TransfersTable from "../components/transfers/TransfersTable";
 import { useTransfers } from "../hooks/useTransfers";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
 const avatarStyle = css`
 	vertical-align: text-bottom;
@@ -47,19 +48,19 @@ const portfolioInfoIconStyle = css`
 	margin-left: 4px;
 `;
 
-type AccountPageParams = {
-	network: string;
+export type AccountPageParams = {
 	address: string;
 };
 
-function AccountPage() {
-	const { network, address } = useParams() as AccountPageParams;
+export const AccountPage = () => {
+	const { network } = useRootLoaderData();
+	const { address } = useParams() as AccountPageParams;
 
-	const account = useAccount(network, address);
+	const account = useAccount(network.name, address);
 	const balances = useAccountBalances(address);
-	const extrinsics = useExtrinsics(network, { signerPublicKey_eq: address });
-	const calls = useCalls(network, { callerPublicKey_eq: address });
-	const transfers = useTransfers(network, { account: { publicKey_eq: address}});
+	const extrinsics = useExtrinsics(network.name, { signerPublicKey_eq: address });
+	const calls = useCalls(network.name, { callerPublicKey_eq: address });
+	const transfers = useTransfers(network.name, { account: { publicKey_eq: address}});
 
 	const usdRates = useUsdRates();
 
@@ -83,7 +84,7 @@ function AccountPage() {
 						Account {address}
 					</CardHeader>
 					<AccountInfoTable
-						network={network}
+						network={network.name}
 						account={account}
 					/>
 				</Card>
@@ -124,9 +125,9 @@ function AccountPage() {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
+							<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showTime />
 						</TabPane>
-						{hasSupport(network, "explorer-squid") &&
+						{hasSupport(network.name, "explorer-squid") &&
 							<TabPane
 								label="Calls"
 								count={calls.pagination.totalCount}
@@ -134,10 +135,10 @@ function AccountPage() {
 								error={calls.error}
 								value="calls"
 							>
-								<CallsTable network={network} calls={calls} />
+								<CallsTable network={network.name} calls={calls} />
 							</TabPane>
 						}
-						{hasSupport(network, "main-squid") &&
+						{hasSupport(network.name, "main-squid") &&
 							<TabPane
 								label="Transfers"
 								count={transfers.pagination.totalCount}
@@ -145,7 +146,7 @@ function AccountPage() {
 								error={transfers.error}
 								value="transfers"
 							>
-								<TransfersTable network={network} transfers={transfers} showTime />
+								<TransfersTable network={network.name} transfers={transfers} showTime />
 							</TabPane>
 						}
 					</TabbedContent>
@@ -153,7 +154,4 @@ function AccountPage() {
 			}
 		</>
 	);
-}
-
-export default AccountPage;
-
+};

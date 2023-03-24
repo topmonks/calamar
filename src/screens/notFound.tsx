@@ -1,6 +1,6 @@
 import { Card, CardHeader } from "../components/Card";
 
-function NotFoundPage() {
+export const NotFoundPage = () => {
 	return (
 		<>
 			<Card>
@@ -9,6 +9,4 @@ function NotFoundPage() {
 			</Card>
 		</>
 	);
-}
-
-export default NotFoundPage;
+};

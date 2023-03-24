@@ -1,17 +1,16 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useMemo, useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useLoaderData } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 
-import { getArchive, getNetwork } from "../services/networksService";
-import NotFoundPage from "../screens/notFound";
+import { Network } from "../model/network";
+
+import { NotFoundPage } from "../screens/notFound";
 
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
-import { Card } from "./Card";
 import { Footer } from "./Footer";
 
 const containerStyle = css`
@@ -119,25 +118,12 @@ const footerStyle = css`
 	}
 `;
 
-type ResultLayoutParams = {
-	network: string;
+export type ResultLayoutLoaderData = {
+	network?: Network;
 };
 
-function ResultLayout() {
-	const { network: networkParam } = useParams() as ResultLayoutParams;
-
-	const [network, setNetwork] = useState<string | undefined>();
-
-	const networkIsValid = useMemo(
-		() => Boolean(getNetwork(networkParam)),
-		[networkParam]
-	);
-
-	useEffect(() => {
-		if (networkIsValid) {
-			setNetwork(networkParam);
-		}
-	}, [networkParam, networkIsValid]);
+export const ResultLayout = () => {
+	const {network} = useLoaderData() as ResultLayoutLoaderData;
 
 	return (
 		<div css={containerStyle}>
@@ -149,20 +135,18 @@ function ResultLayout() {
 						</Link>
 					</div>
 					<div css={topBarRowStyle}>
-						<SearchInput css={searchInputStyle} defaultNetwork={network} key={network} />
+						<SearchInput css={searchInputStyle} defaultNetwork={network?.name} key={network?.name} />
 					</div>
 				</div>
 			</div>
 			<div css={contentStyle}>
 				<div css={backgroundStyle} data-test="background" />
 				<div css={contentInnerStyle}>
-					{networkIsValid && <Outlet />}
-					{!networkIsValid && <NotFoundPage />}
+					{network && <Outlet />}
+					{!network && <NotFoundPage />}
 				</div>
 			</div>
 			<Footer css={footerStyle} />
 		</div>
 	);
-}
-
-export default ResultLayout;
+};
