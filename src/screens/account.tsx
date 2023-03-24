@@ -25,8 +25,6 @@ import { hasSupport } from "../services/networksService";
 import TransfersTable from "../components/transfers/TransfersTable";
 import { useTransfers } from "../hooks/useTransfers";
 
-import { shortenHash } from "../utils/shortenHash";
-
 const avatarStyle = css`
 	vertical-align: text-bottom;
 	margin-right: 8px;
@@ -82,7 +80,7 @@ function AccountPage() {
 						{account.data &&
 							<AccountAvatar address={address} size={32} css={avatarStyle} />
 						}
-						Account #{shortenHash(address)}
+						Account {address}
 					</CardHeader>
 					<AccountInfoTable
 						network={network}
