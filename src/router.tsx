@@ -1,7 +1,8 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter, redirect } from "react-router-dom";
 
 import { ResultLayout } from "./components/ResultLayout";
 import { getNetwork } from "./services/networksService";
+import { encodeAddress } from "./utils/formatAddress";
 
 import { AccountPage } from "./screens/account";
 import { BlockPage } from "./screens/block";
@@ -54,6 +55,21 @@ export const router = createBrowserRouter([
 			{
 				path: "account/:address",
 				element: <AccountPage />,
+				loader: ({ params }) => {
+					const { network: networkName, address } = params;
+					const network = networkName ? getNetwork(networkName) : undefined;
+
+					if (!network || !address) {
+						return null;
+					}
+
+					const encodedAddress = encodeAddress(address, network.prefix);
+					if (address !== encodedAddress) {
+						return redirect(`/${network.name}/account/${encodedAddress}`);
+					}
+
+					return null;
+				}
 			},
 			{
 				path: "event/:id",
