@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect } from "react";
-import { ListItemIcon, ListItemText, MenuItem, Select, SelectProps } from "@mui/material";
+import { Divider, ListItemIcon, ListItemText, ListSubheader, MenuItem, Select, SelectProps } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { useNetworks } from "../../hooks/useNetworks";
+import { useNetworkGroups } from "../../hooks/useNetworkGroups";
 
 const selectStyle = css`
 	&.MuiInputBase-root {
@@ -42,13 +43,15 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 
 	const networks = useNetworks();
 
+	const networkGroups = useNetworkGroups();
+
 	useEffect(() => {
 		const network = networks.find((it) => it.name === value);
 
 		if (!network && onChange && networks.length > 0) {
-			onChange(networks[0]!.name, false);
+			onChange(networkGroups[0]!.networks[0]!.name, false);
 		}
-	}, [value, onChange, networks]);
+	}, [value, onChange, networkGroups]);
 
 	const handleNetworkChange = useCallback(
 		(e: any) => {
@@ -64,17 +67,24 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 			value={value || ""}
 			css={selectStyle}
 		>
-			{networks.map((network) => (
-				<MenuItem key={network.name} value={network.name}>
-					<ListItemIcon>
-						<img
-							src={network.icon}
-							css={iconStyle}
-						/>
-					</ListItemIcon>
-					<ListItemText>{network.displayName}</ListItemText>
-				</MenuItem>
-			))}
+			{networkGroups.map((group, index) => [
+				index > 0 && <Divider />,
+				<ListSubheader>
+					{group.relayChainNetwork?.displayName || "Other"}
+					{group.relayChainNetwork && <span> and parachains</span>}
+				</ListSubheader>,
+				...group.networks.map((network) => (
+					<MenuItem key={network.name} value={network.name}>
+						<ListItemIcon>
+							<img
+								src={network.icon}
+								css={iconStyle}
+							/>
+						</ListItemIcon>
+						<ListItemText>{network.displayName}</ListItemText>
+					</MenuItem>
+				))
+			])}
 		</Select>
 	);
 };

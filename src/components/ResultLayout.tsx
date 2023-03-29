@@ -26,12 +26,26 @@ const backgroundStyle = css`
 	left: 0;
 	margin: 0;
 	width: 100%;
-	height: 100vh;
-	background-position: center bottom;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-image: url(${Background});
+	height: 100%;
 	z-index: -1;
+
+	background-color: #def9fb;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		min-height: 1080px;
+		max-height: 1200px;
+		background-color: white;
+		background-position: center bottom;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-image: url(${Background});
+	}
 `;
 
 const topBarStyle = (theme: Theme) => css`
@@ -127,6 +141,7 @@ export const ResultLayout = () => {
 
 	return (
 		<div css={containerStyle}>
+			<div css={backgroundStyle} data-test="background" />
 			<div css={topBarStyle} data-test="top-bar">
 				<div css={topBarContentStyle}>
 					<div css={topBarRowStyle}>
@@ -140,7 +155,6 @@ export const ResultLayout = () => {
 				</div>
 			</div>
 			<div css={contentStyle}>
-				<div css={backgroundStyle} data-test="background" />
 				<div css={contentInnerStyle}>
 					{network && <Outlet />}
 					{!network && <NotFoundPage />}
