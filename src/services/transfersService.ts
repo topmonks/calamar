@@ -5,13 +5,14 @@ import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
 
 import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { decodeAddress } from "../utils/formatAddress";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchMainSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
 
 export type TransfersFilter =
-	{ account: { publicKey_eq: string } };
+	{ accountAddress_eq: string };
 
 export type TransfersOrder = string | string[];
 
@@ -84,7 +85,7 @@ async function getMainSquidTransfers(
 		{
 			first: pagination.limit,
 			after,
-			filter,
+			filter: transfersFilterToMainSquidFilter(filter),
 			order,
 		}
 	);
@@ -145,4 +146,20 @@ function unifyMainSquidTransfer(transfer: MainSquidTransfer): Omit<Transfer, "ru
 	};
 }
 
+function transfersFilterToMainSquidFilter(filter?: TransfersFilter) {
+	if (!filter) {
+		return undefined;
+	}
 
+	if ("accountAddress_eq" in filter) {
+		const publicKey = decodeAddress(filter.accountAddress_eq);
+
+		return {
+			account: {
+				publicKey_eq: publicKey
+			}
+		};
+	}
+
+	return filter;
+}
