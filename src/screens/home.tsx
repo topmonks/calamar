@@ -58,11 +58,16 @@ const logoStyle = css`
 	max-width: 100%;
 `;
 
-const subtitleStyle = css`
+const subtitleStyle = (theme: Theme) => css`
 	position: relative;
 	top: -100px;
+	padding: 0 16px;
 	font-size: 16px;
 	text-align: center;
+
+	${theme.breakpoints.down("sm")} {
+		top: -70px;
+	}
 `;
 
 const searchBoxStyle = css`
@@ -95,16 +100,18 @@ const searchInputStyle = (theme: Theme) => css`
 
 const networksStyle = css`
 	box-sizing: border-box;
-	max-width: 1000px;
+	max-width: 1032px;
 	margin: 0 auto;
 	margin-top: 64px;
 	margin-bottom: 48px;
+	padding: 0 16px;
 `;
 
 const networksGroupStyle = (theme: Theme) => css`
 	margin: 24px 0;
+	padding: 16px;
 	display: grid;
-	grid-template-columns: repeat(5, 1fr);
+	grid-template-columns: repeat(auto-fill, minmax(180px, auto));
 	gap: 16px;
 
 	${theme.breakpoints.up("md")} {
