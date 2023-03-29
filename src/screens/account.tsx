@@ -58,9 +58,9 @@ export const AccountPage = () => {
 
 	const account = useAccount(network.name, address);
 	const balances = useAccountBalances(address);
-	const extrinsics = useExtrinsics(network.name, { signerPublicKey_eq: address });
-	const calls = useCalls(network.name, { callerPublicKey_eq: address });
-	const transfers = useTransfers(network.name, { account: { publicKey_eq: address}});
+	const extrinsics = useExtrinsics(network.name, { signerAddress_eq: address });
+	const calls = useCalls(network.name, { callerAddress_eq: address });
+	const transfers = useTransfers(network.name, { accountAddress_eq: address });
 
 	const usdRates = useUsdRates();
 

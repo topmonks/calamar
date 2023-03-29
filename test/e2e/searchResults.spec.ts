@@ -22,12 +22,12 @@ test.describe("Search results page", () => {
 
 	test("redirects to account if found by public key", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/kusama/search?query=0x701edf7baf18532d871b65666416404861faab1d1fcca9241efba6d8cf5f4509", {waitUntil: "data-loaded"});
-		await page.waitForURL(/\/kusama\/account\/0x701edf7baf18532d871b65666416404861faab1d1fcca9241efba6d8cf5f4509/);
+		await page.waitForURL(/\/kusama\/account\/F7L3yPqrmHtDQd1Ry4w6pXL7Fxpoa1G6VWLSNGa9RwQKNWJ/);
 	});
 
 	test("redirects to account if found by encoded address", async ({ page, takeScreenshot }) => {
 		await navigate(page, "/kusama/search?query=F7L3yPqrmHtDQd1Ry4w6pXL7Fxpoa1G6VWLSNGa9RwQKNWJ", {waitUntil: "data-loaded"});
-		await page.waitForURL(/\/kusama\/account\/0x701edf7baf18532d871b65666416404861faab1d1fcca9241efba6d8cf5f4509/);
+		await page.waitForURL(/\/kusama\/account\/F7L3yPqrmHtDQd1Ry4w6pXL7Fxpoa1G6VWLSNGa9RwQKNWJ/);
 	});
 
 	test("shows found extrinsics by name", async ({ page, takeScreenshot }) => {
@@ -68,7 +68,7 @@ test.describe("Search results page", () => {
 
 	test("shows not found message if nothing was found by hash", async ({ page, takeScreenshot }) => {
 		const query = "0x123456789";
-		
+
 		await navigate(page, `/kusama/search?query=${query}`, {waitUntil: "data-loaded"});
 
 		const errorMessage = page.getByTestId("not-found");

@@ -6,6 +6,7 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { decodeAddress } from "../utils/formatAddress";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
@@ -15,7 +16,7 @@ export type CallsFilter =
 	{ id_eq: string; }
 	| { blockId_eq: string; }
 	| { extrinsicId_eq: string; }
-	| { callerPublicKey_eq: string; };
+	| { callerAddress_eq: string; };
 
 export type CallsOrder = string | string[];
 
@@ -311,7 +312,7 @@ function callsFilterToArchiveFilter(filter?: CallsFilter) {
 				id_eq: filter.extrinsicId_eq
 			}
 		};
-	} else if ("callerPublicKey_eq" in filter) {
+	} else if ("callerAddress_eq" in filter) {
 		throw new Error("Filtering by caller public key in archive not implemented");
 	}
 
@@ -335,6 +336,12 @@ function callsFilterToExplorerSquidFilter(filter?: CallsFilter) {
 			extrinsic: {
 				id_eq: filter.extrinsicId_eq
 			}
+		};
+	} else if ("callerAddress_eq" in filter) {
+		const publicKey = decodeAddress(filter.callerAddress_eq);
+
+		return {
+			callerPublicKey_eq: publicKey
 		};
 	}
 
