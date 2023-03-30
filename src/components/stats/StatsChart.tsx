@@ -3,92 +3,15 @@ import { HTMLAttributes, useMemo } from "react";
 import { Resource } from "../../model/resource";
 import { Stats } from "../../model/stats";
 import { PieChart, PieChartOptions } from "../PieChart";
-import { css, Theme, useTheme } from "@emotion/react";
+import { useTheme } from "@emotion/react";
 import { useMediaQuery } from "@mui/material";
 import { CallbackDataParams } from "echarts/types/dist/shared";
 import { getNetwork } from "../../services/networksService";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { ErrorMessage } from "../ErrorMessage";
+import { chartStyle, notFoundStyle, separatorStyle, valuesStyle, valueStyle, valueTypeStyle } from "../ChartStyles";
 
-const valuesStyle = (theme: Theme) => css`
-	position: relative;
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	justify-content: space-around;
-
-	${theme.breakpoints.down("sm")} {
-		display: block;
-	}
-`;
-
-const valueStyle = (theme: Theme) => css`
-	min-width: 70px;
-
-	${theme.breakpoints.down("sm")} {
-		display: flex;
-		max-width: 230px;
-		margin: 0 auto;
-	}
-`;
-
-const valueTypeStyle = (theme: Theme) => css`
-	margin-bottom: 8px;
-	font-weight: 700;
-
-	${theme.breakpoints.down("sm")} {
-		flex: 1 1 auto;
-	}
-`;
-
-const separatorStyle = css`
-	display: block;
-	width: 1px;
-	flex: 0 0 auto;
-	background-color: rgba(0, 0, 0, .125);
-`;
-
-const notFoundStyle = css`
-	margin: 0 auto;
-	max-width: 300px;
-`;
-
-const chartStyle = (theme: Theme) => css`
-	width: 400px;
-	height: 230px;
-
-	${theme.breakpoints.down("sm")} {
-		width: 230px;
-		height: 270px;
-	}
-
-	.ECharts-tooltip {
-		[data-class=title] {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			margin-bottom: 8px;
-			font-weight: 600;
-			font-size: 15px;
-		}
-
-		[data-class=icon] {
-			height: 24px;
-			width: 24px;
-			object-fit: contain;
-		}
-
-		[data-class=value] {
-			font-size: 15px;
-		}
-
-		[data-class=usd-value] {
-			font-size: 14px;
-			opacity: .75;
-		}
-	}
-`;
 
 export type StatsChartProps = HTMLAttributes<HTMLDivElement> & {
 	stats: Resource<Stats>;

@@ -1,16 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
 import { Resource } from "../../model/resource";
 import { Stats } from "../../model/stats";
+import { notFoundStyle } from "../ChartStyles";
 import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { StatItem, StatsLayout } from "../StatsLayout";
-
-const notFoundStyle = css`
-	margin: 0 auto;
-	max-width: 300px;
-`;
 
 export type StatsInfoTableProps = {
 	stats: Resource<Stats>;

@@ -1,9 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-
 import { Card, CardHeader, CardRow } from "../components/Card";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
