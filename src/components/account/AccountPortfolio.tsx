@@ -10,7 +10,7 @@ import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { AccountPortfolioChartMode, AccountPortfolioChart } from "./AccountPortfolioChart";
-import { chartStyle, notFoundStyle, separatorStyle, switchStyle, valuesStyle, valueStyle, valueTypeStyle } from "../ChartStyles";
+import { chartMarginStyle, notFoundStyle, separatorStyle, switchStyle, valuesStyle, valueStyle, valueTypeStyle } from "../ChartStyles";
 
 export type AccountPortfolioProps = HTMLAttributes<HTMLDivElement> & {
 	balances: Resource<AccountBalance[]>;
@@ -76,7 +76,7 @@ export const AccountPortfolio = (props: AccountPortfolioProps) => {
 				<div css={separatorStyle} />
 			</div>
 			<AccountPortfolioChart
-				css={chartStyle}
+				css={chartMarginStyle}
 				balances={balances.data}
 				usdRates={usdRates.data}
 				mode={chartMode}

@@ -10,8 +10,7 @@ import { getNetwork } from "../../services/networksService";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { ErrorMessage } from "../ErrorMessage";
-import { chartStyle, notFoundStyle, separatorStyle, valuesStyle, valueStyle, valueTypeStyle } from "../ChartStyles";
-
+import { notFoundStyle, separatorStyle, valuesStyle, valueStyle, valueTypeStyle, chartStyle, chartMarginStyle } from "../ChartStyles";
 
 export type StatsChartProps = HTMLAttributes<HTMLDivElement> & {
 	stats: Resource<Stats>;
@@ -51,11 +50,7 @@ export const StatsChart = (props: StatsChartProps) => {
 
 
 	const options = useMemo<PieChartOptions>(() => {
-		if (totalData.length === 0) {
-			return {};
-		}
-
-		const thing: PieChartOptions = {
+		return {
 			tooltip: {
 				formatter: (params) => {
 					const { name, value } = params as CallbackDataParams;
@@ -89,7 +84,7 @@ export const StatsChart = (props: StatsChartProps) => {
 				]
 			},
 		};
-		return thing;
+
 	}, [totalData, isSmallScreen]);
 
 	if (stats.loading) {
@@ -127,12 +122,14 @@ export const StatsChart = (props: StatsChartProps) => {
 			</div>
 			<div css={separatorStyle} />
 		</div>
-		<PieChart
-			options={options}
-			css={chartStyle}
-			data-test={"stats-chart"}
-			{...divProps}
-		/>
+		<div css={chartMarginStyle}>
+			<PieChart
+				options={options}
+				css={chartStyle}
+				data-test={"stats-chart"}
+				{...divProps}
+			/>
+		</div>
 	</>
 	);
 };

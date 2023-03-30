@@ -63,7 +63,7 @@ export const separatorStyle = css`
 	background-color: rgba(0, 0, 0, .125);
 `;
 
-export const chartStyle = css`
+export const chartMarginStyle = css`
 	margin: 0 auto;
 	margin-top: 32px;
 `;
@@ -71,4 +71,40 @@ export const chartStyle = css`
 export const notFoundStyle = css`
 	margin: 0 auto;
 	max-width: 300px;
+`;
+
+export const chartStyle = (theme: Theme) => css`
+	width: 400px;
+	height: 230px;
+
+	${theme.breakpoints.down("sm")} {
+		width: 230px;
+		height: 270px;
+	}
+
+	.ECharts-tooltip {
+		[data-class=title] {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 8px;
+			font-weight: 600;
+			font-size: 15px;
+		}
+
+		[data-class=icon] {
+			height: 24px;
+			width: 24px;
+			object-fit: contain;
+		}
+
+		[data-class=value] {
+			font-size: 15px;
+		}
+
+		[data-class=usd-value] {
+			font-size: 14px;
+			opacity: .75;
+		}
+	}
 `;

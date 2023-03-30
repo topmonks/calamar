@@ -61,7 +61,7 @@ function ChainDashboardPage() {
 				{hasSupport(network, "stats-squid") &&
 					<Card>
 						<CardHeader>
-							{networkData?.displayName} Statistics
+							{networkData?.displayName} statistics
 						</CardHeader>
 						<StatsChart stats={stats} networkName={network} />
 					</Card>
