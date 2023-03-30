@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 
-import { Card, CardHeader } from "../components/Card";
+import { Card, CardHeader, CardRow } from "../components/Card";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -18,19 +18,18 @@ import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
 import { useStats } from "../hooks/useStats";
 import { StatsInfoTable } from "../components/stats/StatsInfoTable";
-import { StatsGraph } from "../components/stats/StatsGraphs";
-import styled from "@emotion/styled";
+import { StatsChart } from "../components/stats/StatsChart";
 import { useUsdRates } from "../hooks/useUsdRates";
+import { css, Tooltip } from "@mui/material";
+import { InfoOutlined } from "@mui/icons-material";
 
-const ChainDashboardLayout = styled.div`
-	display: flex;
-	flex-direction: row;
-
-	@media (max-width: 800px) {
-		flex-direction: column;
-	}
+const portfolioInfoIconStyle = css`
+	height: 30px;
+	font-size: 20px;
+	opacity: .5;
+	vertical-align: text-bottom;
+	margin-left: 4px;
 `;
-
 
 type ChainDashboardPageParams = {
 	network: string;
@@ -62,16 +61,22 @@ function ChainDashboardPage() {
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
-					{networkData?.displayName} dashboard
-				</CardHeader>
-
-				<ChainDashboardLayout>
+			<CardRow>
+				<Card>
+					<CardHeader>
+						{networkData?.displayName} dashboard
+					</CardHeader>
 					<StatsInfoTable stats={stats} />
-					<StatsGraph stats={stats} />
-				</ChainDashboardLayout>
-			</Card>
+				</Card>
+				<Card>
+					<CardHeader>
+						{networkData?.displayName} Statistics
+					</CardHeader>
+					<StatsChart stats={stats} networkName={network} />
+				</Card>
+			</CardRow>
+
+
 			<Card>
 				<TabbedContent>
 					<TabPane
@@ -95,26 +100,26 @@ function ChainDashboardPage() {
 
 
 					{hasSupport(network, "main-squid") &&
-							<TabPane
-								label="Transfers"
-								count={transfers.pagination.totalCount}
-								loading={transfers.loading}
-								error={transfers.error}
-								value="transfers"
-							>
-								<TransfersTable network={network} transfers={transfers} showTime />
-							</TabPane>
+						<TabPane
+							label="Transfers"
+							count={transfers.pagination.totalCount}
+							loading={transfers.loading}
+							error={transfers.error}
+							value="transfers"
+						>
+							<TransfersTable network={network} transfers={transfers} showTime />
+						</TabPane>
 					}
 					{hasSupport(network, "balances-squid") &&
-							<TabPane
-								label="Top holders"
-								count={topHolders.pagination.totalCount}
-								loading={topHolders.loading}
-								error={topHolders.error}
-								value="top-holders"
-							>
-								<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
-							</TabPane>
+						<TabPane
+							label="Top holders"
+							count={topHolders.pagination.totalCount}
+							loading={topHolders.loading}
+							error={topHolders.error}
+							value="top-holders"
+						>
+							<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
+						</TabPane>
 					}
 				</TabbedContent>
 			</Card>
