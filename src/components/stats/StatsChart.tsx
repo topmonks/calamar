@@ -174,7 +174,7 @@ export const StatsChart = (props: StatsChartProps) => {
 	}
 
 	if (stats.notFound) {
-		return <NotFound css={notFoundStyle}>No positive balances with conversion rate to USD found</NotFound>;
+		return <NotFound css={notFoundStyle}>Stats are currently unavailable for {networkName}.</NotFound>;
 	}
 
 	if (stats.error) {
