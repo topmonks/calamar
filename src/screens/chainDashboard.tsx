@@ -54,14 +54,18 @@ function ChainDashboardPage() {
 					<CardHeader>
 						{networkData?.displayName} dashboard
 					</CardHeader>
-					<StatsInfoTable stats={stats} />
+					{hasSupport(network, "stats-squid") &&
+						<StatsInfoTable stats={stats} />
+					}
 				</Card>
-				<Card>
-					<CardHeader>
-						{networkData?.displayName} Statistics
-					</CardHeader>
-					<StatsChart stats={stats} networkName={network} />
-				</Card>
+				{hasSupport(network, "stats-squid") &&
+					<Card>
+						<CardHeader>
+							{networkData?.displayName} Statistics
+						</CardHeader>
+						<StatsChart stats={stats} networkName={network} />
+					</Card>
+				}
 			</CardRow>
 
 

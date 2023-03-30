@@ -22,7 +22,7 @@ export const StatsInfoTable = (props: StatsInfoTableProps) => {
 	}
 
 	if (stats.notFound) {
-		return <NotFound css={notFoundStyle}>Stats are currently unavailable.</NotFound>;
+		return <NotFound css={notFoundStyle}>Stats not found.</NotFound>;
 	}
 
 	if (stats.error) {

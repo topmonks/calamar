@@ -97,7 +97,7 @@ export const StatsChart = (props: StatsChartProps) => {
 	}
 
 	if (stats.notFound) {
-		return <NotFound css={notFoundStyle}>Stats are currently unavailable for {networkName}.</NotFound>;
+		return <NotFound css={notFoundStyle}>Stats not found.</NotFound>;
 	}
 
 	if (stats.error) {
