@@ -1,10 +1,13 @@
 import { ItemsConnection } from "../model/itemsConnection";
+import { ItemsResponse } from "../model/itemsResponse";
 import { MainSquidTransfer } from "../model/mainSquidTransfer";
 import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
-import { addLatestRuntimeSpecs } from "../utils/addRuntimeSpec";
+
+import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { fetchMainSquid } from "./fetchService";
+
+import { fetchArchive, fetchMainSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
 
 export type TransfersFilter =
@@ -87,13 +90,48 @@ async function getMainSquidTransfers(
 	);
 
 	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer);
+	const itemsWithRuntimeSpec = await addRuntimeSpecs(network, items, () => "latest");
+	const transfers = await addExtrinsicsInfo(network, itemsWithRuntimeSpec);
 
-	const transfer = await addLatestRuntimeSpecs(network, items);
-
-	return transfer;
+	return transfers;
 }
 
-function unifyMainSquidTransfer(transfer: MainSquidTransfer): Omit<Transfer, "runtimeSpec"> {
+async function addExtrinsicsInfo(network: string, items: ItemsResponse<Omit<Transfer, "extrinsic">>) {
+	const extrinsicHashes = items.data.map((transfer) => transfer.extrinsicHash);
+
+	const extrinsicsInfoByHash = await getArchiveExtrinsicsInfo(network, extrinsicHashes);
+
+	return {
+		...items,
+		data: items.data.map(transfer => ({
+			...transfer,
+			extrinsic: extrinsicsInfoByHash[transfer.extrinsicHash]
+		}))
+	};
+}
+
+async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string[]) {
+	const response = await fetchArchive<{extrinsics: {id: string, hash: string}[]}>(
+		network,
+		`query($hashes: [String!], $limit: Int!) {
+			extrinsics(where: { hash_in: $hashes }, limit: $limit) {
+				id,
+				hash
+			}
+		}`,
+		{
+			hashes: extrinsicHashes,
+			limit: extrinsicHashes.length
+		}
+	);
+
+	return response.extrinsics.reduce((extrinsicInfoByHash, extrinsic) => {
+		extrinsicInfoByHash[extrinsic.hash] = extrinsic;
+		return extrinsicInfoByHash;
+	}, {} as Record<string, any>);
+}
+
+function unifyMainSquidTransfer(transfer: MainSquidTransfer): Omit<Transfer, "runtimeSpec"|"extrinsic"> {
 	return {
 		...transfer,
 		accountPublicKey: transfer.account.publicKey,

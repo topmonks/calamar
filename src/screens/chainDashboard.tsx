@@ -20,6 +20,7 @@ import { useStats } from "../hooks/useStats";
 import { StatsInfoTable } from "../components/stats/StatsInfoTable";
 import { StatsGraph } from "../components/stats/StatsGraphs";
 import styled from "@emotion/styled";
+import { useUsdRates } from "../hooks/useUsdRates";
 
 const ChainDashboardLayout = styled.div`
 	display: flex;
@@ -30,27 +31,28 @@ const ChainDashboardLayout = styled.div`
 	}
 `;
 
+
 type ChainDashboardPageParams = {
 	network: string;
 };
 
 function ChainDashboardPage() {
-    
 	const { network } = useParams() as ChainDashboardPageParams;
+
 	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
 	const blocks = useBlocks(network, undefined, "id_DESC");
 	const transfers = useTransfers(network, undefined, "id_DESC");
-	const topHolders = useBalances(network, undefined, "free_DESC");
+	const topHolders = useBalances(network, undefined, "total_DESC");
 
 	const stats = useStats(network, undefined);
 
-	console.log(stats.data);
+	const usdRates = useUsdRates();
 
-	useDOMEventTrigger("data-loaded", !extrinsics.loading);
+	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
 
 	const networks = useNetworks();
 	const networkData = networks.find((item) => item.name === network);
-    
+
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
@@ -81,7 +83,6 @@ function ChainDashboardPage() {
 					>
 						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
 					</TabPane>
-					{hasSupport(network, "explorer-squid") &&
 					<TabPane
 						label="Blocks"
 						count={blocks.pagination.totalCount}
@@ -91,7 +92,7 @@ function ChainDashboardPage() {
 					>
 						<BlocksTable network={network} blocks={blocks} showValidator showTime />
 					</TabPane>
-					}
+
 
 					{hasSupport(network, "main-squid") &&
 							<TabPane
@@ -112,7 +113,7 @@ function ChainDashboardPage() {
 								error={topHolders.error}
 								value="top-holders"
 							>
-								<BalancesTable network={network} balances={topHolders} />
+								<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
 							</TabPane>
 					}
 				</TabbedContent>

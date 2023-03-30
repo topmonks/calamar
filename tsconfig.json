@@ -23,6 +23,13 @@
     "noUncheckedIndexedAccess": true
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "scripts"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "target": "es2020",
+      "module": "CommonJS"
+    }
+  }
 }

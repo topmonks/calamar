@@ -1,8 +1,9 @@
-import { ArchiveBlock } from "../model/archiveBlock";
+import { ArchiveBlock } from "../model/archive/archiveBlock";
 import { Block } from "../model/block";
-import { ExplorerSquidBlock } from "../model/explorerSquidBlock";
+import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
+
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
@@ -34,15 +35,7 @@ export async function getBlocks(
 		return getExplorerSquidBlocks(network, filter, order, pagination);
 	}
 
-	return {
-		data: [],
-		pagination: {
-			offset: 0,
-			limit: 0,
-			hasNextPage: false,
-			totalCount: 0,
-		}
-	};
+	return getArchiveBlocks(network, filter, order, pagination);
 }
 
 /*** PRIVATE ***/
@@ -99,6 +92,54 @@ async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
 	return block;
 }
 
+async function getArchiveBlocks(
+	network: string,
+	filter: BlocksFilter | undefined,
+	order: BlocksOrder = "id_DESC",
+	pagination: PaginationOptions
+) {
+	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+
+	const response = await fetchArchive<{blocksConnection: ItemsConnection<ArchiveBlock>}>(
+		network,
+		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
+			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
+				edges {
+					node {
+						id
+						hash
+						height
+						timestamp
+						parentHash
+						validator
+						spec {
+							specVersion
+						}
+					}
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
+				}
+				${filter !== undefined ? "totalCount" : "" }
+			}
+		}`,
+		{
+			first: pagination.limit,
+			after,
+			filter: blocksFilterToArchiveFilter(filter),
+			order,
+		}
+	);
+
+	const data = extractConnectionItems(response.blocksConnection, pagination, unifyArchiveBlock);
+	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
+
+	return blocks;
+}
+
 async function getExplorerSquidBlocks(
 	network: string,
 	filter: BlocksFilter | undefined,
@@ -140,7 +181,7 @@ async function getExplorerSquidBlocks(
 	);
 
 	const data = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
-	
+
 	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
 
 	return blocks;

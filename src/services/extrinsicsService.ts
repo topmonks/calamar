@@ -1,5 +1,5 @@
-import { ArchiveExtrinsic } from "../model/archiveExtrinsic";
-import { ExplorerSquidExtrinsic } from "../model/explorerSquidExtrinsic";
+import { ArchiveExtrinsic } from "../model/archive/archiveExtrinsic";
+import { ExplorerSquidExtrinsic } from "../model/explorer-squid/explorerSquidExtrinsic";
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";

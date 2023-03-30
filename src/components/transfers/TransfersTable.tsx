@@ -38,11 +38,11 @@ function TransfersTable(props: TransfersTableProps) {
 			data-test="transfers-table"
 		>
 			<TransfersTableAttribute
-				label="ID"
+				label="Extrinsic"
 				render={(transfer) =>
-					<>
-						{transfer.id}
-					</>
+					<Link to={`/${network}/extrinsic/${transfer.extrinsic.id}`}>
+						{transfer.extrinsic.id}
+					</Link>
 				}
 			/>
 			<TransfersTableAttribute
@@ -53,6 +53,7 @@ function TransfersTable(props: TransfersTableProps) {
 						address={transfer.fromPublicKey}
 						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
+						copyToClipboard="small"
 					/>
 				}
 			/>
@@ -64,6 +65,7 @@ function TransfersTable(props: TransfersTableProps) {
 						address={transfer.toPublicKey}
 						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
+						copyToClipboard="small"
 					/>
 				}
 			/>
@@ -77,6 +79,7 @@ function TransfersTable(props: TransfersTableProps) {
 			/>
 			<TransfersTableAttribute
 				label="Success"
+				colCss={{width: 180}}
 				render={(transfer) =>
 					<Chip
 						variant="outlined"
@@ -88,6 +91,7 @@ function TransfersTable(props: TransfersTableProps) {
 			{showTime &&
 				<TransfersTableAttribute
 					label="Time"
+					colCss={{width: 200}}
 					render={(transfer) =>
 						<Time time={transfer.timestamp} fromNow tooltip utc />
 					}

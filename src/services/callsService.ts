@@ -1,8 +1,10 @@
-import { ArchiveCall } from "../model/archiveCall";
+import { ArchiveCall } from "../model/archive/archiveCall";
+import { ExplorerSquidCall } from "../model/explorer-squid/explorerSquidCall";
+
 import { Call } from "../model/call";
-import { ExplorerSquidCall } from "../model/explorerSquidCall";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
+
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 

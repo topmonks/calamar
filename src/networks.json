@@ -1,0 +1,665 @@
+[
+    {
+        "name": "acala",
+        "displayName": "Acala",
+        "icon": "/assets/network-icons/acala.svg",
+        "color": "#645aff",
+        "website": "https://acala.network/",
+        "parachainId": 2000,
+        "relayChain": "polkadot",
+        "prefix": 10,
+        "decimals": 12,
+        "symbol": "ACA",
+        "squids": {
+            "archive": "https://acala.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-acala/graphql",
+            "main": "https://squid.subsquid.io/gs-main-acala/graphql"
+        },
+        "coinGeckoId": "acala"
+    },
+    {
+        "name": "amplitude",
+        "displayName": "Amplitude",
+        "icon": "/assets/network-icons/amplitude.svg",
+        "color": "#5defa7",
+        "website": "https://pendulumchain.org/amplitude/",
+        "parachainId": 2124,
+        "relayChain": "kusama",
+        "prefix": 57,
+        "decimals": 12,
+        "symbol": "AMPE",
+        "squids": {
+            "archive": "https://amplitude.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "astar",
+        "displayName": "Astar Network",
+        "icon": "/assets/network-icons/astar.png",
+        "color": "#1b6dc1d9",
+        "website": "https://astar.network/",
+        "parachainId": 2006,
+        "relayChain": "polkadot",
+        "prefix": 5,
+        "decimals": 18,
+        "symbol": "ASTR",
+        "squids": {
+            "archive": "https://astar.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-astar/graphql",
+            "main": "https://squid.subsquid.io/gs-main-astar/graphql"
+        },
+        "coinGeckoId": "astar"
+    },
+    {
+        "name": "bajun",
+        "displayName": "Bajun Network",
+        "icon": "/assets/network-icons/bajun.png",
+        "color": "#161212",
+        "website": "https://ajuna.io/",
+        "parachainId": 2119,
+        "relayChain": "kusama",
+        "prefix": 1337,
+        "decimals": 12,
+        "symbol": "BAJU",
+        "squids": {
+            "archive": "https://bajun.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "ajuna-network"
+    },
+    {
+        "name": "bifrost",
+        "displayName": "Bifrost Kusama",
+        "icon": "/assets/network-icons/bifrost.svg",
+        "color": "#5a25f0",
+        "website": "https://bifrost.finance/",
+        "parachainId": 2001,
+        "relayChain": "kusama",
+        "prefix": 6,
+        "decimals": 12,
+        "symbol": "BNC",
+        "squids": {
+            "archive": "https://bifrost.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-bifrost/graphql",
+            "main": "https://squid.subsquid.io/gs-main-bifrost/graphql"
+        },
+        "coinGeckoId": "bifrost-native-coin"
+    },
+    {
+        "name": "calamari",
+        "displayName": "Calamari Network",
+        "icon": "/assets/network-icons/calamari.png",
+        "color": "#000000",
+        "website": "https://www.calamari.network/",
+        "parachainId": 2084,
+        "relayChain": "kusama",
+        "prefix": 78,
+        "decimals": 12,
+        "symbol": "KMA",
+        "squids": {
+            "archive": "https://calamari.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-calamari/graphql",
+            "main": "https://squid.subsquid.io/gs-main-calamari/graphql"
+        },
+        "coinGeckoId": "calamari-network"
+    },
+    {
+        "name": "crust",
+        "displayName": "Crust Network",
+        "icon": "/assets/network-icons/crust.svg",
+        "color": "#ff8812",
+        "website": "https://crust.network/",
+        "parachainId": 2008,
+        "relayChain": "polkadot",
+        "prefix": 66,
+        "decimals": 12,
+        "symbol": "CRU",
+        "squids": {
+            "archive": "https://crust.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "crust-network"
+    },
+    {
+        "name": "efinity",
+        "displayName": "Efinity",
+        "icon": "/assets/network-icons/efinity.svg",
+        "color": "#496ddb",
+        "website": "https://efinity.io/",
+        "parachainId": 2021,
+        "relayChain": "polkadot",
+        "prefix": 1110,
+        "decimals": 18,
+        "symbol": "EFI",
+        "squids": {
+            "archive": "https://efinity.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-efinity/graphql",
+            "main": "https://squid.subsquid.io/gs-main-efinity/graphql"
+        },
+        "coinGeckoId": "efinity"
+    },
+    {
+        "name": "equilibrium",
+        "displayName": "Equilibrium",
+        "icon": "/assets/network-icons/equilibrium.png",
+        "color": "#1792ff",
+        "website": "https://equilibrium.io/",
+        "prefix": 68,
+        "decimals": 9,
+        "symbol": "EQ",
+        "squids": {
+            "archive": "https://equilibrium.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "gemini-2a-testnet",
+        "displayName": "Gemini 2a Testnet",
+        "icon": "/assets/network-icons/gemini-2a-testnet.svg",
+        "color": "#562b8e",
+        "website": "https://subspace.network/",
+        "prefix": 2254,
+        "decimals": 18,
+        "symbol": "tSSC",
+        "squids": {
+            "archive": "https://gemini-2a-testnet.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "gmordie",
+        "displayName": "GM",
+        "icon": "/assets/network-icons/gmordie.png",
+        "color": "#f47b36",
+        "website": "https://gmordie.com/",
+        "parachainId": 2123,
+        "relayChain": "kusama",
+        "prefix": 7013,
+        "decimals": 12,
+        "symbol": "FREN",
+        "squids": {
+            "archive": "https://gmordie.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-gmordie/graphql",
+            "main": "https://squid.subsquid.io/gs-main-gmordie/graphql"
+        }
+    },
+    {
+        "name": "hydradx",
+        "displayName": "HydraDX",
+        "icon": "/assets/network-icons/hydradx.svg",
+        "color": "#f653a2",
+        "website": "https://hydradx.io/",
+        "parachainId": 2034,
+        "relayChain": "polkadot",
+        "prefix": 63,
+        "decimals": 12,
+        "symbol": "HDX",
+        "squids": {
+            "archive": "https://hydradx.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-hydradx/graphql",
+            "main": "https://squid.subsquid.io/gs-main-hydradx/graphql"
+        },
+        "coinGeckoId": "hydradx"
+    },
+    {
+        "name": "interlay",
+        "displayName": "Interlay",
+        "icon": "/assets/network-icons/interlay.svg",
+        "color": "#3e96ff",
+        "website": "https://interlay.io/",
+        "parachainId": 2032,
+        "relayChain": "polkadot",
+        "prefix": 2032,
+        "decimals": 10,
+        "symbol": "INTR",
+        "squids": {
+            "archive": "https://interlay.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-interlay/graphql",
+            "main": "https://squid.subsquid.io/gs-main-interlay/graphql"
+        },
+        "coinGeckoId": "interlay"
+    },
+    {
+        "name": "invarch-tinkernet",
+        "displayName": "InvArch Tinkernet",
+        "icon": "/assets/network-icons/invarch-tinkernet.svg",
+        "color": "#161616",
+        "website": "https://invarch.network/tinkernet/",
+        "parachainId": 2125,
+        "relayChain": "kusama",
+        "prefix": 117,
+        "decimals": 12,
+        "symbol": "TNKR",
+        "squids": {
+            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "joystream",
+        "displayName": "Joystream",
+        "icon": "/assets/network-icons/joystream.svg",
+        "color": "#4038ff",
+        "website": "https://joystream.org/",
+        "prefix": 126,
+        "decimals": 10,
+        "symbol": "JOY",
+        "squids": {
+            "archive": "https://joystream.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "karura",
+        "displayName": "Karura",
+        "icon": "/assets/network-icons/karura.svg",
+        "color": "#ff4c3b",
+        "website": "https://karura.network/",
+        "parachainId": 2000,
+        "relayChain": "kusama",
+        "prefix": 8,
+        "decimals": 12,
+        "symbol": "KAR",
+        "squids": {
+            "archive": "https://karura.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-karura/graphql",
+            "main": "https://squid.subsquid.io/gs-main-karura/graphql"
+        },
+        "coinGeckoId": "karura"
+    },
+    {
+        "name": "khala",
+        "displayName": "Khala Network",
+        "icon": "/assets/network-icons/khala.svg",
+        "color": "#03f3f3",
+        "website": "https://www.phala.network/khala/",
+        "parachainId": 2004,
+        "relayChain": "kusama",
+        "prefix": 30,
+        "decimals": 12,
+        "symbol": "PHA",
+        "squids": {
+            "archive": "https://khala.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-khala/graphql",
+            "main": "https://squid.subsquid.io/gs-main-khala/graphql"
+        },
+        "coinGeckoId": "pha"
+    },
+    {
+        "name": "kintsugi",
+        "displayName": "Kintsugi",
+        "icon": "/assets/network-icons/kintsugi.svg",
+        "color": "#1a0a2d",
+        "website": "https://kintsugi.interlay.io/",
+        "parachainId": 2092,
+        "relayChain": "kusama",
+        "prefix": 2092,
+        "decimals": 12,
+        "symbol": "KINT",
+        "squids": {
+            "archive": "https://kintsugi.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "kintsugi"
+    },
+    {
+        "name": "kusama",
+        "displayName": "Kusama",
+        "icon": "/assets/network-icons/kusama.svg",
+        "color": "#000000",
+        "website": "https://kusama.network/",
+        "parachainId": 0,
+        "relayChain": "kusama",
+        "prefix": 2,
+        "decimals": 12,
+        "symbol": "KSM",
+        "squids": {
+            "archive": "https://kusama.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/kusama-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+            "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
+            "stats": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql"
+        },
+        "coinGeckoId": "kusama"
+    },
+    {
+        "name": "litentry",
+        "displayName": "Litentry",
+        "icon": "/assets/network-icons/litentry.svg",
+        "color": "linear-gradient(45deg, #5cc27c 0%, #6de98f 100%)",
+        "website": "https://litentry.com/",
+        "parachainId": 2013,
+        "relayChain": "polkadot",
+        "prefix": 31,
+        "decimals": 12,
+        "symbol": "LIT",
+        "squids": {
+            "archive": "https://litentry.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "litentry"
+    },
+    {
+        "name": "litmus",
+        "displayName": "Litmus",
+        "icon": "/assets/network-icons/litmus.webp",
+        "color": "#6822fb",
+        "website": "https://kusama-crowdloan.litentry.com/",
+        "parachainId": 2106,
+        "relayChain": "kusama",
+        "prefix": 131,
+        "decimals": 12,
+        "symbol": "LIT",
+        "squids": {
+            "archive": "https://litmus.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "litentry"
+    },
+    {
+        "name": "moonbeam",
+        "displayName": "Moonbeam",
+        "icon": "/assets/network-icons/moonbeam.png",
+        "color": "#53cbc9",
+        "website": "https://moonbeam.network/",
+        "parachainId": 2004,
+        "relayChain": "polkadot",
+        "prefix": 1284,
+        "decimals": 18,
+        "symbol": "GLMR",
+        "squids": {
+            "archive": "https://moonbeam.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-moonbeam/graphql",
+            "main": "https://squid.subsquid.io/gs-main-moonbeam/graphql"
+        },
+        "coinGeckoId": "moonbeam"
+    },
+    {
+        "name": "moonriver",
+        "displayName": "Moonriver",
+        "icon": "/assets/network-icons/moonriver.png",
+        "color": "#0e132e",
+        "website": "https://moonbeam.network/",
+        "parachainId": 2023,
+        "relayChain": "kusama",
+        "prefix": 1285,
+        "decimals": 18,
+        "symbol": "MOVR",
+        "squids": {
+            "archive": "https://moonriver.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/moonriver-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-moonriver/graphql",
+            "main": "https://squid.subsquid.io/gs-main-moonriver/graphql"
+        },
+        "coinGeckoId": "moonriver"
+    },
+    {
+        "name": "opal",
+        "displayName": "Opal",
+        "icon": "/assets/network-icons/opal.png",
+        "color": "#3b9c9d",
+        "website": "https://docs.unique.network/unique-and-quartz-wiki/build/get-started/testnet-and-mainnet#opal-testnet",
+        "prefix": 42,
+        "decimals": 18,
+        "symbol": "OPL",
+        "squids": {
+            "archive": "https://archive.unique.network/opal/explorer/graphql"
+        }
+    },
+    {
+        "name": "peaq",
+        "displayName": "peaq",
+        "icon": "/assets/network-icons/peaq.svg",
+        "website": "https://peaq.network/",
+        "prefix": 1221,
+        "decimals": 18,
+        "symbol": "PEAQ",
+        "squids": {
+            "archive": "https://peaq.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "pendulum",
+        "displayName": "Pendulum",
+        "icon": "/assets/network-icons/pendulum.svg",
+        "website": "https://pendulumchain.org/",
+        "parachainId": 2094,
+        "relayChain": "polkadot",
+        "prefix": 56,
+        "decimals": 12,
+        "symbol": "PEN",
+        "squids": {
+            "archive": "https://pendulum.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "pendulum-chain"
+    },
+    {
+        "name": "phala",
+        "displayName": "Phala Network",
+        "icon": "/assets/network-icons/phala.svg",
+        "color": "#c6fa4c",
+        "website": "https://www.phala.network/",
+        "parachainId": 2035,
+        "relayChain": "polkadot",
+        "prefix": 30,
+        "decimals": 12,
+        "symbol": "PHA",
+        "squids": {
+            "archive": "https://phala.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-phala/graphql",
+            "main": "https://squid.subsquid.io/gs-main-phala/graphql"
+        },
+        "coinGeckoId": "pha"
+    },
+    {
+        "name": "polkadot",
+        "displayName": "Polkadot",
+        "icon": "/assets/network-icons/polkadot.svg",
+        "color": "#e6007a",
+        "website": "https://polkadot.network/",
+        "parachainId": 0,
+        "relayChain": "polkadot",
+        "prefix": 0,
+        "decimals": 10,
+        "symbol": "DOT",
+        "squids": {
+            "archive": "https://polkadot.explorer.subsquid.io/graphql",
+            "balances": "https://squid.subsquid.io/polkadot-balances/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+            "main": "https://squid.subsquid.io/gs-main-polkadot/graphql",
+            "stats": "https://squid.subsquid.io/chain-analytics-squid/v/polkadot-multi-parallel-2-0/graphql"
+        },
+        "coinGeckoId": "polkadot"
+    },
+    {
+        "name": "quartz",
+        "displayName": "Quartz",
+        "icon": "/assets/network-icons/quartz.png",
+        "color": "#ff4d6a",
+        "website": "https://unique.network/quartz/",
+        "parachainId": 2095,
+        "relayChain": "kusama",
+        "prefix": 255,
+        "decimals": 18,
+        "symbol": "QTZ",
+        "squids": {
+            "archive": "https://archive.unique.network/quartz/explorer/graphql"
+        },
+        "coinGeckoId": "quartz"
+    },
+    {
+        "name": "robonomics",
+        "displayName": "Robonomics",
+        "icon": "/assets/network-icons/robonomics.svg",
+        "color": "#2949d3",
+        "website": "https://robonomics.network/",
+        "parachainId": 2048,
+        "relayChain": "kusama",
+        "prefix": 32,
+        "decimals": 9,
+        "symbol": "XRT",
+        "squids": {
+            "archive": "https://robonomics.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "robonomics-network"
+    },
+    {
+        "name": "rococo",
+        "displayName": "Rococo",
+        "icon": "/assets/network-icons/rococo.svg",
+        "color": "#6f36dc",
+        "website": "https://polkadot.network/tag/rococo/",
+        "prefix": 42,
+        "decimals": 12,
+        "symbol": "ROC",
+        "squids": {
+            "archive": "https://rococo.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-rococo/graphql"
+        }
+    },
+    {
+        "name": "shibuya",
+        "displayName": "Shibuya Network",
+        "icon": "/assets/network-icons/shibuya.webp",
+        "website": "https://www.shibuya.xyz/",
+        "prefix": 5,
+        "decimals": 18,
+        "symbol": "SBY",
+        "squids": {
+            "archive": "https://shibuya.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-shibuya/graphql"
+        }
+    },
+    {
+        "name": "shiden",
+        "displayName": "Shiden Network",
+        "icon": "/assets/network-icons/shiden.webp",
+        "color": "#5923b2",
+        "website": "https://shiden.astar.network/",
+        "parachainId": 2007,
+        "relayChain": "kusama",
+        "prefix": 5,
+        "decimals": 18,
+        "symbol": "SDN",
+        "squids": {
+            "archive": "https://shiden.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-shiden/graphql",
+            "main": "https://squid.subsquid.io/gs-main-shiden/graphql"
+        },
+        "coinGeckoId": "shiden"
+    },
+    {
+        "name": "snow",
+        "displayName": "SNOW",
+        "icon": "/assets/network-icons/snow.svg",
+        "website": "https://icenetwork.io/snow/",
+        "parachainId": 2129,
+        "relayChain": "kusama",
+        "prefix": 2207,
+        "decimals": 18,
+        "symbol": "ICZ",
+        "squids": {
+            "archive": "https://snow.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "snow"
+    },
+    {
+        "name": "statemine",
+        "displayName": "Statemine",
+        "icon": "/assets/network-icons/statemine.png",
+        "color": "#113911",
+        "website": "https://www.parity.io/",
+        "parachainId": 1000,
+        "relayChain": "kusama",
+        "prefix": 2,
+        "decimals": 12,
+        "symbol": "KSM",
+        "squids": {
+            "archive": "https://statemine.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-statemine/graphql",
+            "main": "https://squid.subsquid.io/gs-main-statemine/graphql"
+        },
+        "coinGeckoId": "kusama"
+    },
+    {
+        "name": "statemint",
+        "displayName": "Statemint",
+        "icon": "/assets/network-icons/statemint.png",
+        "color": "#86e62a",
+        "website": "https://www.parity.io/",
+        "parachainId": 1000,
+        "relayChain": "polkadot",
+        "prefix": 0,
+        "decimals": 10,
+        "symbol": "DOT",
+        "squids": {
+            "archive": "https://statemint.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-statemint/graphql",
+            "main": "https://squid.subsquid.io/gs-main-statemint/graphql"
+        },
+        "coinGeckoId": "polkadot"
+    },
+    {
+        "name": "subsocial",
+        "displayName": "Subsocial",
+        "icon": "/assets/network-icons/subsocial.png",
+        "color": "#69058c",
+        "website": "http://subsocial.network/",
+        "prefix": 28,
+        "decimals": 10,
+        "symbol": "SUB",
+        "squids": {
+            "archive": "https://subsocial.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-subsocial/graphql",
+            "main": "https://squid.subsquid.io/gs-main-subsocial/graphql"
+        }
+    },
+    {
+        "name": "t0rn",
+        "displayName": "t0rn",
+        "icon": "/assets/network-icons/t0rn.png",
+        "color": "#212322",
+        "website": "https://t3rn.io/",
+        "parachainId": 3333,
+        "relayChain": "rococo",
+        "prefix": 42,
+        "decimals": 12,
+        "symbol": "T0RN",
+        "squids": {
+            "archive": "https://t0rn.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "unique",
+        "displayName": "Unique",
+        "icon": "/assets/network-icons/unique.png",
+        "color": "#40bcff",
+        "website": "https://unique.network/",
+        "parachainId": 2037,
+        "relayChain": "polkadot",
+        "prefix": 7391,
+        "decimals": 18,
+        "symbol": "UNQ",
+        "squids": {
+            "archive": "https://archive.unique.network/unique/explorer/graphql"
+        },
+        "coinGeckoId": "unique-network"
+    },
+    {
+        "name": "vara",
+        "displayName": "Vara",
+        "icon": "/assets/network-icons/vara.svg",
+        "color": "#32e37d",
+        "website": "https://vara-network.io/",
+        "prefix": 137,
+        "decimals": 12,
+        "symbol": "VARA",
+        "squids": {
+            "archive": "https://vara.explorer.subsquid.io/graphql"
+        }
+    },
+    {
+        "name": "xx-network",
+        "displayName": "xx network",
+        "icon": "/assets/network-icons/xx-network.svg",
+        "website": "https://xx.network/",
+        "prefix": 55,
+        "decimals": 9,
+        "symbol": "XX",
+        "squids": {
+            "archive": "https://xx-network.explorer.subsquid.io/graphql"
+        },
+        "coinGeckoId": "xxcoin"
+    }
+]

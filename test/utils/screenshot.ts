@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 
 const hideSelectors = [
 	".MuiTabs-indicator",
@@ -6,7 +6,7 @@ const hideSelectors = [
 	"[data-test=time]"
 ];
 
-export async function screenshot(page: Page, path: string) {
+export async function screenshot(page: Page, element: Locator|undefined, path: string) {
 	page.evaluate((hideSelectors) => {
 		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");
 		if (topBar) {
@@ -30,11 +30,9 @@ export async function screenshot(page: Page, path: string) {
 		}
 	}, hideSelectors);
 
-	const screenshot = await page.screenshot({
-		path,
-		fullPage: true,
-		animations: "disabled"
-	});
+	const screenshot = element
+		? await element.screenshot({path, animations: "disabled"})
+		: await page.screenshot({path, fullPage: true, animations: "disabled"});
 
 	page.evaluate((hideSelectors) => {
 		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");

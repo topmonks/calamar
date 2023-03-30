@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FetchOptions } from "../model/fetchOptions";
 import { Resource } from "../model/resource";
-import { GraphQLError } from "../utils/fetchGraphql";
+import { DataError } from "../utils/error";
 
 export function useResource<T = any, F extends any[] = any[]>(
 	fetchItem: (...args: F) => T|undefined|Promise<T|undefined>,
@@ -27,7 +27,7 @@ export function useResource<T = any, F extends any[] = any[]>(
 				const data = await fetchItem(...args);
 				setData(data);
 			} catch(e) {
-				if (e instanceof GraphQLError) {
+				if (e instanceof DataError) {
 					rollbar.error(e);
 					setError(e);
 				} else {

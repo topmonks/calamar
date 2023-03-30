@@ -45,7 +45,7 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 				label="Spec version"
 				render={(block) =>
 					<>{block.specVersion}</>
-                    
+
 				}
 			/>
 			{showValidator &&
@@ -58,6 +58,7 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 						address={block.validator}
 						prefix={block.runtimeSpec.metadata.ss58Prefix}
 						shorten
+						copyToClipboard="small"
 					/>
 				}
 			/>
