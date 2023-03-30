@@ -20,16 +20,6 @@ import { useStats } from "../hooks/useStats";
 import { StatsInfoTable } from "../components/stats/StatsInfoTable";
 import { StatsChart } from "../components/stats/StatsChart";
 import { useUsdRates } from "../hooks/useUsdRates";
-import { css, Tooltip } from "@mui/material";
-import { InfoOutlined } from "@mui/icons-material";
-
-const portfolioInfoIconStyle = css`
-	height: 30px;
-	font-size: 20px;
-	opacity: .5;
-	vertical-align: text-bottom;
-	margin-left: 4px;
-`;
 
 type ChainDashboardPageParams = {
 	network: string;
