@@ -7,7 +7,7 @@ export type MainSquidTransfer = {
 	transfer: {
 		blockNumber: number;
 		timestamp: string;
-		extrinsicHash: string;
+		extrinsicHash: string|null;
 		from: {
 			publicKey: string;
 		};

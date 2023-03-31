@@ -1,6 +1,6 @@
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsResponse } from "../model/itemsResponse";
-import { MainSquidTransfer } from "../model/mainSquidTransfer";
+import { MainSquidTransfer } from "../model/main-squid/mainSquidTransfer";
 import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
 
@@ -98,7 +98,7 @@ async function getMainSquidTransfers(
 }
 
 async function addExtrinsicsInfo(network: string, items: ItemsResponse<Omit<Transfer, "extrinsic">>) {
-	const extrinsicHashes = items.data.map((transfer) => transfer.extrinsicHash);
+	const extrinsicHashes = items.data.map((transfer) => transfer.extrinsicHash).filter(Boolean) as string[];
 
 	const extrinsicsInfoByHash = await getArchiveExtrinsicsInfo(network, extrinsicHashes);
 
@@ -106,7 +106,7 @@ async function addExtrinsicsInfo(network: string, items: ItemsResponse<Omit<Tran
 		...items,
 		data: items.data.map(transfer => ({
 			...transfer,
-			extrinsic: extrinsicsInfoByHash[transfer.extrinsicHash]
+			extrinsic: transfer.extrinsicHash ? extrinsicsInfoByHash[transfer.extrinsicHash] : null
 		}))
 	};
 }
