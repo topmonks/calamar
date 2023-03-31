@@ -6,7 +6,7 @@ export type Transfer = {
 	accountPublicKey: string;
 	blockNumber: number;
 	timestamp: string;
-	extrinsicHash: string;
+	extrinsicHash: string|null;
 	fromPublicKey: string;
 	toPublicKey: string;
 	amount: number;
@@ -14,5 +14,5 @@ export type Transfer = {
 	runtimeSpec: RuntimeSpec;
 	extrinsic: {
 		id: string;
-	}
+	} | null;
 }
