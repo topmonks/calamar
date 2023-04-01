@@ -2,6 +2,10 @@ export type Network = {
 	name: string;
 	displayName: string;
 	icon: string|undefined;
+	color: string|undefined;
+	website: string|undefined;
+	parachainId: number|undefined;
+	relayChain: string|undefined;
 	prefix: number|undefined;
 	decimals: number|undefined;
 	symbol: string|undefined;
@@ -12,15 +16,17 @@ export type Network = {
 }
 
 export enum SourceType {
-	SS58_REGISTRY = "SS58_REGISTRY",
-	RPC = "RPC",
+	ARCHIVE_REGISTRY = "ARCHIVE_REGISTRY",
+	POLKADOT_JS = "POLKADOT_JS",
 	RUNTIME_SPEC = "RUNTIME_SPEC",
-	ARCHIVE_REGISTRY = "ARCHIVE_REGISTRY"
+	SS58_REGISTRY = "SS58_REGISTRY",
 }
+
+export type NetworkResolvableProps = Omit<Network, "name"|"displayName"|"squids"|"hasWarnings"|"hasErrors">;
 
 export type SourceData = {
 	type: SourceType;
-} & Partial<Pick<Network, "prefix"|"decimals"|"symbol">>;
+} & Partial<NetworkResolvableProps>;
 
 export type CoinGeckoCoin = {
 	id: string;

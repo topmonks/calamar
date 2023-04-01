@@ -1,3 +1,3 @@
 import Decimal from "decimal.js";
 
-export type USDRates = Record<string, Decimal>;
+export type UsdRates = Record<string, Decimal>;

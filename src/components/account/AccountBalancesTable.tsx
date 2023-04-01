@@ -10,7 +10,7 @@ import { SortDirection } from "../../model/sortDirection";
 import { SortOrder } from "../../model/sortOrder";
 import { SortProperty } from "../../model/sortProperty";
 import { Resource } from "../../model/resource";
-import { USDRates } from "../../model/usdRates";
+import { UsdRates } from "../../model/usdRates";
 import { compareProps } from "../../utils/compare";
 
 import { AccountAddress } from "../AccountAddress";
@@ -65,10 +65,10 @@ const SortProperties = {
 
 export type AccountBalanceOverview = {
 	balances: Resource<AccountBalance[]>;
-	usdRates: Resource<USDRates>;
+	usdRates: Resource<UsdRates>;
 }
 
-const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [USDRates]>;
+const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [UsdRates]>;
 
 export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 	const { balances, usdRates } = props;
@@ -170,11 +170,11 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							{balance.balanceSupported && !balance.error && balance.balance &&
 								<Currency
 									amount={balance.balance.total}
-									symbol={balance.network.symbol}
-									autoDecimalPlaces
+									currency={balance.network.symbol}
+									decimalPlaces="optimal"
 									usdRate={usdRates[balance.network.name]}
-									showUSDValue
 									showFullInTooltip
+									showUsdValue
 									data-test={`${balance.network.name}-balance-total`}
 								/>
 							}
@@ -203,11 +203,11 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					render={(balance, usdRates) => balance.balance &&
 						<Currency
 							amount={balance.balance.free}
-							symbol={balance.network.symbol}
-							autoDecimalPlaces
+							currency={balance.network.symbol}
+							decimalPlaces="optimal"
 							usdRate={usdRates[balance.network.name]}
-							showUSDValue
 							showFullInTooltip
+							showUsdValue
 							data-test={`${balance.network.name}-balance-free`}
 						/>
 					}
@@ -222,11 +222,11 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 					render={(balance, usdRates) => balance.balance &&
 						<Currency
 							amount={balance.balance.reserved}
-							symbol={balance.network.symbol}
-							autoDecimalPlaces
+							currency={balance.network.symbol}
+							decimalPlaces="optimal"
 							usdRate={usdRates[balance.network.name]}
-							showUSDValue
 							showFullInTooltip
+							showUsdValue
 							data-test={`${balance.network.name}-balance-reserved`}
 						/>
 					}

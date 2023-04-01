@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 
 import { FetchOptions } from "../model/fetchOptions";
-import { getUSDRates, getUSDRatesUpdatedAt, USD_RATES_REFRESH_RATE } from "../services/usdRatesService";
+import { getUsdRates, getUsdRatesUpdatedAt, USD_RATES_REFRESH_RATE } from "../services/usdRatesService";
 
 import { useResource } from "./useResource";
 
-export function useUSDRates(
+export function useUsdRates(
 	options?: FetchOptions
 ) {
-	const usdRates = useResource(getUSDRates, [], options);
+	const usdRates = useResource(getUsdRates, [], options);
 
 	useEffect(() => {
 		if (usdRates.data) {
-			const nextRefetchAt = getUSDRatesUpdatedAt() + USD_RATES_REFRESH_RATE;
+			const nextRefetchAt = getUsdRatesUpdatedAt() + USD_RATES_REFRESH_RATE;
 			const timeout = setTimeout(usdRates.refetch, Math.max(0, nextRefetchAt - Date.now()));
 			return () => clearTimeout(timeout);
 		}

@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import { Tooltip } from "@mui/material";
 import Decimal from "decimal.js";
 
-import { formatCurrency } from "../utils/number";
+import { formatCurrency, FormatCurrencyOptions } from "../utils/number";
 
 const wrapperStyle = css`
 	display: inline-block;
@@ -21,58 +21,42 @@ const usdValueStyle = css`
 
 export type CurrencyProps = HTMLAttributes<HTMLDivElement> & {
 	amount: Decimal;
-	symbol?: string;
-	autoDecimalPlaces?: boolean;
-	decimalPlaces?: number;
-	showFullInTooltip?: boolean;
+	currency: string;
+	decimalPlaces?: FormatCurrencyOptions["decimalPlaces"];
+	minimalUsdValue?: Decimal;
 	usdRate?: Decimal;
-	showUSDValue?: boolean;
+	showFullInTooltip?: boolean;
+	showUsdValue?: boolean;
 }
 
 export const Currency = (props: CurrencyProps) => {
-	const {amount, symbol, autoDecimalPlaces, decimalPlaces, showFullInTooltip, usdRate, showUSDValue, ...divProps} = props;
+	const {amount, currency, decimalPlaces, usdRate, minimalUsdValue, showFullInTooltip, showUsdValue, ...divProps} = props;
 
-	const usdValue = useMemo(() => usdRate && amount.mul(usdRate).toDecimalPlaces(2, Decimal.ROUND_HALF_UP), [amount, usdRate]);
+	const usdValue = useMemo(() => usdRate && amount.mul(usdRate), [amount, usdRate]);
 
-	const rounded = useMemo(() => {
-		let roundToDecimalPlaces = decimalPlaces;
+	let amountContent = (
+		<div css={amount.isZero() && zeroAmountStyle}>
+			{formatCurrency(amount, currency, {decimalPlaces, minimalUsdValue, usdRate})}
+		</div>
+	);
 
-		if (autoDecimalPlaces) {
-			if (usdRate) {
-				// if USD rate is specified, round to most significant decimal place of approx $0.01 value
-				const usdValueOfOneHundredth = new Decimal("0.01").div(usdRate);
-				const mostSignificantDecimalPlace = usdValueOfOneHundredth.log().neg().ceil().toNumber();
-				roundToDecimalPlaces = mostSignificantDecimalPlace;
-			}
-
-			// otherwise use default decimal places
-			if (symbol?.toUpperCase() === "USD") {
-				roundToDecimalPlaces = 2;
-			} else {
-				roundToDecimalPlaces = 4;
-			}
-		}
-
-		if (!roundToDecimalPlaces) {
-			return amount;
-		}
-
-		return amount.toDecimalPlaces(roundToDecimalPlaces, Decimal.ROUND_HALF_UP);
-	}, [amount, symbol, decimalPlaces, usdRate]);
-
-	return (
-		<div css={wrapperStyle} {...divProps}>
+	if (showFullInTooltip) {
+		amountContent = (
 			<Tooltip
 				arrow
 				placement="top"
-				title={formatCurrency(showFullInTooltip ? amount : rounded, symbol || "")}
+				title={formatCurrency(amount, currency)}
 			>
-				<div css={amount.isZero() && zeroAmountStyle}>
-					{formatCurrency(rounded, symbol || "")}
-				</div>
+				{amountContent}
 			</Tooltip>
-			{showUSDValue && usdValue && usdValue.greaterThan(0) &&
-				<div css={usdValueStyle}>{formatCurrency(usdValue, "USD")}</div>
+		);
+	}
+
+	return (
+		<div css={wrapperStyle} {...divProps}>
+			{amountContent}
+			{showUsdValue && usdValue && usdValue.greaterThan(0) &&
+				<div css={usdValueStyle}>{formatCurrency(usdValue, "USD", {decimalPlaces: "optimal"})}</div>
 			}
 		</div>
 	);

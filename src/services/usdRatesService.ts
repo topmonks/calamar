@@ -1,14 +1,14 @@
 import Decimal from "decimal.js";
-import { USDRates } from "../model/usdRates";
+import { UsdRates } from "../model/usdRates";
 import { rollbar } from "../rollbar";
 
 import { getNetworks } from "./networksService";
 
 export const USD_RATES_REFRESH_RATE = 60000; // 1 minute
 
-export async function getUSDRates() {
+export async function getUsdRates() {
 	await window.navigator.locks.request("usd-rates", async () => {
-		const usdRatesUpdatedAt = loadUSDRatesUpdatedAt();
+		const usdRatesUpdatedAt = loadUsdRatesUpdatedAt();
 		const coinGeckoWaitUntil = loadCoinGeckoWaitUntil();
 
 		const nextRefreshAt = Math.max(
@@ -21,9 +21,9 @@ export async function getUSDRates() {
 		}
 
 		try {
-			const usdRates = await fetchUSDRates();
-			storeUSDRates(usdRates);
-			storeUSDRatesUpdatedAt(Date.now());
+			const usdRates = await fetchUsdRates();
+			storeUsdRates(usdRates);
+			storeUsdRatesUpdatedAt(Date.now());
 		} catch(e: any) {
 			// probably rate limit exceeded, wait 2 minutes
 			storeCoinGeckoWaitUntil(Date.now() + 120000);
@@ -32,35 +32,35 @@ export async function getUSDRates() {
 		}
 	});
 
-	return loadUSDRates();
+	return loadUsdRates();
 }
 
-export function getUSDRatesUpdatedAt() {
-	return loadUSDRatesUpdatedAt();
+export function getUsdRatesUpdatedAt() {
+	return loadUsdRatesUpdatedAt();
 }
 
 /*** PRIVATE ***/
 
-function loadUSDRates() {
+function loadUsdRates() {
 	try {
 		return JSON.parse(
 			localStorage.getItem("usd-rates") || "{}",
 			(key, value) => key ? new Decimal(value) : value
-		) as USDRates;
+		) as UsdRates;
 	} catch(e) {
 		return {};
 	}
 }
 
-function storeUSDRates(usdRates: USDRates) {
+function storeUsdRates(usdRates: UsdRates) {
 	localStorage.setItem("usd-rates", JSON.stringify(usdRates));
 }
 
-function loadUSDRatesUpdatedAt() {
+function loadUsdRatesUpdatedAt() {
 	return parseInt(localStorage.getItem("usd-rates-updated-at") || "0");
 }
 
-function storeUSDRatesUpdatedAt(time: number) {
+function storeUsdRatesUpdatedAt(time: number) {
 	localStorage.setItem("usd-rates-updated-at", time.toString());
 }
 
@@ -72,8 +72,8 @@ function storeCoinGeckoWaitUntil(time: number) {
 	localStorage.setItem("coingecko-wait-until", time.toString());
 }
 
-async function fetchUSDRates() {
-	console.log("fetchUSDRates");
+async function fetchUsdRates() {
+	console.log("fetchUsdRates");
 	const networks = getNetworks().filter(it => it.coinGeckoId);
 	const coinGeckoIds = networks.map(it => it.coinGeckoId);
 
@@ -90,7 +90,7 @@ async function fetchUSDRates() {
 
 	const data = await response.json();
 
-	const usdRates: USDRates = {};
+	const usdRates: UsdRates = {};
 
 	for (const network of networks) {
 		if (network.coinGeckoId && data[network.coinGeckoId]?.usd) {

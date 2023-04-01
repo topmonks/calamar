@@ -1,7 +1,7 @@
 import { Balance } from "../../model/balance";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { Resource } from "../../model/resource";
-import { USDRates } from "../../model/usdRates";
+import { UsdRates } from "../../model/usdRates";
 import { getNetwork } from "../../services/networksService";
 import { decodeAddress } from "../../utils/formatAddress";
 import { AccountAddress } from "../AccountAddress";
@@ -12,10 +12,10 @@ import { Link } from "../Link";
 export type BalancesTableProps = {
 	network: string;
 	balances: PaginatedResource<Balance>;
-	usdRates: Resource<USDRates>;
+	usdRates: Resource<UsdRates>;
 };
 
-const BalancesItemsTableAttribute = ItemsTableAttribute<Balance, never, [USDRates]>;
+const BalancesItemsTableAttribute = ItemsTableAttribute<Balance, never, [UsdRates]>;
 
 function BalancesTable(props: BalancesTableProps) {
 	const { network, balances, usdRates } = props;
@@ -48,11 +48,11 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.total}
-						symbol={getNetwork(network)?.symbol}
-						autoDecimalPlaces
+						currency={getNetwork(network)!.symbol}
+						decimalPlaces="optimal"
 						usdRate={usdRates[network]}
-						showUSDValue
 						showFullInTooltip
+						showUsdValue
 					/>
 				}
 			/>
@@ -62,11 +62,11 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.free}
-						symbol={getNetwork(network)?.symbol}
-						autoDecimalPlaces
+						currency={getNetwork(network)!.symbol}
+						decimalPlaces="optimal"
 						usdRate={usdRates[network]}
-						showUSDValue
 						showFullInTooltip
+						showUsdValue
 					/>
 				}
 			/>
@@ -76,11 +76,11 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.reserved}
-						symbol={getNetwork(network)?.symbol}
-						autoDecimalPlaces
+						currency={getNetwork(network)!.symbol}
+						decimalPlaces="optimal"
 						usdRate={usdRates[network]}
-						showUSDValue
 						showFullInTooltip
+						showUsdValue
 					/>
 				}
 			/>

@@ -16,7 +16,7 @@ import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
 import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
-import { useUSDRates } from "../hooks/useUSDRates";
+import { useUsdRates } from "../hooks/useUsdRates";
 
 type ChainDashboardPageParams = {
 	network: string;
@@ -30,7 +30,7 @@ function ChainDashboardPage() {
 	const transfers = useTransfers(network, undefined, "id_DESC");
 	const topHolders = useBalances(network, undefined, "total_DESC");
 
-	const usdRates = useUSDRates();
+	const usdRates = useUsdRates();
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
 

@@ -1,6 +1,6 @@
 import * as ss58 from "@subsquid/ss58";
 
-import { ss58RegistryNetworkNames } from "../config";
+import { ss58RegistryNetworkNames } from "../config/ss58-registry";
 import { Network, SourceData, SourceType } from "../model";
 import { log } from "../utils/log";
 import { checkSourceData } from "../utils/source-data";
@@ -22,7 +22,7 @@ export function getSS58RegistryData(network: Network): SourceData {
 	data.decimals = registryEntry?.decimals[0];
 	data.symbol = registryEntry?.symbols[0];
 
-	checkSourceData(data);
+	checkSourceData(data, ["prefix", "decimals", "symbol"]);
 
 	return data;
 }

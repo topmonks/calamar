@@ -29,6 +29,10 @@ const cellStyle = css`
 	&:last-of-type {
 		padding-right: 0;
 	}
+
+	[data-class=card] > [data-class=table]:last-of-type tbody tr:last-of-type & {
+		padding-bottom: 0;
+	}
 `;
 
 type ItemsTableItem = {
@@ -121,7 +125,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 	}
 
 	return (
-		<div {...restProps}>
+		<div {...restProps} data-class="table">
 			<TableContainer>
 				<Table css={tableStyle}>
 					<colgroup>

@@ -1,13 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { css } from "@emotion/react";
+import { Tooltip } from "@mui/material";
+import { InfoOutlined } from "@mui/icons-material";
+import { css, Theme } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
 import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
+import { AccountPortfolio } from "../components/account/AccountPortfolio";
 import { CallsTable } from "../components/calls/CallsTable";
-import { Card, CardHeader } from "../components/Card";
+import { Card, CardHeader, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 
@@ -16,7 +19,7 @@ import { useAccountBalances } from "../hooks/useAccountBalances";
 import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { useUSDRates } from "../hooks/useUSDRates";
+import { useUsdRates } from "../hooks/useUsdRates";
 
 import { hasSupport } from "../services/networksService";
 import TransfersTable from "../components/transfers/TransfersTable";
@@ -25,6 +28,23 @@ import { useTransfers } from "../hooks/useTransfers";
 const avatarStyle = css`
 	vertical-align: text-bottom;
 	margin-right: 8px;
+`;
+
+const portfolioStyle = (theme: Theme) => css`
+	flex: 0 0 auto;
+	width: 400px;
+
+	${theme.breakpoints.down("lg")} {
+		width: auto;
+	}
+`;
+
+const portfolioInfoIconStyle = css`
+	height: 30px;
+	font-size: 20px;
+	opacity: .5;
+	vertical-align: text-bottom;
+	margin-left: 4px;
 `;
 
 type AccountPageParams = {
@@ -41,7 +61,7 @@ function AccountPage() {
 	const calls = useCalls(network, { callerPublicKey_eq: address });
 	const transfers = useTransfers(network, { account: { publicKey_eq: address}});
 
-	const usdRates = useUSDRates();
+	const usdRates = useUsdRates();
 
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
 
@@ -54,20 +74,39 @@ function AccountPage() {
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
-					{account.data &&
-						<AccountAvatar address={address} size={32} css={avatarStyle} />
-					}
-					Account #{address}
-				</CardHeader>
-				<AccountInfoTable
-					network={network}
-					account={account}
-				/>
-			</Card>
+			<CardRow>
+				<Card data-test="account-info">
+					<CardHeader>
+						{account.data &&
+							<AccountAvatar address={address} size={32} css={avatarStyle} />
+						}
+						Account {address}
+					</CardHeader>
+					<AccountInfoTable
+						network={network}
+						account={account}
+					/>
+				</Card>
+				<Card css={portfolioStyle} data-test="account-portfolio">
+					<CardHeader>
+						Portfolio
+						<Tooltip
+							arrow
+							placement="top"
+							enterTouchDelay={0}
+							title="Includes only supported networks with conversion rate to USD."
+						>
+							<InfoOutlined css={portfolioInfoIconStyle} />
+						</Tooltip>
+					</CardHeader>
+					<AccountPortfolio
+						balances={balances}
+						usdRates={usdRates}
+					/>
+				</Card>
+			</CardRow>
 			{account.data &&
-				<Card>
+				<Card data-test="account-related-items">
 					<TabbedContent>
 						<TabPane
 							label="Balances"

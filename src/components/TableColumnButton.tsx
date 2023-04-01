@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-
-import { ButtonLink, ButtonLinkProps } from "./ButtonLink";
+import { Button, ButtonProps } from "@mui/material";
 
 const buttonStyle = css`
 	position: relative;
@@ -33,21 +32,21 @@ const emptyTextStyle = css`
 	width: 0;
 `;
 
-export type TableColumnButtonProps = Omit<ButtonLinkProps, "startIcon"|"endIcon"> & {
-	icon: ButtonLinkProps["startIcon"]
+export type TableColumnButtonProps = Omit<ButtonProps, "startIcon"|"endIcon"> & {
+	icon: ButtonProps["startIcon"]
 }
 
 export const TableColumnButton = (props: TableColumnButtonProps) => {
 	const {icon, children, ...buttonProps} = props;
 
 	return (
-		<ButtonLink
+		<Button
 			size="small"
 			css={[buttonStyle, !children && iconOnlyStyle]}
 			startIcon={icon}
 			{...buttonProps}
 		>
 			{children || <span css={emptyTextStyle}>&nbsp;</span>}
-		</ButtonLink>
+		</Button>
 	);
 };
