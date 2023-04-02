@@ -4,6 +4,7 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
 import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
+import { decodeAddress } from "../utils/formatAddress";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
@@ -18,7 +19,7 @@ export type ExtrinsicsFilter =
 	| { blockId_eq: string; }
 	| { palletName_eq: string; }
 	| { palletName_eq: string, callName_eq: string; }
-	| { signerPublicKey_eq: string; };
+	| { signerAddress_eq: string; };
 
 export type ExtrinsicsOrder = string | string[];
 
@@ -376,11 +377,13 @@ function extrinsicFilterToArchiveFilter(filter?: ExtrinsicsFilter) {
 				id_eq: filter.blockId_eq
 			}
 		};
-	} else if ("signerPublicKey_eq" in filter) {
+	} else if ("signerAddress_eq" in filter) {
+		const publicKey = decodeAddress(filter.signerAddress_eq);
+
 		return {
 			OR: [
-				{ signature_jsonContains: `{"address": "${filter.signerPublicKey_eq}" }` },
-				{ signature_jsonContains: `{"address": { "value": "${filter.signerPublicKey_eq}"} }` },
+				{ signature_jsonContains: `{"address": "${publicKey}" }` },
+				{ signature_jsonContains: `{"address": { "value": "${publicKey}"} }` },
 			],
 		};
 	} else if ("palletName_eq" in filter) {
@@ -410,6 +413,12 @@ function extrinsicFilterToExplorerSquidFilter(filter?: ExtrinsicsFilter) {
 			block: {
 				id_eq: filter.blockId_eq
 			}
+		};
+	} else if ("signerAddress_eq" in filter) {
+		const publicKey = decodeAddress(filter.signerAddress_eq);
+
+		return {
+			signerPublicKey_eq: publicKey
 		};
 	} else if ("palletName_eq" in filter) {
 		return {

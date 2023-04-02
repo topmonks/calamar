@@ -80,7 +80,7 @@ const footerStyle = css`
 	}
 `;
 
-function HomePage() {
+export const HomePage = () => {
 	const [network, setNetwork] = useState<string | undefined>();
 
 	return (
@@ -104,6 +104,4 @@ function HomePage() {
 			<Footer css={footerStyle} />
 		</div>
 	);
-}
-
-export default HomePage;
+};

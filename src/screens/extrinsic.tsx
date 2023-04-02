@@ -11,18 +11,19 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
 type ExtrinsicPageParams = {
-	network: string;
 	id: string;
 };
 
-function ExtrinsicPage() {
-	const { network, id } = useParams() as ExtrinsicPageParams;
+export const ExtrinsicPage = () => {
+	const { network } = useRootLoaderData();
+	const { id } = useParams() as ExtrinsicPageParams;
 
-	const extrinsic = useExtrinsic(network, { id_eq: id });
-	const events = useEvents(network, { extrinsicId_eq: id }, "id_ASC");
-	const calls = useCalls(network, { extrinsicId_eq: id }, "id_ASC");
+	const extrinsic = useExtrinsic(network.name, { id_eq: id });
+	const events = useEvents(network.name, { extrinsicId_eq: id }, "id_ASC");
+	const calls = useCalls(network.name, { extrinsicId_eq: id }, "id_ASC");
 
 	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
 
@@ -34,7 +35,7 @@ function ExtrinsicPage() {
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
 				<ExtrinsicInfoTable
-					network={network}
+					network={network.name}
 					extrinsic={extrinsic}
 				/>
 			</Card>
@@ -49,7 +50,7 @@ function ExtrinsicPage() {
 							value="events"
 						>
 							<EventsTable
-								network={network}
+								network={network.name}
 								events={events}
 							/>
 						</TabPane>
@@ -60,13 +61,11 @@ function ExtrinsicPage() {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} showAccount />
+							<CallsTable network={network.name} calls={calls} showAccount />
 						</TabPane>
 					</TabbedContent>
 				</Card>
 			}
 		</>
 	);
-}
-
-export default ExtrinsicPage;
+};
