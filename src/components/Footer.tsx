@@ -7,7 +7,9 @@ import { HTMLAttributes } from "react";
 const footerStyle = css`
 	box-sizing: border-box;
 	width: 100%;
-	padding: 32px;
+	padding: 24px;
+	padding-top: 48px;
+	padding-bottom: 64px;
 `;
 
 const contentStyle = (theme: Theme) => css`

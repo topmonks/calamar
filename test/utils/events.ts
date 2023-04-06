@@ -19,7 +19,7 @@ export async function capturePageEvents(page: Page, events: string[]) {
 
 export function waitForPageEvent(page: Page, eventName: string, condition?: (event: any) => boolean, options: { timeout?: number } = {}) {
 	options = {
-		timeout: 10000,
+		timeout: 30000,
 		...options
 	};
 

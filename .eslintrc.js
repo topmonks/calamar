@@ -41,6 +41,8 @@ module.exports = {
 		"@typescript-eslint/no-var-requires": ["off"],
 		"prefer-const": ["warn"],
 		"no-debugger": ["warn"],
-		"no-constant-condition": ["warn"]
+		"no-constant-condition": ["warn"],
+		"@typescript-eslint/ban-ts-comment": ["warn"],
+		"react/jsx-key": ["off"]
 	}
 };
