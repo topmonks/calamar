@@ -10,19 +10,36 @@ import { Card } from "../components/Card";
 import { ButtonLink } from "../components/ButtonLink";
 import { useNetworkGroups } from "../hooks/useNetworkGroups";
 
-const containerStyle = css`
+const containerStyle = (theme: Theme) => css`
+	--content-min-height: 900px;
+
 	width: 100%;
-	height: 100vh;
-	min-height: 1080px;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+
+	${theme.breakpoints.up("sm")} {
+		--content-min-height: 1000px;
+	}
+
+	${theme.breakpoints.up("md")} {
+		--content-min-height: 1100px;
+	}
+
+	${theme.breakpoints.up("lg")} {
+		--content-min-height: 1200px;
+	}
+
+	${theme.breakpoints.up("xl")} {
+		--content-min-height: 1300px;
+	}
 `;
 
 const contentStyle = css`
 	position: relative;
 	flex: 1 1 auto;
+	min-height: var(--content-min-height);
 `;
 
 const backgroundStyle = css`
@@ -31,8 +48,8 @@ const backgroundStyle = css`
 	margin: 0;
 	width: 100%;
 	height: 100%;
+	min-height: 100vh;
 	z-index: -1;
-	background-color: #9af0f7;
 
 	&::before {
 		content: '';
@@ -40,14 +57,22 @@ const backgroundStyle = css`
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100vh;
-		min-height: 1080px;
-		max-height: 1200px;
+		height: var(--content-min-height);
 		background-color: white;
 		background-position: center bottom;
-		background-size: contain;
+		background-size: 100% auto;
 		background-repeat: no-repeat;
 		background-image: url(${Background});
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: var(--content-min-height);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #9af0f7;
 	}
 `;
 
@@ -167,10 +192,9 @@ const networkButtonStyle = css`
 
 const footerStyle = css`
 	flex: 0 0 auto;
-	background-color: #9af0f7;
 
 	> div {
-		max-width: 900px;
+		max-width: 1000px;
 	}
 `;
 
@@ -179,8 +203,8 @@ export const HomePage = () => {
 
 	return (
 		<div css={containerStyle}>
+			<div css={backgroundStyle} data-test="background" />
 			<div css={contentStyle}>
-				<div css={backgroundStyle} data-test="background" />
 				<Logo css={logoStyle} />
 				<div css={subtitleStyle}>Block explorer for Polkadot & Kusama ecosystem</div>
 				<div css={searchBoxStyle}>
