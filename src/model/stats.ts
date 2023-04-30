@@ -12,4 +12,6 @@ export type Stats = {
 	transfersCount: number;
 	validatorsCount: number;
 	validatorsIdealCount: number;
+	stakedValuePercentage: number;
+	circulatingValueTotal: number;
 }

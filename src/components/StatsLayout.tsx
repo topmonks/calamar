@@ -1,46 +1,33 @@
 /** @jsxImportSource @emotion/react */
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
-export const StatsLayout = styled.div`
-    display: grid;
-    width: 100%;
-    height: auto;
-
-    gap: 10px;
-
-    grid-template-columns: repeat(4, auto);
-
-    @media (max-width: 1300px) {
-        grid-template-columns: repeat(2, auto);
-	}
-
-`;
-
-const Stat = styled.div`
+const StatStyle = css`
     min-width: 100px;
     width: 100%;
     height: 64px;
     display: flex;
 `;
 
-const StatIcon = styled.img`
-    width: 64px;
-    height: 64px;
+const StatIconStyle = css`
+    width: 44px;
+    height: 44px;
     margin-right: 10px;
+    padding: 10px;
 `;
 
-const StatTitle = styled.div`
-    font-weight: 500;
+const StatTitleStyle = css`
+    font-weight: 900;
     margin-top: auto;
 `;
 
-const StatValue = styled.div`
+const StatValueStyle = css`
+    font-weight: 500;
     height: 32px;
-    font-weight: 900;
 `;
 
 export type StatItemProps = {
 	title: string;
+	icon?: string;
 	value?: string | number;
 };
 
@@ -48,15 +35,16 @@ export function StatItem (props: StatItemProps) {
 	const {
 		title,
 		value,
+		icon,
 	} = props;
     
 	return (
-		<Stat>
-			<StatIcon />
+		<div css={StatStyle}>
+			<img css={StatIconStyle} src={icon} />
 			<div style={{display: "flex", flexDirection: "column"}}>
-				<StatTitle>{title}</StatTitle>
-				<StatValue>{value}</StatValue>
+				<div css={StatTitleStyle}>{title}</div>
+				<div css={StatValueStyle}>{value}</div>
 			</div>
-		</Stat>
+		</div>
 	);
 }

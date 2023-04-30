@@ -5,7 +5,31 @@ import { notFoundStyle } from "../ChartStyles";
 import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
-import { StatItem, StatsLayout } from "../StatsLayout";
+import { StatItem } from "../StatsLayout";
+
+import Block from "../../assets/block.svg";
+import Signed from "../../assets/signed.svg";
+import Transfer from "../../assets/transfer.svg";
+import Holder from "../../assets/holder.svg";
+import Nominator from "../../assets/nominator.svg";
+import Stake from "../../assets/stake.svg";
+import Validator from "../../assets/validator.svg";
+import Token from "../../assets/token.svg";
+import { css } from "@emotion/react";
+
+const StatsLayoutStyle = css`
+    display: grid;
+    width: 100%;
+    height: auto;
+
+    gap: 10px;
+
+    grid-template-columns: repeat(4, auto);
+
+    @media (max-width: 1500px) {
+        grid-template-columns: repeat(2, auto);
+	}
+`;
 
 export type StatsInfoTableProps = {
 	stats: Resource<Stats>;
@@ -13,9 +37,6 @@ export type StatsInfoTableProps = {
 
 export const StatsInfoTable = (props: StatsInfoTableProps) => {
 	const { stats } = props;
-
-
-	const stakedValuePercentage =  stats.data?.totalIssuance ? (stats.data?.stakedValueTotal / stats.data?.totalIssuance * 100).toFixed(1) : 0;
 
 	if (stats.loading) {
 		return <Loading />;
@@ -40,15 +61,21 @@ export const StatsInfoTable = (props: StatsInfoTableProps) => {
 	}
 	
 	return (
-		<StatsLayout>
-			<StatItem title="Finalized blocks" value={stats.data?.finalizedBlocks} />
-			<StatItem title="Signed extrinsics" value={stats.data?.signedExtrinsics} />
-			<StatItem title="Transfers" value={stats.data?.transfersCount} />
-			<StatItem title="Holders" value={stats.data?.holders} />
-			<StatItem title="Total issuance" value={stats.data?.totalIssuance} />
-			<StatItem title="Staked value" value={`${stats.data?.stakedValueTotal} (${stakedValuePercentage}%)`} />
-			<StatItem title="Validators" value={`${stats.data?.validatorsCount}/${stats.data?.validatorsIdealCount}`} />
-			<StatItem title="Nomination pools" value={`${stats.data?.nominationPoolsCountPools}`} />
-		</StatsLayout>
+		<div css={StatsLayoutStyle}>
+			<StatItem title="Finalized blocks" value={stats.data?.finalizedBlocks} icon={Block} />
+			<StatItem title="Signed extrinsics" value={stats.data?.signedExtrinsics} icon={Signed} />
+			<StatItem title="Transfers" value={stats.data?.transfersCount} icon={Transfer} />
+			<StatItem title="Holders" value={stats.data?.holders} icon={Holder} />
+			<StatItem title="Total issuance" value={stats.data?.totalIssuance.toFixed(1)} icon={Token} />
+			<StatItem
+				title="Staked value"
+				value={`${stats.data?.stakedValueTotal.toFixed(1)} (${stats.data?.stakedValuePercentage.toFixed(1)}%)`}
+				icon={Stake} />
+			<StatItem
+				title="Validators"
+				value={`${stats.data?.validatorsCount}/${stats.data?.validatorsIdealCount}`}
+				icon={Validator} />
+			<StatItem title="Nomination pools" value={`${stats.data?.nominationPoolsCountPools}`} icon={Nominator} />
+		</div>
 	);
 };

@@ -33,7 +33,7 @@ export const StatsChart = (props: StatsChartProps) => {
 		return [
 			{
 				name: "Circulating",
-				value: (stats.data?.totalIssuance - stats.data?.stakedValueTotal),
+				value: (stats.data.circulatingValueTotal),
 				itemStyle: {
 					color: network?.color || theme.palette.primary.main,
 				}
@@ -113,12 +113,12 @@ export const StatsChart = (props: StatsChartProps) => {
 		<div css={valuesStyle}>
 			<div css={valueStyle} data-test="porfolio-total">
 				<div css={valueTypeStyle}>Circulating</div>
-				<div>{stats.data?.totalIssuance - stats.data?.stakedValueTotal}</div>
+				<div>{stats.data.circulatingValueTotal}</div>
 			</div>
 			<div css={separatorStyle} />
 			<div css={valueStyle} data-test="porfolio-free">
 				<div css={valueTypeStyle}>Staked</div>
-				<div>{stats.data?.stakedValueTotal}</div>
+				<div>{stats.data?.stakedValueTotal.toString()}</div>
 			</div>
 			<div css={separatorStyle} />
 		</div>
