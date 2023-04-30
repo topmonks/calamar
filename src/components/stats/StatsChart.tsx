@@ -113,12 +113,12 @@ export const StatsChart = (props: StatsChartProps) => {
 		<div css={valuesStyle}>
 			<div css={valueStyle} data-test="porfolio-total">
 				<div css={valueTypeStyle}>Circulating</div>
-				<div>{stats.data.circulatingValueTotal}</div>
+				<div>{stats.data.circulatingValueTotal.toFixed(1)}</div>
 			</div>
 			<div css={separatorStyle} />
 			<div css={valueStyle} data-test="porfolio-free">
 				<div css={valueTypeStyle}>Staked</div>
-				<div>{stats.data?.stakedValueTotal.toString()}</div>
+				<div>{stats.data?.stakedValueTotal.toFixed(1)}</div>
 			</div>
 			<div css={separatorStyle} />
 		</div>
