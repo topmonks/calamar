@@ -1,17 +1,15 @@
 export type Stats = {
-	finalizedBlocks: number;
-	holders: number;
-	nominationPoolsCountMembers: number;
-	nominationPoolsCountPools: number;
-	nominationPoolsTotalStake: number;
-	signedExtrinsics: number;
-	stakedValueNominator: number;
-	stakedValueTotal: number;
-	stakedValueValidator: number;
-	totalIssuance: number;
-	transfersCount: number;
-	validatorsCount: number;
-	validatorsIdealCount: number;
+	chainFinalizedBlocks: number;
+	nominationPoolsMembersAmount: number;
+	nominationPoolsPoolsActiveTotalStake: number;
+	chainSignedExtrinsics: number;
+	stakingTotalStake: number;
+	balancesTotalIssuance: number;
+	balancesTransfersAmount: number;
+	stakingValidatorsAmount: number;
+	stakingValidatorsIdealAmount: number;
 	stakedValuePercentage: number;
 	circulatingValueTotal: number;
+	nominationPoolsCountPools: number;
+	holders: number;
 }

@@ -62,18 +62,18 @@ export const StatsInfoTable = (props: StatsInfoTableProps) => {
 	
 	return (
 		<div css={StatsLayoutStyle}>
-			<StatItem title="Finalized blocks" value={stats.data?.finalizedBlocks} icon={Block} />
-			<StatItem title="Signed extrinsics" value={stats.data?.signedExtrinsics} icon={Signed} />
-			<StatItem title="Transfers" value={stats.data?.transfersCount} icon={Transfer} />
+			<StatItem title="Finalized blocks" value={stats.data?.chainFinalizedBlocks} icon={Block} />
+			<StatItem title="Signed extrinsics" value={stats.data?.chainSignedExtrinsics} icon={Signed} />
+			<StatItem title="Transfers" value={stats.data?.balancesTransfersAmount} icon={Transfer} />
 			<StatItem title="Holders" value={stats.data?.holders} icon={Holder} />
-			<StatItem title="Total issuance" value={stats.data?.totalIssuance.toFixed(1)} icon={Token} />
+			<StatItem title="Total issuance" value={stats.data?.balancesTotalIssuance.toFixed(1)} icon={Token} />
 			<StatItem
 				title="Staked value"
-				value={`${stats.data?.stakedValueTotal.toFixed(1)} (${stats.data?.stakedValuePercentage.toFixed(1)}%)`}
+				value={`${stats.data?.stakingTotalStake.toFixed(1)} (${stats.data?.stakedValuePercentage.toFixed(1)}%)`}
 				icon={Stake} />
 			<StatItem
 				title="Validators"
-				value={`${stats.data?.validatorsCount}/${stats.data?.validatorsIdealCount}`}
+				value={`${stats.data?.stakingValidatorsAmount}/${stats.data?.stakingValidatorsIdealAmount}`}
 				icon={Validator} />
 			<StatItem title="Nomination pools" value={`${stats.data?.nominationPoolsCountPools}`} icon={Nominator} />
 		</div>

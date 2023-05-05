@@ -40,7 +40,7 @@ export const StatsChart = (props: StatsChartProps) => {
 			},
 			{
 				name: "Staked",
-				value: (stats.data?.stakedValueTotal),
+				value: (stats.data?.stakingTotalStake),
 				itemStyle: {
 					color: "gray"
 				},
@@ -118,7 +118,7 @@ export const StatsChart = (props: StatsChartProps) => {
 			<div css={separatorStyle} />
 			<div css={valueStyle} data-test="porfolio-free">
 				<div css={valueTypeStyle}>Staked</div>
-				<div>{stats.data?.stakedValueTotal.toFixed(1)}</div>
+				<div>{stats.data?.stakingTotalStake.toFixed(1)}</div>
 			</div>
 			<div css={separatorStyle} />
 		</div>

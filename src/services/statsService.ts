@@ -13,23 +13,19 @@ export async function getStats(
 	order: StatsOrder = "id_DESC",
 ) {
 	if (hasSupport(network, "stats-squid")) {
-		const response = await fetchStatsSquid<{totals: Omit<Stats, "circulatingValueTotal" & "stakedValuePercentage">[]}>(
+		const response = await fetchStatsSquid<{currents: Omit<Stats, "circulatingValueTotal" & "stakedValuePercentage">[]}>(
 			network,
-			`query ($filter: TotalsWhereInput, $order: [TotalsOrderByInput!]!) {
-                totals(limit: 1, where: $filter, orderBy: $order) {
-					finalizedBlocks
-					holders
-					nominationPoolsCountMembers
-					nominationPoolsCountPools
-					nominationPoolsTotalStake
-					signedExtrinsics
-					stakedValueNominator
-					stakedValueTotal
-					stakedValueValidator
-					totalIssuance
-					transfersCount
-					validatorsCount
-					validatorsIdealCount
+			`query ($filter: CurrentWhereInput, $order: [CurrentOrderByInput!]!) {
+                currents(limit: 1, where: $filter, orderBy: $order) {
+					chainFinalizedBlocks
+					nominationPoolsMembersAmount
+					nominationPoolsPoolsActiveTotalStake
+					chainSignedExtrinsics
+					stakingTotalStake
+					balancesTotalIssuance
+					balancesTransfersAmount
+					stakingValidatorsAmount
+    				stakingValidatorsIdealAmount
                 }
             }`,
 			{
@@ -38,8 +34,8 @@ export async function getStats(
 			}
 		);
 
-		if(response.totals[0]) {
-			return unifyStats(response.totals[0], network);
+		if(response.currents[0]) {
+			return unifyStats(response.currents[0], network);
 		}
 	}
 
@@ -53,9 +49,11 @@ function unifyStats(stats: Omit<Stats, "circulatingValueTotal" & "stakedValuePer
 
 	return {
 		...stats,
-		totalIssuance: rawAmountToDecimal(network, stats.totalIssuance.toString()).toNumber(),
-		stakedValueTotal: rawAmountToDecimal(network, stats.stakedValueTotal.toString()).toNumber(),
+		balancesTotalIssuance: rawAmountToDecimal(network, stats.balancesTotalIssuance.toString()).toNumber(),
+		stakingTotalStake: rawAmountToDecimal(network, stats.stakingTotalStake.toString()).toNumber(),
 		circulatingValueTotal: 0,
-		stakedValuePercentage: stats.stakedValueTotal / stats.totalIssuance * 100,
+		stakedValuePercentage: stats.stakingTotalStake / stats.balancesTotalIssuance * 100,
+		nominationPoolsCountPools: 0,
+		holders: 0,
 	};
 }
