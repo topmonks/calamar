@@ -17,6 +17,7 @@ import { StatsInfoTable } from "../components/stats/StatsInfoTable";
 import { StatsChart } from "../components/stats/StatsChart";
 import { useUsdRates } from "../hooks/useUsdRates";
 import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { ChainIcon } from "../components/ChainIcon";
 
 export const ChainDashboardPage = () => {
 	const { network } = useRootLoaderData();
@@ -44,6 +45,7 @@ export const ChainDashboardPage = () => {
 			<CardRow>
 				<Card>
 					<CardHeader>
+						<ChainIcon networkName={network.name}/>
 						{network.displayName}
 					</CardHeader>
 					{hasSupport(network.name, "stats-squid") &&
