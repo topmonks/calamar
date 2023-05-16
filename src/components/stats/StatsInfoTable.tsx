@@ -52,7 +52,7 @@ export const StatsInfoTable = (
 		return <NotFound css={notFoundStyle}>Stats not found.</NotFound>;
 	}
 
-	if (stats.error || !network) {
+	if (stats.error) {
 		return (
 			<ErrorMessage
 				message="Unexpected error occured while fetching data"
@@ -62,7 +62,7 @@ export const StatsInfoTable = (
 		);
 	}
 
-	if (!stats.data) {
+	if (!stats.data || !network) {
 		return null;
 	}
 

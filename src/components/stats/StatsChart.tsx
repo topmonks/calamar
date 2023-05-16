@@ -11,6 +11,7 @@ import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { ErrorMessage } from "../ErrorMessage";
 import { notFoundStyle, separatorStyle, valuesStyle, valueStyle, valueTypeStyle, chartStyle, chartMarginStyle } from "../ChartStyles";
+import { formatCurrency } from "../../utils/number";
 
 export type StatsChartProps = HTMLAttributes<HTMLDivElement> & {
 	stats: Resource<Stats>;
@@ -44,6 +45,13 @@ export const StatsChart = (props: StatsChartProps) => {
 				itemStyle: {
 					color: "gray"
 				},
+			},
+			{
+				name: "Other",
+				value: (stats.data?.balancesTotalIssuance - stats.data.circulatingValueTotal - stats.data?.stakingTotalStake),
+				itemStyle: {
+					color: "lightgray"
+				},
 			}
 		];
 	}, [stats]);
@@ -59,7 +67,10 @@ export const StatsChart = (props: StatsChartProps) => {
 
 					return `
 						<div data-class="title">${name}</div>
-						<div data-class="value">${value}</div>
+						<div data-class="value">${
+	typeof value === "number" ? 
+		formatCurrency(value, network ? network.symbol : "", { decimalPlaces: "optimal" })
+		: value}</div>
 					`;
 				}
 			},
@@ -105,22 +116,16 @@ export const StatsChart = (props: StatsChartProps) => {
 		);
 	}
 
-	if (!stats.data) {
+	if (!stats.data || !network) {
 		return null;
 	}
 
 	return (<>
 		<div css={valuesStyle}>
 			<div css={valueStyle} data-test="porfolio-total">
-				<div css={valueTypeStyle}>Circulating</div>
-				<div>{stats.data.circulatingValueTotal.toFixed(1)}</div>
+				<div css={valueTypeStyle}>Total issuance</div>
+				<div>{formatCurrency(stats.data.balancesTotalIssuance, network.symbol, { decimalPlaces: "optimal" })}</div>
 			</div>
-			<div css={separatorStyle} />
-			<div css={valueStyle} data-test="porfolio-free">
-				<div css={valueTypeStyle}>Staked</div>
-				<div>{stats.data?.stakingTotalStake.toFixed(1)}</div>
-			</div>
-			<div css={separatorStyle} />
 		</div>
 		<div css={chartMarginStyle}>
 			<PieChart
