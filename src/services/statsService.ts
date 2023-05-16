@@ -26,6 +26,9 @@ export async function getStats(
 					balancesTransfersAmount
 					stakingValidatorsAmount
     				stakingValidatorsIdealAmount
+					stakingInflationRatio
+    				stakingRewardsRatio
+					nominationPoolsPoolsActiveAmount
                 }
             }`,
 			{
@@ -53,7 +56,5 @@ function unifyStats(stats: Omit<Stats, "circulatingValueTotal" & "stakedValuePer
 		stakingTotalStake: rawAmountToDecimal(network, stats.stakingTotalStake.toString()).toNumber(),
 		circulatingValueTotal: 0,
 		stakedValuePercentage: stats.stakingTotalStake / stats.balancesTotalIssuance * 100,
-		nominationPoolsCountPools: 0,
-		holders: 0,
 	};
 }

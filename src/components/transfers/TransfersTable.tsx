@@ -1,11 +1,9 @@
-import { Extrinsic } from "../../model/extrinsic";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { Transfer } from "../../model/transfer";
 import { Chip } from "@mui/material";
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 import { AccountAddress } from "../AccountAddress";
-import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";

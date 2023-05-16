@@ -4,8 +4,9 @@ import { css } from "@emotion/react";
 const StatStyle = css`
     min-width: 100px;
     width: 100%;
-    height: 64px;
+    
     display: flex;
+	align-items: center;
 `;
 
 const StatIconStyle = css`
@@ -41,7 +42,7 @@ export function StatItem (props: StatItemProps) {
 	return (
 		<div css={StatStyle}>
 			<img css={StatIconStyle} src={icon} />
-			<div style={{display: "flex", flexDirection: "column"}}>
+			<div style={{display: "flex", flexDirection: "column", justifyContent: "center" }}>
 				<div css={StatTitleStyle}>{title}</div>
 				<div css={StatValueStyle}>{value}</div>
 			</div>

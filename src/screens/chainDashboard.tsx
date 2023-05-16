@@ -44,16 +44,16 @@ export const ChainDashboardPage = () => {
 			<CardRow>
 				<Card>
 					<CardHeader>
-						{network.displayName} dashboard
+						{network.displayName}
 					</CardHeader>
 					{hasSupport(network.name, "stats-squid") &&
-						<StatsInfoTable stats={stats} />
+						<StatsInfoTable stats={stats} networkName={network.name} />
 					}
 				</Card>
 				{hasSupport(network.name, "stats-squid") &&
 					<Card>
 						<CardHeader>
-							{network.displayName} statistics
+							Token distribution
 						</CardHeader>
 						<StatsChart stats={stats} networkName={network.name} />
 					</Card>

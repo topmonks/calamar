@@ -10,6 +10,7 @@ export type Stats = {
 	stakingValidatorsIdealAmount: number;
 	stakedValuePercentage: number;
 	circulatingValueTotal: number;
-	nominationPoolsCountPools: number;
-	holders: number;
+	stakingInflationRatio: number;
+	stakingRewardsRatio: number;
+	nominationPoolsPoolsActiveAmount: number;
 }
