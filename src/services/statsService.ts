@@ -24,7 +24,7 @@ export async function getStats(
 					stakingTotalStake
 					balancesTotalIssuance
 					balancesTransfersAmount
-					stakingValidatorsAmount
+					stakingActiveValidatorsAmount
     				stakingValidatorsIdealAmount
 					stakingInflationRatio
     				stakingRewardsRatio

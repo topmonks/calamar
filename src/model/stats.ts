@@ -6,7 +6,7 @@ export type Stats = {
 	stakingTotalStake: number;
 	balancesTotalIssuance: number;
 	balancesTransfersAmount: number;
-	stakingValidatorsAmount: number;
+	stakingActiveValidatorsAmount: number;
 	stakingValidatorsIdealAmount: number;
 	stakedValuePercentage: number;
 	circulatingValueTotal: number;

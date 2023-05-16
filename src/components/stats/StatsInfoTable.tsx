@@ -79,7 +79,7 @@ export const StatsInfoTable = (
 			<StatItem title="Signed extrinsics" value={stats.data?.chainSignedExtrinsics} icon={Signed} />
 			<StatItem
 				title="Validators"
-				value={`${stats.data?.stakingValidatorsAmount}/${stats.data?.stakingValidatorsIdealAmount}`}
+				value={`${stats.data?.stakingActiveValidatorsAmount}/${stats.data?.stakingValidatorsIdealAmount}`}
 				icon={Validator} />
 			<StatItem title="Nomination pools" value={`${stats.data?.nominationPoolsPoolsActiveAmount}`} icon={Nominator} />
 		</div>
