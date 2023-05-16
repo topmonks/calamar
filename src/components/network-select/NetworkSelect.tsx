@@ -69,7 +69,7 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 		>
 			{networkGroups.map((group, index) => [
 				index > 0 && <Divider />,
-				<ListSubheader>
+				<ListSubheader key={index}>
 					{group.relayChainNetwork?.displayName || "Other"}
 					{group.relayChainNetwork && <span> and parachains</span>}
 				</ListSubheader>,
