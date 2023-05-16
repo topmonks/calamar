@@ -8,17 +8,18 @@ import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
-type CallPageParams = {
-	network: string;
+export type CallPageParams = {
 	id: string;
 };
 
-export const CallPage: React.FC = () => {
-	const { network, id } = useParams() as CallPageParams;
+export const CallPage = () => {
+	const { network } = useRootLoaderData();
+	const { id } = useParams() as CallPageParams;
 
-	const call = useCall(network, { id_eq: id });
-	const events = useEvents(network, { callId_eq: id }, "id_ASC");
+	const call = useCall(network.name, { id_eq: id });
+	const events = useEvents(network.name, { callId_eq: id }, "id_ASC");
 
 	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
 
@@ -29,7 +30,7 @@ export const CallPage: React.FC = () => {
 					Call #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
-				<CallInfoTable network={network} call={call} />
+				<CallInfoTable network={network.name} call={call} />
 			</Card>
 			{call.data &&
 				<Card>
@@ -41,7 +42,7 @@ export const CallPage: React.FC = () => {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} events={events} />
+							<EventsTable network={network.name} events={events} />
 						</TabPane>
 					</TabbedContent>
 				</Card>

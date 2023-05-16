@@ -1,12 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useNetworks } from "../hooks/useNetworks";
 import { useTransfers } from "../hooks/useTransfers";
 import TransfersTable from "../components/transfers/TransfersTable";
 import { hasSupport } from "../services/networksService";
@@ -18,27 +16,21 @@ import { useStats } from "../hooks/useStats";
 import { StatsInfoTable } from "../components/stats/StatsInfoTable";
 import { StatsChart } from "../components/stats/StatsChart";
 import { useUsdRates } from "../hooks/useUsdRates";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
-type ChainDashboardPageParams = {
-	network: string;
-};
+export const ChainDashboardPage = () => {
+	const { network } = useRootLoaderData();
 
-function ChainDashboardPage() {
-	const { network } = useParams() as ChainDashboardPageParams;
+	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
+	const blocks = useBlocks(network.name, undefined, "id_DESC");
+	const transfers = useTransfers(network.name, undefined, "id_DESC");
+	const topHolders = useBalances(network.name, undefined, "total_DESC");
 
-	const extrinsics = useExtrinsicsWithoutTotalCount(network, undefined, "id_DESC");
-	const blocks = useBlocks(network, undefined, "id_DESC");
-	const transfers = useTransfers(network, undefined, "id_DESC");
-	const topHolders = useBalances(network, undefined, "total_DESC");
-
-	const stats = useStats(network, undefined);
+	const stats = useStats(network.name, undefined);
 
 	const usdRates = useUsdRates();
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
-
-	const networks = useNetworks();
-	const networkData = networks.find((item) => item.name === network);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -52,18 +44,18 @@ function ChainDashboardPage() {
 			<CardRow>
 				<Card>
 					<CardHeader>
-						{networkData?.displayName} dashboard
+						{network.displayName} dashboard
 					</CardHeader>
-					{hasSupport(network, "stats-squid") &&
+					{hasSupport(network.name, "stats-squid") &&
 						<StatsInfoTable stats={stats} />
 					}
 				</Card>
-				{hasSupport(network, "stats-squid") &&
+				{hasSupport(network.name, "stats-squid") &&
 					<Card>
 						<CardHeader>
-							{networkData?.displayName} statistics
+							{network.displayName} statistics
 						</CardHeader>
-						<StatsChart stats={stats} networkName={network} />
+						<StatsChart stats={stats} networkName={network.name} />
 					</Card>
 				}
 			</CardRow>
@@ -78,7 +70,7 @@ function ChainDashboardPage() {
 						error={extrinsics.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
+						<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showAccount showTime />
 					</TabPane>
 					<TabPane
 						label="Blocks"
@@ -87,36 +79,34 @@ function ChainDashboardPage() {
 						error={blocks.error}
 						value="blocks"
 					>
-						<BlocksTable network={network} blocks={blocks} showValidator showTime />
+						<BlocksTable network={network.name} blocks={blocks} showValidator showTime />
 					</TabPane>
 
 
-					{hasSupport(network, "main-squid") &&
-						<TabPane
-							label="Transfers"
-							count={transfers.pagination.totalCount}
-							loading={transfers.loading}
-							error={transfers.error}
-							value="transfers"
-						>
-							<TransfersTable network={network} transfers={transfers} showTime />
-						</TabPane>
+					{hasSupport(network.name, "main-squid") &&
+							<TabPane
+								label="Transfers"
+								count={transfers.pagination.totalCount}
+								loading={transfers.loading}
+								error={transfers.error}
+								value="transfers"
+							>
+								<TransfersTable network={network.name} transfers={transfers} showTime />
+							</TabPane>
 					}
-					{hasSupport(network, "balances-squid") &&
-						<TabPane
-							label="Top holders"
-							count={topHolders.pagination.totalCount}
-							loading={topHolders.loading}
-							error={topHolders.error}
-							value="top-holders"
-						>
-							<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
-						</TabPane>
+					{hasSupport(network.name, "balances-squid") &&
+							<TabPane
+								label="Top holders"
+								count={topHolders.pagination.totalCount}
+								loading={topHolders.loading}
+								error={topHolders.error}
+								value="top-holders"
+							>
+								<BalancesTable network={network.name} balances={topHolders} usdRates={usdRates} />
+							</TabPane>
 					}
 				</TabbedContent>
 			</Card>
 		</>
 	);
-}
-
-export default ChainDashboardPage;
+};

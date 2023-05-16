@@ -13,20 +13,21 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
-type BlockPageParams = {
-	network: string;
+export type BlockPageParams = {
 	id: string;
 };
 
-function BlockPage() {
-	const { network, id } = useParams() as BlockPageParams;
+export const BlockPage = () => {
+	const { network } = useRootLoaderData();
+	const { id } = useParams() as BlockPageParams;
 
-	const block = useBlock(network, { id_eq: id });
+	const block = useBlock(network.name, { id_eq: id });
 
-	const extrinsics = useExtrinsics(network, { blockId_eq: id }, "id_DESC");
-	const events = useEvents(network, { blockId_eq: id }, "id_DESC");
-	const calls = useCalls(network, { blockId_eq: id }, "id_DESC");
+	const extrinsics = useExtrinsics(network.name, { blockId_eq: id }, "id_DESC");
+	const events = useEvents(network.name, { blockId_eq: id }, "id_DESC");
+	const calls = useCalls(network.name, { blockId_eq: id }, "id_DESC");
 
 	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
 
@@ -45,7 +46,7 @@ function BlockPage() {
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
 				<BlockInfoTable
-					network={network}
+					network={network.name}
 					block={block}
 				/>
 			</Card>
@@ -59,7 +60,7 @@ function BlockPage() {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount />
+							<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showAccount />
 						</TabPane>
 						<TabPane
 							label="Calls"
@@ -68,7 +69,7 @@ function BlockPage() {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} showAccount />
+							<CallsTable network={network.name} calls={calls} showAccount />
 						</TabPane>
 						<TabPane
 							label="Events"
@@ -77,13 +78,11 @@ function BlockPage() {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} events={events} showExtrinsic />
+							<EventsTable network={network.name} events={events} showExtrinsic />
 						</TabPane>
 					</TabbedContent>
 				</Card>
 			}
 		</>
 	);
-}
-
-export default BlockPage;
+};

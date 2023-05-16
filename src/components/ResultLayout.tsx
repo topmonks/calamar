@@ -1,53 +1,93 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useMemo, useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useLoaderData } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 
-import { getArchive, getNetwork } from "../services/networksService";
-import NotFoundPage from "../screens/notFound";
+import { Network } from "../model/network";
+
+import { NotFoundPage } from "../screens/notFound";
 
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
-import { Card } from "./Card";
 import { Footer } from "./Footer";
 
-const containerStyle = css`
+const containerStyle = (theme: Theme) => css`
+	--content-wrapper-min-height: 450px;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	min-height: 100vh;
+
+	${theme.breakpoints.up("sm")} {
+		--content-wrapper-min-height: 500px;
+	}
+
+	${theme.breakpoints.up("md")} {
+		--content-wrapper-min-height: 600px;
+	}
+
+	${theme.breakpoints.up("lg")} {
+		--content-wrapper-min-height: 750px;
+	}
+
+	${theme.breakpoints.up("xl")} {
+		--content-wrapper-min-height: 1250px;
+	}
 `;
 
 const backgroundStyle = css`
 	position: absolute;
-	bottom: 0;
 	left: 0;
 	margin: 0;
 	width: 100%;
-	height: 100vh;
-	background-position: center bottom;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-image: url(${Background});
+	height: 100%;
+	min-height: 100vh;
 	z-index: -1;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: var(--content-wrapper-min-height);
+		background-color: white;
+		background-position: center bottom;
+		background-size: 100% auto;
+		background-repeat: no-repeat;
+		background-image: url(${Background});
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: var(--content-wrapper-min-height);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #def9fb;
+	}
 `;
 
 const topBarStyle = (theme: Theme) => css`
-	position: sticky;
+	position: relative;
 	top: 0;
 	padding: 16px;
-	width: 100%;
+	margin: 0 -16px;
+	margin-top: -16px;
 	min-height: 130px;
 	box-sizing: border-box;
-	background-color: white;
 	z-index: 1000;
 
+	flex: 0 0 auto;
+
 	${theme.breakpoints.up("md")} {
-		padding: 24px 32px;
-		padding-bottom: 0;
+		margin: 0 -32px;
+		margin-top: -24px;
+		padding: 0 32px;
+		padding-top: 24px;
 	}
 `;
 
@@ -69,24 +109,24 @@ const topBarRowStyle = css`
 	flex: 1 1 auto;
 `;
 
-const contentStyle = (theme: Theme) => css`
+const contentWrapperStyle = (theme: Theme) => css`
 	position: relative;
-	padding: 0 16px;
-	padding-top: 40px;
-	padding-bottom: 20px;
+	padding: 16px;
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1 1 auto;
 
+	min-height: var(--content-wrapper-min-height);
+
 	${theme.breakpoints.up("md")} {
-		padding-left: 32px;
-		padding-right: 32px;
+		padding: 24px 32px;
 	}
 `;
 
-const contentInnerStyle = css`
+const contentStyle = css`
 	max-width: 1500px;
 	margin: auto;
+	margin-top: 40px;
 `;
 
 const logoStyle = (theme: Theme) => css`
@@ -112,57 +152,40 @@ const searchInputStyle = css`
 `;
 
 const footerStyle = css`
-	background-color: #def9fb;
-
 	> div {
 		max-width: 1500px;
 	}
 `;
 
-type ResultLayoutParams = {
-	network: string;
+export type ResultLayoutLoaderData = {
+	network?: Network;
 };
 
-function ResultLayout() {
-	const { network: networkParam } = useParams() as ResultLayoutParams;
-
-	const [network, setNetwork] = useState<string | undefined>();
-
-	const networkIsValid = useMemo(
-		() => Boolean(getNetwork(networkParam)),
-		[networkParam]
-	);
-
-	useEffect(() => {
-		if (networkIsValid) {
-			setNetwork(networkParam);
-		}
-	}, [networkParam, networkIsValid]);
+export const ResultLayout = () => {
+	const {network} = useLoaderData() as ResultLayoutLoaderData;
 
 	return (
 		<div css={containerStyle}>
-			<div css={topBarStyle} data-test="top-bar">
-				<div css={topBarContentStyle}>
-					<div css={topBarRowStyle}>
-						<Link css={logoStyle} to="/">
-							<Logo />
-						</Link>
-					</div>
-					<div css={topBarRowStyle}>
-						<SearchInput css={searchInputStyle} defaultNetwork={network} key={network} />
+			<div css={backgroundStyle} data-test="background" />
+			<div css={contentWrapperStyle}>
+				<div css={topBarStyle} data-test="top-bar">
+					<div css={topBarContentStyle}>
+						<div css={topBarRowStyle}>
+							<Link css={logoStyle} to="/">
+								<Logo />
+							</Link>
+						</div>
+						<div css={topBarRowStyle}>
+							<SearchInput css={searchInputStyle} defaultNetwork={network?.name} key={network?.name} />
+						</div>
 					</div>
 				</div>
-			</div>
-			<div css={contentStyle}>
-				<div css={backgroundStyle} data-test="background" />
-				<div css={contentInnerStyle}>
-					{networkIsValid && <Outlet />}
-					{!networkIsValid && <NotFoundPage />}
+				<div css={contentStyle}>
+					{network && <Outlet />}
+					{!network && <NotFoundPage />}
 				</div>
 			</div>
 			<Footer css={footerStyle} />
 		</div>
 	);
-}
-
-export default ResultLayout;
+};

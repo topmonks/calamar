@@ -39,7 +39,7 @@ function TransfersTable(props: TransfersTableProps) {
 		>
 			<TransfersTableAttribute
 				label="Extrinsic"
-				render={(transfer) =>
+				render={(transfer) => transfer.extrinsic &&
 					<Link to={`/${network}/extrinsic/${transfer.extrinsic.id}`}>
 						{transfer.extrinsic.id}
 					</Link>

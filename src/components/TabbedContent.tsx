@@ -115,8 +115,8 @@ export const TabbedContent = (props: TabbedContentProps) => {
 					css={tabsStyle}
 					onChange={(_, tab) => setTab(tab)}
 					value={tab || tabHandles[0]!.props.value}
-					scrollButtons="auto"
-					allowScrollButtonsMobile
+					variant="scrollable"
+					scrollButtons={false}
 				>
 					{tabHandles}
 				</Tabs>

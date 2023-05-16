@@ -1,17 +1,14 @@
 import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 
 export const Devtools = () => {
-	const [qs, setQs] = useSearchParams();
-
 	useEffect(() => {
-		if (qs.has("devtools")) {
-			localStorage.setItem("devtools", qs.get("devtools")!);
-			qs.delete("devtools");
-			setQs(qs);
-			window.location.reload();
+		const url = new URL(window.location.href);
+		if (url.searchParams.has("devtools")) {
+			localStorage.setItem("devtools", url.searchParams.get("devtools")!);
+			url.searchParams.delete("devtools");
+			window.location.href = url.toString();
 		}
-	}, [qs]);
+	}, []);
 
 	return null;
 };
