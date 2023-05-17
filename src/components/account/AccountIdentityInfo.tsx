@@ -4,7 +4,7 @@ import { Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 import { Email, Language, Person, Twitter } from "@mui/icons-material";
 
-import { ReactComponent as ElementIcon } from "../../assets/element_logo.svg";
+import { ReactComponent as ElementIcon } from "../../assets/element.svg";
 
 import { Resource } from "../../model/resource";
 import { Account } from "../../model/account";
