@@ -27,7 +27,8 @@ export const router = createBrowserRouter([
 		path: ":network",
 		loader: ({ params }) => {
 			const { network: networkName } = params;
-			const network = networkName ? getNetwork(networkName) : undefined;
+			const network = networkName ? getNetwork(networkName, false) : undefined;
+
 			return { network };
 		},
 		element: <ResultLayout />,
@@ -57,7 +58,7 @@ export const router = createBrowserRouter([
 				element: <AccountPage />,
 				loader: ({ params }) => {
 					const { network: networkName, address } = params;
-					const network = networkName ? getNetwork(networkName) : undefined;
+					const network = networkName ? getNetwork(networkName, false) : undefined;
 
 					if (!network || !address) {
 						return null;
