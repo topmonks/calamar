@@ -10,7 +10,7 @@ import { getNetwork } from "../../services/networksService";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { ErrorMessage } from "../ErrorMessage";
-import { notFoundStyle, separatorStyle, valuesStyle, valueStyle, valueTypeStyle, chartStyle, chartMarginStyle } from "../ChartStyles";
+import { notFoundStyle, valuesStyle, valueStyle, valueTypeStyle, chartStyle, chartMarginStyle } from "../ChartStyles";
 import { formatCurrency } from "../../utils/number";
 
 export type StatsChartProps = HTMLAttributes<HTMLDivElement> & {

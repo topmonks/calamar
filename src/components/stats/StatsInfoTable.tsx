@@ -6,18 +6,14 @@ import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
 import { StatItem } from "../StatsLayout";
-
 import Block from "../../assets/block.svg";
 import Signed from "../../assets/signed.svg";
 import Nominator from "../../assets/nominator.svg";
-import Stake from "../../assets/stake.svg";
 import Validator from "../../assets/validator.svg";
-import Token from "../../assets/token.svg";
 import Inflation from "../../assets/inflation.svg";
 import StakingReward from "../../assets/staking-reward.svg";
 
 import { css } from "@emotion/react";
-import { formatCurrency } from "../../utils/number";
 import { getNetwork } from "../../services/networksService";
 
 const StatsLayoutStyle = css`
@@ -29,7 +25,9 @@ const StatsLayoutStyle = css`
 
 	grid-template-columns: repeat(2, auto);
     
-
+	@media (max-width: 530px) {
+        grid-template-columns: repeat(1, auto);
+	}
 `;
 
 export type StatsInfoTableProps = {
@@ -68,15 +66,10 @@ export const StatsInfoTable = (
 
 	return (
 		<div css={StatsLayoutStyle}>
-			<StatItem title="Total issuance" value={formatCurrency(stats.data?.balancesTotalIssuance, network.symbol, { decimalPlaces: "optimal" })} icon={Token} />
-			<StatItem
-				title="Staked value"
-				value={`${formatCurrency(stats.data?.stakingTotalStake, network.symbol, { decimalPlaces: "optimal" })} (${stats.data?.stakedValuePercentage.toFixed(1)}%)`}
-				icon={Stake} />
-			<StatItem title="Staking inflation" value={`${stats.data?.stakingInflationRatio.toFixed(1)}%`} icon={Inflation} />
-			<StatItem title="Staking rewards" value={`${stats.data?.stakingRewardsRatio.toFixed(1)}%`} icon={StakingReward} />
 			<StatItem title="Finalized blocks" value={stats.data?.chainFinalizedBlocks} icon={Block} />
 			<StatItem title="Signed extrinsics" value={stats.data?.chainSignedExtrinsics} icon={Signed} />
+			<StatItem title="Staking inflation" value={`${stats.data?.stakingInflationRatio.toFixed(1)}%`} icon={Inflation} />
+			<StatItem title="Staking rewards" value={`${stats.data?.stakingRewardsRatio.toFixed(1)}%`} icon={StakingReward} />
 			<StatItem
 				title="Validators"
 				value={`${stats.data?.stakingActiveValidatorsAmount}/${stats.data?.stakingValidatorsIdealAmount}`}
