@@ -29,7 +29,9 @@
         "decimals": 12,
         "symbol": "AMPE",
         "squids": {
-            "archive": "https://amplitude.explorer.subsquid.io/graphql"
+            "archive": "https://amplitude.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-amplitude/graphql",
+            "main": "https://squid.subsquid.io/gs-main-amplitude/graphql"
         }
     },
     {
@@ -62,7 +64,8 @@
         "decimals": 12,
         "symbol": "BAJU",
         "squids": {
-            "archive": "https://bajun.explorer.subsquid.io/graphql"
+            "archive": "https://bajun.explorer.subsquid.io/graphql",
+            "main": "https://squid.subsquid.io/gs-main-bajun/graphql"
         },
         "coinGeckoId": "ajuna-network"
     },
@@ -103,22 +106,6 @@
         "coinGeckoId": "calamari-network"
     },
     {
-        "name": "crust",
-        "displayName": "Crust Network",
-        "icon": "/assets/network-icons/crust.svg",
-        "color": "#ff8812",
-        "website": "https://crust.network/",
-        "parachainId": 2008,
-        "relayChain": "polkadot",
-        "prefix": 66,
-        "decimals": 12,
-        "symbol": "CRU",
-        "squids": {
-            "archive": "https://crust.explorer.subsquid.io/graphql"
-        },
-        "coinGeckoId": "crust-network"
-    },
-    {
         "name": "efinity",
         "displayName": "Efinity",
         "icon": "/assets/network-icons/efinity.svg",
@@ -147,19 +134,6 @@
         "symbol": "EQ",
         "squids": {
             "archive": "https://equilibrium.explorer.subsquid.io/graphql"
-        }
-    },
-    {
-        "name": "gemini-2a-testnet",
-        "displayName": "Gemini 2a Testnet",
-        "icon": "/assets/network-icons/gemini-2a-testnet.svg",
-        "color": "#562b8e",
-        "website": "https://subspace.network/",
-        "prefix": 2254,
-        "decimals": 18,
-        "symbol": "tSSC",
-        "squids": {
-            "archive": "https://gemini-2a-testnet.explorer.subsquid.io/graphql"
         }
     },
     {
@@ -311,6 +285,7 @@
             "balances": "https://squid.subsquid.io/kusama-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
             "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
+            "main-identites": "https://squid.subsquid.io/gs-main-kusama-beta/v/v3/graphql",
             "stats": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql"
         },
         "coinGeckoId": "kusama"
@@ -327,7 +302,8 @@
         "decimals": 12,
         "symbol": "LIT",
         "squids": {
-            "archive": "https://litentry.explorer.subsquid.io/graphql"
+            "archive": "https://litentry.explorer.subsquid.io/graphql",
+            "main": "https://squid.subsquid.io/gs-main-litentry/graphql"
         },
         "coinGeckoId": "litentry"
     },
@@ -343,7 +319,8 @@
         "decimals": 12,
         "symbol": "LIT",
         "squids": {
-            "archive": "https://litmus.explorer.subsquid.io/graphql"
+            "archive": "https://litmus.explorer.subsquid.io/graphql",
+            "main": "https://squid.subsquid.io/gs-main-litmus/graphql"
         },
         "coinGeckoId": "litentry"
     },
@@ -388,7 +365,7 @@
         "name": "opal",
         "displayName": "Opal",
         "icon": "/assets/network-icons/opal.png",
-        "color": "#3b9c9d",
+        "color": "#40bcff",
         "website": "https://docs.unique.network/unique-and-quartz-wiki/build/get-started/testnet-and-mainnet#opal-testnet",
         "prefix": 42,
         "decimals": 18,
@@ -420,7 +397,8 @@
         "decimals": 12,
         "symbol": "PEN",
         "squids": {
-            "archive": "https://pendulum.explorer.subsquid.io/graphql"
+            "archive": "https://pendulum.explorer.subsquid.io/graphql",
+            "main": "https://squid.subsquid.io/gs-main-pendulum/graphql"
         },
         "coinGeckoId": "pendulum-chain"
     },
@@ -490,7 +468,8 @@
         "decimals": 9,
         "symbol": "XRT",
         "squids": {
-            "archive": "https://robonomics.explorer.subsquid.io/graphql"
+            "archive": "https://robonomics.explorer.subsquid.io/graphql",
+            "main": "https://squid.subsquid.io/gs-main-robonomics/graphql"
         },
         "coinGeckoId": "robonomics-network"
     },
@@ -538,21 +517,6 @@
             "main": "https://squid.subsquid.io/gs-main-shiden/graphql"
         },
         "coinGeckoId": "shiden"
-    },
-    {
-        "name": "snow",
-        "displayName": "SNOW",
-        "icon": "/assets/network-icons/snow.svg",
-        "website": "https://icenetwork.io/snow/",
-        "parachainId": 2129,
-        "relayChain": "kusama",
-        "prefix": 2207,
-        "decimals": 18,
-        "symbol": "ICZ",
-        "squids": {
-            "archive": "https://snow.explorer.subsquid.io/graphql"
-        },
-        "coinGeckoId": "snow"
     },
     {
         "name": "statemine",

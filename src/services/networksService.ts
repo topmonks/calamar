@@ -18,6 +18,10 @@ export function getMainSquid(network: string) {
 	return getNetwork(network)?.squids["main"];
 }
 
+export function getMainIdentitesSquid(network: string) {
+	return getNetwork(network)?.squids["main-identites"];
+}
+
 export function getStatsSquid(network: string) {
 	return getNetwork(network)?.squids["stats"];
 }
@@ -30,12 +34,13 @@ export function getNetwork(name: string) {
 	return getNetworks().find((network) => network.name === name);
 }
 
-export function hasSupport(network: string, feature: "archive"|"balances-squid"|"explorer-squid"|"main-squid"|"stats-squid") {
+export function hasSupport(network: string, feature: "archive"|"balances-squid"|"explorer-squid"|"main-squid"|"main-identities-squid"|"stats-squid") {
 	switch(feature) {
 		case "archive": return !!getArchive(network);
 		case "balances-squid": return !!getBalancesSquid(network);
 		case "explorer-squid": return !!getExplorerSquid(network);
 		case "main-squid": return !!getMainSquid(network);
+		case "main-identities-squid": return !!getMainSquid(network);
 		case "stats-squid": return !!getStatsSquid(network);
 	}
 }
