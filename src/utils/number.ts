@@ -11,6 +11,7 @@ export function rawAmountToDecimal(network: Network, amount: string|undefined) {
 
 export type FormatNumberOptions = {
 	decimalPlaces?: number;
+	compact?: boolean;
 }
 
 export function formatNumber(value: number|Decimal, options: FormatNumberOptions = {}) {
@@ -18,25 +19,25 @@ export function formatNumber(value: number|Decimal, options: FormatNumberOptions
 		value = new Decimal(value);
 	}
 
-	if (options.decimalPlaces) {
-		value = value.toDecimalPlaces(options.decimalPlaces, Decimal.ROUND_HALF_UP);
-	}
-
-	const valueString = value.toString();
-
-	const [units] = valueString.split(".") as [string];
-
-	return valueString.replace(units, Intl.NumberFormat("en-US").format(BigInt(units)));
+	return Intl.NumberFormat("en-US", {
+		maximumFractionDigits: options.compact ? 3 : (options.decimalPlaces || 20),
+		notation: options.compact ? "compact" : undefined
+	}).format(value.toString() as any);
 }
 
 export type FormatCurrencyOptions = {
 	decimalPlaces?: "optimal"|number;
 	minimalUsdValue?: Decimal;
 	usdRate?: Decimal;
+	compact?: boolean;
 }
 
 export function formatCurrency(value: number|Decimal, currency: string, options: FormatCurrencyOptions = {}) {
-	let decimalPlaces = options.decimalPlaces;
+	if (!(value instanceof Decimal)) {
+		value = new Decimal(value);
+	}
+
+	let decimalPlaces = options.decimalPlaces || 20;
 
 	if (decimalPlaces === "optimal") {
 		decimalPlaces =
@@ -45,16 +46,18 @@ export function formatCurrency(value: number|Decimal, currency: string, options:
 					: 4; // default for crypto
 	}
 
-	const formattedNumber = formatNumber(value, {decimalPlaces});
-
 	// Intl formats fiat currencies using proper symbols like $
 	if (supportedFiatCurrencies.includes(currency.toUpperCase())) {
-		const template = Intl.NumberFormat("en-US", {style: "currency", currency}).format(0);
-		return template.replace(/[0-9]+\.[0-9]+/, formattedNumber);
+		return Intl.NumberFormat("en-US", {
+			style: "currency",
+			currency,
+			maximumFractionDigits: options.compact ? 3 : decimalPlaces,
+			notation: options.compact ? "compact" : undefined
+		}).format(value.toString() as any);
 	}
 
 	// cryptocurrencies are formatted simply using the code (KSM)
-	return `${formattedNumber} ${currency}`;
+	return `${formatNumber(value, {decimalPlaces, compact: options.compact})} ${currency}`;
 }
 
 

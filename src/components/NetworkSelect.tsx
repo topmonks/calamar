@@ -3,8 +3,8 @@ import { useCallback, useEffect } from "react";
 import { Divider, ListItemIcon, ListItemText, ListSubheader, MenuItem, Select, SelectProps } from "@mui/material";
 import { css } from "@emotion/react";
 
-import { useNetworks } from "../../hooks/useNetworks";
-import { useNetworkGroups } from "../../hooks/useNetworkGroups";
+import { useNetworks } from "../hooks/useNetworks";
+import { useNetworkGroups } from "../hooks/useNetworkGroups";
 
 const selectStyle = css`
 	&.MuiInputBase-root {

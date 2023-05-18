@@ -3,7 +3,7 @@ import { rawAmountToDecimal } from "../utils/number";
 import { fetchStatsSquid} from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 
-export type StatsFilter = any
+export type StatsFilter = any;
 
 export type StatsOrder = string | string[];
 
@@ -16,7 +16,7 @@ export async function getStats(
 		const response = await fetchStatsSquid<{currents: Omit<Stats, "circulatingValueTotal" & "stakedValuePercentage">[]}>(
 			network,
 			`query ($filter: CurrentWhereInput, $order: [CurrentOrderByInput!]!) {
-                currents(limit: 1, where: $filter, orderBy: $order) {
+				currents(limit: 1, where: $filter, orderBy: $order) {
 					chainFinalizedBlocks
 					nominationPoolsMembersAmount
 					nominationPoolsPoolsActiveTotalStake
@@ -25,12 +25,12 @@ export async function getStats(
 					balancesTotalIssuance
 					balancesTransfersAmount
 					stakingActiveValidatorsAmount
-    				stakingValidatorsIdealAmount
+					stakingValidatorsIdealAmount
 					stakingInflationRatio
-    				stakingRewardsRatio
+					stakingRewardsRatio
 					nominationPoolsPoolsActiveAmount
-                }
-            }`,
+				}
+			}`,
 			{
 				filter,
 				order,

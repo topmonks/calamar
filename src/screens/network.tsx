@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect } from "react";
+import { Theme, css } from "@emotion/react";
+
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
@@ -13,13 +15,27 @@ import BlocksTable from "../components/blocks/BlocksTable";
 import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
 import { useStats } from "../hooks/useStats";
-import { StatsInfoTable } from "../components/stats/StatsInfoTable";
-import { StatsChart } from "../components/stats/StatsChart";
+import { NetworkStats } from "../components/network/NetworkStats";
 import { useUsdRates } from "../hooks/useUsdRates";
 import { useRootLoaderData } from "../hooks/useRootLoaderData";
-import { ChainIcon } from "../components/ChainIcon";
+import { NetworkTokenDistribution } from "../components/network/NetworkTokenDistribution";
 
-export const ChainDashboardPage = () => {
+const networkIconStyle = css`
+	vertical-align: text-bottom;
+	margin-right: 8px;
+	height: 32px;
+`;
+
+const tokenDistributionStyle = (theme: Theme) => css`
+	flex: 0 0 auto;
+	width: 400px;
+
+	${theme.breakpoints.down("lg")} {
+		width: auto;
+	}
+`;
+
+export const NetworkPage = () => {
 	const { network } = useRootLoaderData();
 
 	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
@@ -45,19 +61,22 @@ export const ChainDashboardPage = () => {
 			<CardRow>
 				<Card>
 					<CardHeader>
-						<ChainIcon networkName={network.name}/>
+						<img css={networkIconStyle} src={network.icon} />
 						{network.displayName}
 					</CardHeader>
 					{hasSupport(network.name, "stats-squid") &&
-						<StatsInfoTable stats={stats} networkName={network.name} />
+						<NetworkStats stats={stats} networkName={network.name} />
 					}
 				</Card>
 				{hasSupport(network.name, "stats-squid") &&
-					<Card>
+					<Card css={tokenDistributionStyle}>
 						<CardHeader>
 							Token distribution
 						</CardHeader>
-						<StatsChart stats={stats} networkName={network.name} />
+						<NetworkTokenDistribution
+							stats={stats}
+							network={network}
+						/>
 					</Card>
 				}
 			</CardRow>
