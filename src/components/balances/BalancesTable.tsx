@@ -48,7 +48,7 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.total}
-						currency={getNetwork(network)!.symbol}
+						currency={getNetwork(network).symbol}
 						decimalPlaces="optimal"
 						usdRate={usdRates[network]}
 						showFullInTooltip
@@ -62,7 +62,7 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.free}
-						currency={getNetwork(network)!.symbol}
+						currency={getNetwork(network).symbol}
 						decimalPlaces="optimal"
 						usdRate={usdRates[network]}
 						showFullInTooltip
@@ -76,7 +76,7 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.reserved}
-						currency={getNetwork(network)!.symbol}
+						currency={getNetwork(network).symbol}
 						decimalPlaces="optimal"
 						usdRate={usdRates[network]}
 						showFullInTooltip

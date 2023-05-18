@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Children, cloneElement, ReactElement, ReactNode } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableContainerProps, TableRow } from "@mui/material";
 import { css, Interpolation, Theme } from "@emotion/react";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
@@ -131,7 +131,7 @@ export const InfoTableAttribute = <T extends object = any, A extends any[] = []>
 	);
 };
 
-export type InfoTableProps<T extends object, A extends any[] = []> = {
+export type InfoTableProps<T extends object, A extends any[] = []> = TableContainerProps & {
 	data?: T;
 	additionalData?: A;
 	loading?: boolean;
@@ -151,7 +151,8 @@ export const InfoTable = <T extends object, A extends any[] = []>(props: InfoTab
 		notFoundMessage = "No item found",
 		error,
 		errorMessage = "Unexpected error occured while fetching data",
-		children
+		children,
+		...containerProps
 	} = props;
 
 	if (loading) {
@@ -173,7 +174,7 @@ export const InfoTable = <T extends object, A extends any[] = []>(props: InfoTab
 	}
 
 	return (
-		<TableContainer>
+		<TableContainer {...containerProps}>
 			<Table css={tableStyles}>
 				{data &&
 					<TableBody>

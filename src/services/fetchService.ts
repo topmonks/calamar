@@ -1,5 +1,5 @@
 import { fetchGraphql } from "../utils/fetchGraphql";
-import { getArchive, getBalancesSquid, getExplorerSquid, getStatsSquid, getMainSquid } from "./networksService";
+import { getArchive, getBalancesSquid, getExplorerSquid, getStatsSquid, getMainSquid, getMainIdentitesSquid } from "./networksService";
 
 export async function fetchArchive<T = any>(network: string, query: string, variables: object = {}) {
 	const archiveUrl = getArchive(network);
@@ -36,6 +36,16 @@ export function fetchMainSquid<T = any>(network: string, query: string, variable
 
 	if (!squidUrl) {
 		throw new Error(`Main squid for network '${network}' not found`);
+	}
+
+	return fetchGraphql<T>(squidUrl, query, variables);
+}
+
+export function fetchMainIdentitiesSquid<T = any>(network: string, query: string, variables: object = {}) {
+	const squidUrl = getMainIdentitesSquid(network);
+
+	if (!squidUrl) {
+		throw new Error(`Main (identities) squid for network '${network}' not found`);
 	}
 
 	return fetchGraphql<T>(squidUrl, query, variables);
