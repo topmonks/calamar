@@ -7,12 +7,14 @@ import { css, Theme } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
 import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
+import { AccountIdentityInfo } from "../components/account/AccountIdentityInfo";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { AccountPortfolio } from "../components/account/AccountPortfolio";
 import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+import TransfersTable from "../components/transfers/TransfersTable";
 
 import { useAccount } from "../hooks/useAccount";
 import { useAccountBalances } from "../hooks/useAccountBalances";
@@ -20,15 +22,41 @@ import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useUsdRates } from "../hooks/useUsdRates";
-
-import { hasSupport } from "../services/networksService";
-import TransfersTable from "../components/transfers/TransfersTable";
 import { useTransfers } from "../hooks/useTransfers";
 import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
+import { hasSupport } from "../services/networksService";
+
+const accountInfoStyle = css`
+	display: flex;
+	flex-direction: column;
+`;
+
+const accountInfoTableStyle = css`
+	&:not(:last-of-type) {
+		margin-bottom: 56px;
+	}
+`;
+
+const accountIdentityInfoStyle = css`
+	margin-top: auto;
+`;
+
 const avatarStyle = css`
 	vertical-align: text-bottom;
-	margin-right: 8px;
+	margin-left: 12px;
+`;
+
+const accountLabel = css`
+	margin-left: 8px;
+	font-weight: 400;
+`;
+
+const accountLabelName = css`
+`;
+
+const accountLabelAddress = css`
+	opacity: .5;
 `;
 
 const portfolioStyle = (theme: Theme) => css`
@@ -76,15 +104,26 @@ export const AccountPage = () => {
 	return (
 		<>
 			<CardRow>
-				<Card data-test="account-info">
+				<Card css={accountInfoStyle} data-test="account-info">
 					<CardHeader>
-						{account.data &&
+						Account
+						{(account.loading || account.data) &&
 							<AccountAvatar address={address} size={32} css={avatarStyle} />
 						}
-						Account {address}
+						<span css={accountLabel}>
+							{account.data?.identity?.display
+								? <span css={accountLabelName}>{account.data?.identity?.display}</span>
+								: <span css={accountLabelAddress}>{address}</span>
+							}
+						</span>
 					</CardHeader>
 					<AccountInfoTable
+						css={accountInfoTableStyle}
 						network={network.name}
+						account={account}
+					/>
+					<AccountIdentityInfo
+						css={accountIdentityInfoStyle}
 						account={account}
 					/>
 				</Card>

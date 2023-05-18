@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { HTMLAttributes } from "react";
 import { isEthereumAddress } from "@polkadot/util-crypto";
 
 import { useNetwork } from "../../hooks/useNetwork";
@@ -7,15 +9,15 @@ import { encodeAddress } from "../../utils/formatAddress";
 
 import {InfoTable, InfoTableAttribute } from "../InfoTable";
 
-export type ExtrinsicInfoTableProps = {
+export type AccountInfoTableProps = HTMLAttributes<HTMLDivElement> & {
 	network: string;
 	account: Resource<Account>;
 }
 
 const AccountInfoTableAttribute = InfoTableAttribute<Account>;
 
-export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
-	const {network, account} = props;
+export const AccountInfoTable = (props: AccountInfoTableProps) => {
+	const {network, account, ...tableProps} = props;
 
 	const networkData = useNetwork(network);
 
@@ -26,6 +28,7 @@ export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 			notFound={account.notFound}
 			notFoundMessage="Account doesn't exist"
 			error={account.error}
+			{...tableProps}
 		>
 			<AccountInfoTableAttribute
 				label={`${networkData?.displayName} address`}
@@ -39,7 +42,7 @@ export const AccountInfoTable = (props: ExtrinsicInfoTableProps) => {
 				copyToClipboard={(data) => encodeAddress(data.address, 42)}
 				hide={(data) => isEthereumAddress(data.address)}
 			/>
-			<InfoTableAttribute
+			<AccountInfoTableAttribute
 				label={(data) => isEthereumAddress(data.address) ? "Address" : "Public key"}
 				render={(data) => data.address}
 				copyToClipboard={(data) => data.address}

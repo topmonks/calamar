@@ -57,7 +57,7 @@ export const SearchPage = () => {
 
 	const account = useAccount(network.name, query, {
 		// extrinsic and block has precedence before account because the hashes may collide
-		// so wait until they are resolved and we know it is not extrinsic or hash
+		// so wait until they are resolved and we know it is not extrinsic or block
 		skip: !maybeAddress || extrinsicByHash.error || blockByHash.error,
 		waitUntil: extrinsicByHash.loading || blockByHash.loading
 	});

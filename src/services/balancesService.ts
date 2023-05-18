@@ -131,7 +131,7 @@ export async function getAccountBalances(address: string) {
 /*** PRIVATE ***/
 
 function unifyBalancesSquidBalance(balance: BalancesSquidBalance, networkName: string): Omit<Balance, "runtimeSpec"> {
-	const network = getNetwork(networkName)!;
+	const network = getNetwork(networkName);
 
 	return {
 		id: balance.id,
