@@ -15,12 +15,12 @@ import NotFound from "../NotFound";
 
 import { AccountPortfolioChartMode, AccountPortfolioChart } from "./AccountPortfolioChart";
 
-export const chartStyle = css`
+const chartStyle = css`
 	margin: 0 auto;
 	margin-top: 32px;
 `;
 
-export const valuesStyle = (theme: Theme) => css`
+const valuesStyle = (theme: Theme) => css`
 	position: relative;
 	display: flex;
 	flex-direction: row;
@@ -32,7 +32,7 @@ export const valuesStyle = (theme: Theme) => css`
 	}
 `;
 
-export const valueStyle = (theme: Theme) => css`
+const valueStyle = (theme: Theme) => css`
 	min-width: 70px;
 
 	${theme.breakpoints.down("sm")} {
@@ -42,7 +42,7 @@ export const valueStyle = (theme: Theme) => css`
 	}
 `;
 
-export const valueTypeStyle = (theme: Theme) => css`
+const valueTypeStyle = (theme: Theme) => css`
 	margin-bottom: 8px;
 	font-weight: 700;
 
@@ -51,7 +51,7 @@ export const valueTypeStyle = (theme: Theme) => css`
 	}
 `;
 
-export const separatorStyle = css`
+const separatorStyle = css`
 	display: block;
 	width: 1px;
 	flex: 0 0 auto;
@@ -59,12 +59,12 @@ export const separatorStyle = css`
 `;
 
 
-export const notFoundStyle = css`
+const notFoundStyle = css`
 	margin: 0 auto;
 	max-width: 300px;
 `;
 
-export const switchStyle = (theme: Theme) => css`
+const switchStyle = (theme: Theme) => css`
 	position: absolute;
 	top: 48px;
 	right: 48px;
