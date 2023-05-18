@@ -1,5 +1,4 @@
 import Decimal from "decimal.js";
-
 import { AccountBalance } from "../model/accountBalance";
 import { Balance } from "../model/balance";
 import { BalancesSquidBalance } from "../model/explorer-squid/explorerSquidAccountBalance";

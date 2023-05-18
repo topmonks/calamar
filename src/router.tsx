@@ -7,7 +7,7 @@ import { encodeAddress } from "./utils/formatAddress";
 import { AccountPage } from "./screens/account";
 import { BlockPage } from "./screens/block";
 import { CallPage } from "./screens/call";
-import { ChainDashboardPage } from "./screens/chainDashboard";
+import { NetworkPage } from "./screens/network";
 import { EventPage } from "./screens/event";
 import { ExtrinsicPage } from "./screens/extrinsic";
 import { HomePage } from "./screens/home";
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: <ChainDashboardPage />,
+				element: <NetworkPage />,
 			},
 			{
 				path: "extrinsic/:id",

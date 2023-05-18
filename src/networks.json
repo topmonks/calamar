@@ -286,7 +286,7 @@
             "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
             "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
             "main-identites": "https://squid.subsquid.io/gs-main-kusama-beta/v/v3/graphql",
-            "stats": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql"
+            "stats": "https://squid.subsquid.io/gs-stats-kusama/graphql"
         },
         "coinGeckoId": "kusama"
     },
@@ -436,7 +436,7 @@
             "balances": "https://squid.subsquid.io/polkadot-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
             "main": "https://squid.subsquid.io/gs-main-polkadot/graphql",
-            "stats": "https://squid.subsquid.io/chain-analytics-squid/v/polkadot-multi-parallel-2-0/graphql"
+            "stats": "https://squid.subsquid.io/gs-stats-polkadot/v/v1122/graphql"
         },
         "coinGeckoId": "polkadot"
     },

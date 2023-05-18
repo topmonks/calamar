@@ -9,10 +9,9 @@ export const squidUrlTemplates: Record<string, (network: string) => string> = {
 
 export const forceSquidUrl: Record<string, Partial<Record<typeof squidTypes[number], string>>> = {
 	"kusama": {
-		"stats": "https://squid.subsquid.io/chain-analytics-squid/v/kusama-multi-parallel-2-0/graphql",
 		"main-identites": "https://squid.subsquid.io/gs-main-kusama-beta/v/v3/graphql"
 	},
 	"polkadot": {
-		"stats": "https://squid.subsquid.io/chain-analytics-squid/v/polkadot-multi-parallel-2-0/graphql"
+		"stats": "https://squid.subsquid.io/gs-stats-polkadot/v/v1122/graphql"
 	}
 };
