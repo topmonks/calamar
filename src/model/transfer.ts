@@ -1,3 +1,5 @@
+import Decimal from "decimal.js";
+
 import { RuntimeSpec } from "./runtimeSpec";
 
 export type Transfer = {
@@ -9,7 +11,7 @@ export type Transfer = {
 	extrinsicHash: string|null;
 	fromPublicKey: string;
 	toPublicKey: string;
-	amount: number;
+	amount: Decimal;
 	success: boolean;
 	runtimeSpec: RuntimeSpec;
 	extrinsic: {

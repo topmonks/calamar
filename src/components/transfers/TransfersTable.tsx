@@ -1,9 +1,14 @@
-import { PaginatedResource } from "../../model/paginatedResource";
-import { Transfer } from "../../model/transfer";
 import { Chip } from "@mui/material";
+
 import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
+
+import { PaginatedResource } from "../../model/paginatedResource";
+import { Transfer } from "../../model/transfer";
+import { getNetwork } from "../../services/networksService";
+
 import { AccountAddress } from "../AccountAddress";
+import { Currency } from "../Currency";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
@@ -70,9 +75,12 @@ function TransfersTable(props: TransfersTableProps) {
 			<TransfersTableAttribute
 				label="Amount"
 				render={(transfer) =>
-					<>
-						{transfer.amount}
-					</>
+					<Currency
+						amount={transfer.amount}
+						currency={getNetwork(network).symbol}
+						decimalPlaces="optimal"
+						showFullInTooltip
+					/>
 				}
 			/>
 			<TransfersTableAttribute

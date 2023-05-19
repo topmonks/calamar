@@ -9,7 +9,8 @@ import { decodeAddress } from "../utils/formatAddress";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchMainSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { getNetwork, hasSupport } from "./networksService";
+import { rawAmountToDecimal } from "../utils/number";
 
 export type TransfersFilter =
 	{ accountAddress_eq: string };
@@ -55,6 +56,7 @@ async function getMainSquidTransfers(
 					node {
 						id
 						transfer {
+							id
 							amount
 							blockNumber
 							success
@@ -90,7 +92,7 @@ async function getMainSquidTransfers(
 		}
 	);
 
-	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer);
+	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer, network);
 	const itemsWithRuntimeSpec = await addRuntimeSpecs(network, items, () => "latest");
 	const transfers = await addExtrinsicsInfo(network, itemsWithRuntimeSpec);
 
@@ -132,14 +134,16 @@ async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string
 	}, {} as Record<string, any>);
 }
 
-function unifyMainSquidTransfer(transfer: MainSquidTransfer): Omit<Transfer, "runtimeSpec"|"extrinsic"> {
+function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Omit<Transfer, "runtimeSpec"|"extrinsic"> {
+	const network = getNetwork(networkName);
+
 	return {
 		...transfer,
 		accountPublicKey: transfer.account.publicKey,
 		blockNumber: transfer.transfer.blockNumber,
 		timestamp: transfer.transfer.timestamp,
 		extrinsicHash: transfer.transfer.extrinsicHash,
-		amount: transfer.transfer.amount,
+		amount: rawAmountToDecimal(network, transfer.transfer.amount),
 		success: transfer.transfer.success,
 		fromPublicKey: transfer.transfer.from.publicKey,
 		toPublicKey: transfer.transfer.to.publicKey,
