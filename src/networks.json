@@ -285,8 +285,7 @@
             "balances": "https://squid.subsquid.io/kusama-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
             "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
-            "main-identites": "https://squid.subsquid.io/gs-main-kusama-beta/v/v3/graphql",
-            "stats": "https://squid.subsquid.io/gs-stats-kusama/graphql"
+            "main-identites": "https://squid.subsquid.io/gs-main-kusama-beta/v/v3/graphql"
         },
         "coinGeckoId": "kusama"
     },
