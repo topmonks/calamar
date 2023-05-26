@@ -17,7 +17,7 @@ const objectKeyValue = css`
 	min-width: 250px;
 `;
 
-const numberKeyStyle = (theme: Theme) => css`
+const numberKeyStyle = css`
 	margin-right: 8px;
 	color: #6f2fab;
 

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { ReactNode, useMemo } from "react";
-import { Chip, Tooltip } from "@mui/material";
+import { useMemo } from "react";
+import { Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { encodeAddress } from "../utils/formatAddress";

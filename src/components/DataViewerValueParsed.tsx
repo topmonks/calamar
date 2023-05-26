@@ -3,11 +3,9 @@ import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { DecodedArg } from "../model/decodedMetadata";
-import { assert } from "../utils/assert";
 import { noCase } from "../utils/string";
 
 import { AccountAddress } from "./AccountAddress";
-import CopyToClipboardButton from "./CopyToClipboardButton";
 import { RuntimeSpec } from "../model/runtimeSpec";
 
 // found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51
@@ -70,10 +68,6 @@ const valueStyle = css`
 	min-width: 180px;
 	max-width: 550px;
 	padding: 6px 0;
-`;
-
-const copyButtonStyle = css`
-	margin-left: 12px;
 `;
 
 type ValueOfKindProps = {

@@ -41,7 +41,6 @@ export type TablePaginationProps = {
 export function TablePagination(props: TablePaginationProps) {
 	const {
 		offset,
-		limit,
 		hasNextPage = true,
 		hideOnSinglePage = true,
 		setPreviousPage,

@@ -58,8 +58,6 @@ export type ItemsTableAttributeProps<T, A extends any[], S> = {
 
 export const ItemsTableAttribute = <T extends object = any, S = any, A extends any[] = []>(props: ItemsTableAttributeProps<T, A, S>) => {
 	const {
-		label,
-		colCss,
 		colSpan,
 		render,
 		hide,

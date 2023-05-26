@@ -17,7 +17,6 @@ import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";
 import { ErrorMessage } from "../ErrorMessage";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Balance } from "../../model/balance";
 
 const networkStyle = css`
 	display: flex;

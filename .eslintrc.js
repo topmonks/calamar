@@ -39,10 +39,13 @@ module.exports = {
 		"@typescript-eslint/no-empty-interface": ["off"],
 		"@typescript-eslint/no-empty-function": ["off"],
 		"@typescript-eslint/no-var-requires": ["off"],
+		"@typescript-eslint/no-unused-vars": ["warn", {
+			"ignoreRestSiblings": true
+		}],
 		"prefer-const": ["warn"],
 		"no-debugger": ["warn"],
 		"no-constant-condition": ["warn"],
 		"@typescript-eslint/ban-ts-comment": ["warn"],
-		"react/jsx-key": ["off"]
+		"react/jsx-key": ["off"],
 	}
 };

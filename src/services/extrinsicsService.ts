@@ -132,45 +132,6 @@ async function getArchiveExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	return extrinsic;
 }
 
-async function getExplorerSquidExtrinsic(network: string, filter?: ExtrinsicsFilter) {
-	const response = await fetchExplorerSquid<{extrinsics: ExplorerSquidExtrinsic[]}>(
-		network,
-		`query ($filter: ExtrinsicWhereInput) {
-			extrinsics(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				extrinsicHash
-				block {
-					id
-					hash
-					height
-					timestamp
-					specVersion
-				}
-				mainCall {
-					callName
-					palletName
-				}
-				indexInBlock
-				success
-				tip
-				fee
-				signerPublicKey
-				error
-				version
-			}
-		}`,
-		{
-			filter: extrinsicFilterToExplorerSquidFilter(filter),
-		}
-	);
-
-	const data = response.extrinsics[0] && unifyExplorerSquidExtrinsic(response.extrinsics[0]);
-	const dataWithRuntimeSpecs = await addRuntimeSpec(network, data, it => it.specVersion);
-	const extrinsic = await addExtrinsicArgs(network, dataWithRuntimeSpecs);
-
-	return extrinsic;
-}
-
 async function getArchiveExtrinsics(
 	network: string,
 	filter: ExtrinsicsFilter|undefined,
@@ -291,41 +252,6 @@ async function getExplorerSquidExtrinsics(
 	const extrinsics = await addRuntimeSpecs(network, items, it => it.specVersion);
 
 	return extrinsics;
-}
-
-async function getArchiveExtrinsicsArgs(network: string, extrinsicIds: string[]) {
-	const response = await fetchArchive<{extrinsics: {id: string, call: { args: any }}[]}>(
-		network,
-		`query($ids: [String!]) {
-			extrinsics(where: { id_in: $ids }) {
-				id
-				call {
-					args
-				}
-			}
-		}`,
-		{
-			ids: extrinsicIds,
-		}
-	);
-
-	return response.extrinsics.reduce((argsByExtrinsicId, extrinsic) => {
-		argsByExtrinsicId[extrinsic.id] = extrinsic.call.args;
-		return argsByExtrinsicId;
-	}, {} as Record<string, any>);
-}
-
-async function addExtrinsicArgs(network: string, extrinsic: Extrinsic|undefined) {
-	if (!extrinsic) {
-		return undefined;
-	}
-
-	const argsByExtrinsicId = await getArchiveExtrinsicsArgs(network, [extrinsic.id]);
-
-	return {
-		...extrinsic,
-		args: argsByExtrinsicId[extrinsic.id]
-	};
 }
 
 function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic): Omit<Extrinsic, "runtimeSpec"> {

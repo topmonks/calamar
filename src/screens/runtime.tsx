@@ -4,7 +4,6 @@ import { MenuItem, Select } from "@mui/material";
 import { Card, CardHeader } from "../components/Card";
 import { Devtool } from "../components/Devtool";
 import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
-import { useNetwork } from "../hooks/useNetwork";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
 import { useRootLoaderData } from "../hooks/useRootLoaderData";
 

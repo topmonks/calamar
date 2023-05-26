@@ -20,7 +20,7 @@ export const pieChartDefaultOptions: PieChartOptions = {
 	legend: {
 		type: "scroll",
 		tooltip: {
-			position: (point, prams, dom, rect) => [
+			position: (point, params, dom) => [
 				point[0] - (dom as HTMLDivElement).clientWidth / 2,
 				point[1] - (dom as HTMLDivElement).clientHeight - 16
 			],

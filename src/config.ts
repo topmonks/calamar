@@ -1,6 +1,5 @@
 const buildTimeEnv = process.env;
 const runtimeEnv = window.env;
-const url = new URL(window.location.href);
 
 export const config = {
 	rollbar: {
