@@ -35,6 +35,12 @@ const configs: Record<string, EndpointOption[]> = {
 	other: [
 		...prodChains,
 		...testChains,
+	],
+	other_prod: [
+		...prodChains,
+	],
+	other_test: [
+		...testChains,
 	]
 };
 

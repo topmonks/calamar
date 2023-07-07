@@ -1,6 +1,7 @@
 import { sanitize } from "../utils/sanitize";
 
 export const polkadotJsNetworkNames: Record<string, string> = {
+	"aleph-zero-testnet": "aleph",
 	"gemini-2a-testnet": "subspace-gemini-2a",
 	"gmordie": "gm",
 	"hydradx": "hydra",
@@ -14,6 +15,7 @@ export const polkadotJsNetworkParachainIds: Record<string, number> = {
 };
 
 export const polkadotJsNetworkRelayChains: Record<string, string> = {
+	"aleph-zero-testnet": "other_test",
 	"equilibrium": "polkadot",
 	"rococo": "rococo",
 	"subsocial": "kusama",

@@ -18,6 +18,19 @@
         "coinGeckoId": "acala"
     },
     {
+        "name": "aleph-zero-testnet",
+        "displayName": "Aleph Zero Testnet",
+        "icon": "/assets/network-icons/aleph-zero-testnet.png",
+        "color": "#00ccab",
+        "website": "https://testnet.alephzero.org/",
+        "prefix": 42,
+        "decimals": 12,
+        "symbol": "TZERO",
+        "squids": {
+            "archive": "https://aleph-zero-testnet.explorer.subsquid.io/graphql"
+        }
+    },
+    {
         "name": "amplitude",
         "displayName": "Amplitude",
         "icon": "/assets/network-icons/amplitude.svg",
@@ -215,7 +228,8 @@
         "symbol": "JOY",
         "squids": {
             "archive": "https://joystream.explorer.subsquid.io/graphql"
-        }
+        },
+        "coinGeckoId": "joystream"
     },
     {
         "name": "karura",
@@ -285,7 +299,8 @@
             "balances": "https://squid.subsquid.io/kusama-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
             "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
-            "main-identites": "https://squid.subsquid.io/gs-main-kusama-beta/v/v3/graphql"
+            "main-identites": "https://squid.subsquid.io/gs-main-kusama/graphql",
+            "stats": "https://squid.subsquid.io/gs-stats-kusama/graphql"
         },
         "coinGeckoId": "kusama"
     },
@@ -435,7 +450,7 @@
             "balances": "https://squid.subsquid.io/polkadot-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
             "main": "https://squid.subsquid.io/gs-main-polkadot/graphql",
-            "stats": "https://squid.subsquid.io/gs-stats-polkadot/v/v1122/graphql"
+            "stats": "https://squid.subsquid.io/gs-stats-polkadot/graphql"
         },
         "coinGeckoId": "polkadot"
     },
