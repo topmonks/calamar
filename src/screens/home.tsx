@@ -173,7 +173,7 @@ export const HomePage = () => {
 				<div css={logoContainerStyle}>
 					<img src={Logo} css={logoStyle} />
 				</div>
-				<div css={subtitleStyle}>Block explorer for BitTensor ecosystem</div>
+				<div css={subtitleStyle}>Block explorer for Bittensor ecosystem</div>
 				<div css={searchBoxStyle}>
 					<SearchInput
 						css={searchInputStyle}

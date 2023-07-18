@@ -91,7 +91,7 @@ export const Footer = (props: HTMLAttributes<HTMLDivElement>) => {
 					<a href="https://twitter.com/taostats">
 						<Twitter css={iconStyle} />
 					</a>
-					<a href="#">
+					<a href="https://discord.com/channels/1086368192521318472/1086369375411507290">
 						<FaDiscord css={iconStyle} />
 					</a>
 				</div>
