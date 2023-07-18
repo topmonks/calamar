@@ -128,7 +128,6 @@ function SearchInput(props: SearchInputProps) {
 			}
 
 			e.preventDefault();
-			localStorage.setItem("network", network);
 			navigate(`/search?query=${search}`);
 		},
 		[navigate, network, search]
