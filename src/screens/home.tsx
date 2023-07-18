@@ -1,14 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css, Theme } from "@emotion/react";
 
-import { ReactComponent as Logo } from "../assets/calamar-logo-export-05.svg";
+import Logo from "../assets/logo.png";
 import Background from "../assets/main-screen-bgr.svg";
 
 import SearchInput from "../components/SearchInput";
 import { Footer } from "../components/Footer";
 import { Card } from "../components/Card";
-import { ButtonLink } from "../components/ButtonLink";
-import { useNetworkGroups } from "../hooks/useNetworkGroups";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -88,9 +86,15 @@ const backgroundStyle = css`
 	}
 `;
 
+const logoContainerStyle = css`
+	background-color: #9AF0F7;
+	padding: 40px 0px 90px;
+	margin-bottom: 40px
+`;
+
 const logoStyle = css`
-	width: 420px;
-	margin: 40px auto;
+	width: 160px;
+	margin: 0px auto;
 	display: block;
 	max-width: 100%;
 `;
@@ -144,64 +148,6 @@ const networksStyle = css`
 	padding: 0 16px;
 `;
 
-const networksGroupStyle = (theme: Theme) => css`
-	margin: 24px 0;
-	padding: 16px;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, auto));
-	gap: 16px;
-
-	${theme.breakpoints.up("md")} {
-		padding: 16px;
-	}
-`;
-
-const newtorkGroupTitleStyle = css`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	font-size: 18px;
-	font-weight: 700;
-	opacity: .75;
-
-	div {
-		font-size: 16px;
-		font-weight: 400;
-	}
-`;
-
-const networkButtonStyle = css`
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	padding: 16px;
-	line-height: normal;
-
-	font-size: 16px;
-	font-weight: 400;
-	text-decoration: none;
-
-	color: inherit;
-	background-color: #f5f5f5;
-	border-radius: 8px;
-
-	img {
-		width: 32px;
-		height: 32px;
-		object-fit: contain;
-		margin-right: 12px;
-		margin-left: 4px;
-	}
-
-	&[data-network=polkadot],
-	&[data-network=kusama] {
-		grid-row-start: 2;
-		grid-row-end: 4;
-	}
-`;
-
 const footerStyle = css`
 	flex: 0 0 auto;
 
@@ -211,8 +157,6 @@ const footerStyle = css`
 `;
 
 export const HomePage = () => {
-	const networkGroups = useNetworkGroups();
-
 	const { network } = useRootLoaderData();
 
 	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
@@ -226,7 +170,9 @@ export const HomePage = () => {
 		<div css={containerStyle}>
 			<div css={backgroundStyle} data-test="background" />
 			<div css={contentStyle}>
-				<Logo css={logoStyle} />
+				<div css={logoContainerStyle}>
+					<img src={Logo} css={logoStyle} />
+				</div>
 				<div css={subtitleStyle}>Block explorer for BitTensor ecosystem</div>
 				<div css={searchBoxStyle}>
 					<SearchInput
@@ -235,24 +181,6 @@ export const HomePage = () => {
 						persistNetwork
 					/>
 				</div>
-				{/* <div css={networksStyle}>
-					{networkGroups.map((group) =>
-						<Card css={networksGroupStyle} key={group.relayChainNetwork?.name || "other"}>
-							<div css={newtorkGroupTitleStyle}>
-								{group.relayChainNetwork?.displayName || "Other"}
-								{group.relayChainNetwork && <div>and parachains</div>}
-							</div>
-							{group.networks.map(network =>
-								network && (
-									<ButtonLink to={`/${network.name}`} key={network.name} css={networkButtonStyle} data-network={network.name}>
-										<img src={network.icon} />
-										{network.displayName}
-									</ButtonLink>
-								)
-							)}
-						</Card>
-					)}
-				</div> */}
 				<div css={networksStyle}>
 					<Card>
 						<TabbedContent>
