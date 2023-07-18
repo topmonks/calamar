@@ -7,7 +7,6 @@ import { encodeAddress } from "./utils/formatAddress";
 import { AccountPage } from "./screens/account";
 import { BlockPage } from "./screens/block";
 import { CallPage } from "./screens/call";
-import { NetworkPage } from "./screens/network";
 import { EventPage } from "./screens/event";
 import { ExtrinsicPage } from "./screens/extrinsic";
 import { HomePage } from "./screens/home";
@@ -19,24 +18,27 @@ import { config } from "./config";
 
 export const router = createBrowserRouter([
 	{
+		id: "home",
 		path: "/",
+		loader: ({ params }) => {
+			// const { network: networkName } = params;
+			const network = getNetwork("polkadot", false);
+
+			return { network };
+		},
 		element: <HomePage />,
 	},
 	{
 		id: "root",
-		path: ":network",
+		path: "*",
 		loader: ({ params }) => {
-			const { network: networkName } = params;
-			const network = networkName ? getNetwork(networkName, false) : undefined;
+			// const { network: networkName } = params;
+			const network = getNetwork("polkadot", false);
 
 			return { network };
 		},
 		element: <ResultLayout />,
 		children: [
-			{
-				index: true,
-				element: <NetworkPage />,
-			},
 			{
 				path: "extrinsic/:id",
 				element: <ExtrinsicPage />,

@@ -39,7 +39,7 @@ function EventsTable(props: EventsTableProps) {
 			<EventsItemsTableAttribute
 				label="ID"
 				render={(event) => (
-					<Link to={`/${network}/event/${event.id}`}>
+					<Link to={`/event/${event.id}`}>
 						{event.id}
 					</Link>
 				)}
@@ -48,7 +48,7 @@ function EventsTable(props: EventsTableProps) {
 				label="Name"
 				render={(event) =>
 					<ButtonLink
-						to={`/${network}/search?query=${event.palletName}.${event.eventName}`}
+						to={`/search?query=${event.palletName}.${event.eventName}`}
 						size="small"
 						color="secondary"
 					>
@@ -60,7 +60,7 @@ function EventsTable(props: EventsTableProps) {
 				<EventsItemsTableAttribute
 					label="Extrinsic"
 					render={(event) => event.extrinsicId && (
-						<Link to={`/${network}/extrinsic/${event.extrinsicId}`}>
+						<Link to={`/extrinsic/${event.extrinsicId}`}>
 							{event.extrinsicId}
 						</Link>
 					)}
