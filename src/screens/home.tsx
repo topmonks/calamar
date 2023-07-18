@@ -9,6 +9,18 @@ import { Footer } from "../components/Footer";
 import { Card } from "../components/Card";
 import { ButtonLink } from "../components/ButtonLink";
 import { useNetworkGroups } from "../hooks/useNetworkGroups";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { useTransfers } from "../hooks/useTransfers";
+import TransfersTable from "../components/transfers/TransfersTable";
+import { hasSupport } from "../services/networksService";
+import { useBlocks } from "../hooks/useBlocks";
+import BlocksTable from "../components/blocks/BlocksTable";
+import { useBalances } from "../hooks/useBalances";
+import BalancesTable from "../components/balances/BalancesTable";
+import { useUsdRates } from "../hooks/useUsdRates";
+import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
 const containerStyle = (theme: Theme) => css`
 	--content-min-height: 900px;
@@ -201,12 +213,21 @@ const footerStyle = css`
 export const HomePage = () => {
 	const networkGroups = useNetworkGroups();
 
+	const { network } = useRootLoaderData();
+
+	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
+	const blocks = useBlocks(network.name, undefined, "id_DESC");
+	const transfers = useTransfers(network.name, undefined, "id_DESC");
+	const topHolders = useBalances(network.name, undefined, "total_DESC");
+
+	const usdRates = useUsdRates();
+
 	return (
 		<div css={containerStyle}>
 			<div css={backgroundStyle} data-test="background" />
 			<div css={contentStyle}>
 				<Logo css={logoStyle} />
-				<div css={subtitleStyle}>Block explorer for Polkadot & Kusama ecosystem</div>
+				<div css={subtitleStyle}>Block explorer for BitTensor ecosystem</div>
 				<div css={searchBoxStyle}>
 					<SearchInput
 						css={searchInputStyle}
@@ -214,7 +235,7 @@ export const HomePage = () => {
 						persistNetwork
 					/>
 				</div>
-				<div css={networksStyle}>
+				{/* <div css={networksStyle}>
 					{networkGroups.map((group) =>
 						<Card css={networksGroupStyle} key={group.relayChainNetwork?.name || "other"}>
 							<div css={newtorkGroupTitleStyle}>
@@ -231,6 +252,54 @@ export const HomePage = () => {
 							)}
 						</Card>
 					)}
+				</div> */}
+				<div css={networksStyle}>
+					<Card>
+						<TabbedContent>
+							<TabPane
+								label="Extrinsics"
+								count={extrinsics.pagination.totalCount}
+								loading={extrinsics.loading}
+								error={extrinsics.error}
+								value="extrinsics"
+							>
+								<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showAccount showTime />
+							</TabPane>
+							<TabPane
+								label="Blocks"
+								count={blocks.pagination.totalCount}
+								loading={blocks.loading}
+								error={blocks.error}
+								value="blocks"
+							>
+								<BlocksTable network={network.name} blocks={blocks} showValidator showTime />
+							</TabPane>
+
+
+							{hasSupport(network.name, "main-squid") &&
+									<TabPane
+										label="Transfers"
+										count={transfers.pagination.totalCount}
+										loading={transfers.loading}
+										error={transfers.error}
+										value="transfers"
+									>
+										<TransfersTable network={network.name} transfers={transfers} showTime />
+									</TabPane>
+							}
+							{hasSupport(network.name, "balances-squid") &&
+									<TabPane
+										label="Top holders"
+										count={topHolders.pagination.totalCount}
+										loading={topHolders.loading}
+										error={topHolders.error}
+										value="top-holders"
+									>
+										<BalancesTable network={network.name} balances={topHolders} usdRates={usdRates} />
+									</TabPane>
+							}
+						</TabbedContent>
+					</Card>
 				</div>
 			</div>
 			<Footer css={footerStyle} />
