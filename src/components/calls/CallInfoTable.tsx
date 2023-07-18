@@ -49,7 +49,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network}/block/${data.blockId}`}>
+					<Link to={`/block/${data.blockId}`}>
 						{data.blockHeight}
 					</Link>
 				}
@@ -58,7 +58,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Extrinsic"
 				render={(data) =>
-					<Link to={`/${network}/extrinsic/${data.extrinsicId}`}>
+					<Link to={`/extrinsic/${data.extrinsicId}`}>
 						{data.extrinsicId}
 					</Link>
 				}
@@ -67,7 +67,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Parent call"
 				render={(data) => data.parentId &&
-					<Link to={`/${network}/call/${data.parentId}`}>
+					<Link to={`/call/${data.parentId}`}>
 						{data.parentId}
 					</Link>
 				}
@@ -102,7 +102,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.palletName}.${data.callName}`}
+						to={`/search?query=${data.palletName}.${data.callName}`}
 						size="small"
 						color="secondary"
 					>

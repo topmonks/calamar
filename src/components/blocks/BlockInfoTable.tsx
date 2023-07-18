@@ -51,7 +51,7 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			<BlockInfoTableAttribute
 				label="Parent hash"
 				render={(data) =>
-					<Link to={`/${network}/search?query=${data.parentHash}`}>
+					<Link to={`/search?query=${data.parentHash}`}>
 						{data.parentHash}
 					</Link>
 				}

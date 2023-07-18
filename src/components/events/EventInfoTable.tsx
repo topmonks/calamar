@@ -42,7 +42,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Block"
 				render={(data) =>
 					<Link
-						to={`/${network}/block/${data.blockId}`}
+						to={`/block/${data.blockId}`}
 					>
 						{data.blockHeight}
 					</Link>
@@ -53,7 +53,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Extrinsic"
 				render={(data) => data.extrinsicId &&
 					<Link
-						to={`/${network}/extrinsic/${data.extrinsicId}`}
+						to={`/extrinsic/${data.extrinsicId}`}
 					>
 						{data.extrinsicId}
 					</Link>
@@ -64,7 +64,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Call"
 				render={(data) => data.callId &&
 					<Link
-						to={`/${network}/call/${data.callId}`}
+						to={`/call/${data.callId}`}
 					>
 						{data.callId}
 					</Link>
@@ -75,7 +75,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.palletName}.${data.eventName}`}
+						to={`/search?query=${data.palletName}.${data.eventName}`}
 						size="small"
 						color="secondary"
 					>

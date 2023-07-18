@@ -88,7 +88,7 @@ function BalancesTable(props: BalancesTableProps) {
 			<BalancesItemsTableAttribute
 				label="Last update"
 				render={(balance) =>
-					<Link to={`/${network}/search?query=${balance.updatedAt}`}>
+					<Link to={`/search?query=${balance.updatedAt}`}>
 						{balance.updatedAt}
 					</Link>
 				}

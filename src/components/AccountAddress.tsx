@@ -51,7 +51,7 @@ export const AccountAddress = (props: AccountLinkProps) => {
 
 		if (link) {
 			content = (
-				<Link to={`/${network}/account/${address}`}>
+				<Link to={`/account/${address}`}>
 					{content}
 				</Link>
 			);

@@ -29,7 +29,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			<CallsTableAttribute
 				label="ID"
 				render={(call) =>
-					<Link to={`/${network}/call/${call.id}`}>
+					<Link to={`/call/${call.id}`}>
 						{call.id}
 					</Link>
 				}
@@ -38,7 +38,7 @@ export const CallsTable = (props: CallsTableProps) => {
 				label="Name"
 				render={(call) =>
 					<ButtonLink
-						to={`/${network}/search?query=${call.palletName}.${call.callName}`}
+						to={`/search?query=${call.palletName}.${call.callName}`}
 						size="small"
 						color="secondary"
 					>
@@ -63,7 +63,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			<CallsTableAttribute
 				label="Extrinsic"
 				render={(call) =>
-					<Link to={`/${network}/extrinsic/${call.extrinsicId}`}>
+					<Link to={`/extrinsic/${call.extrinsicId}`}>
 						{call.extrinsicId}
 					</Link>
 				}

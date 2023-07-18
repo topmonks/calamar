@@ -54,7 +54,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<ExtrinsicInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network}/block/${data.blockId}`}>
+					<Link to={`/block/${data.blockId}`}>
 						{data.blockHeight}
 					</Link>
 				}
@@ -88,7 +88,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.palletName}.${data.callName}`}
+						to={`/search?query=${data.palletName}.${data.callName}`}
 						size="small"
 						color="secondary"
 					>
