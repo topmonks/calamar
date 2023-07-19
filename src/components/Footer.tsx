@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { Email, GitHub, Telegram } from "@mui/icons-material";
+import { FaDiscord } from "react-icons/fa";
+import { Twitter } from "@mui/icons-material";
 import { alpha } from "@mui/material";
 import { css, Theme } from "@emotion/react";
 import { HTMLAttributes } from "react";
@@ -26,7 +27,7 @@ const contentStyle = (theme: Theme) => css`
 	z-index: 100;
 
 	font-size: 15px;
-	color: ${theme.palette.secondary.dark};
+	color: ${theme.palette.primary.light};
 
 	a {
 		color: inherit;
@@ -74,7 +75,7 @@ const linksStyle = css`
 const iconStyle = (theme: Theme) => css`
 	display: block;
 	font-size: 1.25em;
-	color: ${alpha(theme.palette.secondary.dark, .8)};
+	color: ${alpha(theme.palette.primary.light, .8)};
 `;
 
 export const Footer = (props: HTMLAttributes<HTMLDivElement>) => {
@@ -82,20 +83,16 @@ export const Footer = (props: HTMLAttributes<HTMLDivElement>) => {
 		<div css={footerStyle} {...props}>
 			<div css={contentStyle}>
 				<div css={creditsStyle}>
-					<div>Created by <a href="https://topmonks.com">TopMonks</a></div>
+					<div>Created by <a href="https://taostats.io">Taostats</a></div>
 					<div css={separatorStyle}></div>
-					<div>Powered by <a href="https://subsquid.io">Subsquid</a></div>
+					<div>Built on <a href="https://bittensor.com">Bittensor</a></div>
 				</div>
 				<div css={linksStyle}>
-					<a href="https://docs.calamar.app">Docs</a>
-					<a href="https://t.me/calamar_explorer">
-						<Telegram css={iconStyle} />
+					<a href="https://twitter.com/taostats">
+						<Twitter css={iconStyle} />
 					</a>
-					<a href="https://github.com/topmonks/calamar">
-						<GitHub css={iconStyle} />
-					</a>
-					<a href="mailto:calamar@topmonks.com">
-						<Email css={iconStyle} />
+					<a href="https://discord.com/channels/1086368192521318472/1086369375411507290">
+						<FaDiscord css={iconStyle} />
 					</a>
 				</div>
 			</div>
