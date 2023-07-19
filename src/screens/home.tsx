@@ -70,29 +70,29 @@ const backgroundStyle = css`
   min-height: 100vh;
   z-index: -1;
 
-  // &::before {
-  //   content: "";
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   width: 100%;
-  //   height: var(--content-min-height);
-  //   background-color: white;
-  //   background-position: center bottom;
-  //   background-size: 100% auto;
-  //   background-repeat: no-repeat;
-  //   background-image: url(${Background});
-  // }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--content-min-height);
+    background-color: white;
+    background-position: center bottom;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-image: url(${Background});
+  }
 
-  // &::after {
-  //   content: "";
-  //   position: absolute;
-  //   top: var(--content-min-height);
-  //   left: 0;
-  //   right: 0;
-  //   bottom: 0;
-  //   background-color: #9af0f7;
-  // }
+  &::after {
+    content: "";
+    position: absolute;
+    top: var(--content-min-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #9af0f7;
+  }
 `;
 
 const logoContainerStyle = css`
