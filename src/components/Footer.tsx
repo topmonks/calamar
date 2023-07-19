@@ -83,7 +83,7 @@ export const Footer = (props: HTMLAttributes<HTMLDivElement>) => {
 		<div css={footerStyle} {...props}>
 			<div css={contentStyle}>
 				<div css={creditsStyle}>
-					<div>Created by <a href="https://taostats.io">TaoStats</a></div>
+					<div>Created by <a href="https://taostats.io">Taostats</a></div>
 					<div css={separatorStyle}></div>
 					<div>Built on <a href="https://bittensor.com">Bittensor</a></div>
 				</div>

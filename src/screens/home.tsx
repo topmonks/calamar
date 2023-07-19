@@ -19,6 +19,7 @@ import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
 import { useUsdRates } from "../hooks/useUsdRates";
 import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { Link } from "../components/Link";
 
 const containerStyle = (theme: Theme) => css`
   --content-min-height: 800px;
@@ -176,7 +177,9 @@ export const HomePage = () => {
 			<div css={backgroundStyle} data-test="background" />
 			<div css={ headerStyle }>
 				<div css={logoContainerStyle}>
-					<img src={Logo} css={logoStyle} />
+					<Link to='/'>
+						<img src={Logo} css={logoStyle} />
+					</Link>
 				</div>
 				<div css={searchBoxStyle}>
 					<SearchInput
