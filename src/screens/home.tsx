@@ -139,18 +139,18 @@ const searchInputStyle = (theme: Theme) => css`
   }
 `;
 
-const headerStyle = css`
+const headerStyle = (theme: Theme) => css`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 2.5rem 4rem;
-  background-color: #181818;
+  background-color: ${theme.palette.primary.dark};
 `;
 
-const footerStyle = css`
+const footerStyle = (theme: Theme) => css`
   flex: 0 0 auto;
 
-  background: #181818;
+  background-color: ${theme.palette.primary.dark};
 
   > div {
     max-width: 1000px;
