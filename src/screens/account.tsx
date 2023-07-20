@@ -1,16 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Tooltip } from "@mui/material";
-import { InfoOutlined } from "@mui/icons-material";
 import { css, Theme } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
-import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
 import { AccountIdentityInfo } from "../components/account/AccountIdentityInfo";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
 import { AccountPortfolio } from "../components/account/AccountPortfolio";
-import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -68,14 +64,6 @@ const portfolioStyle = (theme: Theme) => css`
 	}
 `;
 
-const portfolioInfoIconStyle = css`
-	height: 30px;
-	font-size: 20px;
-	opacity: .5;
-	vertical-align: text-bottom;
-	margin-left: 4px;
-`;
-
 export type AccountPageParams = {
 	address: string;
 };
@@ -129,15 +117,7 @@ export const AccountPage = () => {
 				</Card>
 				<Card css={portfolioStyle} data-test="account-portfolio">
 					<CardHeader>
-						Portfolio
-						<Tooltip
-							arrow
-							placement="top"
-							enterTouchDelay={0}
-							title="Includes only supported networks with conversion rate to USD."
-						>
-							<InfoOutlined css={portfolioInfoIconStyle} />
-						</Tooltip>
+						Account Balance
 					</CardHeader>
 					<AccountPortfolio
 						balances={balances}
@@ -149,15 +129,6 @@ export const AccountPage = () => {
 				<Card data-test="account-related-items">
 					<TabbedContent>
 						<TabPane
-							label="Balances"
-							count={balances.data?.length}
-							loading={balances.loading}
-							error={balances.error}
-							value="balances"
-						>
-							<AccountBalancesTable balances={balances} usdRates={usdRates} />
-						</TabPane>
-						<TabPane
 							label="Extrinsics"
 							count={extrinsics.pagination.totalCount}
 							loading={extrinsics.loading}
@@ -166,17 +137,6 @@ export const AccountPage = () => {
 						>
 							<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showTime />
 						</TabPane>
-						{hasSupport(network.name, "explorer-squid") &&
-							<TabPane
-								label="Calls"
-								count={calls.pagination.totalCount}
-								loading={calls.loading}
-								error={calls.error}
-								value="calls"
-							>
-								<CallsTable network={network.name} calls={calls} />
-							</TabPane>
-						}
 						{hasSupport(network.name, "main-squid") &&
 							<TabPane
 								label="Transfers"
