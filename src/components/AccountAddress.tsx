@@ -28,7 +28,6 @@ const copyToClipboardStyle = css`
 `;
 
 export type AccountLinkProps = {
-	network: string;
 	address: string;
 	prefix: number;
 	icon?: boolean;
@@ -39,7 +38,6 @@ export type AccountLinkProps = {
 
 export const AccountAddress = (props: AccountLinkProps) => {
 	const {
-		network,
 		address,
 		prefix,
 		icon = true,
@@ -75,7 +73,7 @@ export const AccountAddress = (props: AccountLinkProps) => {
 		}
 
 		return content;
-	}, [network, address, encodeAddress, link]);
+	}, [address, encodeAddress, link]);
 
 	/*if (!icon) {
 		return <>{content}</>;

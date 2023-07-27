@@ -1,21 +1,17 @@
 import { Block } from "../../model/block";
 import { Resource } from "../../model/resource";
-import { encodeAddress } from "../../utils/formatAddress";
-
-import { AccountAddress } from "../AccountAddress";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type BlockInfoTableProps = {
-	network: string;
 	block: Resource<Block>;
 }
 
 const BlockInfoTableAttribute = InfoTableAttribute<Block>;
 
 export const BlockInfoTable = (props: BlockInfoTableProps) => {
-	const {network, block} = props;
+	const { block } = props;
 
 	return (
 		<InfoTable
@@ -30,18 +26,18 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 				render={(data) =>
 					<Time time={data.timestamp} utc />
 				}
-				hide={(data) => data.height === 0}
+				hide={(data) => data.height.toString() === "0"}
 			/>
 			<BlockInfoTableAttribute
 				label="Block time"
 				render={(data) =>
-					<Time time={data.timestamp} fromNow />
+					<Time time={data.timestamp} fromNow utc />
 				}
-				hide={(data) => data.height === 0}
+				hide={(data) => data.height.toString() === "0"}
 			/>
 			<BlockInfoTableAttribute
 				label="Block height"
-				render={(data) => data.height}
+				render={(data) => data.height.toString()}
 			/>
 			<BlockInfoTableAttribute
 				label="Hash"
@@ -51,28 +47,12 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			<BlockInfoTableAttribute
 				label="Parent hash"
 				render={(data) =>
-					<Link to={`/search?query=${data.parentHash}`}>
-						{data.parentHash}
-					</Link>
+					data.height > 1 ? 
+						<Link to={`/block/${(BigInt(data.height) - BigInt(1)).toString()}`}>
+							{data.parentHash}
+						</Link> : <>{data.parentHash}</>
 				}
 				copyToClipboard={(data) => data.parentHash}
-			/>
-			<BlockInfoTableAttribute
-				label="Validator"
-				render={(data) => data.validator &&
-					<AccountAddress
-						network={network}
-						address={data.validator}
-						prefix={data.runtimeSpec.metadata.ss58Prefix}
-					/>
-				}
-				copyToClipboard={(data) => data.validator &&
-					encodeAddress(
-						data.validator,
-						data.runtimeSpec.metadata.ss58Prefix
-					)
-				}
-				hide={(data) => !data.validator}
 			/>
 			<BlockInfoTableAttribute
 				label="Spec version"

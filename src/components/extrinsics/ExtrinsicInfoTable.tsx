@@ -12,12 +12,14 @@ import { ButtonLink } from "../ButtonLink";
 import DataViewer from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
-import { Time } from "../Time";
+import { BlockTimestamp } from "../BlockTimestamp";
+import { NETWORK_CONFIG } from "../../config";
+import { useBlock } from "../../hooks/useBlock";
+import { useRuntimeSpec } from "../../hooks/useRuntimeSpec";
 
 export type ExtrinsicInfoTableProps = {
-	network: string;
 	extrinsic: Resource<Extrinsic>;
-}
+};
 
 const ExtrinsicInfoTableAttribute = InfoTableAttribute<Extrinsic>;
 
@@ -32,53 +34,58 @@ const failedStyle = (theme: Theme) => css`
 `;
 
 export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
-	const {network, extrinsic} = props;
+	const { extrinsic } = props;
+	const block = useBlock({ id: { equalTo: extrinsic.data?.blockHeight } });
+	const { runtimeSpec, loading: loadingRuntimeSpec } = useRuntimeSpec(
+		block?.data?.specVersion
+	);
 
 	return (
 		<InfoTable
 			data={extrinsic.data}
 			loading={extrinsic.loading}
 			notFound={extrinsic.notFound}
-			notFoundMessage="No extrinsic found"
+			notFoundMessage='No extrinsic found'
 			error={extrinsic.error}
 		>
 			<ExtrinsicInfoTableAttribute
-				label="Timestamp"
-				render={(data) =>
-					<Time time={data.timestamp} timezone utc />
-				}
+				label='Timestamp'
+				render={(data) => (
+					<BlockTimestamp blockHeight={data.blockHeight} timezone utc />
+				)}
 			/>
 			<ExtrinsicInfoTableAttribute
-				label="Block time"
-				render={(data) =>
-					<Time time={data.timestamp} fromNow />
-				}
+				label='Block time'
+				render={(data) => (
+					<BlockTimestamp blockHeight={data.blockHeight} fromNow utc />
+				)}
 			/>
 			<ExtrinsicInfoTableAttribute
-				label="Hash"
-				render={(data) => data.hash}
-				copyToClipboard={(data) => data.hash}
+				label='Hash'
+				render={(data) => data.txHash}
+				copyToClipboard={(data) => data.txHash}
 			/>
 			<ExtrinsicInfoTableAttribute
-				label="Block"
-				render={(data) =>
-					<Link to={`/block/${data.blockId}`}>
-						{data.blockHeight}
+				label='Block'
+				render={(data) => (
+					<Link to={`/block/${data.blockHeight.toString()}`}>
+						{data.blockHeight.toString()}
 					</Link>
-				}
+				)}
 				copyToClipboard={(data) => data.blockHeight.toString()}
 			/>
 			<ExtrinsicInfoTableAttribute
-				label="Account"
-				render={(data) => data.signer &&
-					<AccountAddress
-						network={network}
-						address={data.signer}
-						prefix={data.runtimeSpec.metadata.ss58Prefix}
-					/>
+				label='Account'
+				render={(data) =>
+					data.signer && (
+						<AccountAddress
+							address={data.signer}
+							prefix={NETWORK_CONFIG.prefix}
+						/>
+					)
 				}
-				copyToClipboard={(data) => data.signer &&
-					encodeAddress(data.signer, data.runtimeSpec.metadata.ss58Prefix)
+				copyToClipboard={(data) =>
+					data.signer && encodeAddress(data.signer, NETWORK_CONFIG.prefix)
 				}
 				hide={(data) => !data.signer}
 			/>
@@ -95,56 +102,50 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				}
 			/>
 			<ExtrinsicInfoTableAttribute
-				label="Name"
-				render={(data) =>
+				label='Name'
+				render={(data) => (
 					<ButtonLink
-						to={`/search?query=${data.palletName}.${data.callName}`}
-						size="small"
-						color="secondary"
+						to={`/search?query=${data.module}.${data.call}`}
+						size='small'
+						color='secondary'
 					>
-						{data.palletName}.{data.callName}
+						{data.module}.{data.call}
 					</ButtonLink>
-				}
+				)}
 			/>
-			<ExtrinsicInfoTableAttribute
-				label="Parameters"
+			{!loadingRuntimeSpec && runtimeSpec ? (
+				<ExtrinsicInfoTableAttribute
+					label='Parameters'
+					render={(data) => (
+						<DataViewer
+							data={data.args}
+							metadata={
+								getCallMetadataByName(runtimeSpec.metadata, data.module, data.call)?.args
+							}
+							runtimeSpec={runtimeSpec}
+							copyToClipboard
+						/>
+					)}
+				/>
+			) : (
+				<></>
+			)}
+
+			{/* TODO: */}
+			{/* <ExtrinsicInfoTableAttribute
+				label='Signature'
 				render={(data) =>
-					<DataViewer
-						network={network}
-						data={data.args}
-						metadata={getCallMetadataByName(data.runtimeSpec.metadata, data.palletName, data.callName)?.args}
-						runtimeSpec={data.runtimeSpec}
-						copyToClipboard
-					/>
-				}
-			/>
-			<ExtrinsicInfoTableAttribute
-				label="Error"
-				render={(data) => <DataViewer network={network} data={data.error} copyToClipboard />}
-				hide={(data) => !data.error}
-			/>
-			<ExtrinsicInfoTableAttribute
-				label="Fee"
-				render={(data) => data.fee?.toString()}
-				hide={(data) => !data.fee || data.fee === BigInt(0)}
-			/>
-			<ExtrinsicInfoTableAttribute
-				label="Signature"
-				render={(data) => data.signature &&
-					<DataViewer
-						simple
-						network={network}
-						data={data.signature}
-						runtimeSpec={data.runtimeSpec}
-						copyToClipboard
-					/>
+					data.signature && (
+						<DataViewer
+							simple
+							data={data.signature}
+							runtimeSpec={data.runtimeSpec}
+							copyToClipboard
+						/>
+					)
 				}
 				hide={(data) => !data.signature}
-			/>
-			<ExtrinsicInfoTableAttribute
-				label="Spec version"
-				render={(data) => data.specVersion}
-			/>
+			/> */}
 		</InfoTable>
 	);
 };

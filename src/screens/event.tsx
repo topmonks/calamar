@@ -5,27 +5,28 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import { EventInfoTable } from "../components/events/EventInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useEvent } from "../hooks/useEvent";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
 export type EventPageParams = {
 	id: string;
 };
 
 export const EventPage = () => {
-	const { network } = useRootLoaderData();
 	const { id } = useParams() as EventPageParams;
 
-	const event = useEvent(network.name, { id_eq: id });
+	const event = useEvent({ id: { equalTo: id } });
 
 	useDOMEventTrigger("data-loaded", !event.loading);
 
-	return (<>
-		<Card>
-			<CardHeader>
-				Event #{id}
-				<CopyToClipboardButton value={id} />
-			</CardHeader>
-			<EventInfoTable network={network.name} event={event} />
-		</Card>
-	</>);
+	return (
+		event.data ? 
+			<>
+				<Card>
+					<CardHeader>
+						Event #{id}
+						<CopyToClipboardButton value={id} />
+					</CardHeader>
+					<EventInfoTable event={event} />
+				</Card>
+			</>: <></>
+	);
 };

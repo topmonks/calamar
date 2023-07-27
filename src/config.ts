@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const buildTimeEnv = process.env;
 const runtimeEnv = window.env;
 
@@ -15,4 +17,12 @@ export const config = {
 	devtools: {
 		enabled: localStorage.getItem("devtools") === "1"
 	}
+};
+
+export const DICTIONARY_ENDPOINT = process.env.REACT_APP_DICTIONARY_ENDPOINT || "https://api.subquery.network/sq/TaoStats/bittensor-dictionary";
+export const INDEXER_ENDPOINT = process.env.REACT_APP_INDEXER_ENDPOINT || "https://api.subquery.network/sq/TaoStats/bittensor-indexer";
+export const NETWORK_CONFIG = {
+	currency: "TAO",
+	decimals: 9,
+	prefix: 42,
 };

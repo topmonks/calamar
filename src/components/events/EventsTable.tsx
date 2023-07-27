@@ -12,11 +12,10 @@ import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 
 const parametersColCss = (showExtrinsic?: boolean) => css`
-	width: ${showExtrinsic ? "40%" : "60%"};
+  width: ${showExtrinsic ? "40%" : "60%"};
 `;
 
 export type EventsTableProps = {
-	network: string;
 	events: PaginatedResource<Event>;
 	showExtrinsic?: boolean;
 };
@@ -24,71 +23,70 @@ export type EventsTableProps = {
 const EventsItemsTableAttribute = ItemsTableAttribute<Event>;
 
 function EventsTable(props: EventsTableProps) {
-	const { network, events, showExtrinsic } = props;
+	const { events, showExtrinsic } = props;
 
 	return (
 		<ItemsTable
 			data={events.data}
 			loading={events.loading}
 			notFound={events.notFound}
-			notFoundMessage="No events found"
+			notFoundMessage='No events found'
 			error={events.error}
 			pagination={events.pagination}
-			data-test="events-table"
+			data-test='events-table'
 		>
 			<EventsItemsTableAttribute
-				label="ID"
-				render={(event) => (
-					<Link to={`/event/${event.id}`}>
-						{event.id}
-					</Link>
-				)}
+				label='ID'
+				render={(event) => <Link to={`/event/${event.id}`}>{event.id}</Link>}
 			/>
 			<EventsItemsTableAttribute
-				label="Name"
-				render={(event) =>
+				label='Name'
+				render={(event) => (
 					<ButtonLink
-						to={`/search?query=${event.palletName}.${event.eventName}`}
-						size="small"
-						color="secondary"
+						to={`/search?query=${event.module}.${event.event}`}
+						size='small'
+						color='secondary'
 					>
-						{event.palletName}.{event.eventName}
+						{event.module}.{event.event}
 					</ButtonLink>
-				}
+				)}
 			/>
 			{showExtrinsic && (
 				<EventsItemsTableAttribute
-					label="Extrinsic"
-					render={(event) => event.extrinsicId && (
-						<Link to={`/extrinsic/${event.extrinsicId}`}>
-							{event.extrinsicId}
-						</Link>
-					)}
+					label='Extrinsic'
+					render={(event) =>
+						event.extrinsicId != null && (
+							<Link to={`/extrinsic/${event.blockHeight}-${event.extrinsicId}`}>
+								<span>
+									{`${ event.blockHeight } - ${ event.extrinsicId }`}
+								</span>
+							</Link>
+						)
+					}
 				/>
 			)}
-			<EventsItemsTableAttribute
+			{/* <EventsItemsTableAttribute
 				label="Parameters"
 				colCss={parametersColCss(showExtrinsic)}
 				render={(event) => {
-					if (!event.args) {
+					if (!event.data) {
 						return null;
 					}
 
 					return (
 						<DataViewer
-							network={network}
-							data={event.args}
+							data={event.data}
 							metadata={getEventMetadataByName(
 								event.runtimeSpec.metadata,
-								event.palletName,
-								event.eventName
+								event.module,
+								event.event
 							)?.args}
 							runtimeSpec={event.runtimeSpec}
 							copyToClipboard
 						/>
 					);
 				}}
-			/>
+			/> */}
 		</ItemsTable>
 	);
 }

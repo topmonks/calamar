@@ -7,13 +7,8 @@ import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTot
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import { useTransfers } from "../hooks/useTransfers";
 import TransfersTable from "../components/transfers/TransfersTable";
-import { hasSupport } from "../services/networksService";
 import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
-import { useBalances } from "../hooks/useBalances";
-import BalancesTable from "../components/balances/BalancesTable";
-import { useUsdRates } from "../hooks/useUsdRates";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
 
 const contentStyle = css`
   position: relative;
@@ -30,24 +25,27 @@ const contentInner = css`
 `;
 
 export const HomePage = () => {
-	const { network } = useRootLoaderData();
-
 	const extrinsics = useExtrinsicsWithoutTotalCount(
-		network.name,
 		undefined,
-		"id_DESC"
+		"BLOCK_HEIGHT_DESC"
 	);
-	const blocks = useBlocks(network.name, undefined, "id_DESC");
-	const transfers = useTransfers(network.name, undefined, "id_DESC");
-	const topHolders = useBalances(network.name, undefined, "total_DESC");
-
-	const usdRates = useUsdRates();
+	const blocks = useBlocks(undefined, "HEIGHT_DESC");
+	const transfers = useTransfers(undefined, "BLOCK_NUMBER_DESC");
 
 	return (
 		<div css={contentStyle}>
 			<div css={contentInner}>
 				<Card>
 					<TabbedContent>
+						<TabPane
+							label='Blocks'
+							count={blocks.pagination.totalCount}
+							loading={blocks.loading}
+							error={blocks.error}
+							value='blocks'
+						>
+							<BlocksTable blocks={blocks} showTime />
+						</TabPane>
 						<TabPane
 							label="Extrinsics"
 							count={extrinsics.pagination.totalCount}
@@ -56,61 +54,23 @@ export const HomePage = () => {
 							value="extrinsics"
 						>
 							<ExtrinsicsTable
-								network={network.name}
 								extrinsics={extrinsics}
 								showAccount
 								showTime
 							/>
 						</TabPane>
 						<TabPane
-							label="Blocks"
-							count={blocks.pagination.totalCount}
-							loading={blocks.loading}
-							error={blocks.error}
-							value="blocks"
+							label='Transfers'
+							count={transfers.pagination.totalCount}
+							loading={transfers.loading}
+							error={transfers.error}
+							value='transfers'
 						>
-							<BlocksTable
-								network={network.name}
-								blocks={blocks}
-								showValidator
-								showTime
-							/>
+							<TransfersTable transfers={transfers} showTime />
 						</TabPane>
-
-						{hasSupport(network.name, "main-squid") && (
-							<TabPane
-								label="Transfers"
-								count={transfers.pagination.totalCount}
-								loading={transfers.loading}
-								error={transfers.error}
-								value="transfers"
-							>
-								<TransfersTable
-									network={network.name}
-									transfers={transfers}
-									showTime
-								/>
-							</TabPane>
-						)}
-						{hasSupport(network.name, "balances-squid") && (
-							<TabPane
-								label="Top holders"
-								count={topHolders.pagination.totalCount}
-								loading={topHolders.loading}
-								error={topHolders.error}
-								value="top-holders"
-							>
-								<BalancesTable
-									network={network.name}
-									balances={topHolders}
-									usdRates={usdRates}
-								/>
-							</TabPane>
-						)}
 					</TabbedContent>
 				</Card>
 			</div>
-			
 		</div>
 	);
 };

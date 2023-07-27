@@ -1,121 +1,56 @@
-import { ArchiveBlock } from "../model/archive/archiveBlock";
 import { Block } from "../model/block";
-import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
-import { ItemsConnection } from "../model/itemsConnection";
+import { ResponseItems } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { addRuntimeSpec } from "../utils/addRuntimeSpec";
+import { extractItems } from "../utils/extractItems";
 
-import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { fetchDictionary } from "./fetchService";
 
-export type BlocksFilter =
-	{ id_eq: string; }
-	| { hash_eq: string; }
-	| { height_eq: number; };
+export type BlocksFilter = object;
 
 export type BlocksOrder = string | string[];
 
-export async function getBlock(network: string, filter: BlocksFilter) {
-	if (hasSupport(network, "explorer-squid")) {
-		return getExplorerSquidBlock(network, filter);
-	}
-
-	return getArchiveBlock(network, filter);
-}
-
-export async function getBlocks(
-	network: string,
-	filter: BlocksFilter|undefined,
-	order: BlocksOrder = "id_DESC",
-	pagination: PaginationOptions,
-) {
-	if (hasSupport(network, "explorer-squid")) {
-		return getExplorerSquidBlocks(network, filter, order, pagination);
-	}
-
-	return getArchiveBlocks(network, filter, order, pagination);
-}
-
-/*** PRIVATE ***/
-
-async function getArchiveBlock(network: string, filter: BlocksFilter) {
-	const response = await fetchArchive<{blocks: ArchiveBlock[]}>(
-		network,
-		`query ($filter: BlockWhereInput) {
-			blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				hash
-				height
-				timestamp
-				parentHash
-				validator
-				spec {
+export async function getBlock(filter: BlocksFilter) {
+	const response = await fetchDictionary<{ blocks: ResponseItems<Block> }>(
+		`query ($filter: BlockFilter) {
+			blocks(first: 1, offset: 0, filter: $filter, orderBy: ID_DESC) {
+				nodes {
+					id
+					hash
+					height
+					timestamp
+					parentHash
 					specVersion
 				}
 			}
 		}`,
 		{
-			filter: blocksFilterToArchiveFilter(filter),
+			filter,
 		}
 	);
 
-	const data = response.blocks[0] && unifyArchiveBlock(response.blocks[0]);
-	const block = await addRuntimeSpec(network, data, it => it.specVersion);
-
-	return block;
+	const data = response.blocks?.nodes[0] && transformBlock(response.blocks.nodes[0]);
+	return data;
 }
 
-async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
-	const response = await fetchExplorerSquid<{blocks: ExplorerSquidBlock[]}>(
-		network,
-		`query ($filter: BlockWhereInput) {
-			blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				hash
-				height
-				timestamp
-				parentHash
-				validator
-				specVersion
-			}
-		}`,
-		{
-			filter: blocksFilterToExplorerSquidFilter(filter),
-		}
-	);
-
-	const data = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0]);
-	const block = await addRuntimeSpec(network, data, it => it.specVersion);
-
-	return block;
-}
-
-async function getArchiveBlocks(
-	network: string,
+export async function getBlocks(
 	filter: BlocksFilter | undefined,
-	order: BlocksOrder = "id_DESC",
-	pagination: PaginationOptions
+	order: BlocksOrder = "ID_DESC",
+	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const offset = pagination.offset;
 
-	const response = await fetchArchive<{blocksConnection: ItemsConnection<ArchiveBlock>}>(
-		network,
-		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
-			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						spec {
-							specVersion
-						}
-					}
+	const response = await fetchDictionary<{ blocks: ResponseItems<Block> }>(
+		`query ($first: Int!, $offset: Int!, $filter: BlockFilter, $order: [BlocksOrderBy!]!) {
+			blocks(first: $first, offset: $offset, filter: $filter, orderBy: $order) {
+				nodes {
+					id
+					hash
+					height
+					timestamp
+					parentHash
+					specVersion
 				}
 				pageInfo {
 					endCursor
@@ -123,94 +58,20 @@ async function getArchiveBlocks(
 					hasPreviousPage
 					startCursor
 				}
-				${filter !== undefined ? "totalCount" : "" }
+				${filter !== undefined ? "totalCount" : ""}
 			}
 		}`,
 		{
 			first: pagination.limit,
-			after,
-			filter: blocksFilterToArchiveFilter(filter),
+			offset,
+			filter,
 			order,
 		}
 	);
 
-	const data = extractConnectionItems(response.blocksConnection, pagination, unifyArchiveBlock);
-	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
-
-	return blocks;
+	return extractItems(response.blocks, pagination, transformBlock);
 }
 
-async function getExplorerSquidBlocks(
-	network: string,
-	filter: BlocksFilter | undefined,
-	order: BlocksOrder = "id_DESC",
-	pagination: PaginationOptions
-) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
-
-	const response = await fetchExplorerSquid<{blocksConnection: ItemsConnection<ExplorerSquidBlock>}>(
-		network,
-		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
-			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						specVersion
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
-				${filter !== undefined ? "totalCount" : "" }
-			}
-		}`,
-		{
-			first: pagination.limit,
-			after,
-			filter: blocksFilterToExplorerSquidFilter(filter),
-			order,
-		}
-	);
-
-	const data = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
-
-	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
-
-	return blocks;
-}
-
-function unifyArchiveBlock(block: ArchiveBlock): Omit<Block, "runtimeSpec"> {
-	return {
-		...block,
-		specVersion: block.spec.specVersion
-	};
-}
-
-function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Omit<Block, "runtimeSpec"> {
+const transformBlock = (block: Block): Block => {
 	return block;
-}
-
-function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
-	if (!filter) {
-		return undefined;
-	}
-
-	return filter;
-}
-
-function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
-	if (!filter) {
-		return undefined;
-	}
-
-	return filter;
-}
-
+};

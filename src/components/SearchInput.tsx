@@ -57,48 +57,31 @@ const buttonStyle = (theme: Theme) => css`
 `;
 
 export type SearchInputProps = FormHTMLAttributes<HTMLFormElement> & {
-	defaultNetwork?: string;
 	persistNetwork?: boolean;
 	onNetworkChange?: (network?: string) => void;
 };
 
 function SearchInput(props: SearchInputProps) {
-	const { defaultNetwork, persistNetwork, onNetworkChange, ...restProps } = props;
+	const { persistNetwork, onNetworkChange, ...restProps } = props;
 
 	const [qs] = useSearchParams();
 	const query = qs.get("query");
 
-	const [network, setNetwork] = useState<string | undefined>(defaultNetwork);
 	const [search, setSearch] = useState<string>(query || "");
 
 	const navigate = useNavigate();
 
 	const handleSubmit = useCallback(
 		(e: any) => {
-			if (!network) {
-				return;
-			}
-
 			e.preventDefault();
 			navigate(`/search?query=${search}`);
 		},
-		[navigate, network, search]
+		[navigate, search]
 	);
 
 	useEffect(() => {
 		setSearch(query || "");
 	}, [query]);
-
-	useEffect(() => {
-		if (persistNetwork) {
-			const network = localStorage.getItem("network");
-			network && setNetwork(network);
-		}
-	}, [persistNetwork]);
-
-	useEffect(() => {
-		onNetworkChange?.(network);
-	}, [onNetworkChange, network]);
 
 	return (
 		<form {...restProps} onSubmit={handleSubmit}>

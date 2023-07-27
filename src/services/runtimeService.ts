@@ -1,51 +1,37 @@
-import { RuntimeSpec } from "../model/runtimeSpec";
+import { RuntimeSpec, RuntimeSpecResponse } from "../model/runtimeSpec";
 import { decodeMetadata } from "../utils/decodeMetadata";
 import { uniq } from "../utils/uniq";
+import { fetchDictionary } from "./fetchService";
 
-import { fetchArchive } from "./fetchService";
+export async function getRuntimeSpec(specVersion: "latest"): Promise<RuntimeSpec>;
+export async function getRuntimeSpec(specVersion: number | "latest"): Promise<RuntimeSpec | undefined>;
 
-export async function getRuntimeSpecVersions(network: string) {
-	const response = await fetchArchive<{metadata: {specVersion: number}[]}>(
-		network, `
-			query {
-				metadata(orderBy: specVersion_DESC) {
-					specVersion
-				}
-			}
-		`
-	);
-
-	return response.metadata.map(it => it.specVersion);
-}
-
-export async function getRuntimeSpec(network: string, specVersion: "latest"): Promise<RuntimeSpec>;
-export async function getRuntimeSpec(network: string, specVersion: number|"latest"): Promise<RuntimeSpec|undefined>;
-export async function getRuntimeSpec(network: string, specVersion: number|"latest"): Promise<RuntimeSpec|undefined> {
+export async function getRuntimeSpec(specVersion: number | "latest"): Promise<RuntimeSpec | undefined> {
 	if (specVersion === "latest") {
-		return getLatestRuntimeSpec(network);
+		return getLatestRuntimeSpec();
 	}
 
-	const specs = await getRuntimeSpecs(network, [specVersion]);
+	const specs = await getRuntimeSpecs([specVersion]);
 	return specs[specVersion];
 }
 
-export async function getLatestRuntimeSpec(network: string) {
-	const response = await fetchArchive<{spec: Omit<RuntimeSpec, "metadata">[]}>(
-		network, `
+export async function getLatestRuntimeSpec() {
+	// FIXME:
+	const response = await fetchDictionary<{ specVersions: { nodes: RuntimeSpecResponse[] } }>(
+		`
 			query {
-				spec: metadata(orderBy: specVersion_DESC, limit: 1) {
-					id
-					blockHash
-					blockHeight
-					specName
-					specVersion
-					hex
+				specVersions(orderBy: BLOCK_HEIGHT_DESC, first: 1) {
+					nodes {
+						id
+						blockHeight
+						hex
+					}
 				}
 			}
 		`
 	);
 
-	const spec = response.spec[0]!;
+	const spec = response.specVersions.nodes[0]!;
 
 	return {
 		...spec,
@@ -54,41 +40,40 @@ export async function getLatestRuntimeSpec(network: string) {
 }
 
 export async function getRuntimeSpecs(
-	network: string,
-	specVersions: (number|"latest")[]| undefined
+	specVersions: (number | "latest")[] | undefined
 ) {
 	if (specVersions == undefined || specVersions.length === 0) {
 		specVersions = [];
 	}
 
-	const specs: Record<number|string, RuntimeSpec> = {};
+	const specs: Record<number | string, RuntimeSpec> = {};
 
 	if (specVersions.includes("latest")) {
-		specs["latest"] = await getLatestRuntimeSpec(network);
+		specs["latest"] = await getLatestRuntimeSpec();
 		specVersions = specVersions.filter(it => it !== "latest");
 	}
 
-	const response = await fetchArchive<{specs: Omit<RuntimeSpec, "metadata">[]}>(
-		network, `
-			query ($specVersions: [Int!]!) {
-				specs: metadata(where: {specVersion_in: $specVersions}, orderBy: specVersion_DESC) {
-					id
-					blockHash
-					blockHeight
-					specName
-					specVersion
-					hex
+	const response = await fetchDictionary<{ specVersions: { nodes: RuntimeSpecResponse[] } }>(
+		`
+			query ($specVersions: [String!]!) {
+				specVersions(filter: {id: {in: $specVersions} }, orderBy: BLOCK_HEIGHT_DESC) {
+					nodes {
+						id
+						blockHeight
+						hex
+					}
 				}
 			}
 		`,
 		{
-			specVersions: uniq(specVersions)
+			specVersions: uniq(specVersions).map((version) => version.toString())
 		}
 	);
 
-	for (const spec of response.specs) {
-		specs[spec.specVersion] = {
-			...spec,
+	for (const spec of response.specVersions.nodes) {
+		specs[spec.id] = {
+			id: spec.id,
+			blockHeight: spec.blockHeight,
 			metadata: decodeMetadata(spec.hex)
 		};
 	}

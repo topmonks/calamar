@@ -4,64 +4,46 @@ import { useParams } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import { AccountAvatar } from "../components/AccountAvatar";
-import { AccountIdentityInfo } from "../components/account/AccountIdentityInfo";
-import { AccountInfoTable } from "../components/account/AccountInfoTable";
-import { AccountPortfolio } from "../components/account/AccountPortfolio";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 import TransfersTable from "../components/transfers/TransfersTable";
 
 import { useAccount } from "../hooks/useAccount";
-import { useAccountBalances } from "../hooks/useAccountBalances";
-import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useUsdRates } from "../hooks/useUsdRates";
 import { useTransfers } from "../hooks/useTransfers";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
-
-import { hasSupport } from "../services/networksService";
+import { AccountInfoTable } from "../components/account/AccountInfoTable";
 
 const accountInfoStyle = css`
-	display: flex;
-	flex-direction: column;
-`;
-
-const accountInfoTableStyle = css`
-	&:not(:last-of-type) {
-		margin-bottom: 56px;
-	}
-`;
-
-const accountIdentityInfoStyle = css`
-	margin-top: auto;
+  display: flex;
+  flex-direction: column;
 `;
 
 const avatarStyle = css`
-	vertical-align: text-bottom;
-	margin-left: 12px;
+  vertical-align: text-bottom;
+  margin-left: 12px;
 `;
 
 const accountLabel = css`
-	margin-left: 8px;
-	font-weight: 400;
+  margin-left: 8px;
+  font-weight: 400;
 `;
 
-const accountLabelName = css`
-`;
+const accountLabelName = css``;
 
 const accountLabelAddress = css`
-	opacity: .5;
+  opacity: 0.5;
 `;
 
 const portfolioStyle = (theme: Theme) => css`
-	flex: 0 0 auto;
-	width: 400px;
+  flex: 0 0 auto;
+  width: 400px;
 
-	${theme.breakpoints.down("lg")} {
-		width: auto;
-	}
+  ${theme.breakpoints.down("lg")} {
+    width: auto;
+  }
 `;
 
 export type AccountPageParams = {
@@ -69,18 +51,23 @@ export type AccountPageParams = {
 };
 
 export const AccountPage = () => {
-	const { network } = useRootLoaderData();
 	const { address } = useParams() as AccountPageParams;
 
-	const account = useAccount(network.name, address);
-	const balances = useAccountBalances(address);
-	const extrinsics = useExtrinsics(network.name, { signerAddress_eq: address });
-	const calls = useCalls(network.name, { callerAddress_eq: address });
-	const transfers = useTransfers(network.name, { accountAddress_eq: address });
+	const account = useAccount(address);
+	const extrinsics = useExtrinsics({ signer: { equalTo: address } });
+	const transfers = useTransfers({
+		or: [{ from: { equalTo: address } }, { to: { equalTo: address } }],
+	});
 
 	const usdRates = useUsdRates();
 
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
+	useDOMEventTrigger(
+		"data-loaded",
+		!account.loading &&
+      !extrinsics.loading &&
+      !transfers.loading &&
+      !usdRates.loading
+	);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
@@ -92,65 +79,60 @@ export const AccountPage = () => {
 	return (
 		<>
 			<CardRow>
-				<Card css={accountInfoStyle} data-test="account-info">
+				<Card css={accountInfoStyle} data-test='account-info'>
 					<CardHeader>
-						Account
-						{(account.loading || account.data) &&
+            Account
+						{(account.loading || account.data) && (
 							<AccountAvatar address={address} size={32} css={avatarStyle} />
-						}
+						)}
 						<span css={accountLabel}>
-							{account.data?.identity?.display
-								? <span css={accountLabelName}>{account.data?.identity?.display}</span>
-								: <span css={accountLabelAddress}>{address}</span>
-							}
+							{account.data?.identity?.display ? (
+								<span css={accountLabelName}>
+									{account.data?.identity?.display}
+								</span>
+							) : (
+								<span css={accountLabelAddress}>{address}</span>
+							)}
 						</span>
 					</CardHeader>
-					<AccountInfoTable
-						css={accountInfoTableStyle}
-						network={network.name}
-						account={account}
-					/>
-					<AccountIdentityInfo
-						css={accountIdentityInfoStyle}
-						account={account}
-					/>
+					<AccountInfoTable account={account} />
 				</Card>
-				<Card css={portfolioStyle} data-test="account-portfolio">
+				<Card css={portfolioStyle} data-test='account-portfolio'>
 					<CardHeader>
 						Account Balance
 					</CardHeader>
+					{/* FIXME:
 					<AccountPortfolio
 						balances={balances}
 						usdRates={usdRates}
-					/>
+					/> */}
 				</Card>
 			</CardRow>
-			{account.data &&
-				<Card data-test="account-related-items">
+			{account.data && (
+				<Card data-test='account-related-items'>
 					<TabbedContent>
 						<TabPane
-							label="Extrinsics"
+							label='Extrinsics'
 							count={extrinsics.pagination.totalCount}
 							loading={extrinsics.loading}
 							error={extrinsics.error}
-							value="extrinsics"
+							value='extrinsics'
 						>
-							<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showTime />
+							<ExtrinsicsTable extrinsics={extrinsics} showTime />
 						</TabPane>
-						{hasSupport(network.name, "main-squid") &&
-							<TabPane
-								label="Transfers"
-								count={transfers.pagination.totalCount}
-								loading={transfers.loading}
-								error={transfers.error}
-								value="transfers"
-							>
-								<TransfersTable network={network.name} transfers={transfers} showTime />
-							</TabPane>
-						}
+
+						<TabPane
+							label='Transfers'
+							count={transfers.pagination.totalCount}
+							loading={transfers.loading}
+							error={transfers.error}
+							value='transfers'
+						>
+							<TransfersTable transfers={transfers} showTime />
+						</TabPane>
 					</TabbedContent>
 				</Card>
-			}
+			)}
 		</>
 	);
 };

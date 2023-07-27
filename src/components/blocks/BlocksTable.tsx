@@ -1,15 +1,11 @@
 import { Block } from "../../model/block";
 import { PaginatedResource } from "../../model/paginatedResource";
-
-import { AccountAddress } from "../AccountAddress";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type BlocksTableProps = {
-	network: string;
 	blocks: PaginatedResource<Block>,
-	showValidator: boolean,
 	showTime?: boolean;
 };
 
@@ -17,9 +13,7 @@ const BlocksTableAttribute = ItemsTableAttribute<Block>;
 
 function ExtrinsicsTable(props: BlocksTableProps) {
 	const {
-		network,
 		blocks,
-		showValidator,
 		showTime,
 	} = props;
 
@@ -37,7 +31,7 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 				label="Height"
 				render={(block) =>
 					<Link to={`/block/${block.id}`}>
-						{block.height}
+						{block.height.toString()}
 					</Link>
 				}
 			/>
@@ -48,21 +42,6 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 
 				}
 			/>
-			{showValidator &&
-			<BlocksTableAttribute
-				label="Validator"
-				render={(block) =>
-					block.validator &&
-					<AccountAddress
-						network={network}
-						address={block.validator}
-						prefix={block.runtimeSpec.metadata.ss58Prefix}
-						shorten
-						copyToClipboard="small"
-					/>
-				}
-			/>
-			}
 			{showTime &&
 				<BlocksTableAttribute
 					label="Time"
