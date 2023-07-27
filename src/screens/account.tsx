@@ -12,9 +12,11 @@ import TransfersTable from "../components/transfers/TransfersTable";
 import { useAccount } from "../hooks/useAccount";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { useUsdRates } from "../hooks/useUsdRates";
 import { useTransfers } from "../hooks/useTransfers";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
+import { AccountPortfolio } from "../components/account/AccountPortfolio";
+import { useTaoPrice } from "../hooks/useTaoPrice";
+import { useBalance } from "../hooks/useBalance";
 
 const accountInfoStyle = css`
   display: flex;
@@ -53,25 +55,26 @@ export type AccountPageParams = {
 export const AccountPage = () => {
 	const { address } = useParams() as AccountPageParams;
 
+	const balance = useBalance(address);
 	const account = useAccount(address);
 	const extrinsics = useExtrinsics({ signer: { equalTo: address } });
 	const transfers = useTransfers({
 		or: [{ from: { equalTo: address } }, { to: { equalTo: address } }],
 	});
 
-	const usdRates = useUsdRates();
+	const taoPrice = useTaoPrice();
 
 	useDOMEventTrigger(
 		"data-loaded",
 		!account.loading &&
       !extrinsics.loading &&
       !transfers.loading &&
-      !usdRates.loading
+      !taoPrice.loading
 	);
 
 	useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
-			const interval = setInterval(extrinsics.refetch, 3000);
+			const interval = setInterval(extrinsics.refetch, 6 * 1000);
 			return () => clearInterval(interval);
 		}
 	}, [extrinsics]);
@@ -98,14 +101,8 @@ export const AccountPage = () => {
 					<AccountInfoTable account={account} />
 				</Card>
 				<Card css={portfolioStyle} data-test='account-portfolio'>
-					<CardHeader>
-						Account Balance
-					</CardHeader>
-					{/* FIXME:
-					<AccountPortfolio
-						balances={balances}
-						usdRates={usdRates}
-					/> */}
+					<CardHeader>Account Balance</CardHeader>
+					<AccountPortfolio balance={balance} taoPrice={taoPrice} />
 				</Card>
 			</CardRow>
 			{account.data && (
