@@ -7,6 +7,7 @@ import Logo from "../assets/logo.png";
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
 import { Footer } from "./Footer";
+import { ApiContextProvider } from "../contexts";
 
 const containerStyle = (theme: Theme) => css`
 	min-height: 100vh;
@@ -121,7 +122,7 @@ export const ResultLayout = () => {
 	return (
 		<div css={containerStyle}>
 			<div css={contentWrapperStyle}>
-				<div css={topBarStyle} data-test="top-bar">
+				<div css={topBarStyle} data-test='top-bar'>
 					<div css={topBarContentStyle}>
 						<Link to='/'>
 							<img src={Logo} css={logoStyle} />
@@ -132,7 +133,9 @@ export const ResultLayout = () => {
 					</div>
 				</div>
 				<div css={contentStyle}>
-					<Outlet />
+					<ApiContextProvider>
+						<Outlet />
+					</ApiContextProvider>
 				</div>
 			</div>
 			<Footer css={footerStyle} />
