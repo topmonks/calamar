@@ -6,7 +6,8 @@ import { usePaginatedResource } from "./usePaginatedResource";
 export function useExtrinsics(
 	filter: ExtrinsicsFilter,
 	order?: ExtrinsicsOrder,
-	options?: FetchOptions
+	options?: FetchOptions,
+	fetchTotalCount = true,
 ) {
-	return usePaginatedResource(getExtrinsics, [filter, order, true], options);
+	return usePaginatedResource(getExtrinsics, [filter, order, fetchTotalCount], options);
 }
