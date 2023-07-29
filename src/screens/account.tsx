@@ -105,7 +105,7 @@ export const AccountPage = () => {
 	});
 
 	const account = useAccount(address);
-	const extrinsics = useExtrinsics({ signer: { equalTo: address } });
+	const extrinsics = useExtrinsics({ signer: { equalTo: address } }, undefined, undefined, false);
 	const transfers = useTransfers({
 		or: [{ from: { equalTo: address } }, { to: { equalTo: address } }],
 	});
