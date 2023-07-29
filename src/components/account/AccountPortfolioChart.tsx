@@ -4,12 +4,11 @@ import { useMediaQuery } from "@mui/material";
 import { css, Theme, useTheme } from "@emotion/react";
 import { CallbackDataParams } from "echarts/types/dist/shared";
 
-import { AccountBalance } from "../../model/accountBalance";
-import { UsdRates } from "../../model/usdRates";
-import { usdBalanceSum } from "../../utils/balance";
 import { formatCurrency } from "../../utils/number";
 
 import { PieChart, PieChartOptions } from "../PieChart";
+import { Balance } from "../../model/balance";
+import Decimal from "decimal.js";
 
 const chartStyle = (theme: Theme) => css`
 	width: 400px;
@@ -53,32 +52,32 @@ export enum AccountPortfolioChartMode {
 }
 
 export type AccountPortfolioChartProps = HTMLAttributes<HTMLDivElement> & {
-	balances: AccountBalance[];
-	usdRates: UsdRates;
+	balance: Balance | undefined;
+	taoPrice: Decimal | undefined;
 };
 
 export const AccountPortfolioChart = (props: AccountPortfolioChartProps) => {
-	const {balances, usdRates, ...divProps} = props;
-
+	const { balance, taoPrice, ...divProps } = props;
+	
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
 	const totalData = useMemo(() => {
-		if (!balances || !usdRates) {
+		if (!balance || !taoPrice) {
 			return [];
 		}
 
 		return [
 			{
 				name: "Free",
-				sum: usdBalanceSum(balances, "free", usdRates),
+				sum: balance.free.mul(taoPrice),
 				itemStyle: {
 					color: theme.palette.primary.main,
 				}
 			},
 			{
 				name: "Reserved",
-				sum: usdBalanceSum(balances, "reserved", usdRates),
+				sum: balance.reserved.mul(taoPrice),
 				itemStyle: {
 					color: theme.palette.primary.main,
 					decal: {
@@ -101,7 +100,7 @@ export const AccountPortfolioChart = (props: AccountPortfolioChartProps) => {
 					}
 				};
 			});
-	}, [balances, usdRates, theme]);
+	}, [balance, taoPrice, theme]);
 
 	const options = useMemo<PieChartOptions>(() => {
 		if (totalData.length === 0) {
@@ -112,7 +111,7 @@ export const AccountPortfolioChart = (props: AccountPortfolioChartProps) => {
 			tooltip: {
 				formatter: (params) => {
 					const {name, data, percent} = params as CallbackDataParams;
-					const {network, formatted, formattedUsdValue} = (data as any).additionalData;
+					const {formattedUsdValue} = (data as any).additionalData;
 
 					return `
 						<div data-class="title">${name}</div>

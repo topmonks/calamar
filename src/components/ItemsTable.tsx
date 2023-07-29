@@ -227,9 +227,7 @@ export const ItemsTable = <
 							<TableRow key={item.id}>
 								{Children.map(
 									children,
-									(child) =>
-										child &&
-                    cloneElement(child, { _data: item, _additionalData: additionalData })
+									(child) => child && cloneElement(child, { _data: item, _additionalData: additionalData })
 								)}
 							</TableRow>
 						))}

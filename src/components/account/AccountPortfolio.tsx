@@ -1,11 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { HTMLAttributes, useMemo } from "react";
+import { HTMLAttributes } from "react";
 import { Theme, css } from "@emotion/react";
 
-import { AccountBalance } from "../../model/accountBalance";
 import { Resource } from "../../model/resource";
-import { UsdRates } from "../../model/usdRates";
-import { usdBalanceSum } from "../../utils/balance";
 import { formatCurrency } from "../../utils/number";
 
 import { ErrorMessage } from "../ErrorMessage";
@@ -13,116 +10,123 @@ import Loading from "../Loading";
 import NotFound from "../NotFound";
 
 import { AccountPortfolioChart } from "./AccountPortfolioChart";
+import Decimal from "decimal.js";
+import { Balance } from "../../model/balance";
 
 const chartStyle = css`
-	margin: 0 auto;
-	margin-top: 32px;
+  margin: 0 auto;
+  margin-top: 32px;
 `;
 
 const valuesStyle = (theme: Theme) => css`
-	position: relative;
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	justify-content: space-around;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
 
-	${theme.breakpoints.down("sm")} {
-		display: block;
-	}
+  ${theme.breakpoints.down("sm")} {
+    display: block;
+  }
 `;
 
 const valueStyle = (theme: Theme) => css`
-	min-width: 70px;
+  min-width: 70px;
 
-	${theme.breakpoints.down("sm")} {
-		display: flex;
-		max-width: 230px;
-		margin: 0 auto;
-	}
+  ${theme.breakpoints.down("sm")} {
+    display: flex;
+    max-width: 230px;
+    margin: 0 auto;
+  }
 `;
 
 const valueTypeStyle = (theme: Theme) => css`
-	margin-bottom: 8px;
-	font-weight: 500;
+  margin-bottom: 8px;
+  font-weight: 500;
 
-	${theme.breakpoints.down("sm")} {
-		flex: 1 1 auto;
-	}
+  ${theme.breakpoints.down("sm")} {
+    flex: 1 1 auto;
+  }
 `;
 
 const separatorStyle = css`
-	display: block;
-	width: 1px;
-	flex: 0 0 auto;
-	background-color: rgba(0, 0, 0, .125);
+  display: block;
+  width: 1px;
+  flex: 0 0 auto;
+  background-color: rgba(0, 0, 0, 0.125);
 `;
 
-
 const notFoundStyle = css`
-	margin: 0 auto;
-	max-width: 300px;
+  margin: 0 auto;
+  max-width: 300px;
 `;
 
 export type AccountPortfolioProps = HTMLAttributes<HTMLDivElement> & {
-	balances: Resource<AccountBalance[]>;
-	usdRates: Resource<UsdRates>;
+	balance: Resource<Balance>;
+	taoPrice: Resource<Decimal>;
 };
 
 export const AccountPortfolio = (props: AccountPortfolioProps) => {
-	const {balances, usdRates} = props;
-
-	const stats = useMemo(() => {
-		return {
-			total: usdBalanceSum(balances.data, "total", usdRates.data),
-			free: usdBalanceSum(balances.data, "free", usdRates.data),
-			reserved: usdBalanceSum(balances.data, "reserved", usdRates.data),
-		};
-	}, [balances, usdRates]);
-
-	if (balances.loading || usdRates.loading) {
+	const { balance, taoPrice } = props;
+	
+	if (balance.loading || taoPrice.loading) {
 		return <Loading />;
 	}
 
-	if (balances.notFound || stats.total.eq(0)) {
-		return <NotFound css={notFoundStyle}>No positive balances with conversion rate to USD found</NotFound>;
+	if (balance.notFound || balance.data?.total.eq(0)) {
+		return (
+			<NotFound css={notFoundStyle}>
+				No balance
+			</NotFound>
+		);
 	}
 
-	if (balances.error) {
+	if (balance.error) {
 		return (
 			<ErrorMessage
-				message="Unexpected error occured while fetching data"
-				details={balances.error.message}
+				message='Unexpected error occured while fetching data'
+				details={balance.error.message}
 				showReported
 			/>
 		);
 	}
 
-	if (!balances.data || !usdRates.data) {
+	if (!balance.data || !taoPrice.data) {
 		return null;
 	}
 
 	return (
 		<div>
 			<div css={valuesStyle}>
-				<div css={valueStyle} data-test="porfolio-total">
+				<div css={valueStyle} data-test='porfolio-total'>
 					<div css={valueTypeStyle}>Total</div>
-					<div>{formatCurrency(stats.total, "USD", {decimalPlaces: "optimal"})}</div>
+					<div>
+						{formatCurrency(balance.data.total, "USD", {
+							decimalPlaces: "optimal",
+						})}
+					</div>
 				</div>
 				<div css={separatorStyle} />
-				<div css={valueStyle} data-test="porfolio-free">
+				<div css={valueStyle} data-test='porfolio-free'>
 					<div css={valueTypeStyle}>Free</div>
-					<div>{formatCurrency(stats.free, "USD", {decimalPlaces: "optimal"})}</div>
+					<div>
+						{formatCurrency(balance.data.free, "USD", { decimalPlaces: "optimal" })}
+					</div>
 				</div>
 				<div css={separatorStyle} />
-				<div css={valueStyle} data-test="porfolio-reserved">
+				<div css={valueStyle} data-test='porfolio-reserved'>
 					<div css={valueTypeStyle}>Reserved</div>
-					<div>{formatCurrency(stats.reserved, "USD", {decimalPlaces: "optimal"})}</div>
+					<div>
+						{formatCurrency(balance.data.reserved, "USD", {
+							decimalPlaces: "optimal",
+						})}
+					</div>
 				</div>
 			</div>
 			<AccountPortfolioChart
 				css={chartStyle}
-				balances={balances.data}
-				usdRates={usdRates.data}
+				balance={balance.data}
+				taoPrice={taoPrice.data}
 			/>
 		</div>
 	);

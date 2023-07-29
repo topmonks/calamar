@@ -7,31 +7,15 @@ import Logo from "../assets/logo.png";
 import SearchInput from "./SearchInput";
 import { Link } from "./Link";
 import { Footer } from "./Footer";
+import { ApiContextProvider } from "../contexts";
 
 const containerStyle = (theme: Theme) => css`
-	--content-wrapper-min-height: 450px;
-
+	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	background-color: ${theme.palette.primary.main};
 	color: ${theme.palette.text.primary};
-
-	${theme.breakpoints.up("sm")} {
-		--content-wrapper-min-height: 500px;
-	}
-
-	${theme.breakpoints.up("md")} {
-		--content-wrapper-min-height: 600px;
-	}
-
-	${theme.breakpoints.up("lg")} {
-		--content-wrapper-min-height: 750px;
-	}
-
-	${theme.breakpoints.up("xl")} {
-		--content-wrapper-min-height: 1250px;
-	}
 `;
 
 const topBarStyle = (theme: Theme) => css`
@@ -138,7 +122,7 @@ export const ResultLayout = () => {
 	return (
 		<div css={containerStyle}>
 			<div css={contentWrapperStyle}>
-				<div css={topBarStyle} data-test="top-bar">
+				<div css={topBarStyle} data-test='top-bar'>
 					<div css={topBarContentStyle}>
 						<Link to='/'>
 							<img src={Logo} css={logoStyle} />
@@ -149,7 +133,9 @@ export const ResultLayout = () => {
 					</div>
 				</div>
 				<div css={contentStyle}>
-					<Outlet />
+					<ApiContextProvider>
+						<Outlet />
+					</ApiContextProvider>
 				</div>
 			</div>
 			<Footer css={footerStyle} />
