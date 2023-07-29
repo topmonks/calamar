@@ -34,17 +34,19 @@ export async function getEvent(filter: EventsFilter) {
 export async function getEventsByName(
 	name: string,
 	order: EventsOrder = "BLOCK_HEIGHT_DESC",
-	pagination: PaginationOptions
+	pagination: PaginationOptions,
 ) {
-	const filter: EventsFilter = { id: { equalTo: name } };
+	const [module, event] = name.split(".");
+	const filter: EventsFilter = { and: [{ module: { equalTo: module } }, { event: { equalTo: event } }] };
 
-	return getEvents(filter, order, pagination);
+	return getEvents(filter, order, false, pagination);
 }
 
 export async function getEvents(
 	filter: EventsFilter,
 	order: EventsOrder = "BLOCK_HEIGHT_DESC",
-	pagination: PaginationOptions
+	fetchTotalCount = true,
+	pagination: PaginationOptions,
 ) {
 	const offset = pagination.offset;
 
@@ -59,7 +61,7 @@ export async function getEvents(
 					extrinsicId
 					data
 				}
-				totalCount
+				${fetchTotalCount ? "totalCount" : ""}
 				pageInfo {
 					endCursor
 					hasNextPage
