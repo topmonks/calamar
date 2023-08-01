@@ -1,4 +1,4 @@
-export type Extrinsic = {
+export interface ExtrinsicResponse {
 	id: string;
 	module: string;
 	call: string;
@@ -6,10 +6,13 @@ export type Extrinsic = {
 	success: boolean;
 	isSigned: boolean;
 	txHash: string;
-	args: string[];
+	args: string;
 	nonce: number;
 	signer: string;
 	version: number;
 	tip: bigint;
 	blockId: string;
+};
+export interface Extrinsic extends Omit<ExtrinsicResponse, "args"> {
+	args: string[];
 }

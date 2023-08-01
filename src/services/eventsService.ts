@@ -1,4 +1,4 @@
-import { Event } from "../model/event";
+import { Event, EventResponse } from "../model/event";
 import { ResponseItems } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 import { extractItems } from "../utils/extractItems";
@@ -9,7 +9,7 @@ export type EventsFilter = object;
 export type EventsOrder = string | string[];
 
 export async function getEvent(filter: EventsFilter) {
-	const response = await fetchDictionary<{ events: ResponseItems<Event> }>(
+	const response = await fetchDictionary<{ events: ResponseItems<EventResponse> }>(
 		`query ($filter: EventFilter) {
 			events(first: 1, offset: 0, filter: $filter, orderBy: BLOCK_HEIGHT_DESC) {
 				nodes {
@@ -50,7 +50,7 @@ export async function getEvents(
 ) {
 	const offset = pagination.offset;
 
-	const response = await fetchDictionary<{ events: ResponseItems<Event> }>(
+	const response = await fetchDictionary<{ events: ResponseItems<EventResponse> }>(
 		`query ($first: Int!, $offset: Int!, $filter: EventFilter, $order: [EventsOrderBy!]!) {
 			events(orderBy: $order, filter: $filter, first: $first, offset: $offset) {
 				nodes {
@@ -83,6 +83,10 @@ export async function getEvents(
 
 /*** PRIVATE ***/
 
-const transformEvent = (event: Event): Event => {
-	return event;
+const transformEvent = (event: EventResponse): Event => {
+	const data = JSON.parse(event.data) as string[];
+	return {
+		...event,
+		data,
+	};
 };

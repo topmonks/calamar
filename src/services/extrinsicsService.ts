@@ -1,4 +1,4 @@
-import { Extrinsic } from "../model/extrinsic";
+import { Extrinsic, ExtrinsicResponse } from "../model/extrinsic";
 import { ResponseItems } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 import { extractItems } from "../utils/extractItems";
@@ -9,7 +9,7 @@ export type ExtrinsicsFilter = object;
 export type ExtrinsicsOrder = string | string[];
 
 export async function getExtrinsic(filter: ExtrinsicsFilter) {
-	const response = await fetchDictionary<{ extrinsics: ResponseItems<Extrinsic> }>(
+	const response = await fetchDictionary<{ extrinsics: ResponseItems<ExtrinsicResponse> }>(
 		`query ($filter: ExtrinsicFilter) {
 			extrinsics(first: 1, offset: 0, filter: $filter, orderBy: ID_DESC) {
 				nodes {
@@ -41,7 +41,7 @@ export async function getExtrinsicsByName(
 	pagination: PaginationOptions,
 ) {
 	const [module, call] = name.split(".");
-	const filter: ExtrinsicsFilter = { and: [{module: {equalTo: module}}, { call: { equalTo: call } }] };
+	const filter: ExtrinsicsFilter = { and: [{ module: { equalTo: module } }, { call: { equalTo: call } }] };
 
 	return getExtrinsics(filter, order, false, pagination);
 }
@@ -54,7 +54,7 @@ export async function getExtrinsics(
 ) {
 	const offset = pagination.offset;
 
-	const response = await fetchDictionary<{ extrinsics: ResponseItems<Extrinsic> }>(
+	const response = await fetchDictionary<{ extrinsics: ResponseItems<ExtrinsicResponse> }>(
 		`query ($first: Int!, $offset: Int!, $filter: ExtrinsicFilter, $order: [ExtrinsicsOrderBy!]!) {
 			extrinsics(first: $first, offset: $offset, filter: $filter, orderBy: $order) {
 				nodes {
@@ -91,6 +91,10 @@ export async function getExtrinsics(
 
 /*** PRIVATE ***/
 
-const transformExtrinsic = (extrinsic: Extrinsic): Extrinsic => {
-	return extrinsic;
+const transformExtrinsic = (extrinsic: ExtrinsicResponse): Extrinsic => {
+	const args = JSON.parse(extrinsic.args) as string[];
+	return {
+		...extrinsic,
+		args
+	};
 };
