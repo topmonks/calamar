@@ -1,6 +1,4 @@
 import Decimal from "decimal.js";
-import { PRICE_DATA_ENDPOINT } from "../config";
-
 export const USD_RATES_REFRESH_RATE = 5 * 60 * 1000; // 5 minutes
 
 export async function getTaoPrice() {

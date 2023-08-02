@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
+import { css, Theme } from "@emotion/react";
 
-import { Card } from "../components/Card";
+import { Card, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -9,6 +9,9 @@ import { useTransfers } from "../hooks/useTransfers";
 import TransfersTable from "../components/transfers/TransfersTable";
 import { useBlocks } from "../hooks/useBlocks";
 import BlocksTable from "../components/blocks/BlocksTable";
+import { CardHeader } from "@mui/material";
+import { NetworkStats, TokenDistribution } from "../components/network";
+import { useStats } from "../hooks/useStats";
 
 const contentStyle = css`
   position: relative;
@@ -24,6 +27,15 @@ const contentInner = css`
   margin-bottom: 48px;
 `;
 
+const tokenDistributionStyle = (theme: Theme) => css`
+  flex: 0 0 auto;
+  width: 400px;
+
+  ${theme.breakpoints.down("lg")} {
+    width: auto;
+  }
+`;
+
 export const HomePage = () => {
 	const extrinsics = useExtrinsicsWithoutTotalCount(
 		undefined,
@@ -31,10 +43,20 @@ export const HomePage = () => {
 	);
 	const blocks = useBlocks(undefined, "HEIGHT_DESC");
 	const transfers = useTransfers(undefined, "BLOCK_NUMBER_DESC");
+	const stats = useStats();
 
 	return (
 		<div css={contentStyle}>
 			<div css={contentInner}>
+				<CardRow>
+					<Card>
+						<NetworkStats stats={stats} />
+					</Card>
+					<Card css={tokenDistributionStyle}>
+						<CardHeader>Token Distribution</CardHeader>
+						<TokenDistribution stats={stats} />
+					</Card>
+				</CardRow>
 				<Card>
 					<TabbedContent>
 						<TabPane
@@ -47,17 +69,13 @@ export const HomePage = () => {
 							<BlocksTable blocks={blocks} showTime />
 						</TabPane>
 						<TabPane
-							label="Extrinsics"
+							label='Extrinsics'
 							count={extrinsics.pagination.totalCount}
 							loading={extrinsics.loading}
 							error={extrinsics.error}
-							value="extrinsics"
+							value='extrinsics'
 						>
-							<ExtrinsicsTable
-								extrinsics={extrinsics}
-								showAccount
-								showTime
-							/>
+							<ExtrinsicsTable extrinsics={extrinsics} showAccount showTime />
 						</TabPane>
 						<TabPane
 							label='Transfers'
