@@ -10,6 +10,12 @@ import NotFound from "../NotFound";
 import { formatCurrency } from "../../utils/number";
 import { Theme } from "@mui/material";
 
+import TaoIcon from "../../assets/tao_icon.png";
+import InflationIcon from "../../assets/inflation.svg";
+import GlobeIcon from "../../assets/globe.svg";
+import StakingAPY from "../../assets/staking-reward.svg";
+import ValidatorAPY from "../../assets/validator.svg";
+
 const statStyle = css`
   min-width: 100px;
   width: 100%;
@@ -20,8 +26,8 @@ const statStyle = css`
 `;
 
 const statIconStyle = css`
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   margin-right: 10px;
   padding: 10px;
 `;
@@ -30,14 +36,14 @@ const statTitleStyle = (theme: Theme) => css`
   font-weight: 500;
   margin-top: auto;
   font-size: 13px;
-  color: ${theme.palette.secondary.dark}
+  color: ${theme.palette.secondary.dark};
 `;
 
 const statValueStyle = (theme: Theme) => css`
   font-weight: 600;
   height: 32px;
   font-size: 15px;
-  color: ${theme.palette.secondary.light}
+  color: ${theme.palette.secondary.light};
 `;
 
 const statsLayoutStyle = css`
@@ -112,31 +118,31 @@ export const NetworkStats = (props: NetworkInfoTableProps) => {
 	return (
 		<div css={statsLayoutStyle}>
 			<StatItem
-				title='Price'
+				title='TAO Price'
 				value={`$ ${formatCurrency(stats.data.price, "USD", {
 					decimalPlaces: "optimal",
 				})}`}
-				// icon={Validator}
+				icon={TaoIcon}
 			/>
 			<StatItem
 				title='24h change'
 				value={`${stats.data.priceChange24h}%`}
-				// icon={Nominator}
+				icon={InflationIcon}
 			/>
 			<StatItem
 				title='Market Cap'
 				value={`$ ${formatCurrency(stats.data.marketCap, "USD")}`}
-				// icon={Nominator}
+				icon={GlobeIcon}
 			/>
 			<StatItem
 				title='Validating APY'
 				value={`${stats.data.validationAPY}%`}
-				// icon={Nominator}
+				icon={StakingAPY}
 			/>
 			<StatItem
 				title='Staking APY'
 				value={`${stats.data.stakingAPY}%`}
-				// icon={Nominator}
+				icon={ValidatorAPY}
 			/>
 		</div>
 	);
