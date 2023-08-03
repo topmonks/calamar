@@ -3,9 +3,15 @@ import { Stats } from "../model/stats";
 
 export async function getStats() {
 	const res = await fetch(TAOSTATS_DATA_ENDPOINT);
-	const data = await res.json();
+	const [data] = await res.json();
 
-	console.log(data);
-
-	return data as Stats;
+	return {
+		price: data["price"],
+		priceChange24h: data["24h_change"],
+		marketCap: data["market_cap"],
+		stakingAPY: data["staking_apy"],
+		validationAPY: data["validating_apy"],
+		totalSupply: data["total_supply"],
+		currentSupply: data["current_supply"],
+	} as Stats;
 }

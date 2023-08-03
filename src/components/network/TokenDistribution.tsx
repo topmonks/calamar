@@ -72,7 +72,7 @@ export const TokenDistribution = (props: TokenDistributionProps) => {
 				<div css={valueStyle}>
 					<div css={valueTypeStyle}>Total issuance</div>
 					<div>
-						{formatNumber(4989589, {
+						{formatNumber(stats.data.totalSupply, {
 							compact: true,
 						})}
 					</div>

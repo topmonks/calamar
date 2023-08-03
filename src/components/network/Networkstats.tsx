@@ -1,25 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
-import Block from "../../assets/block.svg";
-import Signed from "../../assets/signed.svg";
-import Nominator from "../../assets/nominator.svg";
-import Validator from "../../assets/validator.svg";
-import Inflation from "../../assets/inflation.svg";
-import StakingReward from "../../assets/staking-reward.svg";
-
 import { Resource } from "../../model/resource";
 import { Stats } from "../../model/stats";
 
 import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
+import { formatCurrency } from "../../utils/number";
+import { Theme } from "@mui/material";
 
 const statStyle = css`
   min-width: 100px;
   width: 100%;
 
   display: flex;
+  gap: 8px;
   align-items: center;
 `;
 
@@ -30,14 +26,18 @@ const statIconStyle = css`
   padding: 10px;
 `;
 
-const statTitleStyle = css`
-  font-weight: 900;
+const statTitleStyle = (theme: Theme) => css`
+  font-weight: 500;
   margin-top: auto;
+  font-size: 13px;
+  color: ${theme.palette.secondary.dark}
 `;
 
-const statValueStyle = css`
-  font-weight: 500;
+const statValueStyle = (theme: Theme) => css`
+  font-weight: 600;
   height: 32px;
+  font-size: 15px;
+  color: ${theme.palette.secondary.light}
 `;
 
 const statsLayoutStyle = css`
@@ -112,34 +112,31 @@ export const NetworkStats = (props: NetworkInfoTableProps) => {
 	return (
 		<div css={statsLayoutStyle}>
 			<StatItem
-				title='Finalized blocks'
-				value={stats.data.chainFinalizedBlocks}
-				icon={Block}
+				title='Price'
+				value={`$ ${formatCurrency(stats.data.price, "USD", {
+					decimalPlaces: "optimal",
+				})}`}
+				// icon={Validator}
 			/>
 			<StatItem
-				title='Signed extrinsics'
-				value={stats.data.chainSignedExtrinsics}
-				icon={Signed}
+				title='24h change'
+				value={`${stats.data.priceChange24h}%`}
+				// icon={Nominator}
 			/>
 			<StatItem
-				title='Staking inflation'
-				value={`${stats.data.stakingInflationRatio.toFixed(1)}%`}
-				icon={Inflation}
+				title='Market Cap'
+				value={`$ ${formatCurrency(stats.data.marketCap, "USD")}`}
+				// icon={Nominator}
 			/>
 			<StatItem
-				title='Staking rewards'
-				value={`${stats.data.stakingRewardsRatio.toFixed(1)}%`}
-				icon={StakingReward}
+				title='Validating APY'
+				value={`${stats.data.validationAPY}%`}
+				// icon={Nominator}
 			/>
 			<StatItem
-				title='Validators'
-				value={`${stats.data.stakingActiveValidatorsAmount}/${stats.data.stakingValidatorsIdealAmount}`}
-				icon={Validator}
-			/>
-			<StatItem
-				title='Nomination pools'
-				value={`${stats.data.nominationPoolsPoolsActiveAmount}`}
-				icon={Nominator}
+				title='Staking APY'
+				value={`${stats.data.stakingAPY}%`}
+				// icon={Nominator}
 			/>
 		</div>
 	);

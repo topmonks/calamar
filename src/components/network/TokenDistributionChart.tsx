@@ -46,27 +46,27 @@ export const TokenDistributionChart = (
 
 		return [
 			{
-				name: "Circulating",
-				value: stats.circulatingValueTotal,
+				name: "Total issuance",
+				value: stats.totalSupply,
 				itemStyle: {
-					color: theme.palette.primary.main,
+					color: theme.palette.secondary.light,
+				}
+			
+			},
+			{
+				name: "Circulating",
+				value: stats.currentSupply,
+				itemStyle: {
+					color: theme.palette.success.main,
 				},
 			},
 			{
 				name: "Staked",
-				value: stats.stakingTotalStake,
+				// FIXME: 
+				// value: stats.stakingTotalStake,
+				value: 100,
 				itemStyle: {
 					color: lighten(theme.palette.primary.main, 0.5),
-				},
-			},
-			{
-				name: "Other",
-				value:
-          stats.balancesTotalIssuance -
-          stats.circulatingValueTotal -
-          stats.stakingTotalStake,
-				itemStyle: {
-					color: "lightgray",
 				},
 			},
 		].filter((it) => it.value > 0);
@@ -101,7 +101,7 @@ export const TokenDistributionChart = (
 				formatter: (name) => {
 					const item = totalData.find((it) => it.name === name);
 					const value = item!.value;
-					const percent = ((value * 100) / stats.balancesTotalIssuance).toFixed(
+					const percent = ((value * 100) / stats.totalSupply).toFixed(
 						2
 					);
 					return `${name}\n${formatNumber(value, {
