@@ -7,81 +7,118 @@ import { Stats } from "../../model/stats";
 import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
-import { formatCurrency } from "../../utils/number";
 import { Theme } from "@mui/material";
-
 import TaoIcon from "../../assets/tao_icon.png";
-import InflationIcon from "../../assets/inflation.svg";
-import GlobeIcon from "../../assets/globe.svg";
-import StakingAPY from "../../assets/staking-reward.svg";
-import ValidatorAPY from "../../assets/validator.svg";
+import { formatNumber } from "../../utils/number";
 
-const statStyle = css`
-  min-width: 100px;
+const stakingDataBlock = css`
   width: 100%;
-
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+`;
+
+const stakingDataBox = css`
+  padding: 0 35px 0 0;
+`;
+
+const statItemLabel = (theme: Theme) => css`
+  display: flex;
+  font-size: 13px;
+  color: ${theme.palette.secondary.dark};
+  letter-spacing: 0.01em;
+`;
+
+const statItemValue = (theme: Theme) => css`
+  font-weight: 400;
+  color: ${theme.palette.secondary.light};
+  margin: 0 0 6px;
+  line-height: 1.3em;
+`;
+
+const bittensorBlock = css`
+  width: auto;
+  padding: 0 27px 0 0;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
 `;
 
-const statIconStyle = css`
-  width: 36px;
-  height: 36px;
-  margin-right: 10px;
-  padding: 10px;
+const taoIcon = css`
+  margin-right: 16px;
+  width: 54px;
+  height: 54px;
+  color: #ffffff;
+  background-color: rgba(196, 196, 196, 0.06);
+  border-radius: 100%;
+  display: inline-block;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 `;
 
-const statTitleStyle = (theme: Theme) => css`
+const stakingDataLabelContainer = css`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+`;
+
+const stakingDataLabelTag = (theme: Theme) => css`
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 12px;
   font-weight: 500;
-  margin-top: auto;
-  font-size: 13px;
-  color: ${theme.palette.secondary.dark};
-`;
-
-const statValueStyle = (theme: Theme) => css`
-  font-weight: 600;
-  height: 32px;
-  font-size: 15px;
+  line-height: 1em;
+  text-transform: uppercase;
+  background-color: #292929;
+  padding: 5px;
+  border-radius: 4px;
   color: ${theme.palette.secondary.light};
 `;
 
-const statsLayoutStyle = css`
-  display: grid;
-  width: 100%;
-  height: auto;
+const stakingDataPrice = css`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+`;
 
-  gap: 10px;
+const priceValue = (theme: Theme) => css`
+  font-weight: 500;
+  color: ${theme.palette.secondary.light};
+  margin: 0;
+  line-height: 30px;
+  font-size: 30px;
+`;
 
-  grid-template-columns: repeat(2, auto);
+const priceUp = css`
+  font-size: 15px;
+  font-weight: 600;
+  padding-left: 8px;
+  color: #7AFFF7;
+`;
 
-  @media (max-width: 530px) {
-    grid-template-columns: repeat(1, auto);
-  }
+const priceDown = css`
+  font-size: 15px;
+  font-weight: 600;
+  padding-left: 8px;
+  color: #ff7a7a;
 `;
 
 type StatItemProps = {
 	title: string;
-	icon?: string;
-	value?: string | number;
+	value: string | number;
 };
 
 const StatItem = (props: StatItemProps) => {
-	const { title, value, icon } = props;
+	const { title, value } = props;
 
 	return (
-		<div css={statStyle}>
-			<img css={statIconStyle} src={icon} />
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
-				}}
-			>
-				<div css={statTitleStyle}>{title}</div>
-				<div css={statValueStyle}>{value}</div>
-			</div>
+		<div css={stakingDataBox}>
+			<label css={statItemLabel}>{title}</label>
+			<div css={statItemValue}>{value}</div>
 		</div>
 	);
 };
@@ -116,34 +153,46 @@ export const NetworkStats = (props: NetworkInfoTableProps) => {
 	}
 
 	return (
-		<div css={statsLayoutStyle}>
+		<div css={stakingDataBlock}>
+			<div css={bittensorBlock}>
+				<div css={taoIcon}>
+					<img src={TaoIcon} alt='Taostats Tao Icon' />
+				</div>
+				<div css={stakingDataBox}>
+					<div css={stakingDataLabelContainer}>
+						<label css={statItemLabel}>Bittensor price</label>
+						<div css={stakingDataLabelTag}>TAO</div>
+					</div>
+					<div css={stakingDataPrice}>
+						<div css={priceValue}>${stats.data.price}</div>
+						<span
+							css={
+								stats.data.priceChange24h > 0
+									? priceUp
+									: stats.data.priceChange24h < 0
+										? priceDown
+										: ""
+							}
+						>
+							{stats.data.priceChange24h > 0
+								? "▴"
+								: stats.data.priceChange24h < 0
+									? "▾"
+									: ""}
+							{` ${stats.data.priceChange24h}%`}
+						</span>
+					</div>
+				</div>
+			</div>
+			<StatItem title='Market Cap' value={`$ ${formatNumber(stats.data.marketCap)}`} />
 			<StatItem
-				title='TAO Price'
-				value={`$ ${formatCurrency(stats.data.price, "USD", {
-					decimalPlaces: "optimal",
-				})}`}
-				icon={TaoIcon}
+				title='Total Issuance'
+				value={`${formatNumber(stats.data.currentSupply)} 𝞃`}
 			/>
-			<StatItem
-				title='24h change'
-				value={`${stats.data.priceChange24h}%`}
-				icon={InflationIcon}
-			/>
-			<StatItem
-				title='Market Cap'
-				value={`$ ${formatCurrency(stats.data.marketCap, "USD")}`}
-				icon={GlobeIcon}
-			/>
-			<StatItem
-				title='Validating APY'
-				value={`${stats.data.validationAPY}%`}
-				icon={StakingAPY}
-			/>
-			<StatItem
-				title='Staking APY'
-				value={`${stats.data.stakingAPY}%`}
-				icon={ValidatorAPY}
-			/>
+			<StatItem title='Total Supply' value={`${formatNumber(stats.data.totalSupply)} 𝞃`} />
+			{/* <StatItem title='Next Halvening' value={`${stats.data.totalSupply} 𝞃`} /> */}
+			<StatItem title='Validating APR' value={`${stats.data.validationAPY} %`} />
+			<StatItem title='Staking APR' value={`${stats.data.stakingAPY} %`} />
 		</div>
 	);
 };
