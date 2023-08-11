@@ -10,6 +10,7 @@ import { RuntimeSpec } from "../model/runtimeSpec";
 
 // found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51
 const ADDRESS_TYPES = ["AccountId", "AccountId20", "AccountId32", "Address", "LookupSource", "MultiAddress"];
+const ADDRESS_KINDS = ["Id", "AccountId"];
 
 const valueTableStyle = css`
 	width: fit-content;
@@ -119,8 +120,8 @@ type MaybeAccountLinkValueProps = {
 const AccountValue = (props: MaybeAccountLinkValueProps) => {
 	const {network, value, valueMetadata, runtimeSpec} = props;
 
-	if (valueMetadata.type === "MultiAddress") {
-		if (value.__kind === "Id") {
+	if (typeof value === "object") {
+		if (ADDRESS_KINDS.includes(value.__kind)) {
 			return <ValueOfKind
 				network={network}
 				value={value}
@@ -130,15 +131,15 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 				}}
 				runtimeSpec={runtimeSpec}
 			/>;
-		} else {
-			return (
-				<DataViewerValueParsed
-					network={network}
-					value={value}
-					runtimeSpec={runtimeSpec}
-				/>
-			);
 		}
+
+		return (
+			<DataViewerValueParsed
+				network={network}
+				value={value}
+				runtimeSpec={runtimeSpec}
+			/>
+		);
 	}
 
 	return (
