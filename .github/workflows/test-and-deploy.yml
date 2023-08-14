@@ -34,7 +34,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1,2]
+        shardIndex: [1,2,3,4,5]
+        shardTotal: [5]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,7 +53,7 @@ jobs:
       - name: Start app
         run: npm run start:test &
       - name: Run Playwright Tests
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/100
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload test screenshots artifact
         uses: actions/upload-artifact@v3
         if: always()
