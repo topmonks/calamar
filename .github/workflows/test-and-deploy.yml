@@ -31,10 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.37.0-focal
-    #strategy:
-      #fail-fast: false
-      #matrix:
-        #shardIndex: [1,2]
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1,2]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,7 +52,7 @@ jobs:
       - name: Start app
         run: npm run start:test &
       - name: Run Playwright Tests
-        run: npx playwright test --shard=1/100 #--shard=${{ matrix.shardIndex }}/100
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/100
       - name: Upload test screenshots artifact
         uses: actions/upload-artifact@v3
         if: always()
