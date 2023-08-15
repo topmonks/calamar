@@ -7,7 +7,7 @@ import { DataError } from "../utils/error";
 import { decodeAddress, encodeAddress } from "../utils/formatAddress";
 
 import { getNetwork, hasSupport } from "./networksService";
-import { fetchMainIdentitiesSquid } from "./fetchService";
+import { fetchIdentitiesSquid } from "./fetchService";
 import { AccountIdentity } from "../model/accountIdentity";
 
 export async function getAccount(network: string, address: string): Promise<Account|undefined> {
@@ -28,7 +28,7 @@ export async function getAccount(network: string, address: string): Promise<Acco
 		identity: null
 	};
 
-	if (hasSupport(network, "main-identities-squid")) {
+	if (hasSupport(network, "identities-squid")) {
 		data.identity = await getAccountIdentity(network, address);
 	}
 
@@ -42,7 +42,7 @@ export async function getAccount(network: string, address: string): Promise<Acco
 async function getAccountIdentity(networkName: string, address: string) {
 	const network = getNetwork(networkName);
 
-	const response = await fetchMainIdentitiesSquid<{identity: MainSquidIdentity|null}>(
+	const response = await fetchIdentitiesSquid<{identity: MainSquidIdentity|null}>(
 		networkName,
 		`query ($id: String!) {
 			identity: identityById(id: $id) {
