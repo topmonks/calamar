@@ -1,3 +1,5 @@
+import { Request } from "@playwright/test";
+
 import { encodeAddress } from "../../src/utils/formatAddress";
 import { getNetwork } from "../../src/services/networksService";
 
@@ -9,6 +11,24 @@ import { test, expect } from "../utils/test";
 
 import fixtures from "./account.fixture.json";
 
+function isAccountBalanceQuery(request: Request, networkName?: string, address?: string) {
+	const network = networkName ? getNetwork(networkName) : undefined;
+
+	if (!request.url().match(`gs-stats-${network?.name || ""}`)) {
+		return false;
+	}
+
+	if (!request.postDataJSON()?.query.match("accountById")) {
+		return false;
+	}
+
+	if (network && address && request.postDataJSON()?.variables?.address !== encodeAddress(address, network.prefix)) {
+		return false;
+	}
+
+	return true;
+}
+
 test.describe("Account detail page", () => {
 	const address = "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840";
 
@@ -16,13 +36,7 @@ test.describe("Account detail page", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.route("**/*", (route, request) => {
 			for (const balanceFixture of fixtures.balances) {
-				const network = getNetwork(balanceFixture.network);
-
-				const isStatsSquid = request.url().match(`gs-stats-${network.name}`);
-				const isAccountByIdQuery = request.postDataJSON()?.query.match("accountById");
-				const isAccountAddress = request.postDataJSON()?.variables?.address === encodeAddress(address, network.prefix);
-
-				if (isStatsSquid && isAccountByIdQuery && isAccountAddress) {
+				if (isAccountBalanceQuery(request, balanceFixture.network, address)) {
 					return route.fulfill({
 						status: 200,
 						body: JSON.stringify(balanceFixture.response)
@@ -84,7 +98,7 @@ test.describe("Account detail page", () => {
 
 	test("shows portfolio not found message if no account balances found", async ({ page, takeScreenshot }) => {
 		await page.route("**/*", (route, request) => {
-			if (request.url().match(/[a-z]+-balances/)) {
+			if (isAccountBalanceQuery(request)) {
 				return route.fulfill({
 					status: 200,
 					body: JSON.stringify({
@@ -131,7 +145,7 @@ test.describe("Account detail page", () => {
 
 	test("shows error message if account balances fetch fails", async ({ page, takeScreenshot }) => {
 		await page.route("**/*", (route, request) => {
-			if (request.url().match("kusama-balances")) {
+			if (isAccountBalanceQuery(request, "kusama")) {
 				return route.fulfill({
 					status: 200,
 					body: JSON.stringify({
@@ -200,7 +214,7 @@ test.describe("Account detail page", () => {
 		const id = "0x123456789";
 
 		await page.route("**/*", (route, request) => {
-			if (request.url().match(/[a-z]+-balances/)) {
+			if (isAccountBalanceQuery(request)) {
 				return route.fulfill({
 					status: 200,
 					body: JSON.stringify({

@@ -44,19 +44,6 @@
 				"free": ["1,036.7066 KSM", "$35,299.86"],
 				"reserved": ["10 KSM", "$340.5"]
 			}
-		},
-		{
-			"network": "moonriver",
-			"response": {
-				"data": {
-					"balance": null
-				}
-			},
-			"display": {
-				"total": ["0 MOVR"],
-				"free": ["0 MOVR"],
-				"reserved": ["0 MOVR"]
-			}
 		}
 	],
 	"usdRates": {
