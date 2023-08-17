@@ -1,3 +1,6 @@
+import { encodeAddress } from "../../src/utils/formatAddress";
+import { getNetwork } from "../../src/services/networksService";
+
 import { clearCapturedPageEvents, waitForPageEvent } from "../utils/events";
 import { mockRequest } from "../utils/mockRequest";
 import { navigate } from "../utils/navigate";
@@ -13,7 +16,13 @@ test.describe("Account detail page", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.route("**/*", (route, request) => {
 			for (const balanceFixture of fixtures.balances) {
-				if (request.url().match(`${balanceFixture.network}-balances`)) {
+				const network = getNetwork(balanceFixture.network);
+
+				const isStatsSquid = request.url().match(`gs-stats-${network.name}`);
+				const isAccountByIdQuery = request.postDataJSON()?.query.match("accountById");
+				const isAccountAddress = request.postDataJSON()?.variables?.address === encodeAddress(address, network.prefix);
+
+				if (isStatsSquid && isAccountByIdQuery && isAccountAddress) {
 					return route.fulfill({
 						status: 200,
 						body: JSON.stringify(balanceFixture.response)
