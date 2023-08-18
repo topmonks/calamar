@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import { AccountBalance } from "../model/accountBalance";
 import { Balance } from "../model/balance";
-import { BalancesSquidBalance } from "../model/explorer-squid/explorerSquidAccountBalance";
+import { StatsSquidAccountBalance } from "../model/stats-squid/statsSquidAccountBalance";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
@@ -10,7 +10,7 @@ import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { encodeAddress } from "../utils/formatAddress";
 import { rawAmountToDecimal } from "../utils/number";
 
-import { fetchBalancesSquid } from "./fetchService";
+import { fetchStatsSquid } from "./fetchService";
 import { getNetwork, getNetworks, hasSupport } from "./networksService";
 
 
@@ -25,10 +25,10 @@ export async function getBalances(
 	order: BalancesOrder = "total_DESC",
 	pagination: PaginationOptions,
 ) {
-	if (hasSupport(network, "balances-squid")) {
+	if (hasSupport(network, "stats-squid")) {
 		const after = pagination.offset === 0 ? null : pagination.offset.toString();
 
-		const response = await fetchBalancesSquid<{accountsConnection: ItemsConnection<BalancesSquidBalance>}>(
+		const response = await fetchStatsSquid<{accountsConnection: ItemsConnection<StatsSquidAccountBalance>}>(
 			network,
 			`query ($first: Int!, $after: String, $filter: AccountWhereInput, $order: [AccountOrderByInput!]!) {
 				accountsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
@@ -38,7 +38,7 @@ export async function getBalances(
 							free
 							reserved
 							total
-							updatedAt
+							updatedAtBlock
 						}
 					}
 					pageInfo {
@@ -58,7 +58,7 @@ export async function getBalances(
 			}
 		);
 
-		const items = extractConnectionItems(response.accountsConnection, pagination, unifyBalancesSquidBalance, network);
+		const items = extractConnectionItems(response.accountsConnection, pagination, unifyStatsSquidAccountBalance, network);
 		const balances = await addRuntimeSpecs(network, items, () => "latest");
 
 		return balances;
@@ -81,7 +81,7 @@ export async function getAccountBalances(address: string) {
 	const accountBalances = networks.map<AccountBalance>((network) => ({
 		id: `${address}_${network.name}`,
 		network,
-		balanceSupported: !!hasSupport(network.name, "balances-squid"),
+		balanceSupported: !!hasSupport(network.name, "stats-squid"),
 	}));
 
 	const response = await Promise.allSettled(networks.map(async (network, index) => {
@@ -92,14 +92,14 @@ export async function getAccountBalances(address: string) {
 		accountBalance.encodedAddress = encodedAddress;
 
 		if (accountBalance.balanceSupported) {
-			const response = await fetchBalancesSquid<{balance?: BalancesSquidBalance}>(network.name, `
+			const response = await fetchStatsSquid<{balance?: StatsSquidAccountBalance}>(network.name, `
 				query ($address: String!) {
 					balance: accountById(id: $address) {
 						id
 						free
 						reserved
 						total
-						updatedAt
+						updatedAtBlock
 					}
 				}
 			`, {
@@ -107,7 +107,7 @@ export async function getAccountBalances(address: string) {
 			});
 
 			accountBalance.balance = response.balance
-				? unifyBalancesSquidBalance(response.balance, network.name)
+				? unifyStatsSquidAccountBalance(response.balance, network.name)
 				: {
 					id: address,
 					total: new Decimal(0),
@@ -130,7 +130,7 @@ export async function getAccountBalances(address: string) {
 
 /*** PRIVATE ***/
 
-function unifyBalancesSquidBalance(balance: BalancesSquidBalance, networkName: string): Omit<Balance, "runtimeSpec"> {
+function unifyStatsSquidAccountBalance(balance: StatsSquidAccountBalance, networkName: string): Omit<Balance, "runtimeSpec"> {
 	const network = getNetwork(networkName);
 
 	return {
@@ -138,6 +138,6 @@ function unifyBalancesSquidBalance(balance: BalancesSquidBalance, networkName: s
 		free: rawAmountToDecimal(network, balance.free),
 		reserved: rawAmountToDecimal(network, balance.reserved),
 		total: rawAmountToDecimal(network, balance.total),
-		updatedAt: balance.updatedAt
+		updatedAtBlock: balance.updatedAtBlock
 	};
 }
