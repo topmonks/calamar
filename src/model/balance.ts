@@ -7,6 +7,6 @@ export type Balance = {
 	free: Decimal;
 	reserved: Decimal;
 	total: Decimal;
-	updatedAt?: number;
+	updatedAtBlock?: number;
 	runtimeSpec: RuntimeSpec;
 }

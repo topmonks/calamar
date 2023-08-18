@@ -115,7 +115,7 @@ export const NetworkPage = () => {
 								<TransfersTable network={network.name} transfers={transfers} showTime />
 							</TabPane>
 					}
-					{hasSupport(network.name, "balances-squid") &&
+					{hasSupport(network.name, "stats-squid") &&
 							<TabPane
 								label="Top holders"
 								count={topHolders.pagination.totalCount}

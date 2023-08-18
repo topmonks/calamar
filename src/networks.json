@@ -296,10 +296,9 @@
         "symbol": "KSM",
         "squids": {
             "archive": "https://kusama.explorer.subsquid.io/graphql",
-            "balances": "https://squid.subsquid.io/kusama-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
             "main": "https://squid.subsquid.io/gs-main-kusama/graphql",
-            "main-identites": "https://squid.subsquid.io/gs-main-kusama/graphql",
+            "identites": "https://squid.subsquid.io/gs-main-kusama/graphql",
             "stats": "https://squid.subsquid.io/gs-stats-kusama/graphql"
         },
         "coinGeckoId": "kusama"
@@ -369,24 +368,10 @@
         "symbol": "MOVR",
         "squids": {
             "archive": "https://moonriver.explorer.subsquid.io/graphql",
-            "balances": "https://squid.subsquid.io/moonriver-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-moonriver/graphql",
             "main": "https://squid.subsquid.io/gs-main-moonriver/graphql"
         },
         "coinGeckoId": "moonriver"
-    },
-    {
-        "name": "opal",
-        "displayName": "Opal",
-        "icon": "/assets/network-icons/opal.png",
-        "color": "#40bcff",
-        "website": "https://docs.unique.network/unique-and-quartz-wiki/build/get-started/testnet-and-mainnet#opal-testnet",
-        "prefix": 42,
-        "decimals": 18,
-        "symbol": "OPL",
-        "squids": {
-            "archive": "https://archive.unique.network/opal/explorer/graphql"
-        }
     },
     {
         "name": "peaq",
@@ -447,28 +432,12 @@
         "symbol": "DOT",
         "squids": {
             "archive": "https://polkadot.explorer.subsquid.io/graphql",
-            "balances": "https://squid.subsquid.io/polkadot-balances/graphql",
             "explorer": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
             "main": "https://squid.subsquid.io/gs-main-polkadot/graphql",
+            "identites": "https://squid.subsquid.io/gs-main-polkadot/graphql",
             "stats": "https://squid.subsquid.io/gs-stats-polkadot/graphql"
         },
         "coinGeckoId": "polkadot"
-    },
-    {
-        "name": "quartz",
-        "displayName": "Quartz",
-        "icon": "/assets/network-icons/quartz.png",
-        "color": "#ff4d6a",
-        "website": "https://unique.network/quartz/",
-        "parachainId": 2095,
-        "relayChain": "kusama",
-        "prefix": 255,
-        "decimals": 18,
-        "symbol": "QTZ",
-        "squids": {
-            "archive": "https://archive.unique.network/quartz/explorer/graphql"
-        },
-        "coinGeckoId": "quartz"
     },
     {
         "name": "robonomics",
@@ -554,7 +523,6 @@
         "name": "statemint",
         "displayName": "Statemint",
         "icon": "/assets/network-icons/statemint.png",
-        "color": "#86e62a",
         "website": "https://www.parity.io/",
         "parachainId": 1000,
         "relayChain": "polkadot",
@@ -597,22 +565,6 @@
         "squids": {
             "archive": "https://t0rn.explorer.subsquid.io/graphql"
         }
-    },
-    {
-        "name": "unique",
-        "displayName": "Unique",
-        "icon": "/assets/network-icons/unique.png",
-        "color": "#40bcff",
-        "website": "https://unique.network/",
-        "parachainId": 2037,
-        "relayChain": "polkadot",
-        "prefix": 7391,
-        "decimals": 18,
-        "symbol": "UNQ",
-        "squids": {
-            "archive": "https://archive.unique.network/unique/explorer/graphql"
-        },
-        "coinGeckoId": "unique-network"
     },
     {
         "name": "vara",

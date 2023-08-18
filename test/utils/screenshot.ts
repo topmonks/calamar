@@ -7,7 +7,7 @@ const hideSelectors = [
 ];
 
 export async function screenshot(page: Page, element: Locator|undefined, path: string) {
-	page.evaluate((hideSelectors) => {
+	await page.evaluate((hideSelectors) => {
 		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");
 		if (topBar) {
 			topBar.style.position = "relative";
@@ -29,7 +29,7 @@ export async function screenshot(page: Page, element: Locator|undefined, path: s
 		? await element.screenshot({path, animations: "disabled"})
 		: await page.screenshot({path, fullPage: true, animations: "disabled"});
 
-	page.evaluate((hideSelectors) => {
+	await page.evaluate((hideSelectors) => {
 		const topBar = document.querySelector<HTMLElement>("[data-test=top-bar");
 		if (topBar) {
 			topBar.style.position = "";

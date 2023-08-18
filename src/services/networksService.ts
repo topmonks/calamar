@@ -6,10 +6,6 @@ export function getArchive(network: string) {
 	return getNetwork(network).squids["archive"];
 }
 
-export function getBalancesSquid(network: string) {
-	return getNetwork(network).squids["balances"];
-}
-
 export function getExplorerSquid(network: string) {
 	return getNetwork(network).squids["explorer"];
 }
@@ -18,8 +14,8 @@ export function getMainSquid(network: string) {
 	return getNetwork(network).squids["main"];
 }
 
-export function getMainIdentitesSquid(network: string) {
-	return getNetwork(network).squids["main-identites"];
+export function getIdentitesSquid(network: string) {
+	return getNetwork(network).squids["identites"];
 }
 
 export function getStatsSquid(network: string) {
@@ -43,13 +39,12 @@ export function getNetwork(name: string, throwIfNotFound = true) {
 	return network;
 }
 
-export function hasSupport(network: string, feature: "archive"|"balances-squid"|"explorer-squid"|"main-squid"|"main-identities-squid"|"stats-squid") {
+export function hasSupport(network: string, feature: "archive"|"explorer-squid"|"main-squid"|"identities-squid"|"stats-squid") {
 	switch(feature) {
 		case "archive": return !!getArchive(network);
-		case "balances-squid": return !!getBalancesSquid(network);
 		case "explorer-squid": return !!getExplorerSquid(network);
 		case "main-squid": return !!getMainSquid(network);
-		case "main-identities-squid": return !!getMainIdentitesSquid(network);
+		case "identities-squid": return !!getIdentitesSquid(network);
 		case "stats-squid": return !!getStatsSquid(network);
 	}
 }
