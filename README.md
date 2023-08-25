@@ -89,3 +89,5 @@ After the tests are finished (failed or succeeded), you can view the report by
 ```
 $ npm run test:report
 ```
+
+[![argos](https://argos-ci.com/badge-large.svg)](https://argos-ci.com?utm_source=topmonks&utm_campaign=oss)
