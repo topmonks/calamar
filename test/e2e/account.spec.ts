@@ -189,7 +189,9 @@ test.describe("Account detail page", () => {
 		await page.getByTestId("extrinsics-tab").click();
 
 		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
-		await takeScreenshot("account-with-extrinsics");
+
+		const accountRelatedItems = page.getByTestId("account-related-items");
+		await takeScreenshot("account-with-extrinsics", accountRelatedItems);
 	});
 
 	test("shows account detail page with calls", async ({ page, takeScreenshot }) => {
@@ -198,7 +200,9 @@ test.describe("Account detail page", () => {
 		await page.getByTestId("calls-tab").click();
 
 		await removeContent(page.locator("[data-test=calls-table] tr td"));
-		await takeScreenshot("account-with-calls");
+
+		const accountRelatedItems = page.getByTestId("account-related-items");
+		await takeScreenshot("account-with-calls", accountRelatedItems);
 	});
 
 	test("shows account detail page with transfers", async ({ page, takeScreenshot }) => {
@@ -207,7 +211,9 @@ test.describe("Account detail page", () => {
 		await page.getByTestId("transfers-tab").click();
 
 		await removeContent(page.locator("[data-test=transfers-table] tr td"));
-		await takeScreenshot("account-with-transfers");
+
+		const accountRelatedItems = page.getByTestId("account-related-items");
+		await takeScreenshot("account-with-transfers", accountRelatedItems);
 	});
 
 	test("shows error message if account address is not valid", async ({ page, takeScreenshot }) => {
@@ -261,7 +267,8 @@ test.describe("Account detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Extrinsics error/);
 
-		await takeScreenshot("account-with-extrinsics-error");
+		const accountRelatedItems = page.getByTestId("account-related-items");
+		await takeScreenshot("account-with-extrinsics-error", accountRelatedItems);
 	});
 
 	test("shows error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
@@ -287,7 +294,8 @@ test.describe("Account detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Calls error/);
 
-		await takeScreenshot("account-with-calls-error");
+		const accountRelatedItems = page.getByTestId("account-related-items");
+		await takeScreenshot("account-with-calls-error", accountRelatedItems);
 	});
 
 	test("shows error message when transfers items fetch fails", async ({ page, takeScreenshot }) => {
@@ -313,6 +321,7 @@ test.describe("Account detail page", () => {
 		await expect(errorMessage).toHaveText(/Unexpected error/);
 		await expect(errorMessage).toHaveText(/Transfers error/);
 
-		await takeScreenshot("account-with-transfers-error");
+		const accountRelatedItems = page.getByTestId("account-related-items");
+		await takeScreenshot("account-with-transfers-error", accountRelatedItems);
 	});
 });
