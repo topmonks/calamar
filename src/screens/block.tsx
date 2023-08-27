@@ -46,7 +46,7 @@ export const BlockPage = () => {
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
 				<BlockInfoTable
-					network={network.name}
+					network={network}
 					block={block}
 				/>
 			</Card>
@@ -60,7 +60,7 @@ export const BlockPage = () => {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showAccount />
+							<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount />
 						</TabPane>
 						<TabPane
 							label="Calls"
@@ -69,7 +69,7 @@ export const BlockPage = () => {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network.name} calls={calls} showAccount />
+							<CallsTable network={network} calls={calls} showAccount />
 						</TabPane>
 						<TabPane
 							label="Events"
@@ -78,7 +78,7 @@ export const BlockPage = () => {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network.name} events={events} showExtrinsic />
+							<EventsTable network={network} events={events} showExtrinsic />
 						</TabPane>
 					</TabbedContent>
 				</Card>

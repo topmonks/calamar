@@ -10,11 +10,11 @@ import StakingReward from "../../assets/staking-reward.svg";
 
 import { Resource } from "../../model/resource";
 import { Stats } from "../../model/stats";
-import { getNetwork } from "../../services/networksService";
 
 import { ErrorMessage } from "../ErrorMessage";
 import Loading from "../Loading";
 import NotFound from "../NotFound";
+import { Network } from "../../model/network";
 
 const statStyle = css`
 	min-width: 100px;
@@ -80,14 +80,12 @@ const StatItem = (props: StatItemProps) => {
 };
 
 export type NetworkInfoTableProps = {
+	network: Network;
 	stats: Resource<Stats>;
-	networkName: string;
 }
 
 export const NetworkStats = (props: NetworkInfoTableProps) => {
-	const { stats, networkName } = props;
-
-	const network = getNetwork(networkName);
+	const { stats, network } = props;
 
 	if (stats.loading) {
 		return <Loading />;

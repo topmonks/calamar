@@ -147,7 +147,7 @@ export const SearchPage = () => {
 						error={extrinsicsByName.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network.name} extrinsics={extrinsicsByName} showAccount showTime />
+						<ExtrinsicsTable network={network} extrinsics={extrinsicsByName} showAccount showTime />
 					</TabPane>
 				}
 				{!eventsByName.notFound &&
@@ -158,7 +158,7 @@ export const SearchPage = () => {
 						error={eventsByName.error}
 						value="events"
 					>
-						<EventsTable network={network.name} events={eventsByName} showExtrinsic />
+						<EventsTable network={network} events={eventsByName} showExtrinsic />
 					</TabPane>
 				}
 			</TabbedContent>

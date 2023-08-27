@@ -65,7 +65,7 @@ export const NetworkPage = () => {
 						{network.displayName}
 					</CardHeader>
 					{hasSupport(network.name, "stats-squid") &&
-						<NetworkStats stats={stats} networkName={network.name} />
+						<NetworkStats stats={stats} network={network} />
 					}
 				</Card>
 				{hasSupport(network.name, "stats-squid") &&
@@ -91,7 +91,7 @@ export const NetworkPage = () => {
 						error={extrinsics.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showAccount showTime />
+						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
 					</TabPane>
 					<TabPane
 						label="Blocks"
@@ -100,7 +100,7 @@ export const NetworkPage = () => {
 						error={blocks.error}
 						value="blocks"
 					>
-						<BlocksTable network={network.name} blocks={blocks} showValidator showTime />
+						<BlocksTable network={network} blocks={blocks} showValidator showTime />
 					</TabPane>
 
 
@@ -112,7 +112,7 @@ export const NetworkPage = () => {
 								error={transfers.error}
 								value="transfers"
 							>
-								<TransfersTable network={network.name} transfers={transfers} showTime />
+								<TransfersTable network={network} transfers={transfers} showTime />
 							</TabPane>
 					}
 					{hasSupport(network.name, "stats-squid") &&
@@ -123,7 +123,7 @@ export const NetworkPage = () => {
 								error={topHolders.error}
 								value="top-holders"
 							>
-								<BalancesTable network={network.name} balances={topHolders} usdRates={usdRates} />
+								<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
 							</TabPane>
 					}
 				</TabbedContent>

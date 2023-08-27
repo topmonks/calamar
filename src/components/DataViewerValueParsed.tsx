@@ -7,6 +7,7 @@ import { noCase } from "../utils/string";
 
 import { AccountAddress } from "./AccountAddress";
 import { RuntimeSpec } from "../model/runtimeSpec";
+import { Network } from "../model/network";
 
 // found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51
 const ADDRESS_TYPES = ["AccountId", "AccountId20", "AccountId32", "Address", "LookupSource", "MultiAddress"];
@@ -72,7 +73,7 @@ const valueStyle = css`
 `;
 
 type ValueOfKindProps = {
-	network: string;
+	network: Network;
 	value: {
 		__kind: string,
 		value: any;
@@ -111,7 +112,7 @@ const ValueOfKind = (props: ValueOfKindProps) => {
 };
 
 type MaybeAccountLinkValueProps = {
-	network: string;
+	network: Network;
 	value: any;
 	valueMetadata: DecodedArg;
 	runtimeSpec: RuntimeSpec;
@@ -147,7 +148,6 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 			<AccountAddress
 				network={network}
 				address={value}
-				prefix={runtimeSpec.metadata.ss58Prefix}
 				copyToClipboard="small"
 			/>
 		</div>
@@ -155,7 +155,7 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 };
 
 export type DataViewerValueParsedProps = {
-	network: string;
+	network: Network;
 	value: any;
 	metadata?: DecodedArg[]|DecodedArg;
 	runtimeSpec?: RuntimeSpec;

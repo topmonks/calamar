@@ -4,6 +4,7 @@ import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { Extrinsic } from "../../model/extrinsic";
+import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
 import { encodeAddress } from "../../utils/formatAddress";
@@ -17,7 +18,7 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type ExtrinsicInfoTableProps = {
-	network: string;
+	network: Network;
 	extrinsic: Resource<Extrinsic>;
 }
 
@@ -54,7 +55,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<ExtrinsicInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network}/block/${data.blockId}`}>
+					<Link to={`/${network.name}/block/${data.blockId}`}>
 						{data.blockHeight}
 					</Link>
 				}
@@ -66,11 +67,10 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 					<AccountAddress
 						network={network}
 						address={data.signer}
-						prefix={data.runtimeSpec.metadata.ss58Prefix}
 					/>
 				}
 				copyToClipboard={(data) => data.signer &&
-					encodeAddress(data.signer, data.runtimeSpec.metadata.ss58Prefix)
+					encodeAddress(data.signer, network.prefix)
 				}
 				hide={(data) => !data.signer}
 			/>
@@ -88,7 +88,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.palletName}.${data.callName}`}
+						to={`/${network.name}/search?query=${data.palletName}.${data.callName}`}
 						size="small"
 						color="secondary"
 					>

@@ -1,4 +1,5 @@
 import { Extrinsic } from "../../model/extrinsic";
+import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
 import { AccountAddress } from "../AccountAddress";
@@ -8,7 +9,7 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type ExtrinsicsTableProps = {
-	network: string;
+	network: Network;
 	extrinsics: PaginatedResource<Extrinsic>,
 	showAccount?: boolean;
 	showTime?: boolean;
@@ -62,7 +63,6 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 							<AccountAddress
 								network={network}
 								address={extrinsic.signer}
-								prefix={extrinsic.runtimeSpec.metadata.ss58Prefix}
 								shorten
 								copyToClipboard="small"
 							/>

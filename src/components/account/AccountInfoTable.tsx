@@ -2,15 +2,15 @@
 import { HTMLAttributes } from "react";
 import { isEthereumAddress } from "@polkadot/util-crypto";
 
-import { useNetwork } from "../../hooks/useNetwork";
 import { Account } from "../../model/account";
+import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
 import {InfoTable, InfoTableAttribute } from "../InfoTable";
 
 export type AccountInfoTableProps = HTMLAttributes<HTMLDivElement> & {
-	network: string;
+	network: Network;
 	account: Resource<Account>;
 }
 
@@ -18,8 +18,6 @@ const AccountInfoTableAttribute = InfoTableAttribute<Account>;
 
 export const AccountInfoTable = (props: AccountInfoTableProps) => {
 	const {network, account, ...tableProps} = props;
-
-	const networkData = useNetwork(network);
 
 	return (
 		<InfoTable
@@ -31,9 +29,9 @@ export const AccountInfoTable = (props: AccountInfoTableProps) => {
 			{...tableProps}
 		>
 			<AccountInfoTableAttribute
-				label={`${networkData?.displayName} address`}
-				render={(data) => encodeAddress(data.address, data.runtimeSpec.metadata.ss58Prefix)}
-				copyToClipboard={(data) => encodeAddress(data.address, data.runtimeSpec.metadata.ss58Prefix)}
+				label={`${network.displayName} address`}
+				render={(data) => encodeAddress(data.address, network.prefix)}
+				copyToClipboard={(data) => encodeAddress(data.address, network.prefix)}
 				hide={(data) => isEthereumAddress(data.address)}
 			/>
 			<AccountInfoTableAttribute

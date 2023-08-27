@@ -1,4 +1,5 @@
 import { Block } from "../../model/block";
+import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 import { encodeAddress } from "../../utils/formatAddress";
 
@@ -8,7 +9,7 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type BlockInfoTableProps = {
-	network: string;
+	network: Network;
 	block: Resource<Block>;
 }
 
@@ -51,7 +52,7 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			<BlockInfoTableAttribute
 				label="Parent hash"
 				render={(data) =>
-					<Link to={`/${network}/search?query=${data.parentHash}`}>
+					<Link to={`/${network.name}/search?query=${data.parentHash}`}>
 						{data.parentHash}
 					</Link>
 				}
@@ -63,13 +64,12 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 					<AccountAddress
 						network={network}
 						address={data.validator}
-						prefix={data.runtimeSpec.metadata.ss58Prefix}
 					/>
 				}
 				copyToClipboard={(data) => data.validator &&
 					encodeAddress(
 						data.validator,
-						data.runtimeSpec.metadata.ss58Prefix
+						network.prefix
 					)
 				}
 				hide={(data) => !data.validator}
