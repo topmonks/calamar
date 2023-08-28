@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 
+import { Network } from "../model/network";
 import { encodeAddress } from "../utils/formatAddress";
 import { shortenHash } from "../utils/shortenHash";
 
@@ -24,9 +25,8 @@ const copyToClipboardStyle = css`
 `;
 
 export type AccountLinkProps = {
-	network: string;
+	network: Network;
 	address: string;
-	prefix: number;
 	icon?: boolean;
 	link?: boolean;
 	shorten?: boolean;
@@ -37,21 +37,20 @@ export const AccountAddress = (props: AccountLinkProps) => {
 	const {
 		network,
 		address,
-		prefix,
 		icon = true,
 		link = true,
 		shorten,
 		copyToClipboard
 	} = props;
 
-	const encodedAddress = useMemo(() => encodeAddress(address, prefix), [address]);
+	const encodedAddress = useMemo(() => encodeAddress(address, network.prefix), [address]);
 
 	const content = useMemo(() => {
 		let content = <span>{shorten ? shortenHash(encodedAddress) : encodedAddress}</span>;
 
 		if (link) {
 			content = (
-				<Link to={`/${network}/account/${address}`}>
+				<Link to={`/${network.name}/account/${address}`}>
 					{content}
 				</Link>
 			);
@@ -83,7 +82,7 @@ export const AccountAddress = (props: AccountLinkProps) => {
 				<AccountAvatar
 					css={iconStyle}
 					address={address}
-					prefix={prefix}
+					prefix={network.prefix}
 					size={20}
 				/>
 			)}

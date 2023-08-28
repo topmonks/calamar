@@ -35,7 +35,7 @@ export const ExtrinsicPage = () => {
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
 				<ExtrinsicInfoTable
-					network={network.name}
+					network={network}
 					extrinsic={extrinsic}
 				/>
 			</Card>
@@ -50,7 +50,7 @@ export const ExtrinsicPage = () => {
 							value="events"
 						>
 							<EventsTable
-								network={network.name}
+								network={network}
 								events={events}
 							/>
 						</TabPane>
@@ -61,7 +61,7 @@ export const ExtrinsicPage = () => {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network.name} calls={calls} showAccount />
+							<CallsTable network={network} calls={calls} showAccount />
 						</TabPane>
 					</TabbedContent>
 				</Card>

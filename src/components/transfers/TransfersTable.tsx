@@ -5,7 +5,7 @@ import CheckIcon from "../../assets/check-icon.png";
 
 import { PaginatedResource } from "../../model/paginatedResource";
 import { Transfer } from "../../model/transfer";
-import { getNetwork } from "../../services/networksService";
+import { Network } from "../../model/network";
 
 import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";
@@ -14,7 +14,7 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type TransfersTableProps = {
-	network: string;
+	network: Network;
 	transfers: PaginatedResource<Transfer>,
 	showTime?: boolean;
 };
@@ -43,7 +43,7 @@ function TransfersTable(props: TransfersTableProps) {
 			<TransfersTableAttribute
 				label="Extrinsic"
 				render={(transfer) => transfer.extrinsic &&
-					<Link to={`/${network}/extrinsic/${transfer.extrinsic.id}`}>
+					<Link to={`/${network.name}/extrinsic/${transfer.extrinsic.id}`}>
 						{transfer.extrinsic.id}
 					</Link>
 				}
@@ -54,7 +54,6 @@ function TransfersTable(props: TransfersTableProps) {
 					<AccountAddress
 						network={network}
 						address={transfer.fromPublicKey}
-						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
 						copyToClipboard="small"
 					/>
@@ -66,7 +65,6 @@ function TransfersTable(props: TransfersTableProps) {
 					<AccountAddress
 						network={network}
 						address={transfer.toPublicKey}
-						prefix={transfer.runtimeSpec.metadata.ss58Prefix}
 						shorten
 						copyToClipboard="small"
 					/>
@@ -77,7 +75,7 @@ function TransfersTable(props: TransfersTableProps) {
 				render={(transfer) =>
 					<Currency
 						amount={transfer.amount}
-						currency={getNetwork(network).symbol}
+						currency={network.symbol}
 						decimalPlaces="optimal"
 						showFullInTooltip
 					/>

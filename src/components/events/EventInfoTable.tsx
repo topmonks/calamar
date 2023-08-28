@@ -1,4 +1,5 @@
 import { Event } from "../../model/event";
+import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 import { getEventMetadataByName } from "../../utils/queryMetadata";
 
@@ -9,7 +10,7 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type EventInfoTableProps = {
-	network: string;
+	network: Network;
 	event: Resource<Event>;
 }
 
@@ -42,7 +43,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Block"
 				render={(data) =>
 					<Link
-						to={`/${network}/block/${data.blockId}`}
+						to={`/${network.name}/block/${data.blockId}`}
 					>
 						{data.blockHeight}
 					</Link>
@@ -53,7 +54,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Extrinsic"
 				render={(data) => data.extrinsicId &&
 					<Link
-						to={`/${network}/extrinsic/${data.extrinsicId}`}
+						to={`/${network.name}/extrinsic/${data.extrinsicId}`}
 					>
 						{data.extrinsicId}
 					</Link>
@@ -64,7 +65,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Call"
 				render={(data) => data.callId &&
 					<Link
-						to={`/${network}/call/${data.callId}`}
+						to={`/${network.name}/call/${data.callId}`}
 					>
 						{data.callId}
 					</Link>
@@ -75,7 +76,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.palletName}.${data.eventName}`}
+						to={`/${network.name}/search?query=${data.palletName}.${data.eventName}`}
 						size="small"
 						color="secondary"
 					>

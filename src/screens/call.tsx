@@ -30,7 +30,7 @@ export const CallPage = () => {
 					Call #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
-				<CallInfoTable network={network.name} call={call} />
+				<CallInfoTable network={network} call={call} />
 			</Card>
 			{call.data &&
 				<Card>
@@ -42,7 +42,7 @@ export const CallPage = () => {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network.name} events={events} />
+							<EventsTable network={network} events={events} />
 						</TabPane>
 					</TabbedContent>
 				</Card>

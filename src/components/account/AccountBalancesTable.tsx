@@ -144,8 +144,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 										<div>
 											<AccountAddress
 												address={balance.encodedAddress}
-												network={balance.network.name}
-												prefix={balance.network.prefix}
+												network={balance.network}
 												icon={false}
 												shorten
 												copyToClipboard="small"

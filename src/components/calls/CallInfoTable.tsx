@@ -4,6 +4,7 @@ import CrossIcon from "../../assets/cross-icon.png";
 import CheckIcon from "../../assets/check-icon.png";
 
 import { Call } from "../../model/call";
+import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
 import { encodeAddress } from "../../utils/formatAddress";
@@ -17,7 +18,7 @@ import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type CallInfoTableProps = {
-	network: string;
+	network: Network;
 	call: Resource<Call>;
 }
 
@@ -49,7 +50,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network}/block/${data.blockId}`}>
+					<Link to={`/${network.name}/block/${data.blockId}`}>
 						{data.blockHeight}
 					</Link>
 				}
@@ -58,7 +59,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Extrinsic"
 				render={(data) =>
-					<Link to={`/${network}/extrinsic/${data.extrinsicId}`}>
+					<Link to={`/${network.name}/extrinsic/${data.extrinsicId}`}>
 						{data.extrinsicId}
 					</Link>
 				}
@@ -67,7 +68,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Parent call"
 				render={(data) => data.parentId &&
-					<Link to={`/${network}/call/${data.parentId}`}>
+					<Link to={`/${network.name}/call/${data.parentId}`}>
 						{data.parentId}
 					</Link>
 				}
@@ -80,11 +81,10 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 					<AccountAddress
 						network={network}
 						address={data.caller}
-						prefix={data.runtimeSpec.metadata.ss58Prefix}
 					/>
 				}
 				copyToClipboard={(data) => data.caller &&
-					encodeAddress(data.caller, data.runtimeSpec.metadata.ss58Prefix)
+					encodeAddress(data.caller, network.prefix)
 				}
 				hide={(data) => !data.caller}
 			/>
@@ -102,7 +102,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network}/search?query=${data.palletName}.${data.callName}`}
+						to={`/${network.name}/search?query=${data.palletName}.${data.callName}`}
 						size="small"
 						color="secondary"
 					>

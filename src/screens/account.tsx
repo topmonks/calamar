@@ -119,7 +119,7 @@ export const AccountPage = () => {
 					</CardHeader>
 					<AccountInfoTable
 						css={accountInfoTableStyle}
-						network={network.name}
+						network={network}
 						account={account}
 					/>
 					<AccountIdentityInfo
@@ -164,7 +164,7 @@ export const AccountPage = () => {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network.name} extrinsics={extrinsics} showTime />
+							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
 						</TabPane>
 						{hasSupport(network.name, "explorer-squid") &&
 							<TabPane
@@ -174,7 +174,7 @@ export const AccountPage = () => {
 								error={calls.error}
 								value="calls"
 							>
-								<CallsTable network={network.name} calls={calls} />
+								<CallsTable network={network} calls={calls} />
 							</TabPane>
 						}
 						{hasSupport(network.name, "main-squid") &&
@@ -185,7 +185,7 @@ export const AccountPage = () => {
 								error={transfers.error}
 								value="transfers"
 							>
-								<TransfersTable network={network.name} transfers={transfers} showTime />
+								<TransfersTable network={network} transfers={transfers} showTime />
 							</TabPane>
 						}
 					</TabbedContent>

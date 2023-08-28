@@ -7,6 +7,7 @@ import { Close } from "@mui/icons-material";
 import { config } from "../config";
 
 import { DecodedArg } from "../model/decodedMetadata";
+import { Network } from "../model/network";
 import { RuntimeSpec } from "../model/runtimeSpec";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
@@ -203,7 +204,7 @@ const DataViewerModalHandle = (props: DataViewerModalHandleProps) => {
 };
 
 export type DataViewerProps = {
-	network: string;
+	network: Network;
 	data: any;
 	metadata?: DecodedArg[];
 	runtimeSpec?: RuntimeSpec;

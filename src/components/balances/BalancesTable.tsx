@@ -1,16 +1,17 @@
 import { Balance } from "../../model/balance";
+import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { Resource } from "../../model/resource";
 import { UsdRates } from "../../model/usdRates";
-import { getNetwork } from "../../services/networksService";
 import { decodeAddress } from "../../utils/formatAddress";
+
 import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 
 export type BalancesTableProps = {
-	network: string;
+	network: Network;
 	balances: PaginatedResource<Balance>;
 	usdRates: Resource<UsdRates>;
 };
@@ -37,7 +38,6 @@ function BalancesTable(props: BalancesTableProps) {
 					<AccountAddress
 						network={network}
 						address={decodeAddress(balance.id)}
-						prefix={balance.runtimeSpec.metadata.ss58Prefix}
 						shorten
 						copyToClipboard="small"
 					/>}
@@ -48,9 +48,9 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.total}
-						currency={getNetwork(network).symbol}
+						currency={network.symbol}
 						decimalPlaces="optimal"
-						usdRate={usdRates[network]}
+						usdRate={usdRates[network.name]}
 						showFullInTooltip
 						showUsdValue
 					/>
@@ -62,9 +62,9 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.free}
-						currency={getNetwork(network).symbol}
+						currency={network.symbol}
 						decimalPlaces="optimal"
-						usdRate={usdRates[network]}
+						usdRate={usdRates[network.name]}
 						showFullInTooltip
 						showUsdValue
 					/>
@@ -76,9 +76,9 @@ function BalancesTable(props: BalancesTableProps) {
 				render={(balance, usdRates) =>
 					<Currency
 						amount={balance.reserved}
-						currency={getNetwork(network).symbol}
+						currency={network.symbol}
 						decimalPlaces="optimal"
-						usdRate={usdRates[network]}
+						usdRate={usdRates[network.name]}
 						showFullInTooltip
 						showUsdValue
 					/>
@@ -88,7 +88,7 @@ function BalancesTable(props: BalancesTableProps) {
 			<BalancesItemsTableAttribute
 				label="Last update"
 				render={(balance) =>
-					<Link to={`/${network}/search?query=${balance.updatedAtBlock}`}>
+					<Link to={`/${network.name}/search?query=${balance.updatedAtBlock}`}>
 						{balance.updatedAtBlock}
 					</Link>
 				}

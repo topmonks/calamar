@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 
 import { Event } from "../../model/event";
+import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
 import { getEventMetadataByName } from "../../utils/queryMetadata";
@@ -16,7 +17,7 @@ const parametersColCss = (showExtrinsic?: boolean) => css`
 `;
 
 export type EventsTableProps = {
-	network: string;
+	network: Network;
 	events: PaginatedResource<Event>;
 	showExtrinsic?: boolean;
 };
@@ -39,7 +40,7 @@ function EventsTable(props: EventsTableProps) {
 			<EventsItemsTableAttribute
 				label="ID"
 				render={(event) => (
-					<Link to={`/${network}/event/${event.id}`}>
+					<Link to={`/${network.name}/event/${event.id}`}>
 						{event.id}
 					</Link>
 				)}
@@ -48,7 +49,7 @@ function EventsTable(props: EventsTableProps) {
 				label="Name"
 				render={(event) =>
 					<ButtonLink
-						to={`/${network}/search?query=${event.palletName}.${event.eventName}`}
+						to={`/${network.name}/search?query=${event.palletName}.${event.eventName}`}
 						size="small"
 						color="secondary"
 					>
@@ -60,7 +61,7 @@ function EventsTable(props: EventsTableProps) {
 				<EventsItemsTableAttribute
 					label="Extrinsic"
 					render={(event) => event.extrinsicId && (
-						<Link to={`/${network}/extrinsic/${event.extrinsicId}`}>
+						<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
 							{event.extrinsicId}
 						</Link>
 					)}

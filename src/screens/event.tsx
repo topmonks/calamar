@@ -25,7 +25,7 @@ export const EventPage = () => {
 				Event #{id}
 				<CopyToClipboardButton value={id} />
 			</CardHeader>
-			<EventInfoTable network={network.name} event={event} />
+			<EventInfoTable network={network} event={event} />
 		</Card>
 	</>);
 };
