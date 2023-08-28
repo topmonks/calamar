@@ -59,7 +59,7 @@ export const NetworkPage = () => {
 	return (
 		<>
 			<CardRow>
-				<Card>
+				<Card data-test="network-stats">
 					<CardHeader>
 						<img css={networkIconStyle} src={network.icon} />
 						{network.displayName}
@@ -69,7 +69,7 @@ export const NetworkPage = () => {
 					}
 				</Card>
 				{hasSupport(network.name, "stats-squid") &&
-					<Card css={tokenDistributionStyle}>
+					<Card css={tokenDistributionStyle} data-test="network-token-distribution">
 						<CardHeader>
 							Token distribution
 						</CardHeader>
@@ -82,7 +82,7 @@ export const NetworkPage = () => {
 			</CardRow>
 
 
-			<Card>
+			<Card data-test="network-related-items">
 				<TabbedContent>
 					<TabPane
 						label="Extrinsics"
