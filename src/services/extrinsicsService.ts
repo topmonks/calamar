@@ -33,17 +33,7 @@ export async function getExtrinsicsByName(
 	order: ExtrinsicsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	let [palletName = "", callName = ""] = name.split(".");
-
-	const latestRuntimeSpec = await getRuntimeSpec(network, "latest");
-
-	// try to fix casing according to latest runtime spec
-	const runtimePallet = latestRuntimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === palletName.toLowerCase());
-	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === callName.toLowerCase());
-
-	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	palletName = runtimePallet?.name.toString() || upperFirst(palletName);
-	callName = runtimeCall?.name.toString() || lowerFirst(callName);
+	const {palletName, callName} = await normalizeExtrinsicName(network, name);
 
 	const filter: ExtrinsicsFilter = callName
 		? { palletName_eq: palletName, callName_eq: callName }
@@ -88,6 +78,25 @@ export async function getExtrinsics(
 	}
 
 	return getArchiveExtrinsics(network, filter, order, pagination, fetchTotalCount);
+}
+
+export async function normalizeExtrinsicName(network: string, name: string) {
+	let [palletName = "", callName = ""] = name.split(".");
+
+	const latestRuntimeSpec = await getRuntimeSpec(network, "latest");
+
+	// try to fix casing according to latest runtime spec
+	const runtimePallet = latestRuntimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === palletName.toLowerCase());
+	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === callName.toLowerCase());
+
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	palletName = runtimePallet?.name.toString() || upperFirst(palletName);
+	callName = runtimeCall?.name.toString() || lowerFirst(callName);
+
+	return {
+		palletName,
+		callName
+	};
 }
 
 /*** PRIVATE ***/

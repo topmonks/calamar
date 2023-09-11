@@ -37,17 +37,7 @@ export async function getEventsByName(
 	order: EventsOrder = "id_DESC",
 	pagination: PaginationOptions
 ): Promise<ItemsResponse<Event>> {
-	let [palletName = "", eventName = ""] = name.split(".");
-
-	const runtimeSpec = await getRuntimeSpec(network, "latest");
-
-	// try to fix casing according to latest runtime spec
-	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === palletName?.toLowerCase());
-	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === eventName?.toLowerCase());
-
-	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	palletName = runtimePallet?.name.toString() || upperFirst(palletName);
-	eventName = runtimeEvent?.name.toString() || upperFirst(eventName);
+	const {palletName, eventName} = await normalizeEventName(network, name);
 
 	const filter: EventsFilter = eventName
 		? { palletName_eq: palletName, eventName_eq: eventName }
@@ -102,6 +92,25 @@ export async function getEvents(
 	}
 
 	return getArchiveEvents(network, filter, order, pagination);
+}
+
+export async function normalizeEventName(network: string, name: string) {
+	let [palletName = "", eventName = ""] = name.split(".");
+
+	const runtimeSpec = await getRuntimeSpec(network, "latest");
+
+	// try to fix casing according to latest runtime spec
+	const runtimePallet = runtimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === palletName?.toLowerCase());
+	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === eventName?.toLowerCase());
+
+	// use found names from runtime metadata or try to fix the first letter casing as fallback
+	palletName = runtimePallet?.name.toString() || upperFirst(palletName);
+	eventName = runtimeEvent?.name.toString() || upperFirst(eventName);
+
+	return {
+		palletName,
+		eventName
+	};
 }
 
 /*** PRIVATE ***/

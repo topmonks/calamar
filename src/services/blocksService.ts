@@ -198,7 +198,7 @@ function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Omit<Block, "runtim
 	return block;
 }
 
-function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
+export function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 	if (!filter) {
 		return undefined;
 	}
@@ -206,7 +206,7 @@ function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 	return filter;
 }
 
-function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
+export function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
 	if (!filter) {
 		return undefined;
 	}

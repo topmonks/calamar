@@ -16,6 +16,7 @@ import { SearchPage } from "./screens/search";
 import { RuntimePage } from "./screens/runtime";
 
 import { config } from "./config";
+import { TestUniversalPage } from "./screens/test-universal";
 
 export const router = createBrowserRouter([
 	{
@@ -93,6 +94,10 @@ export const router = createBrowserRouter([
 				element: <NotFoundPage />,
 			},
 		],
+	},
+	{
+		path: "test-universal",
+		element: <TestUniversalPage />
 	},
 ], {
 	basename: window.location.hostname === "localhost"
