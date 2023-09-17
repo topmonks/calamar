@@ -4,7 +4,6 @@ import { MainSquidTransfer } from "../model/main-squid/mainSquidTransfer";
 import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
 
-import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { decodeAddress } from "../utils/formatAddress";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
@@ -93,8 +92,7 @@ async function getMainSquidTransfers(
 	);
 
 	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer, network);
-	const itemsWithRuntimeSpec = await addRuntimeSpecs(network, items, () => "latest");
-	const transfers = await addExtrinsicsInfo(network, itemsWithRuntimeSpec);
+	const transfers = await addExtrinsicsInfo(network, items);
 
 	return transfers;
 }
@@ -134,7 +132,7 @@ async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string
 	}, {} as Record<string, any>);
 }
 
-function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Omit<Transfer, "runtimeSpec"|"extrinsic"> {
+function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Omit<Transfer, "extrinsic"> {
 	const network = getNetwork(networkName);
 
 	return {

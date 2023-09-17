@@ -3,13 +3,102 @@ import { isAddress } from "@polkadot/util-crypto";
 
 import { ArchiveBlock } from "../model/archive/archiveBlock";
 import { ArchiveExtrinsic } from "../model/archive/archiveExtrinsic";
-import { decodeAddress } from "../utils/formatAddress";
+import { decodeAddress, encodeAddress } from "../utils/formatAddress";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { normalizeExtrinsicName } from "./extrinsicsService";
 import { normalizeEventName } from "./eventsService";
+import { getNetworks, hasSupport } from "./networksService";
+import { Network } from "../model/network";
 
-export async function searchItem(network: string, query: string) {
+export type ItemId = {
+	id: string;
+}
+
+export type NetworkSearchResult = {
+	extrinsics: ItemId[];
+	blocks: ItemId[];
+	accounts: ItemId[];
+	extrinsicsByNameTotal: number;
+	eventsByNameTotal: number;
+}
+
+export type SearchResult = {
+	results: [Network, NetworkSearchResult][];
+	accountsTotal: number;
+	blocksTotal: number;
+	extrinsicsTotal: number;
+	eventsTotal: number;
+	total: number;
+}
+
+export async function search(query: string, networks?: Network[]): Promise<SearchResult> {
+	/*return {
+		results: [],
+		accountsTotal: 0,
+		blocksTotal: 0,
+		extrinsicsTotal: 0,
+		eventsTotal: 0,
+		total: 0
+	};*/
+
+	if (!networks) {
+		networks = getNetworks();
+	}
+
+	const maybeHash = isHex(query);
+	const maybeAddress = isAddress(query);
+
+	console.log(networks);
+
+	console.log("make promises");
+
+	const promiseResults = await Promise.allSettled(networks.map(async network => [network, await searchNetwork(network, query)]));
+
+	console.log("settled", promiseResults);
+	const results = promiseResults.filter(result => !!(result as any).value?.[1]).map(result => (result as any).value as [Network, NetworkSearchResult]);
+	let nonEmptyResults = results.filter(([network, result]) =>
+		result.extrinsics.length > 0
+		|| result.blocks.length > 0
+		|| result.accounts.length > 0
+		|| result.extrinsicsByNameTotal > 0
+		|| result.eventsByNameTotal > 0
+	);
+
+	if (maybeAddress && nonEmptyResults.length === 0) {
+		nonEmptyResults = results.map(([network, result]) => ([
+			network,
+			{
+				...result,
+				accounts: [{
+					id: decodeAddress(query)
+				}]
+			}
+		]));
+	}
+
+	const accountsTotal = nonEmptyResults.reduce((total, [network, result]) => total + result.accounts.length, 0);
+	const blocksTotal = nonEmptyResults.reduce((total, [network, result]) => total + result.blocks.length, 0);
+	const extrinsicsTotal = nonEmptyResults.reduce((total, [network, result]) => total + result.extrinsics.length + result.extrinsicsByNameTotal, 0);
+	const eventsTotal = nonEmptyResults.reduce((total, [network, result]) => total + result.extrinsicsByNameTotal, 0);
+
+	return {
+		results: nonEmptyResults,
+		accountsTotal,
+		blocksTotal,
+		extrinsicsTotal,
+		eventsTotal,
+		total: accountsTotal + blocksTotal + extrinsicsTotal + eventsTotal
+	};
+}
+
+/*** PRIVATE ***/
+
+async function searchNetwork(network: Network, query: string) {
+	if (!hasSupport(network.name, "explorer-squid")) {
+		return undefined;
+	}
+
 	let extrinsicFilter: any = {extrinsicHash_eq: "0x"}; // default failing filter
 	let blockFilter: any = {hash_eq: "0x"}; // default failing filter
 	let extrinsicsByNameCounterId: any = ""; // default failing filter
@@ -18,7 +107,7 @@ export async function searchItem(network: string, query: string) {
 	const maybeHash = isHex(query);
 	const maybeHeight = query?.match(/^\d+$/);
 	const maybeAddress = isAddress(query);
-	const maybeName = query && !maybeHash && !maybeHeight;
+	const maybeName = query && !maybeHash && !maybeHeight; //&& !maybeAddress;
 
 	if (maybeHash) {
 		extrinsicFilter = {extrinsicHash_eq: query};
@@ -29,9 +118,8 @@ export async function searchItem(network: string, query: string) {
 		blockFilter = {height_eq: parseInt(query)};
 	}
 
-
 	if (maybeName) {
-		const {palletName, callName} = await normalizeExtrinsicName(network, query);
+		const {palletName, callName} = await normalizeExtrinsicName(network.name, query);
 
 		extrinsicsByNameCounterId = callName
 			? `Extrinsics.${palletName}.${callName}`
@@ -39,7 +127,7 @@ export async function searchItem(network: string, query: string) {
 	}
 
 	if (maybeName) {
-		const {palletName, eventName} = await normalizeEventName(network, query);
+		const {palletName, eventName} = await normalizeEventName(network.name, query);
 
 		eventsByNameCounterId = eventName
 			? `Events.${palletName}.${eventName}`
@@ -47,12 +135,12 @@ export async function searchItem(network: string, query: string) {
 	}
 
 	const response = await fetchExplorerSquid<{
-		extrinsics: ArchiveExtrinsic[],
-		blocks: ArchiveBlock[],
+		extrinsics: ItemId[],
+		blocks: ItemId[],
 		extrinsicsByNameCounter: {total: number} | null,
 		eventsByNameCounter: {total: number} | null
 	}>(
-		network,
+		network.name,
 		`query (
 			$extrinsicFilter: ExtrinsicWhereInput,
 			$blockFilter: BlockWhereInput,
@@ -80,7 +168,7 @@ export async function searchItem(network: string, query: string) {
 		}
 	);
 
-	const result: any = {
+	const result: NetworkSearchResult = {
 		extrinsics: response.extrinsics,
 		blocks: response.blocks,
 		accounts: [],
@@ -88,10 +176,16 @@ export async function searchItem(network: string, query: string) {
 		eventsByNameTotal: response.eventsByNameCounter?.total || 0
 	};
 
-	if (maybeAddress && result.extrinsic.length === 0 && result.block.length === 0) {
-		result.accounts = [{
-			id: decodeAddress(query)
-		}];
+	if (maybeAddress) {
+		const encodedAddress = encodeAddress(query, network.prefix);
+
+		console.log("encoded address", network.name, encodedAddress);
+
+		if (query === encodedAddress) {
+			result.accounts.push({
+				id: decodeAddress(query)
+			});
+		}
 	}
 
 	return result;

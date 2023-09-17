@@ -2,7 +2,6 @@ import { isAddress } from "@polkadot/util-crypto";
 
 import { Account } from "../model/account";
 import { MainSquidIdentity } from "../model/main-squid/mainSquidIdentity";
-import { addRuntimeSpec } from "../utils/addRuntimeSpec";
 import { DataError } from "../utils/error";
 import { decodeAddress, encodeAddress } from "../utils/formatAddress";
 
@@ -22,17 +21,15 @@ export async function getAccount(network: string, address: string): Promise<Acco
 		address = decodedAddress;
 	}
 
-	const data: Omit<Account, "runtimeSpec"> = {
+	const account: Account = {
 		id: address,
 		address,
 		identity: null
 	};
 
 	if (hasSupport(network, "identities-squid")) {
-		data.identity = await getAccountIdentity(network, address);
+		account.identity = await getAccountIdentity(network, address);
 	}
-
-	const account = await addRuntimeSpec(network, data, () => "latest");
 
 	return account;
 }

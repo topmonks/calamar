@@ -3,7 +3,6 @@ import { ExplorerSquidExtrinsic } from "../model/explorer-squid/explorerSquidExt
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
-import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { decodeAddress } from "../utils/formatAddress";
 import { lowerFirst, upperFirst } from "../utils/string";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
@@ -12,6 +11,9 @@ import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
 import { getRuntimeSpec } from "./runtimeService";
 import { Extrinsic } from "../model/extrinsic";
+import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
+import { getCallMetadataByName } from "../utils/queryMetadata";
+import { RuntimeSpec } from "../model/runtimeSpec";
 
 export type ExtrinsicsFilter =
 	{ id_eq: string; }
@@ -136,7 +138,7 @@ async function getArchiveExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 	);
 
 	const data = response.extrinsics[0] && unifyArchiveExtrinsic(response.extrinsics[0]);
-	const extrinsic = addRuntimeSpec(network, data, it => it.specVersion);
+	const extrinsic = await addItemMetadata(network, data, it => it.specVersion, getExtrinsicMetadata);
 
 	return extrinsic;
 }
@@ -198,7 +200,7 @@ async function getArchiveExtrinsics(
 	);
 
 	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyArchiveExtrinsic);
-	const extrinsics = await addRuntimeSpecs(network, items, it => it.specVersion);
+	const extrinsics = await addItemsMetadata(network, items, it => it.specVersion, getExtrinsicMetadata);
 
 	return extrinsics;
 }
@@ -258,12 +260,12 @@ async function getExplorerSquidExtrinsics(
 	);
 
 	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyExplorerSquidExtrinsic);
-	const extrinsics = await addRuntimeSpecs(network, items, it => it.specVersion);
+	const extrinsics = await addItemsMetadata(network, items, it => it.specVersion, getExtrinsicMetadata);
 
 	return extrinsics;
 }
 
-function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic): Omit<Extrinsic, "runtimeSpec"> {
+function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic): Omit<Extrinsic, "metadata"> {
 	const [palletName, callName] = extrinsic.call.name.split(".") as [string, string];
 
 	return {
@@ -282,7 +284,7 @@ function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic): Omit<Extrinsic, "ru
 	};
 }
 
-function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic): Omit<Extrinsic, "runtimeSpec"> {
+function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic): Omit<Extrinsic, "metadata"> {
 	return {
 		...extrinsic,
 		hash: extrinsic.extrinsicHash,
@@ -298,6 +300,12 @@ function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic): Omit<Ex
 		fee: extrinsic.fee ? BigInt(extrinsic.fee) : null,
 		tip: extrinsic.tip ? BigInt(extrinsic.tip) : null,
 		specVersion: extrinsic.block.specVersion
+	};
+}
+
+function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">, spec: RuntimeSpec): Extrinsic["metadata"] {
+	return {
+		call: getCallMetadataByName(spec.metadata, extrinsic.palletName, extrinsic.callName)
 	};
 }
 

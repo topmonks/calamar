@@ -38,7 +38,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			<ExtrinsicsTableAttribute
 				label="ID"
 				render={(extrinsic) =>
-					<Link to={`/${network}/extrinsic/${extrinsic.id}`}>
+					<Link to={`/${network.name}/extrinsic/${extrinsic.id}`}>
 						{extrinsic.id}
 					</Link>
 				}
@@ -47,7 +47,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				label="Name"
 				render={(extrinsic) =>
 					<ButtonLink
-						to={`/${network}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
+						to={`/${network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
 						size="small"
 						color="secondary"
 					>

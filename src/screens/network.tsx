@@ -17,7 +17,7 @@ import BalancesTable from "../components/balances/BalancesTable";
 import { useStats } from "../hooks/useStats";
 import { NetworkStats } from "../components/network/NetworkStats";
 import { useUsdRates } from "../hooks/useUsdRates";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 import { NetworkTokenDistribution } from "../components/network/NetworkTokenDistribution";
 
 const networkIconStyle = css`
@@ -36,7 +36,7 @@ const tokenDistributionStyle = (theme: Theme) => css`
 `;
 
 export const NetworkPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 
 	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
 	const blocks = useBlocks(network.name, undefined, "id_DESC");

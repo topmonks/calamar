@@ -49,7 +49,7 @@ export async function getLatestRuntimeSpec(network: string) {
 
 	return {
 		...spec,
-		metadata: decodeMetadata(spec.hex)
+		metadata: await decodeMetadata(spec.hex)
 	};
 }
 
@@ -89,7 +89,7 @@ export async function getRuntimeSpecs(
 	for (const spec of response.specs) {
 		specs[spec.specVersion] = {
 			...spec,
-			metadata: decodeMetadata(spec.hex)
+			metadata: await decodeMetadata(spec.hex)
 		};
 	}
 

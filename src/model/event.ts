@@ -1,4 +1,4 @@
-import { RuntimeSpec } from "./runtimeSpec";
+import { DecodedEvent } from "./decodedMetadata";
 
 export type Event = {
 	id: string;
@@ -11,5 +11,7 @@ export type Event = {
 	extrinsicId: string|null;
 	callId: string|null;
 	args: any|null;
-	runtimeSpec: RuntimeSpec;
+	metadata: {
+		event?: DecodedEvent
+	}
 }

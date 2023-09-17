@@ -5,14 +5,14 @@ import { Card, CardHeader } from "../components/Card";
 import { Devtool } from "../components/Devtool";
 import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 
 export type RuntimeParams = {
 	specVersion?: string;
 };
 
 export const RuntimePage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { specVersion } = useParams() as RuntimeParams;
 
 	const navigate = useNavigate();

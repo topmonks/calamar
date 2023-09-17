@@ -2,24 +2,21 @@
 import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { css } from "@emotion/react";
-import { isHex } from "@polkadot/util";
-import { isAddress } from "@polkadot/util-crypto";
 
 import { Card, CardHeader } from "../components/Card";
 import { ErrorMessage } from "../components/ErrorMessage";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import EventsTable from "../components/events/EventsTable";
 import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
 
-import { useAccount } from "../hooks/useAccount";
-import { useBlock } from "../hooks/useBlock";
-import { useExtrinsic } from "../hooks/useExtrinsic";
-import { useExtrinsicsByName } from "../hooks/useExtrinsicsByName";
-import { useEventsByName } from "../hooks/useEventsByName";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useSearch } from "../hooks/useSearch";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { ItemId } from "../services/searchService";
+import { Link } from "../components/Link";
+import { AccountAddress } from "../components/AccountAddress";
+import { encodeAddress } from "../utils/formatAddress";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -40,41 +37,14 @@ const loadingStyle = css`
 `;
 
 export const SearchPage = () => {
-	const { network } = useRootLoaderData();
-
 	const [qs] = useSearchParams();
 	const query = qs.get("query") || "";
 
 	const [forceLoading, setForceLoading] = useState<boolean>(true);
 
-	const maybeHash = isHex(query);
-	const maybeHeight = query?.match(/^\d+$/);
-	const maybeAddress = isAddress(query);
-	const maybeName = query && !maybeHash && !maybeHeight;
+	const searchResults = useSearch(query);
 
-	const extrinsicByHash = useExtrinsic(network.name, { hash_eq: query }, { skip: !maybeHash });
-	const blockByHash = useBlock(network.name, { hash_eq: query }, { skip: !maybeHash });
-
-	const account = useAccount(network.name, query, {
-		// extrinsic and block has precedence before account because the hashes may collide
-		// so wait until they are resolved and we know it is not extrinsic or block
-		skip: !maybeAddress || extrinsicByHash.error || blockByHash.error,
-		waitUntil: extrinsicByHash.loading || blockByHash.loading
-	});
-
-	const blockByHeight = useBlock(network.name, { height_eq: parseInt(query) }, { skip: !maybeHeight });
-
-	const extrinsicsByName = useExtrinsicsByName(network.name, query, "id_DESC", { skip: !maybeName });
-	const eventsByName = useEventsByName(network.name, query, "id_DESC", { skip: !maybeName });
-
-	const allResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
-	const multipleResultsResources = [extrinsicsByName, eventsByName];
-
-	const showResults = multipleResultsResources.some(it => it.data?.length);
-	const showLoading = forceLoading || (allResources.some(it => it.loading) && !showResults);
-	const showNotFound = allResources.every(it => it.notFound);
-	const error = allResources.find(it => it.error)?.error;
-	const showError = error && allResources.every(it => it.error || it.notFound);
+	console.log("rerender");
 
 	useEffect(() => {
 		// show loading at least for 1s to prevent flickering
@@ -82,27 +52,29 @@ export const SearchPage = () => {
 		setTimeout(() => setForceLoading(false), 1000);
 	}, [query]);
 
-	useDOMEventTrigger("data-loaded", allResources.every(it => !it.loading));
+	useDOMEventTrigger("data-loaded", !searchResults.loading);
 
 	if (!query) {
 		return <Navigate to="/" replace />;
 	}
 
-	if (!forceLoading) {
-		if (extrinsicByHash.data) {
-			return <Navigate to={`/${network.name}/extrinsic/${extrinsicByHash.data.id}`} replace />;
+	if (!forceLoading && searchResults.data?.total === 1) {
+		const [network, result] = searchResults.data.results[0]!;
+
+		if (result.extrinsics[0]) {
+			return <Navigate to={`/${network.name}/extrinsic/${result.extrinsics[0].id}`} replace />;
 		}
 
-		if (blockByHash.data || blockByHeight.data) {
-			return <Navigate to={`/${network.name}/block/${blockByHash.data?.id || blockByHeight.data?.id}`} replace />;
+		if (result.blocks[0]) {
+			return <Navigate to={`/${network.name}/block/${result.blocks[0].id}`} replace />;
 		}
 
-		if (account.data) {
-			return <Navigate to={`/${network.name}/account/${account.data.id}`} replace />;
+		if (result.accounts[0]) {
+			return <Navigate to={`/${network.name}/account/${result.accounts[0].id}`} replace />;
 		}
 	}
 
-	if (showLoading) {
+	if (searchResults.loading || forceLoading) {
 		return (
 			<Card>
 				<CardHeader css={loadingStyle}>
@@ -113,7 +85,7 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (showNotFound) {
+	if (searchResults.notFound || !searchResults.data) {
 		return (
 			<Card>
 				<NotFound>Nothing was found for query <span css={queryStyle}>{query}</span></NotFound>
@@ -121,12 +93,12 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (showError && error) {
+	if (searchResults.error) {
 		return (
 			<Card>
 				<ErrorMessage
 					message={<>Unexpected error occured while searching for <span css={queryStyle}>{query}</span></>}
-					details={error.message}
+					details={searchResults.error.message}
 					showReported
 				/>
 			</Card>
@@ -139,26 +111,66 @@ export const SearchPage = () => {
 				Search results for query <span css={queryStyle}>{query}</span>
 			</CardHeader>
 			<TabbedContent>
-				{!extrinsicsByName.notFound &&
+				{searchResults.data.accountsTotal > 0 &&
 					<TabPane
-						label="Extrinsics"
-						count={extrinsicsByName.pagination.totalCount}
-						loading={extrinsicsByName.loading}
-						error={extrinsicsByName.error}
-						value="extrinsics"
+						label="Accounts"
+						count={searchResults.data.accountsTotal}
+						value="accounts"
 					>
-						<ExtrinsicsTable network={network} extrinsics={extrinsicsByName} showAccount showTime />
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell>network</TableCell>
+									<TableCell>account</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{searchResults.data.results.map(([network, result]) => (
+									result.accounts.map((account: ItemId) => (
+										<TableRow key={`${network.name}-${account.id}`}>
+											<TableCell>{network.name}</TableCell>
+											<TableCell>
+												<AccountAddress
+													address={encodeAddress(account.id, network.prefix)}
+													network={network}
+													copyToClipboard="small"
+												/>
+											</TableCell>
+										</TableRow>
+									)
+									)))}
+							</TableBody>
+						</Table>
 					</TabPane>
 				}
-				{!eventsByName.notFound &&
+				{searchResults.data.extrinsicsTotal > 0 &&
 					<TabPane
-						label="Events"
-						count={eventsByName.pagination.totalCount}
-						loading={eventsByName.loading}
-						error={eventsByName.error}
-						value="events"
+						label="Extrinsics"
+						count={searchResults.data.extrinsicsTotal}
+						value="extrinsics"
 					>
-						<EventsTable network={network} events={eventsByName} showExtrinsic />
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell>network</TableCell>
+									<TableCell>extrinsic</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{searchResults.data.results.map(([network, result]) => (
+									result.extrinsics.map((item: ItemId) => (
+										<TableRow key={`${network.name}-${item.id}`}>
+											<TableCell>{network.name}</TableCell>
+											<TableCell>
+												<Link to={`/${network.name}/extrinsic/${item.id}`}>
+													{item.id}
+												</Link>
+											</TableCell>
+										</TableRow>
+									)
+									)))}
+							</TableBody>
+						</Table>
 					</TabPane>
 				}
 			</TabbedContent>

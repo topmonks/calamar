@@ -1,7 +1,7 @@
 import { useRouteLoaderData } from "react-router";
 
-import { RootLoaderData } from "../model/root-loader-data";
+import { NetworkLoaderData } from "../model/root-loader-data";
 
-export function useRootLoaderData() {
-	return useRouteLoaderData("root") as RootLoaderData;
+export function useNetworkLoaderData() {
+	return useRouteLoaderData("network") as NetworkLoaderData;
 }

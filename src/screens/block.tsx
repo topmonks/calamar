@@ -13,14 +13,14 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 
 export type BlockPageParams = {
 	id: string;
 };
 
 export const BlockPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as BlockPageParams;
 
 	const block = useBlock(network.name, { id_eq: id });

@@ -41,9 +41,24 @@ function decodeEvent(lookup: PortableRegistry, event: Si1Variant) {
 	return decodedEvent;
 }
 
-export function decodeMetadata(hex: `0x${string}`) {
+export async function decodeMetadata(hex: `0x${string}`) {
+	/*const worker = new Worker(new URL("./workers/decodeMetadata.ts", import.meta.url));
+	worker.postMessage(hex);
+
+	const decodedMetadata = await new Promise<DecodedMetadata>((resolve) => {
+		worker.onmessage = (e: MessageEvent<any>) => {
+			resolve(JSON.parse(e.data));
+		};
+	});
+
+	worker.terminate();
+
+	return {ss58Prefix: 0, pallets: []};*/
+
 	const registry = new TypeRegistry();
 	const metadata = new Metadata(registry, hex);
+	//console.log(metadata.toHex() === hex);
+
 	registry.setMetadata(metadata);
 
 	const latestMetadata = metadata.asLatest;

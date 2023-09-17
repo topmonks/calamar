@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useEffect } from "react";
 import { Divider, ListItemIcon, ListItemText, ListSubheader, MenuItem, Select, SelectProps } from "@mui/material";
+import { BlurOn as AllIcon } from "@mui/icons-material";
 import { css } from "@emotion/react";
 
 import { useNetworks } from "../hooks/useNetworks";
@@ -34,24 +35,20 @@ const iconStyle = css`
 `;
 
 type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
-	value?: string;
-	onChange?: (value: string, isUserAction: boolean) => void;
+	value: string | undefined;
+	onChange: (value: string, isUserAction: boolean) => void;
 };
 
 const NetworkSelect = (props: NetworkSelectProps) => {
 	const { value, onChange, ...selectProps } = props;
 
-	const networks = useNetworks();
-
 	const networkGroups = useNetworkGroups();
 
 	useEffect(() => {
-		const network = networks.find((it) => it.name === value);
-
-		if (!network && onChange && networks.length > 0) {
-			onChange(networkGroups[0]!.networks[0]!.name, false);
+		if (!value) {
+			onChange("*", false);
 		}
-	}, [value, onChange, networkGroups]);
+	}, [value, onChange]);
 
 	const handleNetworkChange = useCallback(
 		(e: any) => {
@@ -67,6 +64,13 @@ const NetworkSelect = (props: NetworkSelectProps) => {
 			value={value || ""}
 			css={selectStyle}
 		>
+			<MenuItem value="*">
+				<ListItemIcon>
+					<AllIcon css={{color: "#e6007a"}} />
+				</ListItemIcon>
+				<ListItemText>All networks</ListItemText>
+			</MenuItem>
+			<Divider />
 			{networkGroups.map((group, index) => [
 				index > 0 && <Divider />,
 				<ListSubheader key={index}>

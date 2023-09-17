@@ -5,13 +5,15 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
-import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { upperFirst } from "../utils/string";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
 import { getRuntimeSpec } from "./runtimeService";
+import { RuntimeSpec } from "../model/runtimeSpec";
+import { getEventMetadataByName } from "../utils/queryMetadata";
+import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 
 export type EventsFilter =
 	{ id_eq: string; }
@@ -145,7 +147,7 @@ async function getArchiveEvent(network: string, filter: EventsFilter) {
 	);
 
 	const data = response.events[0] && unifyArchiveEvent(response.events[0]);
-	const event = addRuntimeSpec(network, data, it => it.specVersion);
+	const event = addItemMetadata(network, data, it => it.specVersion, getEventMetadata);
 
 	return event;
 }
@@ -178,8 +180,8 @@ async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
 	);
 
 	const data = response.events[0] && unifyExplorerSquidEvent(response.events[0]);
-	const dataWithRuntimeSpec = await addRuntimeSpec(network, data, it => it.specVersion);
-	const event = await addEventArgs(network, dataWithRuntimeSpec);
+	const dataWithMetadata = await addItemMetadata(network, data, it => it.specVersion, getEventMetadata);
+	const event = await addEventArgs(network, dataWithMetadata);
 
 	return event;
 }
@@ -236,7 +238,7 @@ async function getArchiveEvents(
 	);
 
 	const items = extractConnectionItems(response.eventsConnection, pagination, unifyArchiveEvent);
-	const events = await addRuntimeSpecs(network, items, it => it.specVersion);
+	const events = await addItemsMetadata(network, items, it => it.specVersion, getEventMetadata);
 
 	return events;
 }
@@ -291,8 +293,8 @@ async function getExplorerSquidEvents(
 	);
 
 	const data = extractConnectionItems(response.eventsConnection, pagination, unifyExplorerSquidEvent);
-	const dataWithRuntimeSpecs = await addRuntimeSpecs(network, data, it => it.specVersion);
-	const events = await addEventsArgs(network, dataWithRuntimeSpecs);
+	const dataWithMetadata = await addItemsMetadata(network, data, it => it.specVersion, getEventMetadata);
+	const events = await addEventsArgs(network, dataWithMetadata);
 
 	return events;
 }
@@ -346,7 +348,7 @@ async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
 	};
 }
 
-function unifyArchiveEvent(event: ArchiveEvent): Omit<Event, "runtimeSpec"> {
+function unifyArchiveEvent(event: ArchiveEvent): Omit<Event, "metadata"> {
 	const [palletName, eventName] = event.name.split(".") as [string, string];
 
 	return {
@@ -363,7 +365,7 @@ function unifyArchiveEvent(event: ArchiveEvent): Omit<Event, "runtimeSpec"> {
 	};
 }
 
-function unifyExplorerSquidEvent(event: ExplorerSquidEvent): Omit<Event, "runtimeSpec"> {
+function unifyExplorerSquidEvent(event: ExplorerSquidEvent): Omit<Event, "metadata"> {
 	return {
 		...event,
 		blockId: event.block.id,
@@ -373,6 +375,12 @@ function unifyExplorerSquidEvent(event: ExplorerSquidEvent): Omit<Event, "runtim
 		callId: event.call?.id || null,
 		args: null,
 		specVersion: event.block.specVersion,
+	};
+}
+
+function getEventMetadata(event: Omit<Event, "metadata">, spec: RuntimeSpec): Event["metadata"] {
+	return {
+		event: getEventMetadataByName(spec.metadata, event.palletName, event.eventName)
 	};
 }
 

@@ -8,7 +8,6 @@ import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
 import { encodeAddress } from "../../utils/formatAddress";
-import { getCallMetadataByName } from "../../utils/queryMetadata";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
@@ -102,8 +101,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 					<DataViewer
 						network={network}
 						data={data.args}
-						metadata={getCallMetadataByName(data.runtimeSpec.metadata, data.palletName, data.callName)?.args}
-						runtimeSpec={data.runtimeSpec}
+						metadata={data.metadata.call?.args}
 						copyToClipboard
 					/>
 				}
@@ -125,7 +123,6 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 						simple
 						network={network}
 						data={data.signature}
-						runtimeSpec={data.runtimeSpec}
 						copyToClipboard
 					/>
 				}

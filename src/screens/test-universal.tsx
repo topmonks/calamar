@@ -1,27 +1,27 @@
 import { useCallback, useState } from "react";
 
 import { Card, CardHeader } from "../components/Card";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 import { getExtrinsic } from "../services/extrinsicsService";
 import { getNetworks } from "../services/networksService";
-import { searchItem } from "../services/searchService";
+import { NetworkSearchResult, SearchResult, search } from "../services/searchService";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Network } from "../model/network";
 
 export const TestUniversalPage = () => {
 	const [query, setQuery] = useState<string>("");
+	const [result, setResult] = useState<SearchResult>();
 
-	const search = useCallback(async () => {
-		const networks = getNetworks();
-		/*for (const network of networks.slice(0,10)) {
-			const extrinsic = await getExtrinsic(network.name, {hash_eq: query});
-			console.log("result", network.name, extrinsic);
-		}
+	const handleSearch = useCallback(async () => {
+		setResult(undefined);
 
-		const results = await Promise.allSettled(networks.map(async it => [it.name, await getExtrinsic(it.name, {hash_eq: query})]));
+		const results = await search(query);
+		console.log(results);
 
-		console.log(results.filter(result => !!(result as any).value[1]).map(result => (result as any).value));*/
+		//const result = await searchItem("kusama", query);
+		//console.log(result);
 
-		const result = await searchItem("kusama", query);
-		console.log(result);
+		setResult(results);
 	}, [query]);
 
 	return (
@@ -32,8 +32,32 @@ export const TestUniversalPage = () => {
 				</CardHeader>
 				<div>
 					<input type="text" value={query} onChange={(ev) => setQuery(ev.target.value)} />
-					<button onClick={search}>search</button>
+					<button onClick={handleSearch}>search</button>
 				</div>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>network</TableCell>
+							<TableCell>blocks</TableCell>
+							<TableCell>extrinsics</TableCell>
+							<TableCell>accounts</TableCell>
+							<TableCell>extrinsics by name</TableCell>
+							<TableCell>events by name</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{result?.results.map(([network, result]) => (
+							<TableRow key={network.name}>
+								<TableCell>{network.name}</TableCell>
+								<TableCell>{result.blocks.length}</TableCell>
+								<TableCell>{result.extrinsics.length}</TableCell>
+								<TableCell>{result.accounts.length}</TableCell>
+								<TableCell>{result.extrinsicsByNameTotal}</TableCell>
+								<TableCell>{result.eventsByNameTotal}</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
 			</Card>
 		</>
 	);
