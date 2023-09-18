@@ -9,11 +9,10 @@ import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
-import { getRuntimeSpec } from "./runtimeService";
+import { getLatestRuntimeSpecVersion, getRuntimeMetadata } from "./runtimeSpecService";
 import { Extrinsic } from "../model/extrinsic";
 import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
-import { getCallMetadataByName } from "../utils/queryMetadata";
-import { RuntimeSpec } from "../model/runtimeSpec";
+import { getRuntimeCallMetadata } from "./metadataService";
 
 export type ExtrinsicsFilter =
 	{ id_eq: string; }
@@ -85,10 +84,11 @@ export async function getExtrinsics(
 export async function normalizeExtrinsicName(network: string, name: string) {
 	let [palletName = "", callName = ""] = name.split(".");
 
-	const latestRuntimeSpec = await getRuntimeSpec(network, "latest");
+	const latestRuntimeSpecVersion = await getLatestRuntimeSpecVersion(network);
+	const metadata = await getRuntimeMetadata(network, latestRuntimeSpecVersion);
 
 	// try to fix casing according to latest runtime spec
-	const runtimePallet = latestRuntimeSpec.metadata.pallets.find(it => it.name.toLowerCase() === palletName.toLowerCase());
+	const runtimePallet = metadata?.pallets.find(it => it.name.toLowerCase() === palletName.toLowerCase());
 	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === callName.toLowerCase());
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
@@ -137,8 +137,8 @@ async function getArchiveExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 		}
 	);
 
-	const data = response.extrinsics[0] && unifyArchiveExtrinsic(response.extrinsics[0]);
-	const extrinsic = await addItemMetadata(network, data, it => it.specVersion, getExtrinsicMetadata);
+	const data = response.extrinsics[0] && unifyArchiveExtrinsic(response.extrinsics[0], network);
+	const extrinsic = await addItemMetadata(data, getExtrinsicMetadata);
 
 	return extrinsic;
 }
@@ -199,8 +199,8 @@ async function getArchiveExtrinsics(
 		}
 	);
 
-	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyArchiveExtrinsic);
-	const extrinsics = await addItemsMetadata(network, items, it => it.specVersion, getExtrinsicMetadata);
+	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyArchiveExtrinsic, network);
+	const extrinsics = await addItemsMetadata(items, getExtrinsicMetadata);
 
 	return extrinsics;
 }
@@ -259,17 +259,18 @@ async function getExplorerSquidExtrinsics(
 		}
 	);
 
-	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyExplorerSquidExtrinsic);
-	const extrinsics = await addItemsMetadata(network, items, it => it.specVersion, getExtrinsicMetadata);
+	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyExplorerSquidExtrinsic, network);
+	const extrinsics = await addItemsMetadata(items, getExtrinsicMetadata);
 
 	return extrinsics;
 }
 
-function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic): Omit<Extrinsic, "metadata"> {
+function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Omit<Extrinsic, "metadata"> {
 	const [palletName, callName] = extrinsic.call.name.split(".") as [string, string];
 
 	return {
 		...extrinsic,
+		network,
 		blockId: extrinsic.block.id,
 		blockHeight: extrinsic.block.height,
 		timestamp: extrinsic.block.timestamp,
@@ -284,9 +285,10 @@ function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic): Omit<Extrinsic, "me
 	};
 }
 
-function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic): Omit<Extrinsic, "metadata"> {
+function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic, network: string): Omit<Extrinsic, "metadata"> {
 	return {
 		...extrinsic,
+		network,
 		hash: extrinsic.extrinsicHash,
 		blockId: extrinsic.block.id,
 		blockHeight: extrinsic.block.height,
@@ -303,9 +305,9 @@ function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic): Omit<Ex
 	};
 }
 
-function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">, spec: RuntimeSpec): Extrinsic["metadata"] {
+async function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">): Promise<Extrinsic["metadata"]> {
 	return {
-		call: getCallMetadataByName(spec.metadata, extrinsic.palletName, extrinsic.callName)
+		call: await getRuntimeCallMetadata(extrinsic.network, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
 	};
 }
 

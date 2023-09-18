@@ -3,7 +3,7 @@ import { MenuItem, Select } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import { Devtool } from "../components/Devtool";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
+import { useRuntimeMetadata } from "../hooks/useRuntimeMetadata";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 
@@ -18,11 +18,9 @@ export const RuntimePage = () => {
 	const navigate = useNavigate();
 
 	const runtimeVersions = useRuntimeSpecVersions(network.name);
-	const runtimeSpecs = useRuntimeSpecs(network.name, specVersion ? [parseInt(specVersion)] : [], {
+	const metadata = useRuntimeMetadata(network.name, specVersion ? parseInt(specVersion) : undefined, {
 		skip: !specVersion
 	});
-
-	const metadata = specVersion && runtimeSpecs.data?.[parseInt(specVersion)]!.metadata;
 
 	console.log(metadata);
 
@@ -48,9 +46,9 @@ export const RuntimePage = () => {
 					)}
 				</Select>
 				See console
-				{metadata &&
+				{metadata.data &&
 					<ul>
-						{metadata.pallets.map(pallet =>
+						{metadata.data.pallets.map(pallet =>
 							<li key={pallet.name}>
 								{pallet.name}
 								<ul>

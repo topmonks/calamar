@@ -5,14 +5,13 @@ import { Call } from "../model/call";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { decodeAddress } from "../utils/formatAddress";
+import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { decodeAddress } from "../utils/formatAddress";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
+import { getRuntimeCallMetadata } from "./metadataService";
 import { hasSupport } from "./networksService";
-import { RuntimeSpec } from "../model/runtimeSpec";
-import { getCallMetadataByName } from "../utils/queryMetadata";
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 
 export type CallsFilter =
 	{ id_eq: string; }
@@ -76,8 +75,8 @@ async function getArchiveCall(network: string, filter: CallsFilter) {
 		}
 	);
 
-	const data = response.calls[0] && unifyArchiveCall(response.calls[0]);
-	const call = await addItemMetadata(network, data, it => it.specVersion, getCallMetadata);
+	const data = response.calls[0] && unifyArchiveCall(response.calls[0], network);
+	const call = await addItemMetadata(data, getCallMetadata);
 
 	return call;
 }
@@ -109,8 +108,8 @@ async function getExplorerSquidCall(network: string, filter: CallsFilter) {
 		}
 	);
 
-	const data = response.calls[0] && unifyExplorerSquidCall(response.calls[0]);
-	const dataWithMetadata = await addItemMetadata(network, data, it => it.specVersion, getCallMetadata);
+	const data = response.calls[0] && unifyExplorerSquidCall(response.calls[0], network);
+	const dataWithMetadata = await addItemMetadata(data, getCallMetadata);
 	const call = await addCallArgs(network, dataWithMetadata);
 
 	return call;
@@ -170,8 +169,8 @@ async function getArchiveCalls(
 		}
 	);
 
-	const data = extractConnectionItems(response?.callsConnection, pagination, unifyArchiveCall);
-	const calls = await addItemsMetadata(network, data, it => it.specVersion, getCallMetadata);
+	const data = extractConnectionItems(response?.callsConnection, pagination, unifyArchiveCall, network);
+	const calls = await addItemsMetadata(data, getCallMetadata);
 
 	return calls;
 }
@@ -224,8 +223,8 @@ async function getExplorerSquidCalls(
 		}
 	);
 
-	const data = extractConnectionItems(response.callsConnection, pagination, unifyExplorerSquidCall);
-	const calls = await addItemsMetadata(network, data, it => it.specVersion, getCallMetadata);
+	const data = extractConnectionItems(response.callsConnection, pagination, unifyExplorerSquidCall, network);
+	const calls = await addItemsMetadata(data, getCallMetadata);
 
 	return calls;
 }
@@ -263,11 +262,12 @@ async function addCallArgs(network: string, call: Call|undefined) {
 	};
 }
 
-function unifyArchiveCall(call: ArchiveCall): Omit<Call, "metadata"> {
+function unifyArchiveCall(call: ArchiveCall, network: string): Omit<Call, "metadata"> {
 	const [palletName, callName] = call.name.split(".") as [string, string];
 
 	return {
 		...call,
+		network,
 		callName,
 		palletName,
 		blockId: call.block.id,
@@ -283,9 +283,10 @@ function unifyArchiveCall(call: ArchiveCall): Omit<Call, "metadata"> {
 	};
 }
 
-function unifyExplorerSquidCall(call: ExplorerSquidCall): Omit<Call, "metadata"> {
+function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string): Omit<Call, "metadata"> {
 	return {
 		...call,
+		network,
 		blockId: call.block.id,
 		blockHeight: call.block.height,
 		timestamp: call.block.timestamp,
@@ -297,9 +298,9 @@ function unifyExplorerSquidCall(call: ExplorerSquidCall): Omit<Call, "metadata">
 	};
 }
 
-function getCallMetadata(call: Omit<Call, "metadata">, spec: RuntimeSpec): Call["metadata"] {
+async function getCallMetadata(call: Omit<Call, "metadata">): Promise<Call["metadata"]> {
 	return {
-		call: getCallMetadataByName(spec.metadata, call.palletName, call.callName)
+		call: await getRuntimeCallMetadata(call.network, call.specVersion, call.palletName, call.callName)
 	};
 }
 

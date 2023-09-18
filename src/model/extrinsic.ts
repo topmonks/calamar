@@ -2,6 +2,7 @@ import { DecodedCall } from "./decodedMetadata";
 
 export type Extrinsic = {
 	id: string;
+	network: string;
 	hash: string;
 	blockId: string;
 	blockHeight: number;

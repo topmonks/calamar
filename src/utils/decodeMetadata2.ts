@@ -1,6 +1,7 @@
 import { TypeRegistry, Metadata, PortableRegistry } from "@polkadot/types";
 import { Si1Variant } from "@polkadot/types/interfaces";
 import { getSiName } from "@polkadot/types/metadata/util";
+
 import { DecodedCall, DecodedEvent, DecodedMetadata, DecodedPallet } from "../model/decodedMetadata";
 
 function decodeCall(lookup: PortableRegistry, call: Si1Variant) {
@@ -41,23 +42,9 @@ function decodeEvent(lookup: PortableRegistry, event: Si1Variant) {
 	return decodedEvent;
 }
 
-export async function decodeMetadata(hex: `0x${string}`) {
-	/*const worker = new Worker(new URL("./workers/decodeMetadata.ts", import.meta.url));
-	worker.postMessage(hex);
-
-	const decodedMetadata = await new Promise<DecodedMetadata>((resolve) => {
-		worker.onmessage = (e: MessageEvent<any>) => {
-			resolve(JSON.parse(e.data));
-		};
-	});
-
-	worker.terminate();
-
-	return {ss58Prefix: 0, pallets: []};*/
-
+export function decodeMetadata(hex: `0x${string}`) {
 	const registry = new TypeRegistry();
 	const metadata = new Metadata(registry, hex);
-	//console.log(metadata.toHex() === hex);
 
 	registry.setMetadata(metadata);
 

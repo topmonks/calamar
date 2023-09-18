@@ -2,6 +2,7 @@ import { DecodedEvent } from "./decodedMetadata";
 
 export type Event = {
 	id: string;
+	network: string;
 	eventName: string;
 	palletName: string;
 	blockId: string;

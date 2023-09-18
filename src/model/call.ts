@@ -2,6 +2,7 @@ import { DecodedCall } from "./decodedMetadata";
 
 export type Call = {
 	id: string;
+	network: string;
 	callName: string;
 	palletName: string;
 	blockId: string;
