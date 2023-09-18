@@ -1,5 +1,5 @@
 import { DecodedMetadata } from "../model/decodedMetadata";
-//import { runtimeSpecWorker } from "../workers/runtimeSpecWorker";
+import { runtimeSpecWorker } from "../workers/runtimeSpecWorker";
 
 import { fetchArchive } from "./fetchService";
 
@@ -45,25 +45,10 @@ export async function getRuntimeMetadata(network: string, specVersion: number|un
 	}
 
 	if (!metadataCache[specVersion]) {
-		const worker = new Worker("./workers/xyz.ts");
-
-		worker.postMessage(JSON.stringify({
+		const metadata = await runtimeSpecWorker.run({
 			network,
 			specVersion
-		}));
-
-		const metadata = await new Promise<DecodedMetadata>((resolve) => {
-			worker.onmessage = (e: MessageEvent<any>) => {
-				resolve(e.data);
-			};
 		});
-
-		worker.terminate();
-
-		/*const metadata = await runtimeSpecWorker.run({
-			network,
-			specVersion
-		});*/
 
 		if (metadata) {
 			metadataCache[specVersion] = metadata;

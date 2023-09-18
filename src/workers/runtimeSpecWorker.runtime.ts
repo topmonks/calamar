@@ -1,15 +1,9 @@
-import { DecodedMetadata } from "../model/decodedMetadata";
 import { fetchArchive } from "../services/fetchService";
 import { decodeMetadata } from "../utils/decodeMetadata2";
-import { WebWorker } from "../utils/webWorker";
+import { WebWorkerRuntime } from "../utils/webWorker";
+import { RuntimeSpecWorkerData } from "./runtimeSpecWorker";
 
-export interface RuntimeSpecWorkerData {
-	network: string;
-	specVersion: number;
-}
-
-/*export const runtimeSpecWorker = new WebWorker<RuntimeSpecWorkerData, DecodedMetadata|undefined>(
-	() => new Worker("./runtimeSpecWorker.ts"),
+new WebWorkerRuntime(
 	async (e: MessageEvent<RuntimeSpecWorkerData>) => {
 		const {network, specVersion} = e.data;
 
@@ -30,8 +24,4 @@ export interface RuntimeSpecWorkerData {
 
 		return metadata;
 	}
-);*/
-
-self.onmessage = async (e: MessageEvent) => {
-	self.postMessage(JSON.stringify(undefined));
-};
+);
