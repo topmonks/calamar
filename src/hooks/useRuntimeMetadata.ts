@@ -1,5 +1,5 @@
 import { FetchOptions } from "../model/fetchOptions";
-import { getRuntimeMetadata } from "../services/runtimeSpecService";
+import { getRuntimeMetadata } from "../services/runtimeMetadataService";
 
 import { useResource } from "./useResource";
 

@@ -10,7 +10,7 @@ import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/formatAddress";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { getRuntimeCallMetadata } from "./metadataService";
+import { getRuntimeCallMetadata } from "./runtimeMetadataService";
 import { hasSupport } from "./networksService";
 
 export type CallsFilter =

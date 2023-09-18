@@ -1,9 +1,4 @@
-import { DecodedMetadata } from "../model/decodedMetadata";
-import { runtimeSpecWorker } from "../workers/runtimeSpecWorker";
-
 import { fetchArchive } from "./fetchService";
-
-const metadataCache: Record<string, DecodedMetadata> = {};
 
 export async function getLatestRuntimeSpecVersion(network: string) {
 	const response = await fetchArchive<{spec: {specVersion: number}[]}>(
@@ -37,23 +32,4 @@ export async function getRuntimeSpecVersions(network: string) {
 	);
 
 	return response.metadata.map(it => it.specVersion);
-}
-
-export async function getRuntimeMetadata(network: string, specVersion: number|undefined): Promise<DecodedMetadata|undefined> {
-	if (!specVersion) {
-		return undefined;
-	}
-
-	if (!metadataCache[specVersion]) {
-		const metadata = await runtimeSpecWorker.run({
-			network,
-			specVersion
-		});
-
-		if (metadata) {
-			metadataCache[specVersion] = metadata;
-		}
-	}
-
-	return metadataCache[specVersion];
 }

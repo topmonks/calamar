@@ -1,18 +1,20 @@
 import { ArchiveEvent } from "../model/archive/archiveEvent";
 import { ExplorerSquidEvent } from "../model/explorer-squid/explorerSquidEvent";
+
 import { Event } from "../model/event";
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
-import { upperFirst } from "../utils/string";
+
+import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
-import { getLatestRuntimeSpecVersion, getRuntimeMetadata } from "./runtimeSpecService";
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
-import { getRuntimeEventMetadata } from "./metadataService";
+import { getRuntimeEventMetadata, getRuntimeMetadata } from "./runtimeMetadataService";
+import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type EventsFilter =
 	{ id_eq: string; }

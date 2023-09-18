@@ -1,18 +1,20 @@
 import { ArchiveExtrinsic } from "../model/archive/archiveExtrinsic";
 import { ExplorerSquidExtrinsic } from "../model/explorer-squid/explorerSquidExtrinsic";
+
+import { Extrinsic } from "../model/extrinsic";
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
+
+import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
+import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/formatAddress";
 import { lowerFirst, upperFirst } from "../utils/string";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
-import { getLatestRuntimeSpecVersion, getRuntimeMetadata } from "./runtimeSpecService";
-import { Extrinsic } from "../model/extrinsic";
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
-import { getRuntimeCallMetadata } from "./metadataService";
+import { getRuntimeCallMetadata, getRuntimeMetadata } from "./runtimeMetadataService";
+import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type ExtrinsicsFilter =
 	{ id_eq: string; }
