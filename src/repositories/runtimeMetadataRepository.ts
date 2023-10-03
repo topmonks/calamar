@@ -15,10 +15,10 @@ export class RuntimeMetadataRepository extends Dexie {
 		super("runtime-metadata-dexie");
 
 		this.version(1).stores({
-			specs: "[network+specVersion],network",
-			pallets: "[network+specVersion+name],[network+specVersion],network",
-			calls: "[network+specVersion+pallet+name],[network+specVersion+pallet],[network+pallet]",
-			events: "[network+specVersion+pallet+name],[network+specVersion+pallet],[network+pallet]"
+			specs: "[network+specVersion]",
+			pallets: "[network+specVersion+name],[network+specVersion]",
+			calls: "[network+specVersion+pallet+name],[network+specVersion+pallet]",
+			events: "[network+specVersion+pallet+name],[network+specVersion+pallet]"
 		});
 	}
 }
