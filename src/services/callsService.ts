@@ -10,7 +10,7 @@ import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/formatAddress";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { getRuntimeCallMetadata } from "./runtimeMetadataService";
+import { getCallRuntimeMetadata } from "./runtimeMetadataService";
 import { hasSupport } from "./networksService";
 
 export type CallsFilter =
@@ -300,7 +300,7 @@ function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string): Omit<
 
 async function getCallMetadata(call: Omit<Call, "metadata">): Promise<Call["metadata"]> {
 	return {
-		call: await getRuntimeCallMetadata(call.network, call.specVersion, call.palletName, call.callName)
+		call: await getCallRuntimeMetadata(call.network, call.specVersion, call.palletName, call.callName)
 	};
 }
 

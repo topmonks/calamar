@@ -13,7 +13,7 @@ import { lowerFirst, upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
-import { getRuntimeCallMetadata, getRuntimeMetadata } from "./runtimeMetadataService";
+import { getCallRuntimeMetadata, getCallsRuntimeMetadata, getPalletsRuntimeMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type ExtrinsicsFilter =
@@ -84,18 +84,19 @@ export async function getExtrinsics(
 }
 
 export async function normalizeExtrinsicName(network: string, name: string) {
-	let [palletName = "", callName = ""] = name.split(".");
+	let [palletName = "", callName = ""] = name.toLowerCase().split(".");
 
 	const latestRuntimeSpecVersion = await getLatestRuntimeSpecVersion(network);
-	const metadata = await getRuntimeMetadata(network, latestRuntimeSpecVersion);
 
-	// try to fix casing according to latest runtime spec
-	const runtimePallet = metadata?.pallets.find(it => it.name.toLowerCase() === palletName.toLowerCase());
-	const runtimeCall = runtimePallet?.calls.find(it => it.name.toLowerCase() === callName.toLowerCase());
+	const pallets = await getPalletsRuntimeMetadata(network, latestRuntimeSpecVersion);
+	const pallet = await pallets.and(it => it.name.toLowerCase() === palletName).first();
+
+	const calls = pallet && await getCallsRuntimeMetadata(network, latestRuntimeSpecVersion, pallet.name);
+	const call = await calls?.and(it => it.name.toLowerCase() === callName).first();
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	palletName = runtimePallet?.name.toString() || upperFirst(palletName);
-	callName = runtimeCall?.name.toString() || lowerFirst(callName);
+	palletName = pallet?.name || upperFirst(palletName);
+	callName = call?.name || lowerFirst(callName);
 
 	return {
 		palletName,
@@ -309,7 +310,7 @@ function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic, network:
 
 async function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">): Promise<Extrinsic["metadata"]> {
 	return {
-		call: await getRuntimeCallMetadata(extrinsic.network, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
+		call: await getCallRuntimeMetadata(extrinsic.network, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
 	};
 }
 

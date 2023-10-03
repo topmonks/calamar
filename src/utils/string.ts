@@ -12,3 +12,11 @@ export function lowerFirst(str: string): string {
 export function noCase(str: string) {
 	return str.replace(/[\s\-_]/g, "").toLowerCase();
 }
+
+export function tryParseInt(str?: string) {
+	if (!str) {
+		return undefined;
+	}
+
+	return parseInt(str) || undefined;
+}

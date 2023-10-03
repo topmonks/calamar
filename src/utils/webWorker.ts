@@ -1,29 +1,34 @@
+type Parameters<T> = T extends (...args: infer P) => any ? P : never;
+type ReturnType<T> = T extends (...args: any) => Promise<infer R> ? R : never;
+
 /**
  * Web worker handler
  *
  * Used to run the web worker in a type-safe way
  */
-export class WebWorker<T, R> {
-	/**
-	 * @param createWorker Function returning the worker instance, required by CRA to properly register the worker
-	 */
-	constructor(protected createWorker: () => Worker) {}
+export class WebWorker<T> {
+	constructor(protected worker: Worker) {}
 
-	async run(data: T) {
-		const worker = this.createWorker();
+	async run<M extends keyof T>(method: M, ...args: Parameters<T[M]>): Promise<ReturnType<T[M]>> {
+		this.worker.postMessage({method, args});
 
-		worker.postMessage(data);
-
-		const responseData = await new Promise<R>((resolve) => {
-			worker.onmessage = (e: MessageEvent<R>) => {
+		const responseData = await new Promise<ReturnType<T[M]>>((resolve) => {
+			this.worker.onmessage = (e: MessageEvent<ReturnType<T[M]>>) => {
 				resolve(e.data);
 			};
 		});
 
-		worker.terminate();
-
 		return responseData;
 	}
+
+	terminate() {
+		this.worker.terminate();
+	}
+}
+
+interface WebWorkerRuntimeData {
+	method: string;
+	args: any[];
 }
 
 /**
@@ -31,12 +36,13 @@ export class WebWorker<T, R> {
  *
  * Basically a type-safe wrapper around the web worker's runtime
  *
- * Must be separated from WebWorker class to prevent circular dependency between chunks
+ * Must be separated from WebWorker class to prevent circular dependency between JS chunks
  */
-export class WebWorkerRuntime<T, R> {
-	constructor(runtimeFn: (e: MessageEvent<T>) => Promise<R>) {
-		self.onmessage = async (e: MessageEvent<T>) => {
-			self.postMessage(await runtimeFn(e));
+export class WebWorkerRuntime {
+	constructor() {
+		self.onmessage = async (e: MessageEvent<WebWorkerRuntimeData>) => {
+			const {method, args} = e.data;
+			self.postMessage(await (this as any)[method](...args));
 		};
 	}
 }

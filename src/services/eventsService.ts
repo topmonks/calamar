@@ -9,11 +9,11 @@ import { PaginationOptions } from "../model/paginationOptions";
 
 import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { upperFirst } from "../utils/string";
+import { lowerFirst, upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
-import { getRuntimeEventMetadata, getRuntimeMetadata } from "./runtimeMetadataService";
+import { getEventsRuntimeMetadata, getPalletsRuntimeMetadata, getRuntimeEventMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type EventsFilter =
@@ -98,18 +98,19 @@ export async function getEvents(
 }
 
 export async function normalizeEventName(network: string, name: string) {
-	let [palletName = "", eventName = ""] = name.split(".");
+	let [palletName = "", eventName = ""] = name.toLowerCase().split(".");
 
 	const latestRuntimeSpecVersion = await getLatestRuntimeSpecVersion(network);
-	const metadata = await getRuntimeMetadata(network, latestRuntimeSpecVersion);
 
-	// try to fix casing according to latest runtime spec
-	const runtimePallet = metadata?.pallets.find(it => it.name.toLowerCase() === palletName?.toLowerCase());
-	const runtimeEvent = runtimePallet?.events.find(it => it.name.toLowerCase() === eventName?.toLowerCase());
+	const pallets = await getPalletsRuntimeMetadata(network, latestRuntimeSpecVersion);
+	const pallet = await pallets.and(it => it.name.toLowerCase() === palletName).first();
+
+	const events = pallet && await getEventsRuntimeMetadata(network, latestRuntimeSpecVersion, pallet.name);
+	const event = await events?.and(it => it.name.toLowerCase() === eventName).first();
 
 	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	palletName = runtimePallet?.name.toString() || upperFirst(palletName);
-	eventName = runtimeEvent?.name.toString() || upperFirst(eventName);
+	palletName = pallet?.name || upperFirst(palletName);
+	eventName = event?.name || upperFirst(eventName);
 
 	return {
 		palletName,
