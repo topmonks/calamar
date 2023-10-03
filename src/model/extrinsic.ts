@@ -1,7 +1,8 @@
-import { RuntimeSpec } from "./runtimeSpec";
+import { DecodedCall } from "./decodedMetadata";
 
 export type Extrinsic = {
 	id: string;
+	network: string;
 	hash: string;
 	blockId: string;
 	blockHeight: number;
@@ -18,5 +19,8 @@ export type Extrinsic = {
 	error: object|null;
 	version: number;
 	specVersion: number;
-	runtimeSpec: RuntimeSpec;
+	metadata: {
+		call: DecodedCall|undefined,
+		// TODO error?: any
+	}
 }

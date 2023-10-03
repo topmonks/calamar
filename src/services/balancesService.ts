@@ -1,11 +1,11 @@
 import Decimal from "decimal.js";
+
 import { AccountBalance } from "../model/accountBalance";
 import { Balance } from "../model/balance";
 import { StatsSquidAccountBalance } from "../model/stats-squid/statsSquidAccountBalance";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { encodeAddress } from "../utils/formatAddress";
 import { rawAmountToDecimal } from "../utils/number";
@@ -58,8 +58,7 @@ export async function getBalances(
 			}
 		);
 
-		const items = extractConnectionItems(response.accountsConnection, pagination, unifyStatsSquidAccountBalance, network);
-		const balances = await addRuntimeSpecs(network, items, () => "latest");
+		const balances = extractConnectionItems(response.accountsConnection, pagination, unifyStatsSquidAccountBalance, network);
 
 		return balances;
 	}
@@ -130,7 +129,7 @@ export async function getAccountBalances(address: string) {
 
 /*** PRIVATE ***/
 
-function unifyStatsSquidAccountBalance(balance: StatsSquidAccountBalance, networkName: string): Omit<Balance, "runtimeSpec"> {
+function unifyStatsSquidAccountBalance(balance: StatsSquidAccountBalance, networkName: string): Balance {
 	const network = getNetwork(networkName);
 
 	return {
