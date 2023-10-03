@@ -29,8 +29,19 @@ export async function getRuntimeEventMetadata(network: string, specVersion: numb
 /*** PRIVATE ***/
 
 export async function loadRuntimeMetadata(network: string, specVersion: number) {
-	const worker = new RuntimeSpecWorker();
-	await worker.loadMetadata(network, specVersion);
+	await self.navigator.locks.request(`runtime-metadata/${network}/${specVersion}`, async () => {
+		const spec = await runtimeMetadataRepository.specs.get([network, specVersion]);
 
-	worker.terminate();
+		if (spec) {
+			console.log("metadata already downloaded", network, specVersion);
+			return;
+		}
+
+		console.log("downloading metadata", network, specVersion);
+
+		const worker = new RuntimeSpecWorker();
+		await worker.loadMetadata(network, specVersion);
+
+		worker.terminate();
+	});
 }

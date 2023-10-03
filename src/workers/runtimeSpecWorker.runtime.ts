@@ -16,33 +16,22 @@ import { RuntimeMetadataArg } from "../model/runtime-metadata/runtimeMetadataArg
  */
 class RuntimeSpecWorkerRuntime extends WebWorkerRuntime implements RuntimeSpecWorkerMethods {
 	async loadMetadata(network: string, specVersion: number) {
-		await self.navigator.locks.request(`runtime-metadata/${network}/${specVersion}`, async () => {
-			console.log("worker", network, specVersion);
+		console.log("worker", network, specVersion);
 
-			const spec = await runtimeMetadataRepository.specs.get([network, specVersion]);
-
-			if (spec) {
-				console.log("metadata already downloaded", network, specVersion);
-				return;
-			}
-
-			console.log("downloading metadata", network, specVersion);
-
-			const response = await fetchArchive<{metadata: {hex: `0x${string}`}[]}>(
-				network, `
+		const response = await fetchArchive<{metadata: {hex: `0x${string}`}[]}>(
+			network, `
 						query ($specVersion: Int!) {
 							metadata(where: {specVersion_eq: $specVersion}, orderBy: specVersion_DESC) {
 								hex
 							}
 						}
 					`,
-				{
-					specVersion
-				}
-			);
+			{
+				specVersion
+			}
+		);
 
-			response.metadata[0] && await this.decodeAndSaveRuntimeMetadata(network, specVersion, response.metadata[0].hex);
-		});
+		response.metadata[0] && await this.decodeAndSaveRuntimeMetadata(network, specVersion, response.metadata[0].hex);
 	}
 
 	protected async decodeAndSaveRuntimeMetadata(network: string, specVersion: number, metadataHex: `0x${string}`) {
