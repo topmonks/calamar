@@ -6,7 +6,6 @@ import { DecodedArg } from "../model/decodedMetadata";
 import { noCase } from "../utils/string";
 
 import { AccountAddress } from "./AccountAddress";
-import { RuntimeSpec } from "../model/runtimeSpec";
 import { Network } from "../model/network";
 
 // found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51
@@ -79,7 +78,6 @@ type ValueOfKindProps = {
 		value: any;
 	};
 	valueMetadata?: DecodedArg;
-	runtimeSpec?: RuntimeSpec;
 }
 
 const ValueOfKind = (props: ValueOfKindProps) => {
@@ -87,7 +85,6 @@ const ValueOfKind = (props: ValueOfKindProps) => {
 		network,
 		value: {__kind: kind, ...value},
 		valueMetadata: metadata,
-		runtimeSpec
 	} = props;
 
 	return (
@@ -102,7 +99,6 @@ const ValueOfKind = (props: ValueOfKindProps) => {
 							network={network}
 							value={value.value || value}
 							metadata={metadata}
-							runtimeSpec={runtimeSpec}
 						/>
 					</TableCell>
 				</TableRow>
@@ -115,11 +111,10 @@ type MaybeAccountLinkValueProps = {
 	network: Network;
 	value: any;
 	valueMetadata: DecodedArg;
-	runtimeSpec: RuntimeSpec;
 }
 
 const AccountValue = (props: MaybeAccountLinkValueProps) => {
-	const {network, value, valueMetadata, runtimeSpec} = props;
+	const {network, value, valueMetadata} = props;
 
 	if (typeof value === "object") {
 		if (ADDRESS_KINDS.includes(value.__kind)) {
@@ -130,7 +125,6 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 					...valueMetadata,
 					type: "AccountId"
 				}}
-				runtimeSpec={runtimeSpec}
 			/>;
 		}
 
@@ -138,7 +132,6 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 			<DataViewerValueParsed
 				network={network}
 				value={value}
-				runtimeSpec={runtimeSpec}
 			/>
 		);
 	}
@@ -158,20 +151,18 @@ export type DataViewerValueParsedProps = {
 	network: Network;
 	value: any;
 	metadata?: DecodedArg[]|DecodedArg;
-	runtimeSpec?: RuntimeSpec;
 };
 
 export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
-	const { network, metadata, runtimeSpec } = props;
+	const { network, metadata } = props;
 	let { value } = props;
 
-	if (metadata && runtimeSpec && ADDRESS_TYPES.includes((metadata as DecodedArg).type)) {
+	if (metadata && ADDRESS_TYPES.includes((metadata as DecodedArg).type)) {
 		return (
 			<AccountValue
 				network={network}
 				value={value}
 				valueMetadata={metadata as DecodedArg}
-				runtimeSpec={runtimeSpec}
 			/>
 		);
 	}
@@ -206,7 +197,6 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 									network={network}
 									value={item}
 									metadata={itemsMetadata[index]}
-									runtimeSpec={runtimeSpec}
 								/>
 							</TableCell>
 						</TableRow>
@@ -222,7 +212,6 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 				<ValueOfKind
 					network={network}
 					value={value}
-					runtimeSpec={runtimeSpec}
 				/>
 			);
 		}
@@ -246,7 +235,6 @@ export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 										? metadata?.find(it => noCase(it.name) === noCase(key))
 										: undefined
 									}
-									runtimeSpec={runtimeSpec}
 								/>
 							</TableCell>
 						</TableRow>

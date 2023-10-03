@@ -4,7 +4,6 @@ import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addRuntimeSpec, addRuntimeSpecs } from "../utils/addRuntimeSpec";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
@@ -61,8 +60,7 @@ async function getArchiveBlock(network: string, filter: BlocksFilter) {
 		}
 	);
 
-	const data = response.blocks[0] && unifyArchiveBlock(response.blocks[0]);
-	const block = await addRuntimeSpec(network, data, it => it.specVersion);
+	const block = response.blocks[0] && unifyArchiveBlock(response.blocks[0]);
 
 	return block;
 }
@@ -86,8 +84,7 @@ async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
 		}
 	);
 
-	const data = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0]);
-	const block = await addRuntimeSpec(network, data, it => it.specVersion);
+	const block = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0]);
 
 	return block;
 }
@@ -134,8 +131,7 @@ async function getArchiveBlocks(
 		}
 	);
 
-	const data = extractConnectionItems(response.blocksConnection, pagination, unifyArchiveBlock);
-	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
+	const blocks = extractConnectionItems(response.blocksConnection, pagination, unifyArchiveBlock);
 
 	return blocks;
 }
@@ -180,25 +176,23 @@ async function getExplorerSquidBlocks(
 		}
 	);
 
-	const data = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
-
-	const blocks = await addRuntimeSpecs(network, data, it => it.specVersion);
+	const blocks = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
 
 	return blocks;
 }
 
-function unifyArchiveBlock(block: ArchiveBlock): Omit<Block, "runtimeSpec"> {
+function unifyArchiveBlock(block: ArchiveBlock): Block {
 	return {
 		...block,
 		specVersion: block.spec.specVersion
 	};
 }
 
-function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Omit<Block, "runtimeSpec"> {
+function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Block {
 	return block;
 }
 
-function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
+export function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 	if (!filter) {
 		return undefined;
 	}
@@ -206,7 +200,7 @@ function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 	return filter;
 }
 
-function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
+export function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
 	if (!filter) {
 		return undefined;
 	}

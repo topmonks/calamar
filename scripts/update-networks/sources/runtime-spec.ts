@@ -1,6 +1,6 @@
 import { Metadata, TypeRegistry } from "@polkadot/types";
 
-import { getRuntimeSpec } from "../../../src/services/runtimeService";
+import { getRuntimeSpec } from "../../../src/services/runtimeSpecService";
 
 import { Network, SourceData, SourceType } from "../model";
 import { log } from "../utils/log";

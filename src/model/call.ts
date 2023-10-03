@@ -1,7 +1,8 @@
-import { RuntimeSpec } from "./runtimeSpec";
+import { DecodedCall } from "./decodedMetadata";
 
 export type Call = {
 	id: string;
+	network: string;
 	callName: string;
 	palletName: string;
 	blockId: string;
@@ -13,5 +14,7 @@ export type Call = {
 	args: any|null;
 	success: boolean;
 	specVersion: number;
-	runtimeSpec: RuntimeSpec;
+	metadata: {
+		call?: DecodedCall
+	}
 }

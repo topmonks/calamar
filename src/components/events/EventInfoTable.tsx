@@ -1,7 +1,6 @@
 import { Event } from "../../model/event";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
-import { getEventMetadataByName } from "../../utils/queryMetadata";
 
 import { ButtonLink } from "../ButtonLink";
 import DataViewer from "../DataViewer";
@@ -90,8 +89,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 					<DataViewer
 						network={network}
 						data={data.args}
-						metadata={getEventMetadataByName(data.runtimeSpec.metadata, data.palletName, data.eventName)?.args}
-						runtimeSpec={data.runtimeSpec}
+						metadata={data.metadata.event?.args}
 						copyToClipboard
 					/>
 				}

@@ -8,7 +8,6 @@ import { config } from "../config";
 
 import { DecodedArg } from "../model/decodedMetadata";
 import { Network } from "../model/network";
-import { RuntimeSpec } from "../model/runtimeSpec";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
@@ -207,27 +206,21 @@ export type DataViewerProps = {
 	network: Network;
 	data: any;
 	metadata?: DecodedArg[];
-	runtimeSpec?: RuntimeSpec;
 	modes?: DataViewerMode[];
 	defaultMode?: DataViewerMode;
 	simple?: boolean;
 	copyToClipboard?: boolean;
 };
 
-function DataViewer(props: DataViewerProps) {
+export const DataViewer = (props: DataViewerProps) => {
 	const {
 		network,
 		data,
 		metadata,
-		runtimeSpec,
 		defaultMode = MODES.find(Boolean),
 		simple,
 		copyToClipboard,
 	} = props;
-
-	if (metadata && !runtimeSpec) {
-		console.warn("If <DataViewer> is used with metadata argument, runtimeSpec argument should be passed too.");
-	}
 
 	const [mode, setMode] = useState<DataViewerMode>(defaultMode || MODES.find(Boolean) as DataViewerMode);
 
@@ -250,7 +243,6 @@ function DataViewer(props: DataViewerProps) {
 			network={network}
 			value={data}
 			metadata={metadata}
-			runtimeSpec={runtimeSpec}
 		/>
 	), [data]);
 
@@ -289,6 +281,6 @@ function DataViewer(props: DataViewerProps) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default DataViewer;

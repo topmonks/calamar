@@ -5,8 +5,6 @@ import { Event } from "../../model/event";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
-import { getEventMetadataByName } from "../../utils/queryMetadata";
-
 import { ButtonLink } from "../ButtonLink";
 import DataViewer from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
@@ -79,12 +77,7 @@ function EventsTable(props: EventsTableProps) {
 						<DataViewer
 							network={network}
 							data={event.args}
-							metadata={getEventMetadataByName(
-								event.runtimeSpec.metadata,
-								event.palletName,
-								event.eventName
-							)?.args}
-							runtimeSpec={event.runtimeSpec}
+							metadata={event.metadata.event?.args}
 							copyToClipboard
 						/>
 					);

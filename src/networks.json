@@ -27,7 +27,8 @@
         "decimals": 12,
         "symbol": "TZERO",
         "squids": {
-            "archive": "https://aleph-zero-testnet.explorer.subsquid.io/graphql"
+            "archive": "https://aleph-zero-testnet.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-aleph-zero-testnet/graphql"
         }
     },
     {
@@ -78,6 +79,7 @@
         "symbol": "BAJU",
         "squids": {
             "archive": "https://bajun.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-bajun/graphql",
             "main": "https://squid.subsquid.io/gs-main-bajun/graphql"
         },
         "coinGeckoId": "ajuna-network"
@@ -146,7 +148,8 @@
         "decimals": 9,
         "symbol": "EQ",
         "squids": {
-            "archive": "https://equilibrium.explorer.subsquid.io/graphql"
+            "archive": "https://equilibrium.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-equilibrium/graphql"
         }
     },
     {
@@ -162,7 +165,6 @@
         "symbol": "FREN",
         "squids": {
             "archive": "https://gmordie.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-gmordie/graphql",
             "main": "https://squid.subsquid.io/gs-main-gmordie/graphql"
         }
     },
@@ -214,7 +216,8 @@
         "decimals": 12,
         "symbol": "TNKR",
         "squids": {
-            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql"
+            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-invarch-tinkernet/graphql"
         }
     },
     {
@@ -227,7 +230,8 @@
         "decimals": 10,
         "symbol": "JOY",
         "squids": {
-            "archive": "https://joystream.explorer.subsquid.io/graphql"
+            "archive": "https://joystream.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-joystream/graphql"
         },
         "coinGeckoId": "joystream"
     },
@@ -279,7 +283,8 @@
         "decimals": 12,
         "symbol": "KINT",
         "squids": {
-            "archive": "https://kintsugi.explorer.subsquid.io/graphql"
+            "archive": "https://kintsugi.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-kintsugi/graphql"
         },
         "coinGeckoId": "kintsugi"
     },
@@ -316,6 +321,7 @@
         "symbol": "LIT",
         "squids": {
             "archive": "https://litentry.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-litentry/graphql",
             "main": "https://squid.subsquid.io/gs-main-litentry/graphql"
         },
         "coinGeckoId": "litentry"
@@ -333,6 +339,7 @@
         "symbol": "LIT",
         "squids": {
             "archive": "https://litmus.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-litmus/graphql",
             "main": "https://squid.subsquid.io/gs-main-litmus/graphql"
         },
         "coinGeckoId": "litentry"
@@ -382,7 +389,8 @@
         "decimals": 18,
         "symbol": "PEAQ",
         "squids": {
-            "archive": "https://peaq.explorer.subsquid.io/graphql"
+            "archive": "https://peaq.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-peaq/graphql"
         }
     },
     {
@@ -397,6 +405,7 @@
         "symbol": "PEN",
         "squids": {
             "archive": "https://pendulum.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-pendulum/graphql",
             "main": "https://squid.subsquid.io/gs-main-pendulum/graphql"
         },
         "coinGeckoId": "pendulum-chain"
@@ -452,6 +461,7 @@
         "symbol": "XRT",
         "squids": {
             "archive": "https://robonomics.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-robonomics/graphql",
             "main": "https://squid.subsquid.io/gs-main-robonomics/graphql"
         },
         "coinGeckoId": "robonomics-network"
@@ -523,6 +533,7 @@
         "name": "statemint",
         "displayName": "Statemint",
         "icon": "/assets/network-icons/statemint.png",
+        "color": "#86e62a",
         "website": "https://www.parity.io/",
         "parachainId": 1000,
         "relayChain": "polkadot",
@@ -563,7 +574,8 @@
         "decimals": 12,
         "symbol": "T0RN",
         "squids": {
-            "archive": "https://t0rn.explorer.subsquid.io/graphql"
+            "archive": "https://t0rn.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-t0rn/graphql"
         }
     },
     {
@@ -576,7 +588,8 @@
         "decimals": 12,
         "symbol": "VARA",
         "squids": {
-            "archive": "https://vara.explorer.subsquid.io/graphql"
+            "archive": "https://vara.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-vara/graphql"
         }
     },
     {
@@ -588,7 +601,8 @@
         "decimals": 9,
         "symbol": "XX",
         "squids": {
-            "archive": "https://xx-network.explorer.subsquid.io/graphql"
+            "archive": "https://xx-network.explorer.subsquid.io/graphql",
+            "explorer": "https://squid.subsquid.io/gs-explorer-xx-network/graphql"
         },
         "coinGeckoId": "xxcoin"
     }

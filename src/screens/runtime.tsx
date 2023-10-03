@@ -3,9 +3,11 @@ import { MenuItem, Select } from "@mui/material";
 
 import { Card, CardHeader } from "../components/Card";
 import { Devtool } from "../components/Devtool";
-import { useRuntimeSpecs } from "../hooks/useRuntimeSpecs";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
 import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useRuntimeMetadataPallets } from "../hooks/useRuntimeMetadataPallets";
+
+import { tryParseInt } from "../utils/string";
 
 export type RuntimeParams = {
 	specVersion?: string;
@@ -18,20 +20,16 @@ export const RuntimePage = () => {
 	const navigate = useNavigate();
 
 	const runtimeVersions = useRuntimeSpecVersions(network.name);
-	const runtimeSpecs = useRuntimeSpecs(network.name, specVersion ? [parseInt(specVersion)] : [], {
+	const pallets = useRuntimeMetadataPallets(network.name, tryParseInt(specVersion), {
 		skip: !specVersion
 	});
 
-	const metadata = specVersion && runtimeSpecs.data?.[parseInt(specVersion)]!.metadata;
-
-	console.log(metadata);
-
-	if (runtimeVersions.loading) {
-		return null;
-	}
+	console.log(pallets);
 
 	if (!specVersion) {
-		return <Navigate to={`/${network.name}/runtime/${runtimeVersions.data![0]}`} />;
+		return runtimeVersions.data
+			? <Navigate to={`/${network.name}/runtime/${runtimeVersions.data[0]}`} />
+			: null;
 	}
 
 	return (
@@ -41,58 +39,18 @@ export const RuntimePage = () => {
 					<Devtool />{network.displayName} runtime
 				</CardHeader>
 				<Select value={specVersion} onChange={e => navigate(`/${network.name}/runtime/${e.target.value}`)}>
-					{runtimeVersions.data?.map(version =>
+					{(runtimeVersions.data || [specVersion]).map(version =>
 						<MenuItem key={version} value={version}>
 							{version}
 						</MenuItem>
 					)}
 				</Select>
 				See console
-				{metadata &&
+				{pallets.data &&
 					<ul>
-						{metadata.pallets.map(pallet =>
+						{pallets.data.map(pallet =>
 							<li key={pallet.name}>
 								{pallet.name}
-								<ul>
-									{pallet.calls.length > 0 &&
-										<li>
-											calls
-											<ul>
-												{pallet.calls.map(call =>
-													<li key={call.name}>
-														{call.name}
-														<ul>
-															{call.args.map(arg =>
-																<li key={arg.name}>
-																	{arg.name}: {arg.type} {arg.typeName && `(${arg.typeName})`}
-																</li>
-															)}
-														</ul>
-													</li>
-												)}
-											</ul>
-										</li>
-									}
-									{pallet.events.length > 0 &&
-										<li>
-											events
-											<ul>
-												{pallet.events.map(event =>
-													<li key={event.name}>
-														{event.name}
-														<ul>
-															{event.args.map(arg =>
-																<li key={arg.name}>
-																	{arg.name}: {arg.type} {arg.typeName && `(${arg.typeName})`}
-																</li>
-															)}
-														</ul>
-													</li>
-												)}
-											</ul>
-										</li>
-									}
-								</ul>
 							</li>
 						)}
 					</ul>

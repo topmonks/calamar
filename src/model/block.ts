@@ -1,5 +1,3 @@
-import { RuntimeSpec } from "./runtimeSpec";
-
 export type Block = {
 	id: string;
 	hash: string;
@@ -8,5 +6,4 @@ export type Block = {
 	parentHash: string;
 	validator: string|null;
 	specVersion: number;
-	runtimeSpec: RuntimeSpec;
 }
