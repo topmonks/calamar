@@ -73,18 +73,18 @@ export async function search(query: string, networks: Network[] = []): Promise<S
 						offset: 0,
 						limit: 0,
 						hasNextPage: false,
-						totalCount: 1
-					}
+					},
+					totalCount: 1
 				},
 				total: 1
 			}
 		));
 	}
 
-	const accountsTotal = nonEmptyResults.reduce((total, result) => total + (result.accounts.pagination.totalCount || 0), 0);
-	const blocksTotal = nonEmptyResults.reduce((total, result) => total + (result.blocks.pagination.totalCount || 0), 0);
-	const extrinsicsTotal = nonEmptyResults.reduce((total, result) => total + (result.extrinsics.pagination.totalCount || 0), 0);
-	const eventsTotal = nonEmptyResults.reduce((total, result) => total + (result.events.pagination.totalCount || 0), 0);
+	const accountsTotal = nonEmptyResults.reduce((total, result) => total + (result.accounts.totalCount || 0), 0);
+	const blocksTotal = nonEmptyResults.reduce((total, result) => total + (result.blocks.totalCount || 0), 0);
+	const extrinsicsTotal = nonEmptyResults.reduce((total, result) => total + (result.extrinsics.totalCount || 0), 0);
+	const eventsTotal = nonEmptyResults.reduce((total, result) => total + (result.events.totalCount || 0), 0);
 	const total = nonEmptyResults.reduce((total, result) => total + result.total, 0);
 
 	const result: SearchResult = {
@@ -270,8 +270,8 @@ async function searchNetwork(network: Network, query: string, fetchAll = false) 
 				offset: 0,
 				limit: 0,
 				hasNextPage: false,
-				totalCount: 0,
-			}
+			},
+			totalCount: 0,
 		},
 		blocks: await extractConnectionItems(response.blocks, {offset: 0, limit: fetchAll ? 10 : 1}, unifyExplorerSquidBlock),
 		extrinsics: await extractConnectionItems(response.extrinsics, {offset: 0, limit: fetchAll ? 10 : 1}, unifyExplorerSquidExtrinsic, network.name),
@@ -280,13 +280,13 @@ async function searchNetwork(network: Network, query: string, fetchAll = false) 
 	};
 
 	if (maybeHash || maybeHeight) {
-		result.blocks.pagination.totalCount = result.blocks.data.length;
-		result.extrinsics.pagination.totalCount = result.extrinsics.data.length;
-		result.events.pagination.totalCount = 0;
+		result.blocks.totalCount = result.blocks.data.length;
+		result.extrinsics.totalCount = result.extrinsics.data.length;
+		result.events.totalCount = 0;
 	} else if (maybeName) {
-		result.blocks.pagination.totalCount = result.blocks.data.length;
-		result.extrinsics.pagination.totalCount = response.extrinsicsByNameCounter?.total || 0;
-		result.events.pagination.totalCount = response.eventsByNameCounter?.total || 0;
+		result.blocks.totalCount = result.blocks.data.length;
+		result.extrinsics.totalCount = response.extrinsicsByNameCounter?.total || 0;
+		result.events.totalCount = response.eventsByNameCounter?.total || 0;
 	}
 
 	if (maybeAddress) {
@@ -301,15 +301,15 @@ async function searchNetwork(network: Network, query: string, fetchAll = false) 
 				identity: null
 			}];
 
-			result.accounts.pagination.totalCount = 1;
+			result.accounts.totalCount = 1;
 		}
 	}
 
 	result.total =
-		(result.accounts.pagination.totalCount || 0)
-		+ (result.blocks.pagination.totalCount || 0)
-		+ (result.extrinsics.pagination.totalCount || 0)
-		+ (result.events.pagination.totalCount || 0);
+		(result.accounts.totalCount || 0)
+		+ (result.blocks.totalCount || 0)
+		+ (result.extrinsics.totalCount || 0)
+		+ (result.events.totalCount || 0);
 
 	return result;
 }

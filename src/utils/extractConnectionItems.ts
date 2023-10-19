@@ -19,7 +19,7 @@ export async function extractConnectionItems<R = any, T = any, A extends any[] =
 		pagination: {
 			...pagination,
 			hasNextPage: connection.pageInfo.hasNextPage,
-			totalCount: connection.totalCount
-		}
+		},
+		totalCount: connection.totalCount
 	};
 }

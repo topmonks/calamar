@@ -17,6 +17,7 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 	const rollbar = useRollbar();
 
 	const [data, setData] = useState<T[]>([]);
+	const [totalCount, setTotalCount] = useState<number>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<any>();
 
@@ -36,6 +37,7 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 				});
 
 				setData(items.data);
+				setTotalCount(items.totalCount);
 				pagination.set(items.pagination);
 			} catch(e) {
 				if (e instanceof DataError) {
@@ -66,6 +68,7 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 	return useMemo(
 		() => ({
 			data,
+			totalCount,
 			loading,
 			notFound: !loading && !error && (!data || data.length === 0),
 			pagination,

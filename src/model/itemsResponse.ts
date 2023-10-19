@@ -4,6 +4,6 @@ export type ItemsResponse<T = any> = {
 		offset: number;
 		limit: number;
 		hasNextPage: boolean;
-		totalCount?: number;
-	}
+	},
+	totalCount?: number;
 }

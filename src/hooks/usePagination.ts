@@ -4,7 +4,6 @@ export type PaginationState = {
 	limit: number;
 	offset: number;
 	hasNextPage: boolean;
-	totalCount?: number
 };
 
 export type Pagination = PaginationState & {

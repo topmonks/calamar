@@ -37,7 +37,7 @@ export const CallPage = () => {
 					<TabbedContent>
 						<TabPane
 							label="Events"
-							count={events.pagination.totalCount}
+							count={events.totalCount}
 							loading={events.loading}
 							error={events.error}
 							value="events"

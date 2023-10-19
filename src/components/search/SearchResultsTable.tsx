@@ -66,7 +66,7 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 	const rows = results.flatMap<SearchResultsTableRow<T>>((result) => {
 		const items = getItems(result);
 
-		if (items.data.length === 0 && items.pagination.totalCount) {
+		if (items.data.length === 0 && items.totalCount) {
 			return [{
 				id: `${result.network.name}-0`,
 				item: undefined,
@@ -97,7 +97,7 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 					colCss={colCss}
 					colSpan={({item, result}) => (!item /* TODO || result.error*/) ? Children.count(children) : 1}
 					render={({item, result}) => {
-						const total = getItems(result).pagination.totalCount || 0;
+						const total = getItems(result).totalCount || 0;
 
 						return (
 							<>

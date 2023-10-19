@@ -86,7 +86,7 @@ export const NetworkPage = () => {
 				<TabbedContent>
 					<TabPane
 						label="Extrinsics"
-						count={extrinsics.pagination.totalCount}
+						count={extrinsics.totalCount}
 						loading={extrinsics.loading}
 						error={extrinsics.error}
 						value="extrinsics"
@@ -95,7 +95,7 @@ export const NetworkPage = () => {
 					</TabPane>
 					<TabPane
 						label="Blocks"
-						count={blocks.pagination.totalCount}
+						count={blocks.totalCount}
 						loading={blocks.loading}
 						error={blocks.error}
 						value="blocks"
@@ -107,7 +107,7 @@ export const NetworkPage = () => {
 					{hasSupport(network.name, "main-squid") &&
 							<TabPane
 								label="Transfers"
-								count={transfers.pagination.totalCount}
+								count={transfers.totalCount}
 								loading={transfers.loading}
 								error={transfers.error}
 								value="transfers"
@@ -118,7 +118,7 @@ export const NetworkPage = () => {
 					{hasSupport(network.name, "stats-squid") &&
 							<TabPane
 								label="Top holders"
-								count={topHolders.pagination.totalCount}
+								count={topHolders.totalCount}
 								loading={topHolders.loading}
 								error={topHolders.error}
 								value="top-holders"

@@ -61,7 +61,7 @@ export async function getExtrinsicsByName(
 		);
 
 		const extrinsics = await getExplorerSquidExtrinsics(network, filter, order, pagination, false);
-		extrinsics.pagination.totalCount = countResponse.itemsCounterById?.total;
+		extrinsics.totalCount = countResponse.itemsCounterById?.total;
 
 		return extrinsics;
 	}

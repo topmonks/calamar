@@ -55,7 +55,7 @@ export const BlockPage = () => {
 					<TabbedContent>
 						<TabPane
 							label="Extrinsics"
-							count={extrinsics.pagination.totalCount}
+							count={extrinsics.totalCount}
 							loading={extrinsics.loading}
 							error={extrinsics.error}
 							value="extrinsics"
@@ -64,7 +64,7 @@ export const BlockPage = () => {
 						</TabPane>
 						<TabPane
 							label="Calls"
-							count={calls.pagination.totalCount}
+							count={calls.totalCount}
 							loading={calls.loading}
 							error={calls.error}
 							value="calls"
@@ -73,7 +73,7 @@ export const BlockPage = () => {
 						</TabPane>
 						<TabPane
 							label="Events"
-							count={events.pagination.totalCount}
+							count={events.totalCount}
 							loading={events.loading}
 							error={events.error}
 							value="events"

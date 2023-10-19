@@ -159,7 +159,7 @@ export const AccountPage = () => {
 						</TabPane>
 						<TabPane
 							label="Extrinsics"
-							count={extrinsics.pagination.totalCount}
+							count={extrinsics.totalCount}
 							loading={extrinsics.loading}
 							error={extrinsics.error}
 							value="extrinsics"
@@ -169,7 +169,7 @@ export const AccountPage = () => {
 						{hasSupport(network.name, "explorer-squid") &&
 							<TabPane
 								label="Calls"
-								count={calls.pagination.totalCount}
+								count={calls.totalCount}
 								loading={calls.loading}
 								error={calls.error}
 								value="calls"
@@ -180,7 +180,7 @@ export const AccountPage = () => {
 						{hasSupport(network.name, "main-squid") &&
 							<TabPane
 								label="Transfers"
-								count={transfers.pagination.totalCount}
+								count={transfers.totalCount}
 								loading={transfers.loading}
 								error={transfers.error}
 								value="transfers"

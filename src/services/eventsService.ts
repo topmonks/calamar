@@ -76,7 +76,7 @@ export async function getEventsByName(
 		}
 
 		const events = await getExplorerSquidEvents(network, filter, order, pagination, false);
-		events.pagination.totalCount = countResponse.itemsCounterById.total;
+		events.totalCount = countResponse.itemsCounterById.total;
 
 		return events;
 	}

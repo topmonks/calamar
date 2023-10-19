@@ -44,7 +44,7 @@ export const ExtrinsicPage = () => {
 					<TabbedContent>
 						<TabPane
 							label="Events"
-							count={events.pagination.totalCount}
+							count={events.totalCount}
 							loading={events.loading}
 							error={events.error}
 							value="events"
@@ -56,7 +56,7 @@ export const ExtrinsicPage = () => {
 						</TabPane>
 						<TabPane
 							label="Calls"
-							count={calls.pagination.totalCount}
+							count={calls.totalCount}
 							loading={calls.loading}
 							error={calls.error}
 							value="calls"
