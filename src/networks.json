@@ -121,24 +121,6 @@
         "coinGeckoId": "calamari-network"
     },
     {
-        "name": "efinity",
-        "displayName": "Efinity",
-        "icon": "/assets/network-icons/efinity.svg",
-        "color": "#496ddb",
-        "website": "https://efinity.io/",
-        "parachainId": 2021,
-        "relayChain": "polkadot",
-        "prefix": 1110,
-        "decimals": 18,
-        "symbol": "EFI",
-        "squids": {
-            "archive": "https://efinity.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-efinity/graphql",
-            "main": "https://squid.subsquid.io/gs-main-efinity/graphql"
-        },
-        "coinGeckoId": "efinity"
-    },
-    {
         "name": "equilibrium",
         "displayName": "Equilibrium",
         "icon": "/assets/network-icons/equilibrium.png",
@@ -156,7 +138,6 @@
         "name": "gmordie",
         "displayName": "GM",
         "icon": "/assets/network-icons/gmordie.png",
-        "color": "#f47b36",
         "website": "https://gmordie.com/",
         "parachainId": 2123,
         "relayChain": "kusama",
@@ -515,7 +496,6 @@
         "name": "statemine",
         "displayName": "Statemine",
         "icon": "/assets/network-icons/statemine.png",
-        "color": "#113911",
         "website": "https://www.parity.io/",
         "parachainId": 1000,
         "relayChain": "kusama",
@@ -533,7 +513,6 @@
         "name": "statemint",
         "displayName": "Statemint",
         "icon": "/assets/network-icons/statemint.png",
-        "color": "#86e62a",
         "website": "https://www.parity.io/",
         "parachainId": 1000,
         "relayChain": "polkadot",

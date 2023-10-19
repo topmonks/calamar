@@ -36,7 +36,7 @@ export async function getExtrinsicsByName(
 	order: ExtrinsicsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const {palletName, callName} = await normalizeExtrinsicName(network, name);
+	const {pallet: palletName, call: callName} = await normalizeExtrinsicName(network, name);
 
 	const filter: ExtrinsicsFilter = callName
 		? { palletName_eq: palletName, callName_eq: callName }
@@ -99,8 +99,8 @@ export async function normalizeExtrinsicName(network: string, name: string) {
 	callName = call?.name || lowerFirst(callName);
 
 	return {
-		palletName,
-		callName
+		pallet: palletName,
+		call: callName
 	};
 }
 
@@ -140,10 +140,7 @@ async function getArchiveExtrinsic(network: string, filter?: ExtrinsicsFilter) {
 		}
 	);
 
-	const data = response.extrinsics[0] && unifyArchiveExtrinsic(response.extrinsics[0], network);
-	const extrinsic = await addItemMetadata(data, getExtrinsicMetadata);
-
-	return extrinsic;
+	return response.extrinsics[0] && unifyArchiveExtrinsic(response.extrinsics[0], network);
 }
 
 async function getArchiveExtrinsics(
@@ -202,10 +199,7 @@ async function getArchiveExtrinsics(
 		}
 	);
 
-	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyArchiveExtrinsic, network);
-	const extrinsics = await addItemsMetadata(items, getExtrinsicMetadata);
-
-	return extrinsics;
+	return extractConnectionItems(response.extrinsicsConnection, pagination, unifyArchiveExtrinsic, network);
 }
 
 async function getExplorerSquidExtrinsics(
@@ -262,14 +256,12 @@ async function getExplorerSquidExtrinsics(
 		}
 	);
 
-	const items = extractConnectionItems(response.extrinsicsConnection, pagination, unifyExplorerSquidExtrinsic, network);
-	const extrinsics = await addItemsMetadata(items, getExtrinsicMetadata);
-
-	return extrinsics;
+	return extractConnectionItems(response.extrinsicsConnection, pagination, unifyExplorerSquidExtrinsic, network);
 }
 
-function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Omit<Extrinsic, "metadata"> {
+async function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Promise<Extrinsic> {
 	const [palletName, callName] = extrinsic.call.name.split(".") as [string, string];
+	const specVersion = extrinsic.block.spec.specVersion;
 
 	return {
 		...extrinsic,
@@ -284,11 +276,17 @@ function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Om
 		signature: extrinsic.signature?.signature?.value || extrinsic.signature?.signature || null,
 		fee: extrinsic.fee ? BigInt(extrinsic.fee) : null,
 		tip: extrinsic.tip ? BigInt(extrinsic.tip) : null,
-		specVersion: extrinsic.block.spec.specVersion
+		specVersion,
+		metadata: {
+			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+		}
 	};
 }
 
-function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic, network: string): Omit<Extrinsic, "metadata"> {
+export async function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic, network: string): Promise<Extrinsic> {
+	const {palletName, callName} = extrinsic.mainCall;
+	const specVersion = extrinsic.block.specVersion;
+
 	return {
 		...extrinsic,
 		network,
@@ -304,11 +302,14 @@ function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic, network:
 		error: extrinsic.error && JSON.parse(extrinsic.error),
 		fee: extrinsic.fee ? BigInt(extrinsic.fee) : null,
 		tip: extrinsic.tip ? BigInt(extrinsic.tip) : null,
-		specVersion: extrinsic.block.specVersion
+		specVersion,
+		metadata: {
+			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+		}
 	};
 }
 
-async function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">): Promise<Extrinsic["metadata"]> {
+export async function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">): Promise<Extrinsic["metadata"]> {
 	return {
 		call: await getCallRuntimeMetadata(extrinsic.network, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
 	};
@@ -347,7 +348,7 @@ function extrinsicFilterToArchiveFilter(filter?: ExtrinsicsFilter) {
 	return filter;
 }
 
-function extrinsicFilterToExplorerSquidFilter(filter?: ExtrinsicsFilter) {
+export function extrinsicFilterToExplorerSquidFilter(filter?: ExtrinsicsFilter) {
 	if (!filter) {
 		return undefined;
 	}

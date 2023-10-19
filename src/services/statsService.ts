@@ -48,7 +48,7 @@ export async function getStats(
 /*** PRIVATE ***/
 
 function unifyStats(stats: Omit<Stats, "circulatingValueTotal" & "stakedValuePercentage">, networkName: string): Stats {
-	const network = getNetwork(networkName)!;
+	const network = getNetwork(networkName);
 
 	return {
 		...stats,

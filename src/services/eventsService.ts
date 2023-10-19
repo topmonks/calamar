@@ -40,7 +40,7 @@ export async function getEventsByName(
 	order: EventsOrder = "id_DESC",
 	pagination: PaginationOptions
 ): Promise<ItemsResponse<Event>> {
-	const {palletName, eventName} = await normalizeEventName(network, name);
+	const {pallet: palletName, event: eventName} = await normalizeEventName(network, name);
 
 	const filter: EventsFilter = eventName
 		? { palletName_eq: palletName, eventName_eq: eventName }
@@ -113,8 +113,8 @@ export async function normalizeEventName(network: string, name: string) {
 	eventName = event?.name || upperFirst(eventName);
 
 	return {
-		palletName,
-		eventName
+		pallet: palletName,
+		event: eventName
 	};
 }
 
@@ -149,10 +149,7 @@ async function getArchiveEvent(network: string, filter: EventsFilter) {
 		}
 	);
 
-	const data = response.events[0] && unifyArchiveEvent(response.events[0], network);
-	const event = addItemMetadata(data, getEventMetadata);
-
-	return event;
+	return response.events[0] && unifyArchiveEvent(response.events[0], network);
 }
 
 async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
@@ -182,9 +179,8 @@ async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
 		}
 	);
 
-	const data = response.events[0] && unifyExplorerSquidEvent(response.events[0], network);
-	const dataWithMetadata = await addItemMetadata(data, getEventMetadata);
-	const event = await addEventArgs(network, dataWithMetadata);
+	const data = response.events[0] && await unifyExplorerSquidEvent(response.events[0], network);
+	const event = await addEventArgs(network, data);
 
 	return event;
 }
@@ -240,10 +236,7 @@ async function getArchiveEvents(
 		}
 	);
 
-	const items = extractConnectionItems(response.eventsConnection, pagination, unifyArchiveEvent, network);
-	const events = await addItemsMetadata(items, getEventMetadata);
-
-	return events;
+	return extractConnectionItems(response.eventsConnection, pagination, unifyArchiveEvent, network);
 }
 
 async function getExplorerSquidEvents(
@@ -295,9 +288,8 @@ async function getExplorerSquidEvents(
 		}
 	);
 
-	const data = extractConnectionItems(response.eventsConnection, pagination, unifyExplorerSquidEvent, network);
-	const dataWithMetadata = await addItemsMetadata(data, getEventMetadata);
-	const events = await addEventsArgs(network, dataWithMetadata);
+	const data = await extractConnectionItems(response.eventsConnection, pagination, unifyExplorerSquidEvent, network);
+	const events = await addEventsArgs(network, data);
 
 	return events;
 }
@@ -337,7 +329,7 @@ async function addEventArgs(network: string, event: Event|undefined) {
 	};
 }
 
-async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
+export async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
 	const eventIds = items.data.map((event) => event.id);
 
 	const argsByEventId = await getArchiveEventArgs(network, eventIds);
@@ -351,8 +343,9 @@ async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
 	};
 }
 
-function unifyArchiveEvent(event: ArchiveEvent, network: string): Omit<Event, "metadata"> {
+async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<Event> {
 	const [palletName, eventName] = event.name.split(".") as [string, string];
+	const specVersion = event.block.spec.specVersion;
 
 	return {
 		...event,
@@ -365,11 +358,17 @@ function unifyArchiveEvent(event: ArchiveEvent, network: string): Omit<Event, "m
 		extrinsicId: event.extrinsic?.id || null,
 		callId: event.call?.id || null,
 		args: null,
-		specVersion: event.block.spec.specVersion,
+		specVersion,
+		metadata: {
+			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
+		}
 	};
 }
 
-function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network: string): Omit<Event, "metadata"> {
+export async function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network: string): Promise<Event> {
+	const {palletName, eventName} = event;
+	const specVersion = event.block.specVersion;
+
 	return {
 		...event,
 		network,
@@ -379,13 +378,10 @@ function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network: string): Om
 		extrinsicId: event.extrinsic?.id || null,
 		callId: event.call?.id || null,
 		args: null,
-		specVersion: event.block.specVersion,
-	};
-}
-
-async function getEventMetadata(event: Omit<Event, "metadata">): Promise<Event["metadata"]> {
-	return {
-		event: await getRuntimeEventMetadata(event.network, event.specVersion, event.palletName, event.eventName)
+		specVersion,
+		metadata: {
+			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
+		}
 	};
 }
 
@@ -423,7 +419,7 @@ function eventsFilterToArchiveFilter(filter?: EventsFilter) {
 	return filter;
 }
 
-function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
+export function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
 	if (!filter) {
 		return undefined;
 	}

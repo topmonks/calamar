@@ -50,18 +50,18 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 				}
 			/>
 			{showValidator &&
-			<BlocksTableAttribute
-				label="Validator"
-				render={(block) =>
-					block.validator &&
-					<AccountAddress
-						network={network}
-						address={block.validator}
-						shorten
-						copyToClipboard="small"
-					/>
-				}
-			/>
+				<BlocksTableAttribute
+					label="Validator"
+					render={(block) =>
+						block.validator &&
+						<AccountAddress
+							network={network}
+							address={block.validator}
+							shorten
+							copyToClipboard="small"
+						/>
+					}
+				/>
 			}
 			{showTime &&
 				<BlocksTableAttribute

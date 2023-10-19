@@ -2,14 +2,20 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 
-export function extractConnectionItems<R = any, T = any, A extends any[] = any[]>(
+export async function extractConnectionItems<R = any, T = any, A extends any[] = any[]>(
 	connection: ItemsConnection<T>,
 	pagination: PaginationOptions,
-	transformNode: (node: T, ...a: A) => R,
+	transformNode: (node: T, ...a: A) => R|Promise<R>,
 	...additionalArgs: A
-): ItemsResponse<R> {
+): Promise<ItemsResponse<R>> {
+	const data = [];
+
+	for (const edge of connection.edges) {
+		data.push(await transformNode(edge.node, ...additionalArgs));
+	}
+
 	return {
-		data: connection.edges.map((edge) => transformNode(edge.node, ...additionalArgs)),
+		data,
 		pagination: {
 			...pagination,
 			hasNextPage: connection.pageInfo.hasNextPage,

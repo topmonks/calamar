@@ -23,7 +23,7 @@ import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useUsdRates } from "../hooks/useUsdRates";
 import { useTransfers } from "../hooks/useTransfers";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 
 import { hasSupport } from "../services/networksService";
 
@@ -81,7 +81,7 @@ export type AccountPageParams = {
 };
 
 export const AccountPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { address } = useParams() as AccountPageParams;
 
 	const account = useAccount(network.name, address);

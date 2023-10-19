@@ -1,6 +1,7 @@
 import { Metadata, TypeRegistry } from "@polkadot/types";
 
-import { getRuntimeSpec } from "../../../src/services/runtimeSpecService";
+import { getLatestRuntimeSpecVersion } from "../../../src/services/runtimeSpecService";
+import { fetchArchive } from "../../../src/services/fetchService";
 
 import { Network, SourceData, SourceType } from "../model";
 import { log } from "../utils/log";
@@ -12,10 +13,29 @@ export async function getRuntimeSpecData(network: Network): Promise<SourceData> 
 	};
 
 	try {
-		const runtimeSpec = await getRuntimeSpec(network.name, "latest");
+		const latestRuntimeSpecVersion = await getLatestRuntimeSpecVersion(network.name);
+
+		const response = await fetchArchive<{metadata: {hex: `0x${string}`}[]}>(
+			network.name, `
+				query ($specVersion: Int!) {
+					metadata(where: {specVersion_eq: $specVersion}, orderBy: specVersion_DESC) {
+						hex
+					}
+				}
+			`,
+			{
+				specVersion: latestRuntimeSpecVersion
+			}
+		);
+
+		const metadataHex = response.metadata[0]?.hex;
+
+		if (!metadataHex) {
+			throw new Error("Not found");
+		}
 
 		const registry = new TypeRegistry();
-		const metadata = new Metadata(registry, runtimeSpec.hex);
+		const metadata = new Metadata(registry, metadataHex);
 		registry.setMetadata(metadata);
 
 		const latestMetadata = metadata.asLatest;

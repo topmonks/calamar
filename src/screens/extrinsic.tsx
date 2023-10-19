@@ -11,14 +11,14 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 
 type ExtrinsicPageParams = {
 	id: string;
 };
 
 export const ExtrinsicPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as ExtrinsicPageParams;
 
 	const extrinsic = useExtrinsic(network.name, { id_eq: id });

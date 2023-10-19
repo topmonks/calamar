@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useState } from "react";
-import { Theme, css } from "@emotion/react";
 import { CircularProgress, Tab, TabProps, Tabs } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Warning";
+import { Theme, css } from "@emotion/react";
+
+import { formatNumber } from "../utils/number";
 
 const tabsWrapperStyle = css`
 	margin-bottom: 16px;
@@ -94,7 +96,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				label={
 					<>
 						<span>{label}</span>
-						{Number.isInteger(count) && <span data-test="count" css={tabCountStyle}>({count})</span>}
+						{count !== undefined && <span data-test="count" css={tabCountStyle}>({formatNumber(count)})</span>}
 						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
 						{!!error && <ErrorIcon css={tabErrorStyle} />}
 					</>
@@ -114,7 +116,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				<Tabs
 					css={tabsStyle}
 					onChange={(_, tab) => setTab(tab)}
-					value={tab || tabHandles[0]!.props.value}
+					value={tab || tabHandles[0]?.props.value}
 					variant="scrollable"
 					scrollButtons={false}
 				>

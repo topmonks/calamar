@@ -1,5 +1,5 @@
 import { Network } from "./network";
 
-export type RootLoaderData = {
+export type NetworkLoaderData = {
 	network: Network;
 }

@@ -188,7 +188,7 @@ function unifyArchiveBlock(block: ArchiveBlock): Block {
 	};
 }
 
-function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Block {
+export function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Block {
 	return block;
 }
 

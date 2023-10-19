@@ -91,7 +91,7 @@ async function getMainSquidTransfers(
 		}
 	);
 
-	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer, network);
+	const items = await extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer, network);
 	const transfers = await addExtrinsicsInfo(network, items);
 
 	return transfers;

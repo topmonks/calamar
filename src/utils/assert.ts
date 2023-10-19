@@ -1,8 +1,8 @@
 import { rollbar } from "../rollbar";
 
-export function assert(value: any, condition: any) {
+export function warningAssert(condition: any, data?: any) {
 	if (!condition) {
-		console.warn("Assert failed", {value});
-		rollbar.warning("Assert failed", {value});
+		console.warn("Assert failed", data);
+		rollbar.warning("Assert failed", data);
 	}
 }

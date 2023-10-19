@@ -4,9 +4,8 @@ import { MenuItem, Select } from "@mui/material";
 import { Card, CardHeader } from "../components/Card";
 import { Devtool } from "../components/Devtool";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 import { useRuntimeMetadataPallets } from "../hooks/useRuntimeMetadataPallets";
-
 import { tryParseInt } from "../utils/string";
 
 export type RuntimeParams = {
@@ -14,7 +13,7 @@ export type RuntimeParams = {
 };
 
 export const RuntimePage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { specVersion } = useParams() as RuntimeParams;
 
 	const navigate = useNavigate();

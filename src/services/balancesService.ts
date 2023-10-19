@@ -83,8 +83,8 @@ export async function getAccountBalances(address: string) {
 		balanceSupported: !!hasSupport(network.name, "stats-squid"),
 	}));
 
-	const response = await Promise.allSettled(networks.map(async (network, index) => {
-		const accountBalance = accountBalances[index]!;
+	const response = await Promise.allSettled(accountBalances.map(async (accountBalance) => {
+		const { network } = accountBalance;
 
 		const encodedAddress = encodeAddress(address, network.prefix);
 
@@ -117,7 +117,7 @@ export async function getAccountBalances(address: string) {
 	}));
 
 	response.forEach((result, index) => {
-		const accountBalance = accountBalances[index]!;
+		const accountBalance = accountBalances[index] as AccountBalance;
 
 		if (result.status === "rejected") {
 			accountBalance.error = result.reason;

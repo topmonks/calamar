@@ -3,7 +3,6 @@ import { isAddress } from "@polkadot/util-crypto";
 import { Account } from "../model/account";
 import { AccountIdentity } from "../model/accountIdentity";
 import { MainSquidIdentity } from "../model/main-squid/mainSquidIdentity";
-
 import { DataError } from "../utils/error";
 import { decodeAddress, encodeAddress } from "../utils/formatAddress";
 

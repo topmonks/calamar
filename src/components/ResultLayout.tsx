@@ -157,13 +157,7 @@ const footerStyle = css`
 	}
 `;
 
-export type ResultLayoutLoaderData = {
-	network?: Network;
-};
-
 export const ResultLayout = () => {
-	const {network} = useLoaderData() as ResultLayoutLoaderData;
-
 	return (
 		<div css={containerStyle}>
 			<div css={backgroundStyle} data-test="background" />
@@ -176,13 +170,12 @@ export const ResultLayout = () => {
 							</Link>
 						</div>
 						<div css={topBarRowStyle}>
-							<SearchInput css={searchInputStyle} defaultNetwork={network?.name} key={network?.name} />
+							<SearchInput css={searchInputStyle} />
 						</div>
 					</div>
 				</div>
 				<div css={contentStyle}>
-					{network && <Outlet />}
-					{!network && <NotFoundPage />}
+					<Outlet />
 				</div>
 			</div>
 			<Footer css={footerStyle} />

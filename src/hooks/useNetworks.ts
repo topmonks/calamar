@@ -1,5 +1,5 @@
 import { getNetworks } from "../services/networksService";
 
-export function useNetworks() {
-	return getNetworks();
+export function useNetworks(names?: string[]) {
+	return getNetworks(names);
 }

@@ -18,5 +18,5 @@ export function tryParseInt(str?: string) {
 		return undefined;
 	}
 
-	return parseInt(str) || undefined;
+	return +str || undefined;
 }

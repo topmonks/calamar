@@ -1,6 +1,8 @@
 import { Network } from "../model/network";
 
-import networks from "../networks.json";
+import networksJson from "../networks.json";
+
+const networks = networksJson as Network[];
 
 export function getArchive(network: string) {
 	return getNetwork(network).squids["archive"];
@@ -22,8 +24,8 @@ export function getStatsSquid(network: string) {
 	return getNetwork(network).squids["stats"];
 }
 
-export function getNetworks() {
-	return networks as Network[];
+export function getNetworks(names?: string[]) {
+	return networks.filter(it => !names || names.includes(it.name));
 }
 
 export function getNetwork(name: string): Network;

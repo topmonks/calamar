@@ -2,24 +2,31 @@
 import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { css } from "@emotion/react";
-import { isHex } from "@polkadot/util";
-import { isAddress } from "@polkadot/util-crypto";
 
+import { AccountAddress } from "../components/AccountAddress";
+import { ButtonLink } from "../components/ButtonLink";
 import { Card, CardHeader } from "../components/Card";
+import DataViewer from "../components/DataViewer";
 import { ErrorMessage } from "../components/ErrorMessage";
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import EventsTable from "../components/events/EventsTable";
+import { Link } from "../components/Link";
 import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
+import { SearchResultsTable, SearchResultsTableItemAttribute } from "../components/search/SearchResultsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+import { Time } from "../components/Time";
 
-import { useAccount } from "../hooks/useAccount";
-import { useBlock } from "../hooks/useBlock";
-import { useExtrinsic } from "../hooks/useExtrinsic";
-import { useExtrinsicsByName } from "../hooks/useExtrinsicsByName";
-import { useEventsByName } from "../hooks/useEventsByName";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useSearch } from "../hooks/useSearch";
+
+import { Account } from "../model/account";
+import { Block } from "../model/block";
+import { Event } from "../model/event";
+import { Extrinsic } from "../model/extrinsic";
+
+import { getNetworks } from "../services/networksService";
+import { NetworkSearchResult } from "../services/searchService";
+
+import { encodeAddress } from "../utils/formatAddress";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -39,42 +46,23 @@ const loadingStyle = css`
 	word-break: break-all;
 `;
 
-export const SearchPage = () => {
-	const { network } = useRootLoaderData();
+const eventArgsColCss = css`
+	width: 35%;
+`;
 
+export const SearchPage = () => {
 	const [qs] = useSearchParams();
+
 	const query = qs.get("query") || "";
+	const networkNames = qs.getAll("network");
+
+	console.log("query", query, networkNames);
 
 	const [forceLoading, setForceLoading] = useState<boolean>(true);
 
-	const maybeHash = isHex(query);
-	const maybeHeight = query?.match(/^\d+$/);
-	const maybeAddress = isAddress(query);
-	const maybeName = query && !maybeHash && !maybeHeight;
+	const searchResults = useSearch(query, getNetworks(networkNames));
 
-	const extrinsicByHash = useExtrinsic(network.name, { hash_eq: query }, { skip: !maybeHash });
-	const blockByHash = useBlock(network.name, { hash_eq: query }, { skip: !maybeHash });
-
-	const account = useAccount(network.name, query, {
-		// extrinsic and block has precedence before account because the hashes may collide
-		// so wait until they are resolved and we know it is not extrinsic or block
-		skip: !maybeAddress || extrinsicByHash.error || blockByHash.error,
-		waitUntil: extrinsicByHash.loading || blockByHash.loading
-	});
-
-	const blockByHeight = useBlock(network.name, { height_eq: parseInt(query) }, { skip: !maybeHeight });
-
-	const extrinsicsByName = useExtrinsicsByName(network.name, query, "id_DESC", { skip: !maybeName });
-	const eventsByName = useEventsByName(network.name, query, "id_DESC", { skip: !maybeName });
-
-	const allResources = [extrinsicByHash, blockByHash, account, blockByHeight, extrinsicsByName, eventsByName];
-	const multipleResultsResources = [extrinsicsByName, eventsByName];
-
-	const showResults = multipleResultsResources.some(it => it.data?.length);
-	const showLoading = forceLoading || (allResources.some(it => it.loading) && !showResults);
-	const showNotFound = allResources.every(it => it.notFound);
-	const error = allResources.find(it => it.error)?.error;
-	const showError = error && allResources.every(it => it.error || it.notFound);
+	console.log("results", searchResults);
 
 	useEffect(() => {
 		// show loading at least for 1s to prevent flickering
@@ -82,27 +70,29 @@ export const SearchPage = () => {
 		setTimeout(() => setForceLoading(false), 1000);
 	}, [query]);
 
-	useDOMEventTrigger("data-loaded", allResources.every(it => !it.loading));
+	useDOMEventTrigger("data-loaded", !searchResults.loading);
 
 	if (!query) {
 		return <Navigate to="/" replace />;
 	}
 
-	if (!forceLoading) {
-		if (extrinsicByHash.data) {
-			return <Navigate to={`/${network.name}/extrinsic/${extrinsicByHash.data.id}`} replace />;
+	if (!forceLoading && searchResults.data?.total === 1) {
+		const result = searchResults.data.results[0] as NetworkSearchResult;
+
+		if (result.extrinsics.data.length > 0) {
+			return <Navigate to={`/${result.network.name}/extrinsic/${result.extrinsics.data[0]}`} replace />;
 		}
 
-		if (blockByHash.data || blockByHeight.data) {
-			return <Navigate to={`/${network.name}/block/${blockByHash.data?.id || blockByHeight.data?.id}`} replace />;
+		if (result.blocks.data.length > 0) {
+			return <Navigate to={`/${result.network.name}/block/${result.blocks.data[0]}`} replace />;
 		}
 
-		if (account.data) {
-			return <Navigate to={`/${network.name}/account/${account.data.id}`} replace />;
+		if (result.accounts.data.length > 0) {
+			return <Navigate to={`/${result.network.name}/account/${result.accounts.data[0]}`} replace />;
 		}
 	}
 
-	if (showLoading) {
+	if (searchResults.loading || forceLoading) {
 		return (
 			<Card>
 				<CardHeader css={loadingStyle}>
@@ -113,7 +103,7 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (showNotFound) {
+	if (searchResults.notFound || !searchResults.data) {
 		return (
 			<Card>
 				<NotFound>Nothing was found for query <span css={queryStyle}>{query}</span></NotFound>
@@ -121,12 +111,12 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (showError && error) {
+	if (searchResults.error) {
 		return (
 			<Card>
 				<ErrorMessage
 					message={<>Unexpected error occured while searching for <span css={queryStyle}>{query}</span></>}
-					details={error.message}
+					details={searchResults.error.message}
 					showReported
 				/>
 			</Card>
@@ -139,26 +129,208 @@ export const SearchPage = () => {
 				Search results for query <span css={queryStyle}>{query}</span>
 			</CardHeader>
 			<TabbedContent>
-				{!extrinsicsByName.notFound &&
+				{searchResults.data.accountsTotal > 0 &&
 					<TabPane
-						label="Extrinsics"
-						count={extrinsicsByName.pagination.totalCount}
-						loading={extrinsicsByName.loading}
-						error={extrinsicsByName.error}
-						value="extrinsics"
+						label="Accounts"
+						count={searchResults.data.accountsTotal}
+						value="accounts"
 					>
-						<ExtrinsicsTable network={network} extrinsics={extrinsicsByName} showAccount showTime />
+						<SearchResultsTable<Account>
+							query={query}
+							results={searchResults.data.results}
+							getItems={(result) => result.accounts}
+							itemsPlural="accounts"
+						>
+							<SearchResultsTableItemAttribute<Account>
+								label="Account"
+								render={(account, network) => (
+									<AccountAddress
+										address={encodeAddress(account.id, network.prefix)}
+										network={network}
+										copyToClipboard="small"
+									/>
+								)}
+							/>
+						</SearchResultsTable>
 					</TabPane>
 				}
-				{!eventsByName.notFound &&
+				{searchResults.data.blocksTotal > 0 &&
+					<TabPane
+						label="Blocks"
+						count={searchResults.data.blocksTotal}
+						value="blocks"
+					>
+						<SearchResultsTable<Block>
+							query={query}
+							results={searchResults.data.results}
+							getItems={(result) => result.blocks}
+							itemsPlural="blocks"
+						>
+							<SearchResultsTableItemAttribute<Block>
+								label="Block (Height)"
+								render={(block, network) =>
+									<Link to={`/${network.name}/block/${block.id}`}>
+										{block.height}
+									</Link>
+								}
+							/>
+							<SearchResultsTableItemAttribute<Block>
+								label="Spec version"
+								render={(block) =>
+									<>{block.specVersion}</>
+								}
+							/>
+							<SearchResultsTableItemAttribute<Block>
+								label="Validator"
+								render={(block, network) =>
+									block.validator &&
+									<AccountAddress
+										network={network}
+										address={block.validator}
+										shorten
+										copyToClipboard="small"
+									/>
+								}
+							/>
+							<SearchResultsTableItemAttribute<Block>
+								label="Time"
+								render={(block) =>
+									<Time time={block.timestamp} fromNow tooltip utc />
+								}
+							/>
+						</SearchResultsTable>
+					</TabPane>
+				}
+				{searchResults.data.extrinsicsTotal > 0 &&
+					<TabPane
+						label="Extrinsics"
+						count={searchResults.data.extrinsicsTotal}
+						value="extrinsics"
+					>
+						<SearchResultsTable<Extrinsic>
+							query={query}
+							results={searchResults.data.results}
+							getItems={(result) => result.extrinsics}
+							itemsPlural="extrinsics"
+						>
+							<SearchResultsTableItemAttribute<Extrinsic>
+								label={searchResults.data?.results.length === 1
+									? "Extrinsic (ID)"
+									: "Extrinsics"
+								}
+								render={(extrinsic, network) => (
+									<Link to={`/${network.name}/extrinsic/${extrinsic.id}`}>
+										{extrinsic.id}
+									</Link>
+								)}
+							/>
+							{searchResults.data?.results.length === 1 &&
+								<SearchResultsTableItemAttribute<Extrinsic>
+									label="Name"
+									render={(extrinsic, network) => (
+										<ButtonLink
+											to={`/${network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
+											size="small"
+											color="secondary"
+										>
+											{extrinsic.palletName}.{extrinsic.callName}
+										</ButtonLink>
+									)}
+								/>
+							}
+							{searchResults.data?.results.length === 1 &&
+								<SearchResultsTableItemAttribute<Extrinsic>
+									label="Account"
+									render={(extrinsic, network) =>
+										extrinsic.signer &&
+											<AccountAddress
+												network={network}
+												address={extrinsic.signer}
+												shorten
+												copyToClipboard="small"
+											/>
+									}
+								/>
+							}
+							{searchResults.data?.results.length === 1 &&
+								<SearchResultsTableItemAttribute<Extrinsic>
+									label="Time"
+									render={(extrinsic) => (
+										<Time time={extrinsic.timestamp} fromNow tooltip utc />
+									)}
+								/>
+							}
+						</SearchResultsTable>
+					</TabPane>
+				}
+				{searchResults.data.eventsTotal > 0 &&
 					<TabPane
 						label="Events"
-						count={eventsByName.pagination.totalCount}
-						loading={eventsByName.loading}
-						error={eventsByName.error}
+						count={searchResults.data.eventsTotal}
 						value="events"
 					>
-						<EventsTable network={network} events={eventsByName} showExtrinsic />
+						<SearchResultsTable<Event>
+							query={query}
+							results={searchResults.data.results}
+							getItems={(result) => result.events}
+							itemsPlural="events"
+						>
+							<SearchResultsTableItemAttribute<Event>
+								label={searchResults.data?.results.length === 1
+									? "Event (ID)"
+									: "Events"
+								}
+								render={(event, network) => (
+									<Link to={`/${network.name}/event/${event.id}`}>
+										{event.id}
+									</Link>
+								)}
+							/>
+							{searchResults.data?.results.length === 1 &&
+								<SearchResultsTableItemAttribute<Event>
+									label="Name"
+									render={(event, network) => (
+										<ButtonLink
+											to={`/${network.name}/search?query=${event.palletName}.${event.eventName}`}
+											size="small"
+											color="secondary"
+										>
+											{event.palletName}.{event.eventName}
+										</ButtonLink>
+									)}
+								/>
+							}
+							{searchResults.data?.results.length === 1 &&
+								<SearchResultsTableItemAttribute<Event>
+									label="Extrinsic"
+									render={(event, network) => (
+										<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
+											{event.extrinsicId}
+										</Link>
+									)}
+								/>
+							}
+							{searchResults.data?.results.length === 1 &&
+								<SearchResultsTableItemAttribute<Event>
+									label="Parameters"
+									colCss={eventArgsColCss}
+									render={(event, network) => {
+										if (!event.args) {
+											return null;
+										}
+
+										return (
+											<DataViewer
+												network={network}
+												data={event.args}
+												metadata={event.metadata.event?.args}
+												copyToClipboard
+											/>
+										);
+									}}
+								/>
+							}
+						</SearchResultsTable>
 					</TabPane>
 				}
 			</TabbedContent>
