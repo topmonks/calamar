@@ -5,7 +5,6 @@ import { Call } from "../model/call";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/address";
 

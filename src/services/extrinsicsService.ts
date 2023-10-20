@@ -6,7 +6,6 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/address";
 import { lowerFirst, upperFirst } from "../utils/string";
