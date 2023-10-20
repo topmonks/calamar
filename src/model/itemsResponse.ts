@@ -1,4 +1,4 @@
-export type ItemsResponse<T = any> = {
+export type ItemsResponse<T = any, C extends boolean = false> = {
 	data: T[];
 	pagination: {
 		offset: number;
@@ -6,4 +6,6 @@ export type ItemsResponse<T = any> = {
 		hasNextPage: boolean;
 	},
 	totalCount?: number;
-}
+} & (C extends true ? {
+	totalCount: number;
+} : object)

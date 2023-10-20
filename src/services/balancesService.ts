@@ -7,7 +7,7 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
 import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { encodeAddress } from "../utils/formatAddress";
+import { encodeAddress } from "../utils/address";
 import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchStatsSquid } from "./fetchService";

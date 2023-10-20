@@ -1,28 +1,21 @@
 /** @jsxImportSource @emotion/react */
-import { Children, ReactElement, ReactNode } from "react";
+import React, { Children, ReactElement, useMemo } from "react";
+import { Alert } from "@mui/material";
 import { css } from "@emotion/react";
 
+import { Network } from "../../model/network";
+import { ItemsResponse } from "../../model/itemsResponse";
 import { NetworkSearchResult } from "../../services/searchService";
+import { formatNumber } from "../../utils/number";
 
 import { ItemsTable, ItemsTableAttribute, ItemsTableAttributeProps } from "../ItemsTable";
 import { Link } from "../Link";
-import { Alert } from "@mui/material";
-import { formatNumber } from "../../utils/number";
-import { ButtonLink } from "../ButtonLink";
-import { Time } from "../Time";
-import { Network } from "../../model/network";
-import { Extrinsic } from "../../model/extrinsic";
-import { ItemsResponse } from "../../model/itemsResponse";
-import React from "react";
 
 const tableStyle = css`
-	table {
-		table-layout: auto;
-	}
 `;
 
 const networkColumnStyle = css`
-	width: 0px;
+	width: 250px;
 `;
 
 const networkStyle = css`
@@ -51,35 +44,40 @@ interface SearchResultsTableProps<T> {
 	itemsPlural: string
 }
 
-export const SearchResultsTableAttribute = <T extends object>(props: ItemsTableAttributeProps<{item: T, result: NetworkSearchResult}, [Network], []>) => <ItemsTableAttribute {...props} />;
 export const SearchResultsTableItemAttribute = <T extends object>(props: ItemsTableAttributeProps<T, [Network], []>) => <ItemsTableAttribute {...props} />;
 
 interface SearchResultsTableRow<T extends object> {
 	id: string;
 	item: T|undefined;
 	result: NetworkSearchResult;
+	collapsed?: boolean;
 }
 
 export const SearchResultsTable = <T extends object>(props: SearchResultsTableProps<T>) => {
 	const { children, query, results, getItems, itemsPlural } = props;
 
-	const rows = results.flatMap<SearchResultsTableRow<T>>((result) => {
-		const items = getItems(result);
+	const collapseMultiple = results.length > 1;
 
-		if (items.data.length === 0 && items.totalCount) {
-			return [{
-				id: `${result.network.name}-0`,
-				item: undefined,
-				result
-			}];
-		} else {
-			return items.data.map((it, index) => ({
-				id: `${result.network.name}-${index}`,
-				item: it,
-				result
-			}));
-		}
-	}) || [];
+	const rows = useMemo(() => {
+		return results.flatMap<SearchResultsTableRow<T>>((result) => {
+			const items = getItems(result);
+
+			if (collapseMultiple && (items.totalCount || items.data.length || 0) > 1) {
+				return [{
+					id: `${result.network.name}-0`,
+					item: undefined,
+					result,
+					collapsed: true
+				}];
+			} else {
+				return items.data.map((it, index) => ({
+					id: `${result.network.name}-${index}`,
+					item: it,
+					result
+				}));
+			}
+		}) || [];
+	}, [collapseMultiple]);
 
 	const itemAttributes = Children.map(children, (child, index) => {
 		if (!child) {
@@ -92,19 +90,17 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 
 		if (index === 0) {
 			return (
-				<SearchResultsTableAttribute<T>
+				<ItemsTableAttribute<SearchResultsTableRow<T>>
 					label={label}
 					colCss={colCss}
-					colSpan={({item, result}) => (!item /* TODO || result.error*/) ? Children.count(children) : 1}
-					render={({item, result}) => {
-						const total = getItems(result).totalCount || 0;
-
+					colSpan={({result, collapsed}) => (collapsed /* TODO || result.error*/) ? Children.count(children) : 1}
+					render={({item, result, collapsed}) => {
 						return (
 							<>
 								{item && render(item, result.network)}
-								{!item && (
+								{collapsed && (
 									<Alert severity="warning" icon={false}>
-										{formatNumber(total)} {itemsPlural} found. {" "}
+										{formatNumber(getItems(result).totalCount || 0)} {itemsPlural} found. {" "}
 										<Link to={`/search?query=${query}&network=${result.network.name}`}>
 											View
 										</Link>
@@ -125,7 +121,7 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 		}
 
 		return (
-			<SearchResultsTableAttribute<T>
+			<ItemsTableAttribute<SearchResultsTableRow<T>>
 				label={label}
 				colCss={colCss}
 				render={({item, result}) => {
@@ -135,19 +131,18 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 
 					return render(item, result.network);
 				}}
-				hide={({item, result}) => !item /* TODO || result.error*/}
+				hide={({result, collapsed}) => collapsed /* TODO || result.error*/}
 			/>
 		);
 	}) as any;
 
 	return (
 		<ItemsTable
-			//data={results.map(it => ({...it, id: it.network.name})).filter(it => (getItems(it).pagination.totalCount || 0) > 0)}
 			data={rows}
 			css={tableStyle}
 			data-test="search-results-table"
 		>
-			<SearchResultsTableAttribute
+			<ItemsTableAttribute<SearchResultsTableRow<T>>
 				label="Network"
 				colCss={networkColumnStyle}
 				render={({result}) => (

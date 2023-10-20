@@ -2,7 +2,7 @@ import { Navigate, createBrowserRouter, redirect } from "react-router-dom";
 
 import { ResultLayout } from "./components/ResultLayout";
 import { getNetwork } from "./services/networksService";
-import { encodeAddress } from "./utils/formatAddress";
+import { encodeAddress } from "./utils/address";
 
 import { AccountPage } from "./screens/account";
 import { BlockPage } from "./screens/block";

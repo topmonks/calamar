@@ -1,6 +1,8 @@
 import Keyring from "@polkadot/keyring";
-import { ethereumEncode } from "@polkadot/util-crypto";
+import { ethereumEncode, isAddress } from "@polkadot/util-crypto";
 import { hexToU8a, isHex, u8aToHex } from "@polkadot/util";
+
+import { Network } from "../model/network";
 
 export function decodeAddress(address: string) {
 	try {
@@ -34,4 +36,12 @@ export function encodeAddress(
 	}
 
 	return address;
+}
+
+export function isEncodedAddress(network: Network, str: string) {
+	return isAddress(str) && str === encodeAddress(str, network.prefix);
+}
+
+export function isAccountPublicKey(str: string) {
+	return isHex(str) && isAddress(str);
 }

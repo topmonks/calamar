@@ -4,7 +4,7 @@ import { MainSquidTransfer } from "../model/main-squid/mainSquidTransfer";
 import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
 
-import { decodeAddress } from "../utils/formatAddress";
+import { decodeAddress } from "../utils/address";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { rawAmountToDecimal } from "../utils/number";
 

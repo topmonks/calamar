@@ -3,7 +3,7 @@ import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { Resource } from "../../model/resource";
 import { UsdRates } from "../../model/usdRates";
-import { decodeAddress } from "../../utils/formatAddress";
+import { decodeAddress } from "../../utils/address";
 
 import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";

@@ -4,7 +4,7 @@ import { Account } from "../model/account";
 import { AccountIdentity } from "../model/accountIdentity";
 import { MainSquidIdentity } from "../model/main-squid/mainSquidIdentity";
 import { DataError } from "../utils/error";
-import { decodeAddress, encodeAddress } from "../utils/formatAddress";
+import { decodeAddress, encodeAddress } from "../utils/address";
 
 import { getNetwork, hasSupport } from "./networksService";
 import { fetchIdentitiesSquid } from "./fetchService";

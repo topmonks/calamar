@@ -4,7 +4,7 @@ import { Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { Network } from "../model/network";
-import { encodeAddress } from "../utils/formatAddress";
+import { encodeAddress } from "../utils/address";
 import { shortenHash } from "../utils/shortenHash";
 
 import { Link } from "./Link";

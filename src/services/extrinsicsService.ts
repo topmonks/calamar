@@ -8,7 +8,7 @@ import { PaginationOptions } from "../model/paginationOptions";
 
 import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
 import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { decodeAddress } from "../utils/formatAddress";
+import { decodeAddress } from "../utils/address";
 import { lowerFirst, upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";

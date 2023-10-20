@@ -26,7 +26,7 @@ import { Extrinsic } from "../model/extrinsic";
 import { getNetworks } from "../services/networksService";
 import { NetworkSearchResult } from "../services/searchService";
 
-import { encodeAddress } from "../utils/formatAddress";
+import { encodeAddress } from "../utils/address";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -79,16 +79,16 @@ export const SearchPage = () => {
 	if (!forceLoading && searchResults.data?.total === 1) {
 		const result = searchResults.data.results[0] as NetworkSearchResult;
 
-		if (result.extrinsics.data.length > 0) {
-			return <Navigate to={`/${result.network.name}/extrinsic/${result.extrinsics.data[0]}`} replace />;
+		if (result.extrinsics.data[0]) {
+			return <Navigate to={`/${result.network.name}/extrinsic/${result.extrinsics.data[0].id}`} replace />;
 		}
 
-		if (result.blocks.data.length > 0) {
-			return <Navigate to={`/${result.network.name}/block/${result.blocks.data[0]}`} replace />;
+		if (result.blocks.data[0]) {
+			return <Navigate to={`/${result.network.name}/block/${result.blocks.data[0].id}`} replace />;
 		}
 
-		if (result.accounts.data.length > 0) {
-			return <Navigate to={`/${result.network.name}/account/${result.accounts.data[0]}`} replace />;
+		if (result.accounts.data[0]) {
+			return <Navigate to={`/${result.network.name}/account/${result.accounts.data[0].id}`} replace />;
 		}
 	}
 
@@ -214,52 +214,43 @@ export const SearchPage = () => {
 							itemsPlural="extrinsics"
 						>
 							<SearchResultsTableItemAttribute<Extrinsic>
-								label={searchResults.data?.results.length === 1
-									? "Extrinsic (ID)"
-									: "Extrinsics"
-								}
+								label="Extrinsic (ID)"
 								render={(extrinsic, network) => (
 									<Link to={`/${network.name}/extrinsic/${extrinsic.id}`}>
 										{extrinsic.id}
 									</Link>
 								)}
 							/>
-							{searchResults.data?.results.length === 1 &&
-								<SearchResultsTableItemAttribute<Extrinsic>
-									label="Name"
-									render={(extrinsic, network) => (
-										<ButtonLink
-											to={`/${network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
-											size="small"
-											color="secondary"
-										>
-											{extrinsic.palletName}.{extrinsic.callName}
-										</ButtonLink>
-									)}
-								/>
-							}
-							{searchResults.data?.results.length === 1 &&
-								<SearchResultsTableItemAttribute<Extrinsic>
-									label="Account"
-									render={(extrinsic, network) =>
-										extrinsic.signer &&
+							<SearchResultsTableItemAttribute<Extrinsic>
+								label="Name"
+								render={(extrinsic, network) => (
+									<ButtonLink
+										to={`/${network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
+										size="small"
+										color="secondary"
+									>
+										{extrinsic.palletName}.{extrinsic.callName}
+									</ButtonLink>
+								)}
+							/>
+							<SearchResultsTableItemAttribute<Extrinsic>
+								label="Account"
+								render={(extrinsic, network) =>
+									extrinsic.signer &&
 											<AccountAddress
 												network={network}
 												address={extrinsic.signer}
 												shorten
 												copyToClipboard="small"
 											/>
-									}
-								/>
-							}
-							{searchResults.data?.results.length === 1 &&
-								<SearchResultsTableItemAttribute<Extrinsic>
-									label="Time"
-									render={(extrinsic) => (
-										<Time time={extrinsic.timestamp} fromNow tooltip utc />
-									)}
-								/>
-							}
+								}
+							/>
+							<SearchResultsTableItemAttribute<Extrinsic>
+								label="Time"
+								render={(extrinsic) => (
+									<Time time={extrinsic.timestamp} fromNow tooltip utc />
+								)}
+							/>
 						</SearchResultsTable>
 					</TabPane>
 				}
@@ -276,60 +267,51 @@ export const SearchPage = () => {
 							itemsPlural="events"
 						>
 							<SearchResultsTableItemAttribute<Event>
-								label={searchResults.data?.results.length === 1
-									? "Event (ID)"
-									: "Events"
-								}
+								label="Event (ID)"
 								render={(event, network) => (
 									<Link to={`/${network.name}/event/${event.id}`}>
 										{event.id}
 									</Link>
 								)}
 							/>
-							{searchResults.data?.results.length === 1 &&
-								<SearchResultsTableItemAttribute<Event>
-									label="Name"
-									render={(event, network) => (
-										<ButtonLink
-											to={`/${network.name}/search?query=${event.palletName}.${event.eventName}`}
-											size="small"
-											color="secondary"
-										>
-											{event.palletName}.{event.eventName}
-										</ButtonLink>
-									)}
-								/>
-							}
-							{searchResults.data?.results.length === 1 &&
-								<SearchResultsTableItemAttribute<Event>
-									label="Extrinsic"
-									render={(event, network) => (
-										<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
-											{event.extrinsicId}
-										</Link>
-									)}
-								/>
-							}
-							{searchResults.data?.results.length === 1 &&
-								<SearchResultsTableItemAttribute<Event>
-									label="Parameters"
-									colCss={eventArgsColCss}
-									render={(event, network) => {
-										if (!event.args) {
-											return null;
-										}
+							<SearchResultsTableItemAttribute<Event>
+								label="Name"
+								render={(event, network) => (
+									<ButtonLink
+										to={`/${network.name}/search?query=${event.palletName}.${event.eventName}`}
+										size="small"
+										color="secondary"
+									>
+										{event.palletName}.{event.eventName}
+									</ButtonLink>
+								)}
+							/>
+							<SearchResultsTableItemAttribute<Event>
+								label="Extrinsic"
+								render={(event, network) => (
+									<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
+										{event.extrinsicId}
+									</Link>
+								)}
+							/>
+							<SearchResultsTableItemAttribute<Event>
+								label="Parameters"
+								colCss={eventArgsColCss}
+								render={(event, network) => {
+									if (!event.args) {
+										return null;
+									}
 
-										return (
-											<DataViewer
-												network={network}
-												data={event.args}
-												metadata={event.metadata.event?.args}
-												copyToClipboard
-											/>
-										);
-									}}
-								/>
-							}
+									return (
+										<DataViewer
+											network={network}
+											data={event.args}
+											metadata={event.metadata.event?.args}
+											copyToClipboard
+										/>
+									);
+								}}
+							/>
 						</SearchResultsTable>
 					</TabPane>
 				}

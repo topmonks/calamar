@@ -51,7 +51,7 @@ export type ItemsTableAttributeProps<T, A extends any[], S> = {
 	onSortChange?: (sortOrder: SortOrder<S>) => void;
 	render: ItemsTableDataFn<T, A, ReactNode>;
 	colSpan?: ItemsTableDataFn<T, A, number>;
-	hide?: ItemsTableDataFn<T, A, boolean>;
+	hide?: ItemsTableDataFn<T, A, boolean|undefined>;
 	_data?: T;
 	_additionalData?: A;
 }

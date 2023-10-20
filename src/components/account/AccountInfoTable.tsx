@@ -5,7 +5,7 @@ import { isEthereumAddress } from "@polkadot/util-crypto";
 import { Account } from "../../model/account";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
-import { encodeAddress } from "../../utils/formatAddress";
+import { encodeAddress } from "../../utils/address";
 
 import {InfoTable, InfoTableAttribute } from "../InfoTable";
 

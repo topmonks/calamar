@@ -1,4 +1,4 @@
-export type ItemsConnection<T = any> = {
+export type ItemsConnection<T = any, C extends boolean = false> = {
 	edges: {
 		node: T
 	}[],
@@ -7,6 +7,8 @@ export type ItemsConnection<T = any> = {
 		endCursor: string;
 		hasPreviousPage: boolean;
 		hasNextPage: boolean;
-	},
+	}
+	totalCount?: number;
+} & (C extends true ? {
 	totalCount: number;
-}
+} : object)

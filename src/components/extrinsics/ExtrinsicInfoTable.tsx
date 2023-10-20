@@ -7,7 +7,7 @@ import { Extrinsic } from "../../model/extrinsic";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
-import { encodeAddress } from "../../utils/formatAddress";
+import { encodeAddress } from "../../utils/address";
 
 import { AccountAddress } from "../AccountAddress";
 import { ButtonLink } from "../ButtonLink";
