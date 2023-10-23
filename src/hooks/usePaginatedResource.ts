@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRollbar } from "@rollbar/react";
 
 import { FetchOptions } from "../model/fetchOptions";
@@ -9,6 +9,15 @@ import { DataError } from "../utils/error";
 
 import { usePagination } from "./usePagination";
 
+type PaginatedResourceProps<T> = Omit<PaginatedResource<T>, "notFound" | "pagination" | "refetch">;
+
+const defaultResourceProps = {
+	data: [],
+	totalCount: undefined,
+	loading: true,
+	error: undefined,
+};
+
 export function usePaginatedResource<T = any, F extends any[] = any[]>(
 	fetchItems: (...args: [...F, PaginationOptions]) => ItemsResponse<T>|Promise<ItemsResponse<T>>,
 	args: F,
@@ -16,10 +25,10 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 ) {
 	const rollbar = useRollbar();
 
-	const [data, setData] = useState<T[]>([]);
-	const [totalCount, setTotalCount] = useState<number>();
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<any>();
+	const fetchRequestKey = useMemo(() => JSON.stringify(args), [JSON.stringify(args)]);
+	const previousFetchRequestKeyRef = useRef<string>();
+
+	const [resourceProps, setResourceProps] = useState<PaginatedResourceProps<T>>(defaultResourceProps);
 
 	const pagination = usePagination();
 
@@ -36,45 +45,67 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 					offset: pagination.offset,
 				});
 
-				setData(items.data);
-				setTotalCount(items.totalCount);
+				setResourceProps((props) => ({
+					...props,
+					data: items.data,
+					totalCount: items.totalCount
+				}));
+
 				pagination.set(items.pagination);
-			} catch(e) {
-				if (e instanceof DataError) {
-					rollbar.error(e);
-					setError(e);
+			} catch(error) {
+				if (error instanceof DataError) {
+					rollbar.error(error);
+					setResourceProps((props) => ({
+						...props,
+						error
+					}));
 				} else {
-					throw e;
+					throw error;
 				}
 			}
 		}
 
-		setLoading(false);
+		setResourceProps((props) => ({
+			...props,
+			loading: false
+		}));
 	}, [
 		fetchItems,
-		JSON.stringify(args),
+		fetchRequestKey,
 		pagination.limit,
 		pagination.offset,
 		options?.skip,
 	]);
 
 	useEffect(() => {
-		setData([]);
-		setError(undefined);
-		setLoading(true);
+		setResourceProps((props) => ({
+			...props,
+			data: [],
+			error: undefined,
+			loading: true
+		}));
 		fetchData();
 	}, [fetchData]);
 
-	return useMemo(
-		() => ({
-			data,
-			totalCount,
-			loading,
-			notFound: !loading && !error && (!data || data.length === 0),
-			pagination,
-			error,
-			refetch: fetchData
-		}) as PaginatedResource<T>,
-		[data, loading, pagination, error, fetchData]
+	return useMemo<PaginatedResource<T>>(
+		() => {
+			if (previousFetchRequestKeyRef.current && previousFetchRequestKeyRef.current !== fetchRequestKey) {
+				// do not return old data if the fetch args changed
+				return ({
+					...defaultResourceProps,
+					notFound: false,
+					pagination,
+					refetch: fetchData
+				});
+			}
+
+			return ({
+				...resourceProps,
+				notFound: !resourceProps.loading && !resourceProps.error && (!resourceProps.data || resourceProps.data.length === 0),
+				pagination,
+				refetch: fetchData
+			});
+		},
+		[fetchRequestKey, resourceProps, pagination, fetchData]
 	);
 }
