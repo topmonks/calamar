@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useEffect } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { BlockInfoTable } from "../components/blocks/BlockInfoTable";
 import { CallsTable } from "../components/calls/CallsTable";
@@ -14,14 +14,18 @@ import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useTabParam } from "../hooks/useTabParam";
 
 export type BlockPageParams = {
 	id: string;
+	tab?: string;
 };
 
 export const BlockPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as BlockPageParams;
+
+	const [tab, setTab] = useTabParam();
 
 	const block = useBlock(network.name, { id_eq: id });
 
@@ -52,7 +56,7 @@ export const BlockPage = () => {
 			</Card>
 			{block.data &&
 				<Card>
-					<TabbedContent>
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Extrinsics"
 							count={extrinsics.totalCount}

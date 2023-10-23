@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useState } from "react";
+import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { CircularProgress, Tab, TabProps, Tabs } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Warning";
 import { Theme, css } from "@emotion/react";
@@ -66,14 +66,14 @@ export const TabPane = (props: TabPaneProps) => {
 
 export type TabbedContentProps = {
 	children: ReactElement<TabPaneProps>|(ReactElement<TabPaneProps>|false)[];
+	currentTab?: string;
+	onTabChange: (tab: string) => void;
 }
 
 export const TabbedContent = (props: TabbedContentProps) => {
-	const { children } = props;
+	const { children, currentTab: tab, onTabChange } = props;
 
-	const [tab, setTab] = useState<string | undefined>(undefined);
-
-	const tabHandles = Children.map(children, (child) => {
+	const tabHandles = useMemo(() => Children.map(children, (child) => {
 		if (!child) {
 			return null;
 		}
@@ -106,16 +106,27 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				{...restProps}
 			/>
 		);
-	});
+	}), [children]);
 
-	const tabPanes = Children.map(children, (child) => child && cloneElement(child, {key: child.props.value}));
+	const tabPanes = useMemo(() => Children.map(children, (child) => child && cloneElement(child, {key: child.props.value})), [children]);
+	const currentTabPane = tabPanes.find((it) => it.props.value === tab);
+
+	const handleTabChange = useCallback((ev: any, value: string) => {
+		onTabChange?.(value);
+	}, [onTabChange]);
+
+	useEffect(() => {
+		if (!currentTabPane) {
+			tabPanes[0] && onTabChange?.(tabPanes[0].props.value);
+		}
+	}, [currentTabPane, tabPanes, onTabChange]);
 
 	return (
 		<>
 			<div css={tabsWrapperStyle}>
 				<Tabs
 					css={tabsStyle}
-					onChange={(_, tab) => setTab(tab)}
+					onChange={handleTabChange}
 					value={tab || tabHandles[0]?.props.value}
 					variant="scrollable"
 					scrollButtons={false}
@@ -124,7 +135,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				</Tabs>
 
 			</div>
-			{tab ? tabPanes.find((it) => it.props.value === tab) : tabPanes[0]}
+			{currentTabPane}
 		</>
 	);
 };

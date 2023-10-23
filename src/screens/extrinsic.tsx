@@ -12,6 +12,7 @@ import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useTabParam } from "../hooks/useTabParam";
 
 type ExtrinsicPageParams = {
 	id: string;
@@ -20,6 +21,7 @@ type ExtrinsicPageParams = {
 export const ExtrinsicPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as ExtrinsicPageParams;
+	const [tab, setTab] = useTabParam();
 
 	const extrinsic = useExtrinsic(network.name, { id_eq: id });
 	const events = useEvents(network.name, { extrinsicId_eq: id }, "id_ASC");
@@ -41,7 +43,7 @@ export const ExtrinsicPage = () => {
 			</Card>
 			{extrinsic.data &&
 				<Card>
-					<TabbedContent>
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Events"
 							count={events.totalCount}

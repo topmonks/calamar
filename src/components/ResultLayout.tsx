@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Outlet, useLoaderData } from "react-router-dom";
+import { Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import Background from "../assets/detail-page-bgr.svg";
@@ -158,6 +158,9 @@ const footerStyle = css`
 `;
 
 export const ResultLayout = () => {
+	const location = useLocation();
+	console.log("LOCATION", location.pathname, location.search);
+
 	return (
 		<div css={containerStyle}>
 			<div css={backgroundStyle} data-test="background" />

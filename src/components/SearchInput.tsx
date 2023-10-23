@@ -136,6 +136,8 @@ function SearchInput(props: SearchInputProps) {
 				url = `${url}&network=${network}`;
 			}
 
+			console.log("SEARCH", url);
+
 			navigate(url);
 		},
 		[navigate, network, search]

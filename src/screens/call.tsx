@@ -9,6 +9,7 @@ import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useTabParam } from "../hooks/useTabParam";
 
 export type CallPageParams = {
 	id: string;
@@ -17,6 +18,7 @@ export type CallPageParams = {
 export const CallPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as CallPageParams;
+	const [tab, setTab] = useTabParam();
 
 	const call = useCall(network.name, { id_eq: id });
 	const events = useEvents(network.name, { callId_eq: id }, "id_ASC");
@@ -34,7 +36,7 @@ export const CallPage = () => {
 			</Card>
 			{call.data &&
 				<Card>
-					<TabbedContent>
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Events"
 							count={events.totalCount}

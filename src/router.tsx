@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
 		element: <ResultLayout />,
 		children: [
 			{
-				path: "search",
+				path: "search/:tab?",
 				element: <SearchPage />,
 			},
 			{
@@ -46,23 +46,23 @@ export const router = createBrowserRouter([
 				errorElement: <ErrorPage />,
 				children: [
 					{
-						index: true,
+						path: ":tab?",
 						element: <NetworkPage />,
 					},
 					{
-						path: "extrinsic/:id",
+						path: "extrinsic/:id/:tab?",
 						element: <ExtrinsicPage />,
 					},
 					{
-						path: "block/:id",
+						path: "block/:id/:tab?",
 						element: <BlockPage />,
 					},
 					{
-						path: "call/:id",
+						path: "call/:id/:tab?",
 						element: <CallPage />,
 					},
 					{
-						path: "account/:address",
+						path: "account/:address/:tab?",
 						element: <AccountPage />,
 						loader: ({ params }) => {
 							const { network: networkName, address } = params;

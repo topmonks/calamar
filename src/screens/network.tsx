@@ -19,6 +19,7 @@ import { NetworkStats } from "../components/network/NetworkStats";
 import { useUsdRates } from "../hooks/useUsdRates";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 import { NetworkTokenDistribution } from "../components/network/NetworkTokenDistribution";
+import { useTabParam } from "../hooks/useTabParam";
 
 const networkIconStyle = css`
 	vertical-align: text-bottom;
@@ -37,6 +38,7 @@ const tokenDistributionStyle = (theme: Theme) => css`
 
 export const NetworkPage = () => {
 	const { network } = useNetworkLoaderData();
+	const [tab, setTab] = useTabParam();
 
 	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
 	const blocks = useBlocks(network.name, undefined, "id_DESC");
@@ -83,7 +85,7 @@ export const NetworkPage = () => {
 
 
 			<Card data-test="network-related-items">
-				<TabbedContent>
+				<TabbedContent currentTab={tab} onTabChange={setTab}>
 					<TabPane
 						label="Extrinsics"
 						count={extrinsics.totalCount}

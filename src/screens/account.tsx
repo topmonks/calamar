@@ -26,6 +26,7 @@ import { useTransfers } from "../hooks/useTransfers";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 
 import { hasSupport } from "../services/networksService";
+import { useTabParam } from "../hooks/useTabParam";
 
 const accountInfoStyle = css`
 	display: flex;
@@ -83,6 +84,7 @@ export type AccountPageParams = {
 export const AccountPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { address } = useParams() as AccountPageParams;
+	const [tab, setTab] = useTabParam();
 
 	const account = useAccount(network.name, address);
 	const balances = useAccountBalances(address);
@@ -147,7 +149,7 @@ export const AccountPage = () => {
 			</CardRow>
 			{account.data &&
 				<Card data-test="account-related-items">
-					<TabbedContent>
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Balances"
 							count={balances.data?.length}

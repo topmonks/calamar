@@ -27,6 +27,7 @@ import { getNetworks } from "../services/networksService";
 import { NetworkSearchResult } from "../services/searchService";
 
 import { encodeAddress } from "../utils/address";
+import { useTabParam } from "../hooks/useTabParam";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -55,6 +56,10 @@ export const SearchPage = () => {
 
 	const query = qs.get("query") || "";
 	const networkNames = qs.getAll("network");
+
+	const [tab, setTab] = useTabParam({
+		preserveQueryParams: ["query", "network"]
+	});
 
 	console.log("query", query, networkNames);
 
@@ -128,7 +133,7 @@ export const SearchPage = () => {
 			<CardHeader>
 				Search results for query <span css={queryStyle}>{query}</span>
 			</CardHeader>
-			<TabbedContent>
+			<TabbedContent currentTab={tab} onTabChange={setTab}>
 				{searchResults.data.accountsTotal > 0 &&
 					<TabPane
 						label="Accounts"
