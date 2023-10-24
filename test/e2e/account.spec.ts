@@ -1,6 +1,6 @@
 import { Request } from "@playwright/test";
 
-import { encodeAddress } from "../../src/utils/formatAddress";
+import { encodeAddress } from "../../src/utils/address";
 import { getNetwork } from "../../src/services/networksService";
 
 import { clearCapturedPageEvents, waitForPageEvent } from "../utils/events";
