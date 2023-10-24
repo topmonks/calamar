@@ -94,14 +94,17 @@ export const AccountPage = () => {
 
 	const usdRates = useUsdRates();
 
+	console.log("USD RATES", usdRates.loading, {...usdRates});
+
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
 
-	useEffect(() => {
+	// TODO
+	/*useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
 			return () => clearInterval(interval);
 		}
-	}, [extrinsics]);
+	}, [extrinsics]);*/
 
 	return (
 		<>

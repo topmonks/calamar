@@ -62,14 +62,14 @@ const SortProperties = {
 	RESERVED: (balance: AccountBalanceWithUsdRate) => balanceSort(balance, "reserved")
 };
 
-export type AccountBalanceOverview = {
+export type AccountBalancesTable = {
 	balances: Resource<AccountBalance[]>;
 	usdRates: Resource<UsdRates>;
 }
 
-const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [UsdRates]>;
+const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [UsdRates|undefined]>;
 
-export const AccountBalancesTable = (props: AccountBalanceOverview) => {
+export const AccountBalancesTable = (props: AccountBalancesTable) => {
 	const { balances, usdRates } = props;
 
 	const [sort, setSort] = useState<SortOrder<SortProperty<AccountBalanceWithUsdRate>>>({
@@ -170,7 +170,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 									amount={balance.balance.total}
 									currency={balance.network.symbol}
 									decimalPlaces="optimal"
-									usdRate={usdRates[balance.network.name]}
+									usdRate={usdRates?.[balance.network.name]}
 									showFullInTooltip
 									showUsdValue
 									data-test={`${balance.network.name}-balance-total`}
@@ -203,7 +203,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							amount={balance.balance.free}
 							currency={balance.network.symbol}
 							decimalPlaces="optimal"
-							usdRate={usdRates[balance.network.name]}
+							usdRate={usdRates?.[balance.network.name]}
 							showFullInTooltip
 							showUsdValue
 							data-test={`${balance.network.name}-balance-free`}
@@ -222,7 +222,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							amount={balance.balance.reserved}
 							currency={balance.network.symbol}
 							decimalPlaces="optimal"
-							usdRate={usdRates[balance.network.name]}
+							usdRate={usdRates?.[balance.network.name]}
 							showFullInTooltip
 							showUsdValue
 							data-test={`${balance.network.name}-balance-reserved`}

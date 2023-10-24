@@ -51,12 +51,13 @@ export const NetworkPage = () => {
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
 
-	useEffect(() => {
+	// TODO
+	/*useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
 			return () => clearInterval(interval);
 		}
-	}, [extrinsics]);
+	}, [extrinsics]);*/
 
 	return (
 		<>

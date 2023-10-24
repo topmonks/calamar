@@ -3,5 +3,4 @@ export type Resource<T = any> = {
 	loading: boolean;
 	notFound: boolean;
 	error?: any;
-	refetch: () => Promise<any>;
 }

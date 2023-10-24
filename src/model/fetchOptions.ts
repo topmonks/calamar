@@ -1,12 +1,6 @@
-export type FetchOptions = {
-	/**
-	 * Use this if you need to wait before fetch
-	 * until some condition is true.
-	 *
-	 * Loading status is on until that.
-	 */
-	waitUntil?: boolean;
+import { SWRConfiguration } from "swr";
 
+export interface FetchOptions extends SWRConfiguration {
 	/**
 	 * Use this if the data are not needed based on some condition.
 	 *
@@ -14,4 +8,4 @@ export type FetchOptions = {
 	 * performed and results with "Not found".
 	 */
 	skip?: boolean;
-};
+}

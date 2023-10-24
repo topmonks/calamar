@@ -35,12 +35,13 @@ export const BlockPage = () => {
 
 	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
 
-	useEffect(() => {
+	// TODO
+	/*useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
 			return () => clearInterval(interval);
 		}
-	}, [extrinsics]);
+	}, [extrinsics]);*/
 
 	return (
 		<>

@@ -1,93 +1,52 @@
+import { useEffect, useMemo } from "react";
+import useSwr from "swr";
 import { useRollbar } from "@rollbar/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { FetchOptions } from "../model/fetchOptions";
 import { Resource } from "../model/resource";
 import { DataError } from "../utils/error";
 
-type ResourceProps<T> = Omit<Resource<T>, "notFound" | "refetch">;
-
-const defaultResourceProps = {
-	data: undefined,
-	loading: true,
-	error: undefined,
-};
-
 export function useResource<T = any, F extends any[] = any[]>(
 	fetchItem: (...args: F) => T|undefined|Promise<T|undefined>,
 	args: F,
-	options?: FetchOptions
+	options: FetchOptions = {}
 ) {
 	const rollbar = useRollbar();
 
-	const fetchRequestKey = useMemo(() => JSON.stringify(args), [JSON.stringify(args)]);
-	const previousFetchRequestKeyRef = useRef<string>();
+	const {skip, ...swrOptions} = options;
 
-	const [resourceProps, setResourceProps] = useState<ResourceProps<T>>(defaultResourceProps);
+	const swrKey = !skip
+		? [fetchItem, args]
+		: null;
 
-	const fetchData = useCallback(async () => {
-		if (options?.waitUntil) {
-			// wait until all required condition are met
+	const {data, isLoading, error} = useSwr(swrKey, swrFetcher, swrOptions);
+
+	useEffect(() => {
+		if (!error) {
 			return;
 		}
 
-		if (!options?.skip) {
-			try {
-				const data = await fetchItem(...args);
-				setResourceProps((props) => ({
-					...props,
-					data
-				}));
-			} catch(error) {
-				if (error instanceof DataError) {
-					rollbar.error(error);
-					setResourceProps((props) => ({
-						...props,
-						error: error
-					}));
-				} else {
-					throw error;
-				}
-			}
+		if (error && error instanceof DataError) {
+			rollbar.error(error);
+		} else {
+			throw error;
 		}
+	}, [error]);
 
-		setResourceProps((props) => ({
-			...props,
-			loading: false
-		}));
-	}, [fetchItem, fetchRequestKey, options?.waitUntil, options?.skip]);
+	return useMemo<Resource<T>>(() => ({
+		data,
+		loading: isLoading,
+		error,
+		notFound: !isLoading && !error && !data,
+	}), [data, isLoading, error]);
+}
 
-	useEffect(() => {
-		setResourceProps((props) => ({
-			...props,
-			data: undefined,
-			error: undefined,
-			loading: true
-		}));
-		fetchData();
-	}, [fetchData]);
+/*** PRIVATE ***/
 
-	useEffect(() => {
-		previousFetchRequestKeyRef.current = fetchRequestKey;
-	}, [fetchRequestKey]);
+type DataFetcher<T, F extends any[]> = (...args: F) => T|undefined|Promise<T|undefined>;
 
-	return useMemo<Resource<T>>(
-		() => {
-			if (previousFetchRequestKeyRef.current && previousFetchRequestKeyRef.current !== fetchRequestKey) {
-				// do not return old data if the fetch args changed
-				return ({
-					...defaultResourceProps,
-					notFound: false,
-					refetch: fetchData
-				});
-			}
-
-			return ({
-				...resourceProps,
-				notFound: !resourceProps.loading && !resourceProps.error && !resourceProps.data,
-				refetch: fetchData
-			});
-		},
-		[fetchRequestKey, resourceProps, fetchData]
-	);
+function swrFetcher<T = any, F extends any[] = any[]>(
+	[fetchItem, args]: [DataFetcher<T, F>, F],
+) {
+	return fetchItem(...args);
 }

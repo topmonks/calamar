@@ -16,7 +16,7 @@ export type BalancesTableProps = {
 	usdRates: Resource<UsdRates>;
 };
 
-const BalancesItemsTableAttribute = ItemsTableAttribute<Balance, never, [UsdRates]>;
+const BalancesItemsTableAttribute = ItemsTableAttribute<Balance, never, [UsdRates|undefined]>;
 
 function BalancesTable(props: BalancesTableProps) {
 	const { network, balances, usdRates } = props;
@@ -50,7 +50,7 @@ function BalancesTable(props: BalancesTableProps) {
 						amount={balance.total}
 						currency={network.symbol}
 						decimalPlaces="optimal"
-						usdRate={usdRates[network.name]}
+						usdRate={usdRates?.[network.name]}
 						showFullInTooltip
 						showUsdValue
 					/>
@@ -64,7 +64,7 @@ function BalancesTable(props: BalancesTableProps) {
 						amount={balance.free}
 						currency={network.symbol}
 						decimalPlaces="optimal"
-						usdRate={usdRates[network.name]}
+						usdRate={usdRates?.[network.name]}
 						showFullInTooltip
 						showUsdValue
 					/>
@@ -78,7 +78,7 @@ function BalancesTable(props: BalancesTableProps) {
 						amount={balance.reserved}
 						currency={network.symbol}
 						decimalPlaces="optimal"
-						usdRate={usdRates[network.name]}
+						usdRate={usdRates?.[network.name]}
 						showFullInTooltip
 						showUsdValue
 					/>
