@@ -40,8 +40,9 @@ interface SearchResultsTableProps<T> {
 	children: SearchResultsTableChild<T>|(SearchResultsTableChild<T>|false|undefined|null)[];
 	query: string;
 	results: NetworkSearchResult[];
-	getItems: (result: NetworkSearchResult) => ItemsResponse<T>;
 	itemsPlural: string
+	getItems: (result: NetworkSearchResult) => ItemsResponse<T>;
+	onPageChange?: (page: number) => void;
 }
 
 export const SearchResultsTableItemAttribute = <T extends object>(props: ItemsTableAttributeProps<T, [Network], []>) => <ItemsTableAttribute {...props} />;

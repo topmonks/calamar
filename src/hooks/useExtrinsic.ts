@@ -1,12 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { ExtrinsicsFilter, getExtrinsic } from "../services/extrinsicsService";
 
-import { useResource } from "./useResource";
+import { UseResourceOptions, useResource } from "./useResource";
 
 export function useExtrinsic(
 	network: string,
 	filter: ExtrinsicsFilter,
-	options?: FetchOptions
+	options?: UseResourceOptions
 ) {
 	return useResource(getExtrinsic, [network, filter], options);
 }

@@ -6,8 +6,8 @@ import { StatsSquidAccountBalance } from "../model/stats-squid/statsSquidAccount
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { encodeAddress } from "../utils/address";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchStatsSquid } from "./fetchService";
@@ -26,7 +26,7 @@ export async function getBalances(
 	pagination: PaginationOptions,
 ) {
 	if (hasSupport(network, "stats-squid")) {
-		const after = pagination.offset === 0 ? null : pagination.offset.toString();
+		const {first, after} = paginationToConnectionCursor(pagination);
 
 		const response = await fetchStatsSquid<{accountsConnection: ItemsConnection<StatsSquidAccountBalance>}>(
 			network,
@@ -51,26 +51,26 @@ export async function getBalances(
 				}
 			}`,
 			{
-				first: pagination.limit,
+				first,
 				after,
 				filter,
 				order,
 			}
 		);
 
-		const balances = extractConnectionItems(response.accountsConnection, pagination, unifyStatsSquidAccountBalance, network);
+		const balances = extractConnectionItems(response.accountsConnection, unifyStatsSquidAccountBalance, network);
 
 		return balances;
 	}
 
 	return {
 		data: [],
-		pagination: {
-			offset: 0,
-			limit: 0,
+		pageInfo: {
+			page: 1,
+			pageSize: 10, // TODO constant
 			hasNextPage: false,
-			totalCount: 0,
-		}
+		},
+		totalCount: 0,
 	};
 }
 

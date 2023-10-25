@@ -14,12 +14,13 @@ export type BalancesTableProps = {
 	network: Network;
 	balances: PaginatedResource<Balance>;
 	usdRates: Resource<UsdRates>;
+	onPageChange?: (page: number) => void;
 };
 
 const BalancesItemsTableAttribute = ItemsTableAttribute<Balance, never, [UsdRates|undefined]>;
 
 function BalancesTable(props: BalancesTableProps) {
-	const { network, balances, usdRates } = props;
+	const { network, balances, usdRates, onPageChange } = props;
 
 	return (
 		<ItemsTable
@@ -29,7 +30,8 @@ function BalancesTable(props: BalancesTableProps) {
 			notFound={balances.notFound}
 			notFoundMessage="No balances found"
 			error={balances.error}
-			pagination={balances.pagination}
+			pageInfo={balances.pageInfo}
+			onPageChange={onPageChange}
 			data-test="balances-table"
 		>
 			<BalancesItemsTableAttribute

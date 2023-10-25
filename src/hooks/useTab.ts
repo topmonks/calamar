@@ -6,15 +6,15 @@ export type UseTabParamOptions = {
 	preserveQueryParams?: string[];
 }
 
-export function useTabParam(options: UseTabParamOptions = {}) {
+export function useTab<T extends string>(options: UseTabParamOptions = {}) {
 	const [qs] = useSearchParams();
 	const params = useParams();
 
 	const navigate = useNavigate();
 
-	const currentTab = params[options.paramName || "tab"];
+	const currentTab = params[options.paramName || "tab"] as T;
 
-	const setTab = useCallback((newTab: string) => {
+	const setTab = useCallback((newTab: T) => {
 		const path = currentTab ? `./../${newTab}` : newTab;
 		const newQs = new URLSearchParams();
 

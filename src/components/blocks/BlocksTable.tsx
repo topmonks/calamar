@@ -12,6 +12,7 @@ export type BlocksTableProps = {
 	blocks: PaginatedResource<Block>,
 	showValidator: boolean,
 	showTime?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const BlocksTableAttribute = ItemsTableAttribute<Block>;
@@ -22,6 +23,7 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 		blocks,
 		showValidator,
 		showTime,
+		onPageChange
 	} = props;
 
 	return (
@@ -31,7 +33,8 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 			notFound={blocks.notFound}
 			notFoundMessage="No blocks found"
 			error={blocks.error}
-			pagination={blocks.pagination}
+			pageInfo={blocks.pageInfo}
+			onPageChange={onPageChange}
 			data-test="blocks-table"
 		>
 			<BlocksTableAttribute

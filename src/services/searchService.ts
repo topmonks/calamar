@@ -1,5 +1,4 @@
 import { isHex } from "@polkadot/util";
-import { isAddress } from "@polkadot/util-crypto";
 
 import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ExplorerSquidEvent } from "../model/explorer-squid/explorerSquidEvent";
@@ -13,16 +12,16 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsResponse } from "../model/itemsResponse";
 import { Network } from "../model/network";
 
-import { warningAssert } from "../utils/assert";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress, encodeAddress, isAccountPublicKey, isEncodedAddress } from "../utils/address";
+import { warningAssert } from "../utils/assert";
+import { extractConnectionItems } from "../utils/itemsConnection";
+import { emptyResponse } from "../utils/itemsResponse";
 
-import { BlocksFilter, BlocksOrder, blocksFilterToExplorerSquidFilter, unifyExplorerSquidBlock } from "./blocksService";
-import { EventsFilter, EventsOrder, addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
-import { ExtrinsicsFilter, ExtrinsicsOrder, extrinsicFilterToExplorerSquidFilter, normalizeExtrinsicName, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
+import { BlocksFilter, blocksFilterToExplorerSquidFilter, unifyExplorerSquidBlock } from "./blocksService";
+import { EventsFilter, addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
+import { ExtrinsicsFilter, extrinsicFilterToExplorerSquidFilter, normalizeExtrinsicName, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
 import { fetchExplorerSquid } from "./fetchService";
 import { getNetworks, hasSupport } from "./networksService";
-import { emptyResponse } from "../utils/items-response";
 
 export type ItemId = {
 	id: string;
@@ -67,9 +66,9 @@ export async function search(query: string, networks: Network[] = []): Promise<S
 						address: encodeAddress(query, result.network.prefix),
 						identity: null
 					}],
-					pagination: {
-						offset: 0,
-						limit: 0,
+					pageInfo: {
+						page: 1,
+						pageSize: 10, // TODO constant
 						hasNextPage: false,
 					},
 					totalCount: 1
@@ -197,8 +196,8 @@ async function searchNetworkByHash(network: Network, hash: string) {
 		}
 	);
 
-	const blocks = await extractConnectionItems(response.blocks, {offset: 0, limit: 10}, unifyExplorerSquidBlock);
-	const extrinsics = await extractConnectionItems(response.extrinsics, {offset: 0, limit: 10}, unifyExplorerSquidExtrinsic, network.name);
+	const blocks = await extractConnectionItems(response.blocks, unifyExplorerSquidBlock);
+	const extrinsics = await extractConnectionItems(response.extrinsics, unifyExplorerSquidExtrinsic, network.name);
 
 	const result: NetworkSearchResult = {
 		network,
@@ -250,7 +249,7 @@ async function searchNetworkByBlockHeight(network: Network, height: number) {
 		}
 	);
 
-	const blocks = await extractConnectionItems(response.blocks, {offset: 0, limit: 10}, unifyExplorerSquidBlock);
+	const blocks = await extractConnectionItems(response.blocks, unifyExplorerSquidBlock);
 
 	const result: NetworkSearchResult = {
 		network,
@@ -273,9 +272,9 @@ async function searchNetworkByEncodedAddress(network: Network, encodedAddress: s
 				address: encodedAddress,
 				identity: null
 			}],
-			pagination: {
-				limit: 10,
-				offset: 0,
+			pageInfo: {
+				page: 1,
+				pageSize: 10,
 				hasNextPage: false
 			},
 			totalCount: 1
@@ -419,7 +418,6 @@ async function searchNetworkByName(network: Network, query: string, fetchAll: bo
 
 	const extrinsics = await extractConnectionItems(
 		response.extrinsics,
-		{offset: 0, limit: 10},
 		unifyExplorerSquidExtrinsic,
 		network.name
 	);
@@ -428,7 +426,6 @@ async function searchNetworkByName(network: Network, query: string, fetchAll: bo
 		network.name,
 		await extractConnectionItems(
 			response.events,
-			{offset: 0, limit: 10},
 			unifyExplorerSquidEvent,
 			network.name
 		)

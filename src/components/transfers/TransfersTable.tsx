@@ -17,6 +17,7 @@ export type TransfersTableProps = {
 	network: Network;
 	transfers: PaginatedResource<Transfer>,
 	showTime?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const TransfersTableAttribute = ItemsTableAttribute<Transfer>;
@@ -26,6 +27,7 @@ function TransfersTable(props: TransfersTableProps) {
 		network,
 		transfers,
 		showTime,
+		onPageChange
 	} = props;
 
 	console.log(transfers);
@@ -37,7 +39,8 @@ function TransfersTable(props: TransfersTableProps) {
 			notFound={transfers.notFound}
 			notFoundMessage="No transfers found"
 			error={transfers.error}
-			pagination={transfers.pagination}
+			pageInfo={transfers.pageInfo}
+			onPageChange={onPageChange}
 			data-test="transfers-table"
 		>
 			<TransfersTableAttribute

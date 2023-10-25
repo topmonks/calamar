@@ -1,11 +1,10 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { getAccountBalances } from "../services/balancesService";
 
-import { useResource } from "./useResource";
+import { UseResourceOptions, useResource } from "./useResource";
 
 export function useAccountBalances(
 	address: string,
-	options?: FetchOptions,
+	options?: UseResourceOptions,
 ) {
 	return useResource(getAccountBalances, [address], options);
 }

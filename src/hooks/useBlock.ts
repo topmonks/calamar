@@ -1,12 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { BlocksFilter, getBlock } from "../services/blocksService";
 
-import { useResource } from "./useResource";
+import { UseResourceOptions, useResource } from "./useResource";
 
 export function useBlock(
 	network: string,
 	filter: BlocksFilter,
-	options?: FetchOptions
+	options?: UseResourceOptions
 ) {
 	return useResource(getBlock, [network, filter], options);
 }

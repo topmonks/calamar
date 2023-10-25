@@ -18,12 +18,13 @@ export type EventsTableProps = {
 	network: Network;
 	events: PaginatedResource<Event>;
 	showExtrinsic?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const EventsItemsTableAttribute = ItemsTableAttribute<Event>;
 
 function EventsTable(props: EventsTableProps) {
-	const { network, events, showExtrinsic } = props;
+	const { network, events, showExtrinsic, onPageChange } = props;
 
 	return (
 		<ItemsTable
@@ -32,7 +33,8 @@ function EventsTable(props: EventsTableProps) {
 			notFound={events.notFound}
 			notFoundMessage="No events found"
 			error={events.error}
-			pagination={events.pagination}
+			pageInfo={events.pageInfo}
+			onPageChange={onPageChange}
 			data-test="events-table"
 		>
 			<EventsItemsTableAttribute

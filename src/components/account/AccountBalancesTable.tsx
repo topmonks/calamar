@@ -1,16 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Alert } from "@mui/material";
 import { css } from "@emotion/react";
 import Decimal from "decimal.js";
 
-import { usePagination } from "../../hooks/usePagination";
 import { AccountBalance } from "../../model/accountBalance";
+import { PaginationOptions } from "../../model/paginationOptions";
+import { Resource } from "../../model/resource";
 import { SortDirection } from "../../model/sortDirection";
 import { SortOrder } from "../../model/sortOrder";
 import { SortProperty } from "../../model/sortProperty";
-import { Resource } from "../../model/resource";
 import { UsdRates } from "../../model/usdRates";
+
 import { compareProps } from "../../utils/compare";
 
 import { AccountAddress } from "../AccountAddress";
@@ -62,22 +63,22 @@ const SortProperties = {
 	RESERVED: (balance: AccountBalanceWithUsdRate) => balanceSort(balance, "reserved")
 };
 
-export type AccountBalancesTable = {
+export type AccountBalancesTableProps = {
 	balances: Resource<AccountBalance[]>;
 	usdRates: Resource<UsdRates>;
+	pagination: PaginationOptions;
+	onPageChange?: (page: number) => void;
 }
 
 const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [UsdRates|undefined]>;
 
-export const AccountBalancesTable = (props: AccountBalancesTable) => {
-	const { balances, usdRates } = props;
+export const AccountBalancesTable = (props: AccountBalancesTableProps) => {
+	const { balances, usdRates, pagination, onPageChange } = props;
 
 	const [sort, setSort] = useState<SortOrder<SortProperty<AccountBalanceWithUsdRate>>>({
 		property: SortProperties.TOTAL,
 		direction: SortDirection.DESC
 	});
-
-	const pagination = usePagination();
 
 	const data = useMemo(() => {
 		return balances.data
@@ -92,26 +93,20 @@ export const AccountBalancesTable = (props: AccountBalancesTable) => {
 	}, [balances, usdRates, sort]);
 
 	const pageData = useMemo(() => {
-		return data?.slice(pagination.offset, pagination.offset + pagination.limit);
-	}, [data, pagination.offset, pagination.limit]);
+		return data?.slice((pagination.page - 1) * pagination.pageSize, pagination.page * pagination.pageSize);
+	}, [data, pagination.page, pagination.pageSize]);
 
-	useEffect(() => {
-		if (data) {
-			pagination.set({
-				...pagination,
-				hasNextPage: pagination.offset + pagination.limit < data.length
-			});
-		}
-	}, [data, pagination.offset, pagination.limit]);
+	const pageInfo = useMemo(() => ({
+		page: pagination.page,
+		pageSize: pagination.pageSize,
+		hasNextPage: pagination.page * pagination.pageSize < data.length
+	}), [data, pagination]);
 
 	const handleSortSelected = useCallback((value: SortOrder<SortProperty<AccountBalance>>) => {
 		console.log("set sort", value);
 		setSort(value);
-		pagination.set({
-			...pagination,
-			offset: 0
-		});
-	}, [pagination]);
+		onPageChange?.(0);
+	}, [onPageChange]);
 
 	return (
 		<div>
@@ -120,7 +115,8 @@ export const AccountBalancesTable = (props: AccountBalancesTable) => {
 				additionalData={[usdRates.data]}
 				loading={balances.loading || usdRates.loading}
 				error={balances.error}
-				pagination={pagination}
+				pageInfo={pageInfo}
+				onPageChange={onPageChange}
 				sort={sort}
 				data-test="account-balances-table"
 			>

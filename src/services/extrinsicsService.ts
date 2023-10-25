@@ -6,8 +6,8 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/address";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { lowerFirst, upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
@@ -149,7 +149,7 @@ async function getArchiveExtrinsics(
 	pagination: PaginationOptions,
 	fetchTotalCount = true
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{ extrinsicsConnection: ItemsConnection<ArchiveExtrinsic> }>(
 		network,
@@ -191,14 +191,14 @@ async function getArchiveExtrinsics(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: extrinsicFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	return extractConnectionItems(response.extrinsicsConnection, pagination, unifyArchiveExtrinsic, network);
+	return extractConnectionItems(response.extrinsicsConnection, unifyArchiveExtrinsic, network);
 }
 
 async function getExplorerSquidExtrinsics(
@@ -208,7 +208,7 @@ async function getExplorerSquidExtrinsics(
 	pagination: PaginationOptions,
 	fetchTotalCount = true
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{ extrinsicsConnection: ItemsConnection<ExplorerSquidExtrinsic> }>(
 		network,
@@ -248,14 +248,14 @@ async function getExplorerSquidExtrinsics(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: extrinsicFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	return extractConnectionItems(response.extrinsicsConnection, pagination, unifyExplorerSquidExtrinsic, network);
+	return extractConnectionItems(response.extrinsicsConnection, unifyExplorerSquidExtrinsic, network);
 }
 
 async function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Promise<Extrinsic> {

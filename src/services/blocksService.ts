@@ -4,7 +4,7 @@ import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { hasSupport } from "./networksService";
@@ -95,7 +95,7 @@ async function getArchiveBlocks(
 	order: BlocksOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{blocksConnection: ItemsConnection<ArchiveBlock>}>(
 		network,
@@ -124,14 +124,14 @@ async function getArchiveBlocks(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: blocksFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, pagination, unifyArchiveBlock);
+	const blocks = extractConnectionItems(response.blocksConnection, unifyArchiveBlock);
 
 	return blocks;
 }
@@ -142,7 +142,7 @@ async function getExplorerSquidBlocks(
 	order: BlocksOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{blocksConnection: ItemsConnection<ExplorerSquidBlock>}>(
 		network,
@@ -169,14 +169,14 @@ async function getExplorerSquidBlocks(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: blocksFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
+	const blocks = extractConnectionItems(response.blocksConnection, unifyExplorerSquidBlock);
 
 	return blocks;
 }

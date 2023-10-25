@@ -1,12 +1,10 @@
-import { FetchOptions } from "../model/fetchOptions";
-import { BalancesFilter, BalancesOrder, getBalances } from "../services/balancesService";
-import { usePaginatedResource } from "./usePaginatedResource";
+import { BalancesFilter, getBalances } from "../services/balancesService";
+import { UsePaginatedResourceOptions, usePaginatedResource } from "./usePaginatedResource";
 
 export function useBalances(
 	network: string,
 	filter: BalancesFilter | undefined,
-	order?: BalancesOrder,
-	options?: FetchOptions
+	options?: UsePaginatedResourceOptions
 ) {
-	return usePaginatedResource(getBalances, [network, filter, order], options);
+	return usePaginatedResource(getBalances, [network, filter, options?.order], options);
 }

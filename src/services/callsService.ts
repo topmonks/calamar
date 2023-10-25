@@ -5,8 +5,8 @@ import { Call } from "../model/call";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
 import { decodeAddress } from "../utils/address";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getCallRuntimeMetadata } from "./runtimeMetadataService";
@@ -116,7 +116,7 @@ async function getArchiveCalls(
 	order: CallsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{callsConnection: ItemsConnection<ArchiveCall>}>(
 		network,
@@ -157,14 +157,14 @@ async function getArchiveCalls(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: callsFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	return extractConnectionItems(response?.callsConnection, pagination, unifyArchiveCall, network);
+	return extractConnectionItems(response?.callsConnection, unifyArchiveCall, network);
 }
 
 async function getExplorerSquidCalls(
@@ -173,7 +173,7 @@ async function getExplorerSquidCalls(
 	order: CallsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{callsConnection: ItemsConnection<ExplorerSquidCall>}>(
 		network,
@@ -208,14 +208,14 @@ async function getExplorerSquidCalls(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: callsFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	return extractConnectionItems(response.callsConnection, pagination, unifyExplorerSquidCall, network);
+	return extractConnectionItems(response.callsConnection, unifyExplorerSquidCall, network);
 }
 
 async function getArchiveCallsArgs(network: string, callsIds: string[]) {

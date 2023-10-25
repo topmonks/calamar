@@ -5,7 +5,7 @@ import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
 
 import { decodeAddress } from "../utils/address";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchArchive, fetchMainSquid } from "./fetchService";
@@ -28,12 +28,12 @@ export async function getTransfers(
 
 	return {
 		data: [],
-		pagination: {
-			offset: 0,
-			limit: 0,
+		pageInfo: {
+			page: 1,
+			pageSize: 10, // TODO constant
 			hasNextPage: false,
-			totalCount: 0,
-		}
+		},
+		totalCount: 0,
 	};
 }
 
@@ -45,7 +45,7 @@ async function getMainSquidTransfers(
 	order: TransfersOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchMainSquid<{transfersConnection: ItemsConnection<MainSquidTransfer>}>(
 		network,
@@ -84,14 +84,14 @@ async function getMainSquidTransfers(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: transfersFilterToMainSquidFilter(filter),
 			order,
 		}
 	);
 
-	const items = await extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer, network);
+	const items = await extractConnectionItems(response.transfersConnection, unifyMainSquidTransfer, network);
 	const transfers = await addExtrinsicsInfo(network, items);
 
 	return transfers;

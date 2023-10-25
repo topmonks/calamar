@@ -1,13 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { EventsFilter, EventsOrder, getEvents } from "../services/eventsService";
 
-import { usePaginatedResource } from "./usePaginatedResource";
+import { UsePaginatedResourceOptions, usePaginatedResource } from "./usePaginatedResource";
 
 export function useEvents(
 	network: string,
 	filter: EventsFilter,
-	order?: EventsOrder,
-	options?: FetchOptions
+	options?: UsePaginatedResourceOptions
 ) {
-	return usePaginatedResource(getEvents, [network, filter, order], options);
+	return usePaginatedResource(getEvents, [network, filter, options?.order], options);
 }

@@ -13,6 +13,7 @@ export type ExtrinsicsTableProps = {
 	extrinsics: PaginatedResource<Extrinsic>,
 	showAccount?: boolean;
 	showTime?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const ExtrinsicsTableAttribute = ItemsTableAttribute<Extrinsic>;
@@ -23,6 +24,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 		extrinsics,
 		showAccount,
 		showTime,
+		onPageChange
 	} = props;
 
 	return (
@@ -32,7 +34,8 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			notFound={extrinsics.notFound}
 			notFoundMessage="No extrinsics found"
 			error={extrinsics.error}
-			pagination={extrinsics.pagination}
+			pageInfo={extrinsics.pageInfo}
+			onPageChange={onPageChange}
 			data-test="extrinsics-table"
 		>
 			<ExtrinsicsTableAttribute

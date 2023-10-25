@@ -11,12 +11,13 @@ export type CallsTableProps = {
 	network: Network;
 	calls: PaginatedResource<Call>;
 	showAccount?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const CallsTableAttribute = ItemsTableAttribute<Call>;
 
 export const CallsTable = (props: CallsTableProps) => {
-	const { network, calls, showAccount } = props;
+	const { network, calls, showAccount, onPageChange } = props;
 
 	return (
 		<ItemsTable
@@ -25,7 +26,8 @@ export const CallsTable = (props: CallsTableProps) => {
 			notFound={calls.notFound}
 			notFoundMessage="No calls found"
 			error={calls.error}
-			pagination={calls.pagination}
+			pageInfo={calls.pageInfo}
+			onPageChange={onPageChange}
 			data-test="calls-table"
 		>
 			<CallsTableAttribute

@@ -17,6 +17,7 @@ import { Time } from "../components/Time";
 
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useSearch } from "../hooks/useSearch";
+import { useTab } from "../hooks/useTab";
 
 import { Account } from "../model/account";
 import { Block } from "../model/block";
@@ -27,7 +28,6 @@ import { getNetworks } from "../services/networksService";
 import { NetworkSearchResult } from "../services/searchService";
 
 import { encodeAddress } from "../utils/address";
-import { useTabParam } from "../hooks/useTabParam";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -57,7 +57,7 @@ export const SearchPage = () => {
 	const query = qs.get("query") || "";
 	const networkNames = qs.getAll("network");
 
-	const [tab, setTab] = useTabParam({
+	const [tab, setTab] = useTab({
 		preserveQueryParams: ["query", "network"]
 	});
 

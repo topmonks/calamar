@@ -5,11 +5,13 @@ import { CallInfoTable } from "../components/calls/CallInfoTable";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import EventsTable from "../components/events/EventsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+
 import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { usePage } from "../hooks/usePage";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
-import { useTabParam } from "../hooks/useTabParam";
+import { useTab } from "../hooks/useTab";
 
 export type CallPageParams = {
 	id: string;
@@ -18,10 +20,16 @@ export type CallPageParams = {
 export const CallPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as CallPageParams;
-	const [tab, setTab] = useTabParam();
+
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
 
 	const call = useCall(network.name, { id_eq: id });
-	const events = useEvents(network.name, { callId_eq: id }, "id_ASC");
+
+	const events = useEvents(network.name, { callId_eq: id }, {
+		order: "id_ASC",
+		page: tab === "events" ? page : 1
+	});
 
 	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);
 
@@ -44,7 +52,11 @@ export const CallPage = () => {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} events={events} />
+							<EventsTable
+								network={network}
+								events={events}
+								onPageChange={setPage}
+							/>
 						</TabPane>
 					</TabbedContent>
 				</Card>

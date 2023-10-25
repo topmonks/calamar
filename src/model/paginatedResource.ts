@@ -1,8 +1,7 @@
-import { Pagination } from "../hooks/usePagination";
-
+import { PageInfo } from "./pageInfo";
 import { Resource } from "./resource";
 
 export type PaginatedResource<T = any> = Resource<T[]> & {
-	pagination: Pagination
+	pageInfo?: PageInfo,
 	totalCount?: number;
 }

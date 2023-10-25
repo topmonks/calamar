@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
@@ -21,12 +20,13 @@ import { useAccountBalances } from "../hooks/useAccountBalances";
 import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { useUsdRates } from "../hooks/useUsdRates";
-import { useTransfers } from "../hooks/useTransfers";
+import { usePage } from "../hooks/usePage";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useTab } from "../hooks/useTab";
+import { useTransfers } from "../hooks/useTransfers";
+import { useUsdRates } from "../hooks/useUsdRates";
 
 import { hasSupport } from "../services/networksService";
-import { useTabParam } from "../hooks/useTabParam";
 
 const accountInfoStyle = css`
 	display: flex;
@@ -84,27 +84,34 @@ export type AccountPageParams = {
 export const AccountPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { address } = useParams() as AccountPageParams;
-	const [tab, setTab] = useTabParam();
+
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
 
 	const account = useAccount(network.name, address);
-	const balances = useAccountBalances(address);
-	const extrinsics = useExtrinsics(network.name, { signerAddress_eq: address });
-	const calls = useCalls(network.name, { callerAddress_eq: address });
-	const transfers = useTransfers(network.name, { accountAddress_eq: address });
+
+	const balances = useAccountBalances(address, { refresh: true });
+
+	const extrinsics = useExtrinsics(network.name, { signerAddress_eq: address }, {
+		page: tab === "extrinsics" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const calls = useCalls(network.name, { callerAddress_eq: address }, {
+		page: tab === "calls" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const transfers = useTransfers(network.name, { accountAddress_eq: address }, {
+		page: tab === "transfers" ? page : 1,
+		refreshFirstPage: true
+	});
 
 	const usdRates = useUsdRates();
 
 	console.log("USD RATES", usdRates.loading, {...usdRates});
 
 	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
-
-	// TODO
-	/*useEffect(() => {
-		if (extrinsics.pagination.offset === 0) {
-			const interval = setInterval(extrinsics.refetch, 3000);
-			return () => clearInterval(interval);
-		}
-	}, [extrinsics]);*/
 
 	return (
 		<>
@@ -160,7 +167,15 @@ export const AccountPage = () => {
 							error={balances.error}
 							value="balances"
 						>
-							<AccountBalancesTable balances={balances} usdRates={usdRates} />
+							<AccountBalancesTable
+								balances={balances}
+								usdRates={usdRates}
+								pagination={{
+									page,
+									pageSize: 10 // TODO constant
+								}}
+								onPageChange={setPage}
+							/>
 						</TabPane>
 						<TabPane
 							label="Extrinsics"
@@ -169,7 +184,12 @@ export const AccountPage = () => {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
+							<ExtrinsicsTable
+								network={network}
+								extrinsics={extrinsics}
+								showTime
+								onPageChange={setPage}
+							/>
 						</TabPane>
 						{hasSupport(network.name, "explorer-squid") &&
 							<TabPane
@@ -179,7 +199,11 @@ export const AccountPage = () => {
 								error={calls.error}
 								value="calls"
 							>
-								<CallsTable network={network} calls={calls} />
+								<CallsTable
+									network={network}
+									calls={calls}
+									onPageChange={setPage}
+								/>
 							</TabPane>
 						}
 						{hasSupport(network.name, "main-squid") &&
@@ -190,7 +214,12 @@ export const AccountPage = () => {
 								error={transfers.error}
 								value="transfers"
 							>
-								<TransfersTable network={network} transfers={transfers} showTime />
+								<TransfersTable
+									network={network}
+									transfers={transfers}
+									showTime
+									onPageChange={setPage}
+								/>
 							</TabPane>
 						}
 					</TabbedContent>

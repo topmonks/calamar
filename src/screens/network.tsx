@@ -1,25 +1,27 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect } from "react";
 import { Theme, css } from "@emotion/react";
 
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import { Card, CardHeader, CardRow } from "../components/Card";
-import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
-import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useTransfers } from "../hooks/useTransfers";
-import TransfersTable from "../components/transfers/TransfersTable";
-import { hasSupport } from "../services/networksService";
-import { useBlocks } from "../hooks/useBlocks";
-import BlocksTable from "../components/blocks/BlocksTable";
-import { useBalances } from "../hooks/useBalances";
 import BalancesTable from "../components/balances/BalancesTable";
-import { useStats } from "../hooks/useStats";
+import BlocksTable from "../components/blocks/BlocksTable";
+import { Card, CardHeader, CardRow } from "../components/Card";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { NetworkStats } from "../components/network/NetworkStats";
-import { useUsdRates } from "../hooks/useUsdRates";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
 import { NetworkTokenDistribution } from "../components/network/NetworkTokenDistribution";
-import { useTabParam } from "../hooks/useTabParam";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
+import TransfersTable from "../components/transfers/TransfersTable";
+
+import { useBalances } from "../hooks/useBalances";
+import { useBlocks } from "../hooks/useBlocks";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { usePage } from "../hooks/usePage";
+import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useStats } from "../hooks/useStats";
+import { useTab } from "../hooks/useTab";
+import { useTransfers } from "../hooks/useTransfers";
+import { useUsdRates } from "../hooks/useUsdRates";
+
+import { hasSupport } from "../services/networksService";
 
 const networkIconStyle = css`
 	vertical-align: text-bottom;
@@ -38,12 +40,30 @@ const tokenDistributionStyle = (theme: Theme) => css`
 
 export const NetworkPage = () => {
 	const { network } = useNetworkLoaderData();
-	const [tab, setTab] = useTabParam();
 
-	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
-	const blocks = useBlocks(network.name, undefined, "id_DESC");
-	const transfers = useTransfers(network.name, undefined, "id_DESC");
-	const topHolders = useBalances(network.name, undefined, "total_DESC");
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
+
+	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, {
+		page: tab === "extrinsics" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const blocks = useBlocks(network.name, undefined, {
+		page: tab === "blocks" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const transfers = useTransfers(network.name, undefined, {
+		page: tab === "transfers" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const topHolders = useBalances(network.name, undefined, {
+		order: "total_DESC",
+		page: tab === "top-holders" ? page : 1,
+		refreshFirstPage: true
+	});
 
 	const stats = useStats(network.name, undefined);
 

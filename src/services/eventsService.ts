@@ -7,7 +7,7 @@ import { ItemsCounter } from "../model/itemsCounter";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
@@ -67,7 +67,7 @@ export async function getEventsByName(
 		if (countResponse.itemsCounterById === null || countResponse.itemsCounterById.total === 0) {
 			return {
 				data: [],
-				pagination: {
+				pageInfo: {
 					...pagination,
 					hasNextPage: false
 				}
@@ -191,7 +191,7 @@ async function getArchiveEvents(
 	pagination: PaginationOptions,
 	fetchTotalCount = true
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{eventsConnection: ItemsConnection<ArchiveEvent>}>(
 		network,
@@ -228,14 +228,14 @@ async function getArchiveEvents(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: eventsFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	return extractConnectionItems(response.eventsConnection, pagination, unifyArchiveEvent, network);
+	return extractConnectionItems(response.eventsConnection, unifyArchiveEvent, network);
 }
 
 async function getExplorerSquidEvents(
@@ -245,7 +245,7 @@ async function getExplorerSquidEvents(
 	pagination: PaginationOptions,
 	fetchTotalCount = true
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{eventsConnection: ItemsConnection<ExplorerSquidEvent>}>(
 		network,
@@ -280,14 +280,14 @@ async function getExplorerSquidEvents(
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: eventsFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	const data = await extractConnectionItems(response.eventsConnection, pagination, unifyExplorerSquidEvent, network);
+	const data = await extractConnectionItems(response.eventsConnection, unifyExplorerSquidEvent, network);
 	const events = await addEventsArgs(network, data);
 
 	return events;

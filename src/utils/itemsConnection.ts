@@ -2,9 +2,17 @@ import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 
+export function paginationToConnectionCursor(pagination: PaginationOptions) {
+	const offset = (pagination.page - 1) * pagination.pageSize;
+
+	return {
+		after: offset === 0 ? null : offset.toString(),
+		first: pagination.pageSize
+	};
+}
+
 export async function extractConnectionItems<R = any, T = any, A extends any[] = any[], C extends boolean = false>(
 	connection: ItemsConnection<T, C>,
-	pagination: PaginationOptions,
 	transformNode: (node: T, ...a: A) => R|Promise<R>,
 	...additionalArgs: A
 ): Promise<ItemsResponse<R, C>> {
@@ -14,10 +22,17 @@ export async function extractConnectionItems<R = any, T = any, A extends any[] =
 		data.push(await transformNode(edge.node, ...additionalArgs));
 	}
 
+	const startIndex = parseInt(connection.pageInfo.startCursor) - 1;
+	const endIndex = parseInt(connection.pageInfo.endCursor); // non-inclusive
+
+	const pageSize = (endIndex - startIndex);
+	const page = Math.floor(startIndex / pageSize) + 1;
+
 	return {
 		data,
-		pagination: {
-			...pagination,
+		pageInfo: {
+			page,
+			pageSize,
 			hasNextPage: connection.pageInfo.hasNextPage,
 		},
 		totalCount: connection.totalCount

@@ -7,12 +7,14 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import EventsTable from "../components/events/EventsTable";
 import { ExtrinsicInfoTable } from "../components/extrinsics/ExtrinsicInfoTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+
 import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { usePage } from "../hooks/usePage";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
-import { useTabParam } from "../hooks/useTabParam";
+import { useTab } from "../hooks/useTab";
 
 type ExtrinsicPageParams = {
 	id: string;
@@ -21,11 +23,21 @@ type ExtrinsicPageParams = {
 export const ExtrinsicPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as ExtrinsicPageParams;
-	const [tab, setTab] = useTabParam();
+
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
 
 	const extrinsic = useExtrinsic(network.name, { id_eq: id });
-	const events = useEvents(network.name, { extrinsicId_eq: id }, "id_ASC");
-	const calls = useCalls(network.name, { extrinsicId_eq: id }, "id_ASC");
+
+	const events = useEvents(network.name, { extrinsicId_eq: id }, {
+		order: "id_ASC",
+		page: tab === "events" ? page : 1
+	});
+
+	const calls = useCalls(network.name, { extrinsicId_eq: id }, {
+		order: "id_ASC",
+		page: tab === "calls" ? page : 1
+	});
 
 	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
 
@@ -54,6 +66,7 @@ export const ExtrinsicPage = () => {
 							<EventsTable
 								network={network}
 								events={events}
+								onPageChange={setPage}
 							/>
 						</TabPane>
 						<TabPane
@@ -63,7 +76,12 @@ export const ExtrinsicPage = () => {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} showAccount />
+							<CallsTable
+								network={network}
+								calls={calls}
+								showAccount
+								onPageChange={setPage}
+							/>
 						</TabPane>
 					</TabbedContent>
 				</Card>

@@ -1,20 +1,21 @@
-import { useCallback, useEffect } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { BlockInfoTable } from "../components/blocks/BlockInfoTable";
 import { CallsTable } from "../components/calls/CallsTable";
 import { Card, CardHeader } from "../components/Card";
 import CopyToClipboardButton from "../components/CopyToClipboardButton";
+import EventsTable from "../components/events/EventsTable";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
-import EventsTable from "../components/events/EventsTable";
+
 import { useBlock } from "../hooks/useBlock";
 import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
-import { useTabParam } from "../hooks/useTabParam";
+import { usePage } from "../hooks/usePage";
+import { useTab } from "../hooks/useTab";
 
 export type BlockPageParams = {
 	id: string;
@@ -25,23 +26,27 @@ export const BlockPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as BlockPageParams;
 
-	const [tab, setTab] = useTabParam();
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
 
 	const block = useBlock(network.name, { id_eq: id });
 
-	const extrinsics = useExtrinsics(network.name, { blockId_eq: id }, "id_DESC");
-	const events = useEvents(network.name, { blockId_eq: id }, "id_DESC");
-	const calls = useCalls(network.name, { blockId_eq: id }, "id_DESC");
+	const extrinsics = useExtrinsics(network.name, { blockId_eq: id }, {
+		page: tab === "extrinsics" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const events = useEvents(network.name, { blockId_eq: id }, {
+		page: tab === "events" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const calls = useCalls(network.name, { blockId_eq: id }, {
+		page: tab === "calls" ? page : 1,
+		refreshFirstPage: true
+	});
 
 	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);
-
-	// TODO
-	/*useEffect(() => {
-		if (extrinsics.pagination.offset === 0) {
-			const interval = setInterval(extrinsics.refetch, 3000);
-			return () => clearInterval(interval);
-		}
-	}, [extrinsics]);*/
 
 	return (
 		<>
@@ -65,7 +70,12 @@ export const BlockPage = () => {
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount />
+							<ExtrinsicsTable
+								network={network}
+								extrinsics={extrinsics}
+								showAccount
+								onPageChange={setPage}
+							/>
 						</TabPane>
 						<TabPane
 							label="Calls"
@@ -74,7 +84,12 @@ export const BlockPage = () => {
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} showAccount />
+							<CallsTable
+								network={network}
+								calls={calls}
+								showAccount
+								onPageChange={setPage}
+							/>
 						</TabPane>
 						<TabPane
 							label="Events"
@@ -83,7 +98,12 @@ export const BlockPage = () => {
 							error={events.error}
 							value="events"
 						>
-							<EventsTable network={network} events={events} showExtrinsic />
+							<EventsTable
+								network={network}
+								events={events}
+								showExtrinsic
+								onPageChange={setPage}
+							/>
 						</TabPane>
 					</TabbedContent>
 				</Card>

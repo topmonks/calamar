@@ -3,7 +3,7 @@ import { Children, cloneElement, HTMLAttributes, ReactElement, ReactNode } from 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { css, Interpolation, Theme } from "@emotion/react";
 
-import { Pagination } from "../hooks/usePagination";
+import { PageInfo } from "../model/pageInfo";
 import { SortDirection } from "../model/sortDirection";
 import { SortOrder } from "../model/sortOrder";
 
@@ -77,6 +77,7 @@ export const ItemsTableAttribute = <T extends object = any, S = any, A extends a
 };
 
 export type ItemsTableProps<T extends ItemsTableItem, S = any, A extends any[] = []> = HTMLAttributes<HTMLDivElement> & {
+	children: ReactElement<ItemsTableAttributeProps<T, A, S>>|(ReactElement<ItemsTableAttributeProps<T, A, S>>|false|undefined|null)[];
 	data?: T[];
 	additionalData?: A;
 	loading?: boolean;
@@ -85,12 +86,13 @@ export type ItemsTableProps<T extends ItemsTableItem, S = any, A extends any[] =
 	error?: any;
 	errorMessage?: string;
 	sort?: SortOrder<any>;
-	pagination?: Pagination;
-	children: ReactElement<ItemsTableAttributeProps<T, A, S>>|(ReactElement<ItemsTableAttributeProps<T, A, S>>|false|undefined|null)[];
+	pageInfo?: PageInfo;
+	onPageChange?: (page: number) => void;
 };
 
 export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = []>(props: ItemsTableProps<T, S, A>) => {
 	const {
+		children,
 		data,
 		additionalData,
 		loading,
@@ -99,8 +101,8 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 		error,
 		errorMessage = "Unexpected error occured while fetching items",
 		sort,
-		pagination,
-		children,
+		pageInfo,
+		onPageChange,
 		...restProps
 	} = props;
 
@@ -171,7 +173,14 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 					</TableBody>
 				</Table>
 			</TableContainer>
-			{pagination && <TablePagination {...pagination} />}
+			{pageInfo && (
+				<TablePagination
+					page={pageInfo.page}
+					pageSize={pageInfo.pageSize}
+					hasNextPage={pageInfo.hasNextPage}
+					onPageChange={onPageChange}
+				/>
+			)}
 		</div>
 	);
 };

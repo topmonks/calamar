@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { useCallback } from "react";
 import { css, IconButton } from "@mui/material";
-
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { Theme } from "@emotion/react";
 
 const paginationStyle = css`
@@ -30,33 +30,40 @@ const buttonStyle = (theme: Theme) => css`
 `;
 
 export type TablePaginationProps = {
-	offset: number;
-	limit: number;
-	hasNextPage?: boolean;
+	page: number;
+	pageSize: number;
+	hasNextPage: boolean;
 	hideOnSinglePage?: boolean;
-	setPreviousPage: () => void;
-	setNextPage: () => void;
+	onPageChange?: (page: number) => void;
 };
 
 export function TablePagination(props: TablePaginationProps) {
 	const {
-		offset,
+		page,
+		pageSize,
 		hasNextPage = true,
 		hideOnSinglePage = true,
-		setPreviousPage,
-		setNextPage,
+		onPageChange,
 	} = props;
 
-	if (hideOnSinglePage && offset === 0 && !hasNextPage) {
+	if (hideOnSinglePage && page === 1 && !hasNextPage) {
 		return null;
 	}
 
+	const setPreviousPage = useCallback(() => {
+		onPageChange?.(page - 1);
+	}, [page, onPageChange]);
+
+	const setNextPage = useCallback(() => {
+		onPageChange?.(page + 1);
+	}, [page, onPageChange]);
+
 	return (
 		<div css={paginationStyle}>
-			<IconButton css={buttonStyle} disabled={offset === 0} onClick={() => setPreviousPage()}>
+			<IconButton css={buttonStyle} disabled={page === 1} onClick={setPreviousPage}>
 				<ChevronLeft />
 			</IconButton>
-			<IconButton css={buttonStyle} disabled={!hasNextPage} onClick={() => setNextPage()}>
+			<IconButton css={buttonStyle} disabled={!hasNextPage} onClick={setNextPage}>
 				<ChevronRight />
 			</IconButton>
 		</div>

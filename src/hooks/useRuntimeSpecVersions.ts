@@ -1,11 +1,10 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { getRuntimeSpecVersions } from "../services/runtimeSpecService";
 
-import { useResource } from "./useResource";
+import { UseResourceOptions, useResource } from "./useResource";
 
 export function useRuntimeSpecVersions(
 	network: string,
-	options?: FetchOptions
+	options?: UseResourceOptions
 ) {
 	return useResource(getRuntimeSpecVersions, [network], options);
 }
