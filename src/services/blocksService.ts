@@ -7,7 +7,7 @@ import { PaginationOptions } from "../model/paginationOptions";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { getNetwork, hasSupport } from "./networksService";
 
 export type BlocksFilter =
 	{ id_eq: string; }
@@ -60,7 +60,7 @@ async function getArchiveBlock(network: string, filter: BlocksFilter) {
 		}
 	);
 
-	const block = response.blocks[0] && unifyArchiveBlock(response.blocks[0]);
+	const block = response.blocks[0] && unifyArchiveBlock(response.blocks[0], network);
 
 	return block;
 }
@@ -84,7 +84,7 @@ async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
 		}
 	);
 
-	const block = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0]);
+	const block = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0], network);
 
 	return block;
 }
@@ -131,7 +131,7 @@ async function getArchiveBlocks(
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, unifyArchiveBlock);
+	const blocks = extractConnectionItems(response.blocksConnection, unifyArchiveBlock, network);
 
 	return blocks;
 }
@@ -176,20 +176,24 @@ async function getExplorerSquidBlocks(
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, unifyExplorerSquidBlock);
+	const blocks = extractConnectionItems(response.blocksConnection, unifyExplorerSquidBlock, network);
 
 	return blocks;
 }
 
-function unifyArchiveBlock(block: ArchiveBlock): Block {
+function unifyArchiveBlock(block: ArchiveBlock, network: string): Block {
 	return {
 		...block,
+		network: getNetwork(network),
 		specVersion: block.spec.specVersion
 	};
 }
 
-export function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Block {
-	return block;
+export function unifyExplorerSquidBlock(block: ExplorerSquidBlock, network: string): Block {
+	return {
+		...block,
+		network: getNetwork(network),
+	};
 }
 
 export function blocksFilterToArchiveFilter(filter?: BlocksFilter) {

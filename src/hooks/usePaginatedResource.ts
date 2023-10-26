@@ -19,7 +19,7 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 ) {
 	const {page = 1, refresh, refreshFirstPage, ...restOptions} = options;
 
-	const resource = useResource(fetchItems, [...args, { page, pageSize: 10 }], {
+	const resource = useResource(fetchItems, [...args, { page, pageSize: 10 /* TODO constant */ }], {
 		...restOptions,
 		refresh: refresh || (refreshFirstPage && page === 1)
 	});

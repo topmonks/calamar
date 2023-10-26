@@ -1,8 +1,9 @@
 import { DecodedCall } from "./decodedMetadata";
+import { Network } from "./network";
 
 export type Extrinsic = {
 	id: string;
-	network: string;
+	network: Network;
 	hash: string;
 	blockId: string;
 	blockHeight: number;

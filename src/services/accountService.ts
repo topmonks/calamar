@@ -23,6 +23,7 @@ export async function getAccount(network: string, address: string): Promise<Acco
 
 	const account: Account = {
 		id: address,
+		network: getNetwork(network),
 		address,
 		identity: null
 	};

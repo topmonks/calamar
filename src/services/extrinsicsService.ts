@@ -11,7 +11,7 @@ import { extractConnectionItems, paginationToConnectionCursor } from "../utils/i
 import { lowerFirst, upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { getNetwork, hasSupport } from "./networksService";
 import { getCallRuntimeMetadata, getCallsRuntimeMetadata, getPalletsRuntimeMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
@@ -264,7 +264,7 @@ async function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: strin
 
 	return {
 		...extrinsic,
-		network,
+		network: getNetwork(network),
 		blockId: extrinsic.block.id,
 		blockHeight: extrinsic.block.height,
 		timestamp: extrinsic.block.timestamp,
@@ -288,7 +288,7 @@ export async function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrin
 
 	return {
 		...extrinsic,
-		network,
+		network: getNetwork(network),
 		hash: extrinsic.extrinsicHash,
 		blockId: extrinsic.block.id,
 		blockHeight: extrinsic.block.height,
@@ -310,7 +310,7 @@ export async function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrin
 
 export async function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">): Promise<Extrinsic["metadata"]> {
 	return {
-		call: await getCallRuntimeMetadata(extrinsic.network, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
+		call: await getCallRuntimeMetadata(extrinsic.network.name, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
 	};
 }
 

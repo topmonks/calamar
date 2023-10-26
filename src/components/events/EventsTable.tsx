@@ -6,7 +6,7 @@ import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
 import { ButtonLink } from "../ButtonLink";
-import DataViewer from "../DataViewer";
+import { DataViewer } from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 

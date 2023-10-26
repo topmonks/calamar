@@ -3,7 +3,7 @@ import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
 import { ButtonLink } from "../ButtonLink";
-import DataViewer from "../DataViewer";
+import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
 import { Time } from "../Time";

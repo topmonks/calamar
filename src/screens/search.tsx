@@ -3,31 +3,22 @@ import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { css } from "@emotion/react";
 
-import { AccountAddress } from "../components/AccountAddress";
-import { ButtonLink } from "../components/ButtonLink";
 import { Card, CardHeader } from "../components/Card";
-import DataViewer from "../components/DataViewer";
 import { ErrorMessage } from "../components/ErrorMessage";
-import { Link } from "../components/Link";
 import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
-import { SearchResultsTable, SearchResultsTableItemAttribute } from "../components/search/SearchResultsTable";
+import { BlockSearchResultsTable } from "../components/search/BlockSearchResultsTable";
+import { AccountSearchResultsTable } from "../components/search/AccountSearchResultsTable";
+import { ExtrinsicSearchResultsTable } from "../components/search/ExtrinsicSearchResultsTable";
+import { EventSearchResultsTable } from "../components/search/EventSearchResultsTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { Time } from "../components/Time";
 
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { usePage } from "../hooks/usePage";
 import { useSearch } from "../hooks/useSearch";
 import { useTab } from "../hooks/useTab";
 
-import { Account } from "../model/account";
-import { Block } from "../model/block";
-import { Event } from "../model/event";
-import { Extrinsic } from "../model/extrinsic";
-
 import { getNetworks } from "../services/networksService";
-import { NetworkSearchResult } from "../services/searchService";
-
-import { encodeAddress } from "../utils/address";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -47,10 +38,6 @@ const loadingStyle = css`
 	word-break: break-all;
 `;
 
-const eventArgsColCss = css`
-	width: 35%;
-`;
-
 export const SearchPage = () => {
 	const [qs] = useSearchParams();
 
@@ -61,13 +48,15 @@ export const SearchPage = () => {
 		preserveQueryParams: ["query", "network"]
 	});
 
+	const [page, setPage] = usePage();
+
 	console.log("query", query, networkNames);
 
 	const [forceLoading, setForceLoading] = useState<boolean>(true);
 
-	const searchResults = useSearch(query, getNetworks(networkNames));
+	const searchResult = useSearch(query, getNetworks(networkNames), { page });
 
-	console.log("results", searchResults);
+	console.log("results", searchResult);
 
 	useEffect(() => {
 		// show loading at least for 1s to prevent flickering
@@ -75,29 +64,32 @@ export const SearchPage = () => {
 		setTimeout(() => setForceLoading(false), 1000);
 	}, [query]);
 
-	useDOMEventTrigger("data-loaded", !searchResults.loading);
+	useDOMEventTrigger("data-loaded", !searchResult.loading);
 
 	if (!query) {
 		return <Navigate to="/" replace />;
 	}
 
-	if (!forceLoading && searchResults.data?.total === 1) {
-		const result = searchResults.data.results[0] as NetworkSearchResult;
+	if (!forceLoading && searchResult.data?.totalCount === 1) {
+		const result = searchResult.data;
 
-		if (result.extrinsics.data[0]) {
-			return <Navigate to={`/${result.network.name}/extrinsic/${result.extrinsics.data[0].id}`} replace />;
+		const extrinsicItem = result.extrinsicItems.data[0];
+		if (extrinsicItem?.data) {
+			return <Navigate to={`/${extrinsicItem.network}/extrinsic/${extrinsicItem.data.id}`} replace />;
 		}
 
-		if (result.blocks.data[0]) {
-			return <Navigate to={`/${result.network.name}/block/${result.blocks.data[0].id}`} replace />;
+		const blockItem = result.blockItems.data[0];
+		if (blockItem?.data) {
+			return <Navigate to={`/${blockItem.network}/block/${blockItem.data.id}`} replace />;
 		}
 
-		if (result.accounts.data[0]) {
-			return <Navigate to={`/${result.network.name}/account/${result.accounts.data[0].id}`} replace />;
+		const accountItem = result.accountItems.data[0];
+		if (accountItem?.data) {
+			return <Navigate to={`/${accountItem.network}/account/${accountItem.data.id}`} replace />;
 		}
 	}
 
-	if (searchResults.loading || forceLoading) {
+	if (searchResult.loading || forceLoading) {
 		return (
 			<Card>
 				<CardHeader css={loadingStyle}>
@@ -108,7 +100,7 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (searchResults.notFound || !searchResults.data) {
+	if (searchResult.notFound || !searchResult.data) {
 		return (
 			<Card>
 				<NotFound>Nothing was found for query <span css={queryStyle}>{query}</span></NotFound>
@@ -116,12 +108,12 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (searchResults.error) {
+	if (searchResult.error) {
 		return (
 			<Card>
 				<ErrorMessage
 					message={<>Unexpected error occured while searching for <span css={queryStyle}>{query}</span></>}
-					details={searchResults.error.message}
+					details={searchResult.error.message}
 					showReported
 				/>
 			</Card>
@@ -134,192 +126,54 @@ export const SearchPage = () => {
 				Search results for query <span css={queryStyle}>{query}</span>
 			</CardHeader>
 			<TabbedContent currentTab={tab} onTabChange={setTab}>
-				{searchResults.data.accountsTotal > 0 &&
-					<TabPane
-						label="Accounts"
-						count={searchResults.data.accountsTotal}
-						value="accounts"
-					>
-						<SearchResultsTable<Account>
-							query={query}
-							results={searchResults.data.results}
-							getItems={(result) => result.accounts}
-							itemsPlural="accounts"
-						>
-							<SearchResultsTableItemAttribute<Account>
-								label="Account"
-								render={(account, network) => (
-									<AccountAddress
-										address={encodeAddress(account.id, network.prefix)}
-										network={network}
-										copyToClipboard="small"
-									/>
-								)}
-							/>
-						</SearchResultsTable>
-					</TabPane>
-				}
-				{searchResults.data.blocksTotal > 0 &&
-					<TabPane
-						label="Blocks"
-						count={searchResults.data.blocksTotal}
-						value="blocks"
-					>
-						<SearchResultsTable<Block>
-							query={query}
-							results={searchResults.data.results}
-							getItems={(result) => result.blocks}
-							itemsPlural="blocks"
-						>
-							<SearchResultsTableItemAttribute<Block>
-								label="Block (Height)"
-								render={(block, network) =>
-									<Link to={`/${network.name}/block/${block.id}`}>
-										{block.height}
-									</Link>
-								}
-							/>
-							<SearchResultsTableItemAttribute<Block>
-								label="Spec version"
-								render={(block) =>
-									<>{block.specVersion}</>
-								}
-							/>
-							<SearchResultsTableItemAttribute<Block>
-								label="Validator"
-								render={(block, network) =>
-									block.validator &&
-									<AccountAddress
-										network={network}
-										address={block.validator}
-										shorten
-										copyToClipboard="small"
-									/>
-								}
-							/>
-							<SearchResultsTableItemAttribute<Block>
-								label="Time"
-								render={(block) =>
-									<Time time={block.timestamp} fromNow tooltip utc />
-								}
-							/>
-						</SearchResultsTable>
-					</TabPane>
-				}
-				{searchResults.data.extrinsicsTotal > 0 &&
-					<TabPane
-						label="Extrinsics"
-						count={searchResults.data.extrinsicsTotal}
-						value="extrinsics"
-					>
-						<SearchResultsTable<Extrinsic>
-							query={query}
-							results={searchResults.data.results}
-							getItems={(result) => result.extrinsics}
-							itemsPlural="extrinsics"
-						>
-							<SearchResultsTableItemAttribute<Extrinsic>
-								label="Extrinsic (ID)"
-								render={(extrinsic, network) => (
-									<Link to={`/${network.name}/extrinsic/${extrinsic.id}`}>
-										{extrinsic.id}
-									</Link>
-								)}
-							/>
-							<SearchResultsTableItemAttribute<Extrinsic>
-								label="Name"
-								render={(extrinsic, network) => (
-									<ButtonLink
-										to={`/${network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
-										size="small"
-										color="secondary"
-									>
-										{extrinsic.palletName}.{extrinsic.callName}
-									</ButtonLink>
-								)}
-							/>
-							<SearchResultsTableItemAttribute<Extrinsic>
-								label="Account"
-								render={(extrinsic, network) =>
-									extrinsic.signer &&
-											<AccountAddress
-												network={network}
-												address={extrinsic.signer}
-												shorten
-												copyToClipboard="small"
-											/>
-								}
-							/>
-							<SearchResultsTableItemAttribute<Extrinsic>
-								label="Time"
-								render={(extrinsic) => (
-									<Time time={extrinsic.timestamp} fromNow tooltip utc />
-								)}
-							/>
-						</SearchResultsTable>
-					</TabPane>
-				}
-				{searchResults.data.eventsTotal > 0 &&
-					<TabPane
-						label="Events"
-						count={searchResults.data.eventsTotal}
-						value="events"
-					>
-						<SearchResultsTable<Event>
-							query={query}
-							results={searchResults.data.results}
-							getItems={(result) => result.events}
-							itemsPlural="events"
-						>
-							<SearchResultsTableItemAttribute<Event>
-								label="Event (ID)"
-								render={(event, network) => (
-									<Link to={`/${network.name}/event/${event.id}`}>
-										{event.id}
-									</Link>
-								)}
-							/>
-							<SearchResultsTableItemAttribute<Event>
-								label="Name"
-								render={(event, network) => (
-									<ButtonLink
-										to={`/${network.name}/search?query=${event.palletName}.${event.eventName}`}
-										size="small"
-										color="secondary"
-									>
-										{event.palletName}.{event.eventName}
-									</ButtonLink>
-								)}
-							/>
-							<SearchResultsTableItemAttribute<Event>
-								label="Extrinsic"
-								render={(event, network) => (
-									<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
-										{event.extrinsicId}
-									</Link>
-								)}
-							/>
-							<SearchResultsTableItemAttribute<Event>
-								label="Parameters"
-								colCss={eventArgsColCss}
-								render={(event, network) => {
-									if (!event.args) {
-										return null;
-									}
-
-									return (
-										<DataViewer
-											network={network}
-											data={event.args}
-											metadata={event.metadata.event?.args}
-											copyToClipboard
-										/>
-									);
-								}}
-							/>
-						</SearchResultsTable>
-					</TabPane>
-				}
+				<TabPane
+					label="Accounts"
+					count={searchResult.data.accountsTotalCount}
+					value="accounts"
+					hide={searchResult.data.accountsTotalCount === 0}
+				>
+					<AccountSearchResultsTable
+						items={searchResult.data.accountItems}
+						query={query}
+						onPageChange={setPage}
+					/>
+				</TabPane>
+				<TabPane
+					label="Blocks"
+					count={searchResult.data.blocksTotalCount}
+					value="blocks"
+					hide={searchResult.data.blocksTotalCount === 0}
+				>
+					<BlockSearchResultsTable
+						items={searchResult.data.blockItems}
+						query={query}
+						onPageChange={setPage}
+					/>
+				</TabPane>
+				<TabPane
+					label="Extrinsics"
+					count={searchResult.data.extrinsicsTotalCount}
+					value="extrinsics"
+					hide={searchResult.data.extrinsicsTotalCount === 0}
+				>
+					<ExtrinsicSearchResultsTable
+						items={searchResult.data.extrinsicItems}
+						query={query}
+						onPageChange={setPage}
+					/>
+				</TabPane>
+				<TabPane
+					label="Events"
+					count={searchResult.data.eventsTotalCount}
+					value="events"
+					hide={searchResult.data.eventsTotalCount === 0}
+				>
+					<EventSearchResultsTable
+						items={searchResult.data.eventItems}
+						query={query}
+						onPageChange={setPage}
+					/>
+				</TabPane>
 			</TabbedContent>
 		</Card>
 	);

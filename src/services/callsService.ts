@@ -10,7 +10,7 @@ import { extractConnectionItems, paginationToConnectionCursor } from "../utils/i
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getCallRuntimeMetadata } from "./runtimeMetadataService";
-import { hasSupport } from "./networksService";
+import { getNetwork, hasSupport } from "./networksService";
 
 export type CallsFilter =
 	{ id_eq: string; }
@@ -257,7 +257,7 @@ async function unifyArchiveCall(call: ArchiveCall, network: string): Promise<Cal
 
 	return {
 		...call,
-		network,
+		network: getNetwork(network),
 		callName,
 		palletName,
 		blockId: call.block.id,
@@ -282,7 +282,7 @@ async function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string):
 
 	return {
 		...call,
-		network,
+		network: getNetwork(network),
 		blockId: call.block.id,
 		blockHeight: call.block.height,
 		timestamp: call.block.timestamp,

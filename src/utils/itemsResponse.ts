@@ -1,6 +1,6 @@
 import { ItemsResponse } from "../model/itemsResponse";
 
-export function emptyResponse(): ItemsResponse<never> {
+export function emptyResponse(): ItemsResponse<never, true> {
 	return {
 		data: [],
 		pageInfo: {

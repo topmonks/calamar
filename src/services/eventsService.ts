@@ -11,7 +11,7 @@ import { extractConnectionItems, paginationToConnectionCursor } from "../utils/i
 import { upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { getNetwork, hasSupport } from "./networksService";
 import { getEventsRuntimeMetadata, getPalletsRuntimeMetadata, getRuntimeEventMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
@@ -348,7 +348,7 @@ async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<
 
 	return {
 		...event,
-		network,
+		network: getNetwork(network),
 		blockId: event.block.id,
 		blockHeight: event.block.height,
 		timestamp: event.block.timestamp,
@@ -370,7 +370,7 @@ export async function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network
 
 	return {
 		...event,
-		network,
+		network: getNetwork(network),
 		blockId: event.block.id,
 		blockHeight: event.block.height,
 		timestamp: event.block.timestamp,

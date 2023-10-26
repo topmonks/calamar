@@ -5,11 +5,11 @@ import { css } from "@emotion/react";
 
 import { Network } from "../../model/network";
 import { ItemsResponse } from "../../model/itemsResponse";
-import { NetworkSearchResult } from "../../services/searchService";
 import { formatNumber } from "../../utils/number";
 
 import { ItemsTable, ItemsTableAttribute, ItemsTableAttributeProps } from "../ItemsTable";
 import { Link } from "../Link";
+import { SearchResultItem } from "../../model/searchResultItem";
 
 const tableStyle = css`
 `;
@@ -36,51 +36,26 @@ const networkIconStyle = css`
 
 type SearchResultsTableChild<T> = ReactElement<ItemsTableAttributeProps<T, [Network], []>>;
 
-interface SearchResultsTableProps<T> {
+
+export const SearchResultsTableItemAttribute = <T extends object>(props: ItemsTableAttributeProps<T, [], []>) => <ItemsTableAttribute {...props} />;
+
+export interface SearchResultsTableProps<T> {
 	children: SearchResultsTableChild<T>|(SearchResultsTableChild<T>|false|undefined|null)[];
 	query: string;
-	results: NetworkSearchResult[];
+	items: ItemsResponse<SearchResultItem<T>, true>;
 	itemsPlural: string
-	getItems: (result: NetworkSearchResult) => ItemsResponse<T>;
 	onPageChange?: (page: number) => void;
 }
 
-export const SearchResultsTableItemAttribute = <T extends object>(props: ItemsTableAttributeProps<T, [Network], []>) => <ItemsTableAttribute {...props} />;
+export const SearchResultsTable = <T extends {id: string, network: Network}>(props: SearchResultsTableProps<T>) => {
+	const { children, query, items, itemsPlural, onPageChange } = props;
 
-interface SearchResultsTableRow<T extends object> {
-	id: string;
-	item: T|undefined;
-	result: NetworkSearchResult;
-	collapsed?: boolean;
-}
+	const data = useMemo(() => items.data.map(it => ({
+		...it,
+		id: `${it.network.name}-${it.data?.id || "grouped"}`
+	})), [items]);
 
-export const SearchResultsTable = <T extends object>(props: SearchResultsTableProps<T>) => {
-	const { children, query, results, getItems, itemsPlural } = props;
-
-	const collapseMultiple = results.length > 1;
-
-	const rows = useMemo(() => {
-		return results.flatMap<SearchResultsTableRow<T>>((result) => {
-			const items = getItems(result);
-
-			if (collapseMultiple && (items.totalCount || items.data.length || 0) > 1) {
-				return [{
-					id: `${result.network.name}-0`,
-					item: undefined,
-					result,
-					collapsed: true
-				}];
-			} else {
-				return items.data.map((it, index) => ({
-					id: `${result.network.name}-${index}`,
-					item: it,
-					result
-				}));
-			}
-		}) || [];
-	}, [collapseMultiple]);
-
-	const itemAttributes = Children.map(children, (child, index) => {
+	const itemAttributes = useMemo(() => Children.map(children, (child, index) => {
 		if (!child) {
 			return null;
 		}
@@ -91,18 +66,18 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 
 		if (index === 0) {
 			return (
-				<ItemsTableAttribute<SearchResultsTableRow<T>>
+				<ItemsTableAttribute<SearchResultItem<T>>
 					label={label}
 					colCss={colCss}
-					colSpan={({result, collapsed}) => (collapsed /* TODO || result.error*/) ? Children.count(children) : 1}
-					render={({item, result, collapsed}) => {
+					colSpan={(item) => (item.groupedCount /* TODO || item.error*/) ? Children.count(children) : 1}
+					render={(item) => {
 						return (
 							<>
-								{item && render(item, result.network)}
-								{collapsed && (
+								{item.data && render(item.data, item.network)}
+								{item.groupedCount && (
 									<Alert severity="warning" icon={false}>
-										{formatNumber(getItems(result).totalCount || 0)} {itemsPlural} found. {" "}
-										<Link to={`/search?query=${query}&network=${result.network.name}`}>
+										{formatNumber(item.groupedCount)} {itemsPlural} found. {" "}
+										<Link to={`/search?query=${query}&network=${item.network.name}`}>
 											View
 										</Link>
 									</Alert>
@@ -122,34 +97,37 @@ export const SearchResultsTable = <T extends object>(props: SearchResultsTablePr
 		}
 
 		return (
-			<ItemsTableAttribute<SearchResultsTableRow<T>>
+			<ItemsTableAttribute<SearchResultItem<T>>
 				label={label}
 				colCss={colCss}
-				render={({item, result}) => {
-					if (!item) {
+				render={(item) => {
+					if (!item.data) {
 						return null;
 					}
 
-					return render(item, result.network);
+					return render(item.data, item.network);
 				}}
-				hide={({result, collapsed}) => collapsed /* TODO || result.error*/}
+				hide={(item) => !!item.groupedCount /* TODO || result.error*/}
 			/>
 		);
-	}) as any;
+	}) as any, [children, query, itemsPlural]);
 
 	return (
 		<ItemsTable
-			data={rows}
+			data={data}
 			css={tableStyle}
+			notFound={items.totalCount === 0}
+			pageInfo={items.pageInfo}
+			onPageChange={onPageChange}
 			data-test="search-results-table"
 		>
-			<ItemsTableAttribute<SearchResultsTableRow<T>>
+			<ItemsTableAttribute<SearchResultItem<T>>
 				label="Network"
 				colCss={networkColumnStyle}
-				render={({result}) => (
+				render={(item) => (
 					<div css={networkStyle}>
-						<img src={result.network.icon} css={networkIconStyle} />
-						<div>{result.network.displayName}</div>
+						<img src={item.network.icon} css={networkIconStyle} />
+						<div>{item.network.displayName}</div>
 					</div>
 				)}
 			/>

@@ -54,10 +54,11 @@ const tabLoadingStyle = (theme: Theme) => css`
 
 export type TabPaneProps = Omit<TabProps, "children"> & PropsWithChildren<{
 	label: ReactNode;
+	value: string;
 	count?: number;
 	loading?: boolean;
 	error?: boolean;
-	value: string;
+	hide?: boolean;
 }>
 
 export const TabPane = (props: TabPaneProps) => {
@@ -84,9 +85,14 @@ export const TabbedContent = (props: TabbedContentProps) => {
 			count,
 			loading,
 			error,
+			hide,
 			children, // ignore
 			...restProps
 		} = child.props;
+
+		if (hide && tab !== value) {
+			return null;
+		}
 
 		return (
 			<Tab
@@ -117,7 +123,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 
 	useEffect(() => {
 		if (!currentTabPane) {
-			tabPanes[0] && onTabChange?.(tabPanes[0].props.value);
+			tabHandles[0] && onTabChange?.(tabHandles[0].props.value);
 		}
 	}, [currentTabPane, tabPanes, onTabChange]);
 
