@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { css } from "@emotion/react";
 
@@ -7,6 +7,7 @@ import { Card, CardHeader } from "../components/Card";
 import { ErrorMessage } from "../components/ErrorMessage";
 import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
+
 import { BlockSearchResultsTable } from "../components/search/BlockSearchResultsTable";
 import { AccountSearchResultsTable } from "../components/search/AccountSearchResultsTable";
 import { ExtrinsicSearchResultsTable } from "../components/search/ExtrinsicSearchResultsTable";
@@ -19,6 +20,8 @@ import { useSearch } from "../hooks/useSearch";
 import { useTab } from "../hooks/useTab";
 
 import { getNetworks } from "../services/networksService";
+
+import { isDeepEqual } from "../utils/equal";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -48,13 +51,38 @@ export const SearchPage = () => {
 		preserveQueryParams: ["query", "network"]
 	});
 
+	const previousQueryRef = useRef<string>();
+	const previousNetworkNamesRef = useRef<string[]>();
+
 	const [page, setPage] = usePage();
 
 	console.log("query", query, networkNames);
 
 	const [forceLoading, setForceLoading] = useState<boolean>(true);
 
-	const searchResult = useSearch(query, getNetworks(networkNames), { page });
+	const searchResult = useSearch(query, getNetworks(networkNames), {
+		pagination: {
+			accounts: {
+				page: tab === "accounts" ? page : 1,
+				pageSize: 10
+			},
+			blocks: {
+				page: tab === "blocks" ? page : 1,
+				pageSize: 10
+			},
+			extrinsics: {
+				page: tab === "extrinsics" ? page : 1,
+				pageSize: 10
+			},
+			events: {
+				page: tab === "events" ? page : 1,
+				pageSize: 10
+			}
+		},
+		keepPreviousData:
+			query === previousQueryRef.current
+			&& isDeepEqual(networkNames, previousNetworkNamesRef.current)
+	});
 
 	console.log("results", searchResult);
 
@@ -64,32 +92,37 @@ export const SearchPage = () => {
 		setTimeout(() => setForceLoading(false), 1000);
 	}, [query]);
 
+	useEffect(() => {
+		if (!searchResult.loading) {
+			previousQueryRef.current = query;
+			previousNetworkNamesRef.current = networkNames;
+		}
+	}, [searchResult.loading]);
+
 	useDOMEventTrigger("data-loaded", !searchResult.loading);
 
 	if (!query) {
 		return <Navigate to="/" replace />;
 	}
 
-	if (!forceLoading && searchResult.data?.totalCount === 1) {
-		const result = searchResult.data;
-
-		const extrinsicItem = result.extrinsicItems.data[0];
+	if (!forceLoading && searchResult.totalCount === 1) {
+		const extrinsicItem = searchResult.extrinsics.data?.[0];
 		if (extrinsicItem?.data) {
 			return <Navigate to={`/${extrinsicItem.network}/extrinsic/${extrinsicItem.data.id}`} replace />;
 		}
 
-		const blockItem = result.blockItems.data[0];
+		const blockItem = searchResult.blocks.data?.[0];
 		if (blockItem?.data) {
 			return <Navigate to={`/${blockItem.network}/block/${blockItem.data.id}`} replace />;
 		}
 
-		const accountItem = result.accountItems.data[0];
+		const accountItem = searchResult.accounts.data?.[0];
 		if (accountItem?.data) {
 			return <Navigate to={`/${accountItem.network}/account/${accountItem.data.id}`} replace />;
 		}
 	}
 
-	if (searchResult.loading || forceLoading) {
+	if ((!searchResult.data && searchResult.loading) || forceLoading) {
 		return (
 			<Card>
 				<CardHeader css={loadingStyle}>
@@ -100,7 +133,7 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (searchResult.notFound || !searchResult.data) {
+	if (searchResult.notFound) {
 		return (
 			<Card>
 				<NotFound>Nothing was found for query <span css={queryStyle}>{query}</span></NotFound>
@@ -127,49 +160,57 @@ export const SearchPage = () => {
 			</CardHeader>
 			<TabbedContent currentTab={tab} onTabChange={setTab}>
 				<TabPane
-					label="Accounts"
-					count={searchResult.data.accountsTotalCount}
 					value="accounts"
-					hide={searchResult.data.accountsTotalCount === 0}
+					label="Accounts"
+					count={searchResult.accounts.totalCount}
+					loading={searchResult.accounts.loading}
+					error={searchResult.accounts.error}
+					hide={searchResult.accounts.totalCount === 0}
 				>
 					<AccountSearchResultsTable
-						items={searchResult.data.accountItems}
+						accounts={searchResult.accounts}
 						query={query}
 						onPageChange={setPage}
 					/>
 				</TabPane>
 				<TabPane
-					label="Blocks"
-					count={searchResult.data.blocksTotalCount}
 					value="blocks"
-					hide={searchResult.data.blocksTotalCount === 0}
+					label="Blocks"
+					count={searchResult.blocks.totalCount}
+					loading={searchResult.blocks.loading}
+					error={searchResult.blocks.error}
+					hide={searchResult.blocks.totalCount === 0}
 				>
 					<BlockSearchResultsTable
-						items={searchResult.data.blockItems}
+						blocks={searchResult.blocks}
 						query={query}
 						onPageChange={setPage}
 					/>
 				</TabPane>
 				<TabPane
-					label="Extrinsics"
-					count={searchResult.data.extrinsicsTotalCount}
 					value="extrinsics"
-					hide={searchResult.data.extrinsicsTotalCount === 0}
+					label="Extrinsics"
+					count={searchResult.extrinsics.totalCount}
+					loading={searchResult.extrinsics.loading}
+					error={searchResult.extrinsics.error}
+					hide={searchResult.extrinsics.totalCount === 0}
 				>
 					<ExtrinsicSearchResultsTable
-						items={searchResult.data.extrinsicItems}
+						extrinsics={searchResult.extrinsics}
 						query={query}
 						onPageChange={setPage}
 					/>
 				</TabPane>
 				<TabPane
-					label="Events"
-					count={searchResult.data.eventsTotalCount}
 					value="events"
-					hide={searchResult.data.eventsTotalCount === 0}
+					label="Events"
+					count={searchResult.events.totalCount}
+					loading={searchResult.events.loading}
+					error={searchResult.events.error}
+					hide={searchResult.events.totalCount === 0}
 				>
 					<EventSearchResultsTable
-						items={searchResult.data.eventItems}
+						events={searchResult.events}
 						query={query}
 						onPageChange={setPage}
 					/>

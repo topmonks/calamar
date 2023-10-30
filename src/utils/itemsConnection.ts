@@ -5,9 +5,12 @@ import { PaginationOptions } from "../model/paginationOptions";
 export function paginationToConnectionCursor(pagination: PaginationOptions) {
 	const offset = (pagination.page - 1) * pagination.pageSize;
 
+	const first = pagination.pageSize;
+	const after = offset === 0 ? null : offset.toString();
+
 	return {
-		after: offset === 0 ? null : offset.toString(),
-		first: pagination.pageSize
+		first,
+		after
 	};
 }
 
@@ -22,11 +25,15 @@ export async function extractConnectionItems<R = any, T = any, A extends any[] =
 		data.push(await transformNode(edge.node, ...additionalArgs));
 	}
 
-	const startIndex = parseInt(connection.pageInfo.startCursor) - 1;
-	const endIndex = parseInt(connection.pageInfo.endCursor); // non-inclusive
+	const startIndex = parseInt(connection.pageInfo.startCursor || "1") - 1;
+	const endIndex = parseInt(connection.pageInfo.endCursor || "1"); // non-inclusive
 
 	const pageSize = (endIndex - startIndex);
 	const page = Math.floor(startIndex / pageSize) + 1;
+
+	const totalPageCount = connection.totalCount
+		? Math.ceil(connection.totalCount / pageSize)
+		: undefined;
 
 	return {
 		data,
@@ -34,6 +41,7 @@ export async function extractConnectionItems<R = any, T = any, A extends any[] =
 			page,
 			pageSize,
 			hasNextPage: connection.pageInfo.hasNextPage,
+			totalPageCount
 		},
 		totalCount: connection.totalCount
 	} as ItemsResponse<R, C>;

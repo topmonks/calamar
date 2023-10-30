@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter, redirect } from "react-router-dom";
+import { Navigate, RouteObject, createBrowserRouter, redirect } from "react-router-dom";
 
 import { ResultLayout } from "./components/ResultLayout";
 import { getNetwork } from "./services/networksService";
@@ -18,7 +18,7 @@ import { RuntimePage } from "./screens/runtime";
 
 import { config } from "./config";
 
-export const router = createBrowserRouter([
+export const routes: RouteObject[] = [
 	{
 		path: "/",
 		element: <HomePage />,
@@ -104,7 +104,9 @@ export const router = createBrowserRouter([
 			},
 		]
 	}
-], {
+];
+
+export const router = createBrowserRouter(routes, {
 	basename: window.location.hostname === "localhost"
 		? undefined
 		: process.env.PUBLIC_URL

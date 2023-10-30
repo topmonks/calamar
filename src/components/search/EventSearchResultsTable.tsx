@@ -8,27 +8,30 @@ import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { Link } from "../Link";
 
-import { SearchResultsTable, SearchResultsTableItemAttribute } from "./SearchResultsTable";
+import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
+import { PaginatedResource } from "../../model/paginatedResource";
 
 const eventArgsColCss = css`
 	width: 35%;
 `;
 
-export interface EventSearchResultsTable {
-	query: string;
-	items: ItemsResponse<SearchResultItem<Event>, true>;
-	onPageChange?: (page: number) => void;
+export interface EventSearchResultsTable
+	extends Pick<SearchResultsTableProps<Event>, "query" | "onPageChange"> {
+	events: PaginatedResource<SearchResultItem<Event>>;
 }
 
 export const EventSearchResultsTable = (props: EventSearchResultsTable) => {
-	const {query, items, onPageChange} = props;
+	const {events, ...tableProps} = props;
 
 	return (
 		<SearchResultsTable<Event>
-			query={query}
-			items={items}
+			data={events.data}
+			loading={events.loading}
+			pageInfo={events.pageInfo}
+			notFound={events.notFound}
+			error={events.error}
 			itemsPlural="events"
-			onPageChange={onPageChange}
+			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Event>
 				label="Event (ID)"

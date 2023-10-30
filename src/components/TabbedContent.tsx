@@ -103,7 +103,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 					<>
 						<span>{label}</span>
 						{count !== undefined && <span data-test="count" css={tabCountStyle}>({formatNumber(count)})</span>}
-						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
+						{(count === undefined && loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
 						{!!error && <ErrorIcon css={tabErrorStyle} />}
 					</>
 				}
@@ -125,7 +125,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 		if (!currentTabPane) {
 			tabHandles[0] && onTabChange?.(tabHandles[0].props.value);
 		}
-	}, [currentTabPane, tabPanes, onTabChange]);
+	}, [currentTabPane, tabHandles, onTabChange]);
 
 	return (
 		<>

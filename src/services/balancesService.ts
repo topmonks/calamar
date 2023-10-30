@@ -8,11 +8,11 @@ import { PaginationOptions } from "../model/paginationOptions";
 
 import { encodeAddress } from "../utils/address";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
+import { emptyItemsResponse } from "../utils/itemsResponse";
 import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchStatsSquid } from "./fetchService";
 import { getNetwork, getNetworks, hasSupport } from "./networksService";
-
 
 export type BalancesFilter =
 	{ id_eq: string; }
@@ -63,15 +63,7 @@ export async function getBalances(
 		return balances;
 	}
 
-	return {
-		data: [],
-		pageInfo: {
-			page: 1,
-			pageSize: 10, // TODO constant
-			hasNextPage: false,
-		},
-		totalCount: 0,
-	};
+	return emptyItemsResponse();
 }
 
 export async function getAccountBalances(address: string) {

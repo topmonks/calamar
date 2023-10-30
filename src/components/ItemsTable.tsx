@@ -14,6 +14,10 @@ import { TablePagination } from "./TablePagination";
 import { TableSortOptions, TableSortOptionsProps } from "./TableSortOptions";
 import { TableSortToggle } from "./TableSortToggle";
 
+const containerStyle = css`
+	position: relative;
+`;
+
 const tableStyle = css`
 	table-layout: fixed;
 	min-width: 860px;
@@ -33,6 +37,15 @@ const cellStyle = css`
 	[data-class=card] > [data-class=table]:last-of-type tbody tr:last-of-type & {
 		padding-bottom: 0;
 	}
+`;
+
+const loadingOverlayStyle = css`
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255, 255, 255, .5);
 `;
 
 type ItemsTableItem = {
@@ -106,7 +119,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 		...restProps
 	} = props;
 
-	if (loading) {
+	if (!data && loading) {
 		return <Loading />;
 	}
 
@@ -126,7 +139,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 
 	return (
 		<div {...restProps} data-class="table">
-			<TableContainer>
+			<TableContainer css={containerStyle}>
 				<Table css={tableStyle}>
 					<colgroup>
 						{Children.map(children, (child) => child && <col css={child.props.colCss} />)}
@@ -172,6 +185,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 						)}
 					</TableBody>
 				</Table>
+				{loading && <Loading css={loadingOverlayStyle} />}
 			</TableContainer>
 			{pageInfo && (
 				<TablePagination

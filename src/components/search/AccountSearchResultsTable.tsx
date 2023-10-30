@@ -1,27 +1,30 @@
 import { Account } from "../../model/account";
 import { ItemsResponse } from "../../model/itemsResponse";
+import { PaginatedResource } from "../../model/paginatedResource";
 import { SearchResultItem } from "../../model/searchResultItem";
 import { encodeAddress } from "../../utils/address";
 
 import { AccountAddress } from "../AccountAddress";
 
-import { SearchResultsTable, SearchResultsTableItemAttribute } from "./SearchResultsTable";
+import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
 
-export interface AccountSearchResultsTable {
-	query: string;
-	items: ItemsResponse<SearchResultItem<Account>, true>;
-	onPageChange?: (page: number) => void;
+export interface AccountSearchResultsTable
+	extends Pick<SearchResultsTableProps<Account>, "query" | "onPageChange"> {
+	accounts: PaginatedResource<SearchResultItem<Account>>;
 }
 
 export const AccountSearchResultsTable = (props: AccountSearchResultsTable) => {
-	const {query, items, onPageChange} = props;
+	const {accounts, ...tableProps} = props;
 
 	return (
 		<SearchResultsTable<Account>
-			query={query}
-			items={items}
+			data={accounts.data}
+			loading={accounts.loading}
+			pageInfo={accounts.pageInfo}
+			notFound={accounts.notFound}
+			error={accounts.error}
 			itemsPlural="accounts"
-			onPageChange={onPageChange}
+			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Account>
 				label="Account"

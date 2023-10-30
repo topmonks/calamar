@@ -1,5 +1,6 @@
 import { Extrinsic } from "../../model/extrinsic";
 import { ItemsResponse } from "../../model/itemsResponse";
+import { PaginatedResource } from "../../model/paginatedResource";
 import { SearchResultItem } from "../../model/searchResultItem";
 
 import { AccountAddress } from "../AccountAddress";
@@ -7,23 +8,25 @@ import { ButtonLink } from "../ButtonLink";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
-import { SearchResultsTable, SearchResultsTableItemAttribute } from "./SearchResultsTable";
+import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
 
-export interface ExtrinsicSearchResultsTable {
-	query: string;
-	items: ItemsResponse<SearchResultItem<Extrinsic>, true>;
-	onPageChange?: (page: number) => void;
+export interface ExtrinsicSearchResultsTable
+	extends Pick<SearchResultsTableProps<Extrinsic>, "query" | "onPageChange"> {
+	extrinsics: PaginatedResource<SearchResultItem<Extrinsic>>;
 }
 
 export const ExtrinsicSearchResultsTable = (props: ExtrinsicSearchResultsTable) => {
-	const {query, items, onPageChange} = props;
+	const {extrinsics, ...tableProps} = props;
 
 	return (
 		<SearchResultsTable<Extrinsic>
-			query={query}
-			items={items}
+			data={extrinsics.data}
+			loading={extrinsics.loading}
+			pageInfo={extrinsics.pageInfo}
+			notFound={extrinsics.notFound}
+			error={extrinsics.error}
 			itemsPlural="extrinsics"
-			onPageChange={onPageChange}
+			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Extrinsic>
 				label="Extrinsic (ID)"

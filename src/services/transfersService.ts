@@ -6,6 +6,7 @@ import { Transfer } from "../model/transfer";
 
 import { decodeAddress } from "../utils/address";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
+import { emptyItemsResponse } from "../utils/itemsResponse";
 import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchArchive, fetchMainSquid } from "./fetchService";
@@ -26,15 +27,7 @@ export async function getTransfers(
 		return getMainSquidTransfers(network, filter, order, pagination);
 	}
 
-	return {
-		data: [],
-		pageInfo: {
-			page: 1,
-			pageSize: 10, // TODO constant
-			hasNextPage: false,
-		},
-		totalCount: 0,
-	};
+	return emptyItemsResponse();
 }
 
 /*** PRIVATE ***/

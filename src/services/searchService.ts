@@ -15,7 +15,7 @@ import { Network } from "../model/network";
 import { decodeAddress, encodeAddress, isAccountPublicKey, isEncodedAddress } from "../utils/address";
 import { warningAssert } from "../utils/assert";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
-import { emptyResponse } from "../utils/itemsResponse";
+import { emptyItemsResponse } from "../utils/itemsResponse";
 
 import { BlocksFilter, blocksFilterToExplorerSquidFilter, unifyExplorerSquidBlock } from "./blocksService";
 import { EventsFilter, addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
@@ -27,7 +27,10 @@ import { PickByType } from "../utils/types";
 import { SearchResult } from "../model/searchResult";
 import { SearchResultItem } from "../model/searchResultItem";
 
-export async function search(query: string, networks: Network[], pagination: PaginationOptions): Promise<SearchResult> {
+
+export type SearchPaginationOptions = Record<keyof PickByType<NetworkSearchResult, ItemsResponse<any, true>>, PaginationOptions>;
+
+export async function search(query: string, networks: Network[], pagination: SearchPaginationOptions): Promise<SearchResult> {
 	if (networks.length === 0) {
 		networks = getNetworks();
 	}
@@ -60,6 +63,7 @@ export async function search(query: string, networks: Network[], pagination: Pag
 						page: 1,
 						pageSize: 10, // TODO constant
 						hasNextPage: false,
+						totalPageCount: 1
 					},
 					totalCount: 1
 				},
@@ -83,43 +87,31 @@ export async function search(query: string, networks: Network[], pagination: Pag
 		} = nonEmptyNetworkResults[0];
 
 		return {
-			accountItems: itemsToSearchResultItems(accounts),
-			blockItems: itemsToSearchResultItems(blocks),
-			extrinsicItems: itemsToSearchResultItems(extrinsics),
-			eventItems: itemsToSearchResultItems(events),
-			accountsTotalCount: accounts.totalCount,
-			blocksTotalCount: blocks.totalCount,
-			extrinsicsTotalCount: extrinsics.totalCount,
-			eventsTotalCount: events.totalCount,
+			accounts: itemsToSearchResultItems(accounts),
+			blocks: itemsToSearchResultItems(blocks),
+			extrinsics: itemsToSearchResultItems(extrinsics),
+			events: itemsToSearchResultItems(events),
 			totalCount
 		};
 	}
 
-	const accountItems = networkResultsToSearchResultItems<Account>(nonEmptyNetworkResults, "accounts", pagination);
-	const blockItems = networkResultsToSearchResultItems<Block>(nonEmptyNetworkResults, "blocks", pagination);
-	const extrinsicItems = networkResultsToSearchResultItems<Extrinsic>(nonEmptyNetworkResults, "extrinsics", pagination);
-	const eventItems = networkResultsToSearchResultItems<Event>(nonEmptyNetworkResults, "events", pagination);
+	const accounts = networkResultsToSearchResultItems<Account>(nonEmptyNetworkResults, "accounts", pagination.accounts);
+	const blocks = networkResultsToSearchResultItems<Block>(nonEmptyNetworkResults, "blocks", pagination.blocks);
+	const extrinsics = networkResultsToSearchResultItems<Extrinsic>(nonEmptyNetworkResults, "extrinsics", pagination.extrinsics);
+	const events = networkResultsToSearchResultItems<Event>(nonEmptyNetworkResults, "events", pagination.events);
 
-	const accountsTotalCount = nonEmptyNetworkResults.reduce((total, result) => total + result.accounts.totalCount, 0);
-	const blocksTotalCount = nonEmptyNetworkResults.reduce((total, result) => total + result.blocks.totalCount, 0);
-	const extrinsicsTotalCount = nonEmptyNetworkResults.reduce((total, result) => total + result.extrinsics.totalCount, 0);
-	const eventsTotalCount = nonEmptyNetworkResults.reduce((total, result) => total + result.events.totalCount, 0);
-	const totalCount = nonEmptyNetworkResults.reduce((total, result) => total + result.totalCount, 0);
+	const totalCount = accounts.totalCount + blocks.totalCount + extrinsics.totalCount + events.totalCount;
 
-	warningAssert(!isHex(query) || blocksTotalCount <= 1, {
+	warningAssert(!isHex(query) || blocks.totalCount <= 1, {
 		message: "Block hashes should be unique",
 		query
 	});
 
 	return {
-		accountItems,
-		blockItems,
-		extrinsicItems,
-		eventItems,
-		accountsTotalCount,
-		blocksTotalCount,
-		extrinsicsTotalCount,
-		eventsTotalCount,
+		accounts,
+		blocks,
+		extrinsics,
+		events,
 		totalCount
 	};
 }
@@ -138,7 +130,7 @@ type NetworkSearchResult = {
 async function searchNetwork(
 	network: Network,
 	query: string,
-	pagination: PaginationOptions,
+	pagination: SearchPaginationOptions,
 	fetchAll = false
 ) {
 	if (!hasSupport(network.name, "explorer-squid")) {
@@ -160,12 +152,13 @@ async function searchNetwork(
 async function searchNetworkByHash(
 	network: Network,
 	hash: string,
-	pagination: PaginationOptions,
+	pagination: SearchPaginationOptions,
 ) {
 	const blocksFilter: BlocksFilter = {hash_eq: hash};
 	const extrinsicsFilter: ExtrinsicsFilter = {hash_eq: hash};
 
-	const {first, after} = paginationToConnectionCursor(pagination);
+	const blocksCursor = paginationToConnectionCursor(pagination.blocks);
+	const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
 
 	const response = await fetchExplorerSquid<{
 		blocks: ItemsConnection<ExplorerSquidBlock, true>,
@@ -173,12 +166,14 @@ async function searchNetworkByHash(
 	}>(
 		network.name,
 		`query (
-			$first: Int!,
-			$after: String
+			$blocksFirst: Int!,
+			$blocksAfter: String,
 			$blocksFilter: BlockWhereInput,
+			$extrinsicsFirst: Int!,
+			$extrinsicsAfter: String,
 			$extrinsicsFilter: ExtrinsicWhereInput,
 		) {
-			blocks: blocksConnection(first: $first, after: $after, where: $blocksFilter, orderBy: id_ASC) {
+			blocks: blocksConnection(first: $blocksFirst, after: $blocksAfter, where: $blocksFilter, orderBy: id_ASC) {
 				edges {
 					node {
 						id
@@ -198,7 +193,7 @@ async function searchNetworkByHash(
 				}
 				totalCount
 			},
-			extrinsics: extrinsicsConnection(first: $first, after: $after, where: $extrinsicsFilter, orderBy: id_ASC) {
+			extrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_ASC) {
 				edges {
 					node {
 						id
@@ -233,9 +228,11 @@ async function searchNetworkByHash(
 			}
 		}`,
 		{
-			first,
-			after,
+			blocksFirst: blocksCursor.first,
+			blocksAfter: blocksCursor.after,
 			blocksFilter: blocksFilterToExplorerSquidFilter(blocksFilter),
+			extrinsicsFirst: extrinsicsCursor.first,
+			extrinsicsAfter: extrinsicsCursor.after,
 			extrinsicsFilter: extrinsicFilterToExplorerSquidFilter(extrinsicsFilter),
 		}
 	);
@@ -245,10 +242,10 @@ async function searchNetworkByHash(
 
 	const result: NetworkSearchResult = {
 		network,
-		accounts: emptyResponse(),
+		accounts: emptyItemsResponse(0),
 		blocks,
 		extrinsics,
-		events: emptyResponse(),
+		events: emptyItemsResponse(0),
 		totalCount: blocks.totalCount + extrinsics.totalCount
 	};
 
@@ -293,10 +290,10 @@ async function searchNetworkByBlockHeight(network: Network, height: number) {
 
 	const result: NetworkSearchResult = {
 		network,
-		accounts: emptyResponse(),
+		accounts: emptyItemsResponse(0),
 		blocks,
-		extrinsics: emptyResponse(),
-		events: emptyResponse(),
+		extrinsics: emptyItemsResponse(0),
+		events: emptyItemsResponse(0),
 		totalCount: blocks.totalCount
 	};
 
@@ -316,13 +313,14 @@ async function searchNetworkByEncodedAddress(network: Network, encodedAddress: s
 			pageInfo: {
 				page: 1,
 				pageSize: 10,
-				hasNextPage: false
+				hasNextPage: false,
+				totalPageCount: 1
 			},
 			totalCount: 1
 		},
-		blocks: emptyResponse(),
-		extrinsics: emptyResponse(),
-		events: emptyResponse(),
+		blocks: emptyItemsResponse(0),
+		extrinsics: emptyItemsResponse(0),
+		events: emptyItemsResponse(0),
 		totalCount: 1
 	};
 
@@ -332,7 +330,7 @@ async function searchNetworkByEncodedAddress(network: Network, encodedAddress: s
 async function searchNetworkByName(
 	network: Network,
 	query: string,
-	pagination: PaginationOptions,
+	pagination: SearchPaginationOptions,
 	fetchAll: boolean,
 ) {
 	const extrinsicName = await normalizeExtrinsicName(network.name, query);
@@ -385,7 +383,8 @@ async function searchNetworkByName(
 		}
 	}
 
-	const {first, after} = paginationToConnectionCursor(pagination);
+	const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
+	const eventsCursor = paginationToConnectionCursor(pagination.events);
 
 	const response = await fetchExplorerSquid<{
 		extrinsics: ItemsConnection<ExplorerSquidExtrinsic>,
@@ -393,12 +392,14 @@ async function searchNetworkByName(
 	}>(
 		network.name,
 		`query (
-			$first: Int!,
-			$after: String
-			$eventsFilter: EventWhereInput,
+			$extrinsicsFirst: Int!,
+			$extrinsicsAfter: String,
 			$extrinsicsFilter: ExtrinsicWhereInput,
+			$eventsFirst: Int!,
+			$eventsAfter: String,
+			$eventsFilter: EventWhereInput,
 		) {
-			extrinsics: extrinsicsConnection(first: $first, after: $after, where: $extrinsicsFilter, orderBy: id_DESC) {
+			extrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_DESC) {
 				edges {
 					node {
 						id
@@ -430,7 +431,7 @@ async function searchNetworkByName(
 					startCursor
 				}
 			}
-			events: eventsConnection(first: $first, after: $after, where: $eventsFilter, orderBy: id_DESC) {
+			events: eventsConnection(first: $eventsFirst, after: $eventsAfter, where: $eventsFilter, orderBy: id_DESC) {
 				edges {
 					node {
 						id
@@ -459,10 +460,13 @@ async function searchNetworkByName(
 			}
 		}`,
 		{
-			first,
-			after,
+			extrinsicsFirst: extrinsicsCursor.first,
+			extrinsicsAfter: extrinsicsCursor.after,
 			extrinsicsFilter: extrinsicFilterToExplorerSquidFilter(extrinsicsFilter),
+			eventsFirst: eventsCursor.first,
+			eventsAfter: eventsCursor.after,
 			eventsFilter: eventsFilterToExplorerSquidFilter(eventsFilter),
+
 		}
 	);
 
@@ -486,8 +490,8 @@ async function searchNetworkByName(
 
 	const result: NetworkSearchResult = {
 		network,
-		accounts: emptyResponse(),
-		blocks: emptyResponse(),
+		accounts: emptyItemsResponse(0),
+		blocks: emptyItemsResponse(0),
 		extrinsics: {
 			...extrinsics,
 			totalCount: extrinsicsTotalCount
@@ -502,42 +506,55 @@ async function searchNetworkByName(
 	return result;
 }
 
-function itemsToSearchResultItems<T extends {network: Network}>(items: ItemsResponse<T, true>): ItemsResponse<SearchResultItem<T>, true> {
+function itemsToSearchResultItems<T extends {id: string, network: Network}>(items: ItemsResponse<T, true>): ItemsResponse<SearchResultItem<T>, true> {
 	return {
 		...items,
 		data: items.data.map(it => ({
+			id: `${it.network}-${it.id}`,
 			network: it.network,
 			data: it
 		})),
 	};
 }
 
-function networkResultsToSearchResultItems<T>(
+function networkResultsToSearchResultItems<T extends {id: string, network: Network}>(
 	networkResults: NetworkSearchResult[],
 	itemsType: keyof PickByType<NetworkSearchResult, ItemsResponse<T, true>>,
 	pagination: PaginationOptions
 ): ItemsResponse<SearchResultItem<T>, true> {
-	const data = networkResults.flatMap<SearchResultItem<T>>((result) => {
-		const {data, totalCount} = result[itemsType];
+	const data: SearchResultItem<T>[] = [];
+	let totalCount = 0;
 
-		if (totalCount === 0) {
-			return [];
+	for (const result of networkResults) {
+		const items = result[itemsType];
+
+		if (items.totalCount === 1) {
+			const item = items.data[0] as unknown as T;
+
+			data.push({
+				id: `${result.network.name}-${item.id}`,
+				network: result.network,
+				data: item,
+			});
+		} else if (totalCount > 1) {
+			data.push({
+				id: `${result.network.name}-grouped`,
+				network: result.network,
+				groupedCount: items.totalCount > 1 ? items.totalCount : undefined
+			});
 		}
 
-		return [{
-			network: result.network,
-			data: totalCount === 1 ? data[0] as T : undefined,
-			groupedCount: totalCount > 1 ? totalCount : undefined
-		}];
-	});
+		totalCount += items.totalCount;
+	}
 
 	return {
 		data: data.slice((pagination.page - 1) * pagination.pageSize, pagination.page * pagination.pageSize),
 		pageInfo: {
 			page: pagination.page,
 			pageSize: pagination.pageSize,
-			hasNextPage: pagination.page * pagination.pageSize < data.length
+			hasNextPage: pagination.page * pagination.pageSize < data.length,
+			totalPageCount: Math.ceil(data.length / pagination.pageSize)
 		},
-		totalCount: data.length
+		totalCount
 	};
 }

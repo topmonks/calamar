@@ -30,7 +30,7 @@ export function useResource<T = any, F extends any[] = any[]>(
 	const {skip, refresh, refreshInterval = 3000, ...swrOptions} = options;
 
 	const swrKey = !skip
-		? [fetchItem, args]
+		? [fetchItem, args] as const
 		: null;
 
 	const {data, isLoading, error, mutate} = useSwr(swrKey, swrFetcher, {

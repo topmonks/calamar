@@ -7,13 +7,9 @@ import { Event } from "./event";
 import { Extrinsic } from "./extrinsic";
 
 export type SearchResult = {
-	accountItems: ItemsResponse<SearchResultItem<Account>, true>
-	blockItems: ItemsResponse<SearchResultItem<Block>, true>
-	extrinsicItems: ItemsResponse<SearchResultItem<Extrinsic>, true>
-	eventItems: ItemsResponse<SearchResultItem<Event>, true>
-	accountsTotalCount: number;
-	blocksTotalCount: number;
-	extrinsicsTotalCount: number;
-	eventsTotalCount: number;
+	accounts: ItemsResponse<SearchResultItem<Account>, true>
+	blocks: ItemsResponse<SearchResultItem<Block>, true>
+	extrinsics: ItemsResponse<SearchResultItem<Extrinsic>, true>
+	events: ItemsResponse<SearchResultItem<Event>, true>
 	totalCount: number;
 }

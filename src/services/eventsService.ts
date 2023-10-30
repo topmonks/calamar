@@ -8,6 +8,7 @@ import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
+import { emptyItemsResponse } from "../utils/itemsResponse";
 import { upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
@@ -65,13 +66,7 @@ export async function getEventsByName(
 		);
 
 		if (countResponse.itemsCounterById === null || countResponse.itemsCounterById.total === 0) {
-			return {
-				data: [],
-				pageInfo: {
-					...pagination,
-					hasNextPage: false
-				}
-			};
+			return emptyItemsResponse();
 		}
 
 		const events = await getExplorerSquidEvents(network, filter, order, pagination, false);

@@ -2,14 +2,19 @@
 import { css } from "@emotion/react";
 
 import Spinner from "./Spinner";
+import { HTMLAttributes } from "react";
 
 const loadingStyle = css`
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
-const Loading = () => {
+export interface LoadingProps extends HTMLAttributes<HTMLDivElement> {}
+
+const Loading = (props: LoadingProps) => {
 	return (
-		<div css={loadingStyle}>
+		<div {...props} css={loadingStyle}>
 			<Spinner />
 		</div>
 	);

@@ -12,7 +12,7 @@ import { AccountAvatar } from "./AccountAvatar";
 import CopyToClipboardButton, { CopyToClipboardButtonProps } from "./CopyToClipboardButton";
 
 const accountAddressStyle = css`
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 `;
 
@@ -71,10 +71,6 @@ export const AccountAddress = (props: AccountLinkProps) => {
 
 		return content;
 	}, [network, address, encodeAddress, link]);
-
-	/*if (!icon) {
-		return <>{content}</>;
-	}*/
 
 	return (
 		<div css={accountAddressStyle}>

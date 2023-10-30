@@ -44,6 +44,8 @@ export const NetworkPage = () => {
 	const [tab, setTab] = useTab();
 	const [page, setPage] = usePage();
 
+	console.log("tab", tab);
+
 	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, {
 		page: tab === "extrinsics" ? page : 1,
 		refreshFirstPage: true
@@ -103,8 +105,6 @@ export const NetworkPage = () => {
 					</Card>
 				}
 			</CardRow>
-
-
 			<Card data-test="network-related-items">
 				<TabbedContent currentTab={tab} onTabChange={setTab}>
 					<TabPane
@@ -114,7 +114,13 @@ export const NetworkPage = () => {
 						error={extrinsics.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
+						<ExtrinsicsTable
+							network={network}
+							extrinsics={extrinsics}
+							showAccount
+							showTime
+							onPageChange={setPage}
+						/>
 					</TabPane>
 					<TabPane
 						label="Blocks"
@@ -123,31 +129,45 @@ export const NetworkPage = () => {
 						error={blocks.error}
 						value="blocks"
 					>
-						<BlocksTable network={network} blocks={blocks} showValidator showTime />
+						<BlocksTable
+							network={network}
+							blocks={blocks}
+							showValidator
+							showTime
+							onPageChange={setPage}
+						/>
 					</TabPane>
-
-
 					{hasSupport(network.name, "main-squid") &&
-							<TabPane
-								label="Transfers"
-								count={transfers.totalCount}
-								loading={transfers.loading}
-								error={transfers.error}
-								value="transfers"
-							>
-								<TransfersTable network={network} transfers={transfers} showTime />
-							</TabPane>
+						<TabPane
+							label="Transfers"
+							count={transfers.totalCount}
+							loading={transfers.loading}
+							error={transfers.error}
+							value="transfers"
+						>
+							<TransfersTable
+								network={network}
+								transfers={transfers}
+								showTime
+								onPageChange={setPage}
+							/>
+						</TabPane>
 					}
 					{hasSupport(network.name, "stats-squid") &&
-							<TabPane
-								label="Top holders"
-								count={topHolders.totalCount}
-								loading={topHolders.loading}
-								error={topHolders.error}
-								value="top-holders"
-							>
-								<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
-							</TabPane>
+						<TabPane
+							label="Top holders"
+							count={topHolders.totalCount}
+							loading={topHolders.loading}
+							error={topHolders.error}
+							value="top-holders"
+						>
+							<BalancesTable
+								network={network}
+								balances={topHolders}
+								usdRates={usdRates}
+								onPageChange={setPage}
+							/>
+						</TabPane>
 					}
 				</TabbedContent>
 			</Card>

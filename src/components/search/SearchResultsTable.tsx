@@ -7,7 +7,7 @@ import { Network } from "../../model/network";
 import { ItemsResponse } from "../../model/itemsResponse";
 import { formatNumber } from "../../utils/number";
 
-import { ItemsTable, ItemsTableAttribute, ItemsTableAttributeProps } from "../ItemsTable";
+import { ItemsTable, ItemsTableAttribute, ItemsTableAttributeProps, ItemsTableProps } from "../ItemsTable";
 import { Link } from "../Link";
 import { SearchResultItem } from "../../model/searchResultItem";
 
@@ -31,7 +31,7 @@ const networkIconStyle = css`
 	height: 20px;
 	object-fit: contain;
 	margin-right: 16px;
-	float: left;
+	flex: 0 0 auto;
 `;
 
 type SearchResultsTableChild<T> = ReactElement<ItemsTableAttributeProps<T, [Network], []>>;
@@ -39,21 +39,14 @@ type SearchResultsTableChild<T> = ReactElement<ItemsTableAttributeProps<T, [Netw
 
 export const SearchResultsTableItemAttribute = <T extends object>(props: ItemsTableAttributeProps<T, [], []>) => <ItemsTableAttribute {...props} />;
 
-export interface SearchResultsTableProps<T> {
+export interface SearchResultsTableProps<T> extends Omit<ItemsTableProps<SearchResultItem<T>>, "children"> {
 	children: SearchResultsTableChild<T>|(SearchResultsTableChild<T>|false|undefined|null)[];
 	query: string;
-	items: ItemsResponse<SearchResultItem<T>, true>;
 	itemsPlural: string
-	onPageChange?: (page: number) => void;
 }
 
 export const SearchResultsTable = <T extends {id: string, network: Network}>(props: SearchResultsTableProps<T>) => {
-	const { children, query, items, itemsPlural, onPageChange } = props;
-
-	const data = useMemo(() => items.data.map(it => ({
-		...it,
-		id: `${it.network.name}-${it.data?.id || "grouped"}`
-	})), [items]);
+	const { children, query, itemsPlural, ...itemsTableProps } = props;
 
 	const itemAttributes = useMemo(() => Children.map(children, (child, index) => {
 		if (!child) {
@@ -114,12 +107,8 @@ export const SearchResultsTable = <T extends {id: string, network: Network}>(pro
 
 	return (
 		<ItemsTable
-			data={data}
+			{...itemsTableProps}
 			css={tableStyle}
-			notFound={items.totalCount === 0}
-			pageInfo={items.pageInfo}
-			onPageChange={onPageChange}
-			data-test="search-results-table"
 		>
 			<ItemsTableAttribute<SearchResultItem<T>>
 				label="Network"

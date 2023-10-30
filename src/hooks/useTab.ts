@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+
+import { useParam } from "./useParam";
 
 export type UseTabParamOptions = {
 	paramName?: string;
@@ -7,28 +8,14 @@ export type UseTabParamOptions = {
 }
 
 export function useTab<T extends string>(options: UseTabParamOptions = {}) {
-	const [qs] = useSearchParams();
-	const params = useParams();
+	const [value, setValue] = useParam(options.paramName || "tab");
 
-	const navigate = useNavigate();
+	const setTab = useCallback((newValue: T) => {
+		setValue(newValue, {
+			preserveQueryParams: options.preserveQueryParams,
+			replace: !value
+		});
+	}, [value, options.preserveQueryParams, setValue]);
 
-	const currentTab = params[options.paramName || "tab"] as T;
-
-	const setTab = useCallback((newTab: T) => {
-		const path = currentTab ? `./../${newTab}` : newTab;
-		const newQs = new URLSearchParams();
-
-		for (const param of options.preserveQueryParams || []) {
-			for (const values of qs.getAll(param)) {
-				newQs.append(param, values);
-			}
-		}
-
-		navigate({
-			pathname: path,
-			search: newQs.toString()
-		}, {replace: !currentTab});
-	}, [currentTab, navigate]);
-
-	return [currentTab, setTab] as const;
+	return [value, setTab] as const;
 }

@@ -5,6 +5,7 @@ import { css } from "@emotion/react";
 import Decimal from "decimal.js";
 
 import { AccountBalance } from "../../model/accountBalance";
+import { PageInfo } from "../../model/pageInfo";
 import { PaginationOptions } from "../../model/paginationOptions";
 import { Resource } from "../../model/resource";
 import { SortDirection } from "../../model/sortDirection";
@@ -96,10 +97,11 @@ export const AccountBalancesTable = (props: AccountBalancesTableProps) => {
 		return data?.slice((pagination.page - 1) * pagination.pageSize, pagination.page * pagination.pageSize);
 	}, [data, pagination.page, pagination.pageSize]);
 
-	const pageInfo = useMemo(() => ({
+	const pageInfo = useMemo<PageInfo>(() => ({
 		page: pagination.page,
 		pageSize: pagination.pageSize,
-		hasNextPage: pagination.page * pagination.pageSize < data.length
+		hasNextPage: pagination.page * pagination.pageSize < data.length,
+		totalPageCount: Math.ceil(data.length / pagination.pageSize)
 	}), [data, pagination]);
 
 	const handleSortSelected = useCallback((value: SortOrder<SortProperty<AccountBalance>>) => {

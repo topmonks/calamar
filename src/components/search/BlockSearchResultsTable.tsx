@@ -1,28 +1,30 @@
 import { Block } from "../../model/block";
-import { ItemsResponse } from "../../model/itemsResponse";
+import { PaginatedResource } from "../../model/paginatedResource";
 import { SearchResultItem } from "../../model/searchResultItem";
 
 import { AccountAddress } from "../AccountAddress";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
-import { SearchResultsTable, SearchResultsTableItemAttribute } from "./SearchResultsTable";
+import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
 
-export interface BlockSearchResultsTable {
-	query: string;
-	items: ItemsResponse<SearchResultItem<Block>, true>;
-	onPageChange?: (page: number) => void;
+export interface BlockSearchResultsTable
+	extends Pick<SearchResultsTableProps<Block>, "query" | "onPageChange"> {
+	blocks: PaginatedResource<SearchResultItem<Block>>;
 }
 
 export const BlockSearchResultsTable = (props: BlockSearchResultsTable) => {
-	const {query, items, onPageChange} = props;
+	const {blocks, ...tableProps} = props;
 
 	return (
 		<SearchResultsTable<Block>
-			query={query}
-			items={items}
+			data={blocks.data}
+			loading={blocks.loading}
+			pageInfo={blocks.pageInfo}
+			notFound={blocks.notFound}
+			error={blocks.error}
 			itemsPlural="blocks"
-			onPageChange={onPageChange}
+			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Block>
 				label="Block (Height)"
