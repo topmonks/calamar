@@ -131,8 +131,8 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 		return (
 			<ErrorMessage
 				message={errorMessage}
-				details={error.message}
-				showReported
+				details={error}
+				report
 			/>
 		);
 	}

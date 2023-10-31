@@ -1,4 +1,4 @@
-import { DataError } from "./error";
+import { DataError, FetchError } from "./error";
 
 export async function fetchGraphql<T = any>(
 	url: string,
@@ -17,6 +17,12 @@ export async function fetchGraphql<T = any>(
 			variables,
 		}),
 	});
+
+	const statusCode = response.status;
+
+	if (statusCode !== 200) {
+		throw new FetchError(url, statusCode);
+	}
 
 	const jsonResult = await response.json();
 

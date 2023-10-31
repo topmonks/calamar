@@ -123,8 +123,8 @@ export const AccountPortfolio = (props: AccountPortfolioProps) => {
 		return (
 			<ErrorMessage
 				message="Unexpected error occured while fetching data"
-				details={balances.error.message}
-				showReported
+				details={balances.error}
+				report
 			/>
 		);
 	}

@@ -181,9 +181,10 @@ export const AccountBalancesTable = (props: AccountBalancesTableProps) => {
 							}
 							{balance.error &&
 								<ErrorMessage
-									message="Unexpected error occured while fetching data"
-									details={balance.error.message}
 									data-test={`${balance.network.name}-balance-error`}
+									message="Unexpected error occured while fetching data"
+									details={balance.error}
+									report
 								/>
 							}
 						</>

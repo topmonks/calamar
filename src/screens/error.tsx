@@ -20,7 +20,8 @@ export const ErrorPage = () => {
 				<CardHeader>Error</CardHeader>
 				<ErrorMessage
 					message="Unexpected error occured while loading page"
-					details={("message" in (error as any)) ? (error as any).message : undefined}
+					details={error}
+					showReported
 				/>
 			</Card>
 		</>

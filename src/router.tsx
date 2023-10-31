@@ -29,6 +29,7 @@ export const routes: RouteObject[] = [
 			{
 				path: "search/:tab?",
 				element: <SearchPage />,
+				errorElement: <ErrorPage />,
 			},
 			{
 				id: "network",

@@ -11,21 +11,22 @@ import { Extrinsic } from "../model/extrinsic";
 import { ItemsConnection } from "../model/itemsConnection";
 import { ItemsResponse } from "../model/itemsResponse";
 import { Network } from "../model/network";
+import { PaginationOptions } from "../model/paginationOptions";
+import { SearchResult } from "../model/searchResult";
+import { SearchResultItem } from "../model/searchResultItem";
 
 import { decodeAddress, encodeAddress, isAccountPublicKey, isEncodedAddress } from "../utils/address";
 import { warningAssert } from "../utils/assert";
+import { NetworkError, NonFatalError } from "../utils/error";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { emptyItemsResponse } from "../utils/itemsResponse";
+import { PickByType } from "../utils/types";
 
 import { BlocksFilter, blocksFilterToExplorerSquidFilter, unifyExplorerSquidBlock } from "./blocksService";
 import { EventsFilter, addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
 import { ExtrinsicsFilter, extrinsicFilterToExplorerSquidFilter, normalizeExtrinsicName, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
 import { fetchExplorerSquid } from "./fetchService";
 import { getNetwork, getNetworks, hasSupport } from "./networksService";
-import { PaginationOptions } from "../model/paginationOptions";
-import { PickByType } from "../utils/types";
-import { SearchResult } from "../model/searchResult";
-import { SearchResultItem } from "../model/searchResultItem";
 
 
 export type SearchPaginationOptions = Record<keyof PickByType<NetworkSearchResult, ItemsResponse<any, true>>, PaginationOptions>;
@@ -44,6 +45,23 @@ export async function search(query: string, networks: Network[], pagination: Sea
 	const networkResults = promiseResults
 		.map((it) => it.status === "fulfilled" ? it.value : undefined)
 		.filter((it): it is NetworkSearchResult => !!it);
+
+	const errors = promiseResults
+		.map((it, index) => {
+			if (it.status !== "rejected") {
+				return undefined;
+			}
+
+			if (it.reason instanceof NonFatalError) {
+				return new NetworkError(networks[index]!, it.reason);
+			}
+
+			throw it.reason;
+		})
+		.filter((it): it is NetworkError => !!it);
+
+	console.log("results", networkResults);
+	console.log("errors", errors);
 
 	let nonEmptyNetworkResults = networkResults.filter((result) => result.totalCount > 0);
 
@@ -112,6 +130,7 @@ export async function search(query: string, networks: Network[], pagination: Sea
 		blocks,
 		extrinsics,
 		events,
+		errors,
 		totalCount
 	};
 }

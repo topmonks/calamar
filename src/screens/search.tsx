@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { css } from "@emotion/react";
 
@@ -34,6 +34,51 @@ const queryStyle = css`
 	&::after {
 		content: close-quote;
 	}
+`;
+
+const xxStyle = css`
+	line-height: 38px;
+`;
+
+const queryStyle2 = css`
+	padding: 4px 8px;
+	margin: 0 2px;
+
+	font-family: inherit;
+	background-color: #f5f5f5;
+	border-radius: 6px;
+
+	&::before {
+		content: open-quote;
+	}
+
+	&::after {
+		content: close-quote;
+	}
+`;
+
+const networkStyle = css`
+	padding: 4px 8px;
+	background-color: #f5f5f5;
+	border-radius: 8px;
+
+	white-space: nowrap;
+`;
+
+const iconStyle = css`
+	width: 20px;
+	height: 20px;
+
+	border-radius: 0px;
+	margin-right: 4px;
+
+	vertical-align: text-bottom;
+	position: relative;
+	top: -1px;
+`;
+
+const errorStyle = css`
+	margin-top: 32px;
 `;
 
 const loadingStyle = css`
@@ -146,76 +191,107 @@ export const SearchPage = () => {
 			<Card>
 				<ErrorMessage
 					message={<>Unexpected error occured while searching for <span css={queryStyle}>{query}</span></>}
-					details={searchResult.error.message}
-					showReported
+					details={searchResult.error}
+					report
 				/>
 			</Card>
 		);
 	}
 
 	return (
-		<Card>
-			<CardHeader>
-				Search results for query <span css={queryStyle}>{query}</span>
-			</CardHeader>
-			<TabbedContent currentTab={tab} onTabChange={setTab}>
-				<TabPane
-					value="accounts"
-					label="Accounts"
-					count={searchResult.accounts.totalCount}
-					loading={searchResult.accounts.loading}
-					error={searchResult.accounts.error}
-					hide={searchResult.accounts.totalCount === 0}
-				>
-					<AccountSearchResultsTable
-						accounts={searchResult.accounts}
-						query={query}
-						onPageChange={setPage}
+		<>
+			<Card>
+				<CardHeader>
+					Search results
+				</CardHeader>
+				<div css={xxStyle}>
+					For query <code css={queryStyle2}>{query}</code> in {" "}
+					{networkNames.length === 0 && <span>all networks.</span>}
+					{networkNames.length > 0 && (
+						<>
+							{getNetworks(networkNames).slice(0, 5).map((it, index) =>
+								<Fragment key={it.name}>
+									<span css={networkStyle}>
+										<img src={it.icon} css={iconStyle} /> {it.displayName}
+									</span>
+									{index <= networkNames.length - 3 && <span>, </span>}
+									{index === networkNames.length - 2 && <span> and </span>}
+								</Fragment>
+							)} network{networkNames.length > 1 && <span>s</span>}.
+						</>
+					)}
+				</div>
+				{searchResult.data?.errors && searchResult.data?.errors.length > 0 && (
+					<ErrorMessage
+						css={errorStyle}
+						message={<>Unexpected error occured while searching some networks</>}
+						details={searchResult.data.errors}
+						report
 					/>
-				</TabPane>
-				<TabPane
-					value="blocks"
-					label="Blocks"
-					count={searchResult.blocks.totalCount}
-					loading={searchResult.blocks.loading}
-					error={searchResult.blocks.error}
-					hide={searchResult.blocks.totalCount === 0}
-				>
-					<BlockSearchResultsTable
-						blocks={searchResult.blocks}
-						query={query}
-						onPageChange={setPage}
-					/>
-				</TabPane>
-				<TabPane
-					value="extrinsics"
-					label="Extrinsics"
-					count={searchResult.extrinsics.totalCount}
-					loading={searchResult.extrinsics.loading}
-					error={searchResult.extrinsics.error}
-					hide={searchResult.extrinsics.totalCount === 0}
-				>
-					<ExtrinsicSearchResultsTable
-						extrinsics={searchResult.extrinsics}
-						query={query}
-						onPageChange={setPage}
-					/>
-				</TabPane>
-				<TabPane
-					value="events"
-					label="Events"
-					count={searchResult.events.totalCount}
-					loading={searchResult.events.loading}
-					error={searchResult.events.error}
-					hide={searchResult.events.totalCount === 0}
-				>
-					<EventSearchResultsTable
-						events={searchResult.events}
-						query={query}
-						onPageChange={setPage}
-					/>
-				</TabPane>
-			</TabbedContent>
-		</Card>
+				)}
+			</Card>
+			{searchResult.data &&
+				<Card>
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
+						<TabPane
+							value="accounts"
+							label="Accounts"
+							count={searchResult.accounts.totalCount}
+							loading={searchResult.accounts.loading}
+							error={searchResult.accounts.error}
+							hide={searchResult.accounts.totalCount === 0}
+						>
+							<AccountSearchResultsTable
+								accounts={searchResult.accounts}
+								query={query}
+								onPageChange={setPage}
+							/>
+						</TabPane>
+						<TabPane
+							value="blocks"
+							label="Blocks"
+							count={searchResult.blocks.totalCount}
+							loading={searchResult.blocks.loading}
+							error={searchResult.blocks.error}
+							hide={searchResult.blocks.totalCount === 0}
+						>
+							<BlockSearchResultsTable
+								blocks={searchResult.blocks}
+								query={query}
+								onPageChange={setPage}
+							/>
+						</TabPane>
+						<TabPane
+							value="extrinsics"
+							label="Extrinsics"
+							count={searchResult.extrinsics.totalCount}
+							loading={searchResult.extrinsics.loading}
+							error={searchResult.extrinsics.error}
+							hide={searchResult.extrinsics.totalCount === 0}
+						>
+							<ExtrinsicSearchResultsTable
+								extrinsics={searchResult.extrinsics}
+								query={query}
+								onPageChange={setPage}
+							/>
+						</TabPane>
+						<TabPane
+							value="events"
+							label="Events"
+							count={searchResult.events.totalCount}
+							loading={searchResult.events.loading}
+							error={searchResult.events.error}
+							hide={searchResult.events.totalCount === 0}
+						>
+							<EventSearchResultsTable
+								events={searchResult.events}
+								query={query}
+								onPageChange={setPage}
+							/>
+						</TabPane>
+					</TabbedContent>
+				</Card>
+			}
+		</>
 	);
 };

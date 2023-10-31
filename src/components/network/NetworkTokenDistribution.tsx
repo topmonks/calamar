@@ -63,8 +63,8 @@ export const NetworkTokenDistribution = (props: NetworkTokenDistributionProps) =
 		return (
 			<ErrorMessage
 				message="Unexpected error occured while fetching data"
-				details={stats.error.message}
-				showReported
+				details={stats.error}
+				report
 			/>
 		);
 	}

@@ -1,9 +1,8 @@
 import { useEffect, useMemo } from "react";
 import useSwr, { SWRConfiguration } from "swr";
-import { useRollbar } from "@rollbar/react";
 
 import { Resource } from "../model/resource";
-import { DataError } from "../utils/error";
+import { NonFatalError } from "../utils/error";
 
 export interface UseResourceOptions extends SWRConfiguration {
 	/**
@@ -25,8 +24,6 @@ export function useResource<T = any, F extends any[] = any[]>(
 	args: F,
 	options: UseResourceOptions = {}
 ) {
-	const rollbar = useRollbar();
-
 	const {skip, refresh, refreshInterval = 3000, ...swrOptions} = options;
 
 	const swrKey = !skip
@@ -39,13 +36,7 @@ export function useResource<T = any, F extends any[] = any[]>(
 	});
 
 	useEffect(() => {
-		if (!error) {
-			return;
-		}
-
-		if (error && error instanceof DataError) {
-			rollbar.error(error);
-		} else {
+		if (error && !(error instanceof NonFatalError)) {
 			throw error;
 		}
 	}, [error]);

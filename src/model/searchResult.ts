@@ -1,3 +1,5 @@
+import { NetworkError } from "../utils/error";
+
 import { ItemsResponse } from "./itemsResponse";
 import { SearchResultItem } from "./searchResultItem";
 
@@ -11,5 +13,6 @@ export type SearchResult = {
 	blocks: ItemsResponse<SearchResultItem<Block>, true>
 	extrinsics: ItemsResponse<SearchResultItem<Extrinsic>, true>
 	events: ItemsResponse<SearchResultItem<Event>, true>
+	errors?: NetworkError[];
 	totalCount: number;
 }
