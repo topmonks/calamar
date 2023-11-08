@@ -1,4 +1,4 @@
-import { SourceData, SourceType } from "../model";
+import { Network, NetworkResolvableProps, SourceData, SourceType } from "../model";
 
 export const forceSource: Record<string, Partial<Record<keyof SourceData, SourceType>>> = {
 	"equilibrium": {
@@ -12,5 +12,11 @@ export const forceSource: Record<string, Partial<Record<keyof SourceData, Source
 	},
 	"peaq": {
 		"prefix": SourceType.SS58_REGISTRY
+	}
+};
+
+export const forceValues: Record<string, Partial<NetworkResolvableProps>> = {
+	"subsocial": {
+		"relayChain": "polkadot"
 	}
 };

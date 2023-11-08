@@ -97,8 +97,7 @@
         "symbol": "BNC",
         "squids": {
             "archive": "https://bifrost.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-bifrost/graphql",
-            "main": "https://squid.subsquid.io/gs-main-bifrost/graphql"
+            "explorer": "https://squid.subsquid.io/gs-explorer-bifrost/graphql"
         },
         "coinGeckoId": "bifrost-native-coin"
     },
@@ -121,24 +120,6 @@
         "coinGeckoId": "calamari-network"
     },
     {
-        "name": "efinity",
-        "displayName": "Efinity",
-        "icon": "/assets/network-icons/efinity.svg",
-        "color": "#496ddb",
-        "website": "https://efinity.io/",
-        "parachainId": 2021,
-        "relayChain": "polkadot",
-        "prefix": 1110,
-        "decimals": 18,
-        "symbol": "EFI",
-        "squids": {
-            "archive": "https://efinity.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-efinity/graphql",
-            "main": "https://squid.subsquid.io/gs-main-efinity/graphql"
-        },
-        "coinGeckoId": "efinity"
-    },
-    {
         "name": "equilibrium",
         "displayName": "Equilibrium",
         "icon": "/assets/network-icons/equilibrium.png",
@@ -156,7 +137,6 @@
         "name": "gmordie",
         "displayName": "GM",
         "icon": "/assets/network-icons/gmordie.png",
-        "color": "#f47b36",
         "website": "https://gmordie.com/",
         "parachainId": 2123,
         "relayChain": "kusama",
@@ -199,8 +179,7 @@
         "symbol": "INTR",
         "squids": {
             "archive": "https://interlay.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-interlay/graphql",
-            "main": "https://squid.subsquid.io/gs-main-interlay/graphql"
+            "explorer": "https://squid.subsquid.io/gs-explorer-interlay/graphql"
         },
         "coinGeckoId": "interlay"
     },
@@ -208,7 +187,6 @@
         "name": "invarch-tinkernet",
         "displayName": "InvArch Tinkernet",
         "icon": "/assets/network-icons/invarch-tinkernet.svg",
-        "color": "#161616",
         "website": "https://invarch.network/tinkernet/",
         "parachainId": 2125,
         "relayChain": "kusama",
@@ -423,7 +401,6 @@
         "symbol": "PHA",
         "squids": {
             "archive": "https://phala.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-phala/graphql",
             "main": "https://squid.subsquid.io/gs-main-phala/graphql"
         },
         "coinGeckoId": "pha"
@@ -515,7 +492,6 @@
         "name": "statemine",
         "displayName": "Statemine",
         "icon": "/assets/network-icons/statemine.png",
-        "color": "#113911",
         "website": "https://www.parity.io/",
         "parachainId": 1000,
         "relayChain": "kusama",
@@ -542,8 +518,7 @@
         "symbol": "DOT",
         "squids": {
             "archive": "https://statemint.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-statemint/graphql",
-            "main": "https://squid.subsquid.io/gs-main-statemint/graphql"
+            "explorer": "https://squid.subsquid.io/gs-explorer-statemint/graphql"
         },
         "coinGeckoId": "polkadot"
     },
@@ -553,6 +528,7 @@
         "icon": "/assets/network-icons/subsocial.png",
         "color": "#69058c",
         "website": "http://subsocial.network/",
+        "relayChain": "polkadot",
         "prefix": 28,
         "decimals": 10,
         "symbol": "SUB",

@@ -2,7 +2,10 @@ import colors from "colors";
 
 // overwrite console.* with noop because @polkadot/api has hardcoded logger which cannot be disabled
 const consoleLog = console.log;
-console.log = () => {}; console.warn = () => {}; console.error = () => {}; console.info = () => {};
+
+if (!process.argv.includes("--debug")) {
+	console.log = () => {}; console.warn = () => {}; console.error = () => {}; console.info = () => {};
+}
 
 let logPrinted = false;
 
