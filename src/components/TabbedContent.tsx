@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { Children, cloneElement, HTMLAttributes, PropsWithChildren, ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { CircularProgress, Tab, TabProps, Tabs } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Warning";
 import { Theme, css } from "@emotion/react";
@@ -65,14 +65,14 @@ export const TabPane = (props: TabPaneProps) => {
 	return <>{props.children}</>;
 };
 
-export type TabbedContentProps = {
+export interface TabbedContentProps extends HTMLAttributes<HTMLDivElement> {
 	children: ReactElement<TabPaneProps>|(ReactElement<TabPaneProps>|false)[];
 	currentTab?: string;
 	onTabChange: (tab: string) => void;
 }
 
 export const TabbedContent = (props: TabbedContentProps) => {
-	const { children, currentTab: tab, onTabChange } = props;
+	const { children, currentTab: tab, onTabChange, ...divProps } = props;
 
 	const tabHandles = useMemo(() => Children.map(children, (child) => {
 		if (!child) {
@@ -128,7 +128,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 	}, [currentTabPane, tabHandles, onTabChange]);
 
 	return (
-		<>
+		<div {...divProps}>
 			<div css={tabsWrapperStyle}>
 				<Tabs
 					css={tabsStyle}
@@ -142,6 +142,6 @@ export const TabbedContent = (props: TabbedContentProps) => {
 
 			</div>
 			{currentTabPane}
-		</>
+		</div>
 	);
 };

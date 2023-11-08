@@ -116,7 +116,7 @@ const searchInputStyle = (theme: Theme) => css`
 	}
 
 	${theme.breakpoints.up("md")} {
-		.MuiButton-root {
+		[data-class="search-button"] {
 			padding-left: 52px;
 			padding-right: 52px;
 		}
@@ -210,8 +210,7 @@ export const HomePage = () => {
 				<div css={searchBoxStyle}>
 					<SearchInput
 						css={searchInputStyle}
-						defaultNetwork={"polkadot"}
-						persistNetwork
+						persist
 					/>
 				</div>
 				<div css={networksStyle}>

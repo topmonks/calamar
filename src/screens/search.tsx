@@ -36,7 +36,8 @@ const queryStyle = css`
 	}
 `;
 
-const xxStyle = css`
+const searchDetailsStyle = css`
+	margin-top: -16px;
 	line-height: 38px;
 `;
 
@@ -84,6 +85,10 @@ const errorStyle = css`
 const loadingStyle = css`
 	text-align: center;
 	word-break: break-all;
+`;
+
+const resultsStyle = css`
+	margin-top: 32px;
 `;
 
 export const SearchPage = () => {
@@ -153,17 +158,17 @@ export const SearchPage = () => {
 	if (!forceLoading && searchResult.totalCount === 1) {
 		const extrinsicItem = searchResult.extrinsics.data?.[0];
 		if (extrinsicItem?.data) {
-			return <Navigate to={`/${extrinsicItem.network}/extrinsic/${extrinsicItem.data.id}`} replace />;
+			return <Navigate to={`/${extrinsicItem.network.name}/extrinsic/${extrinsicItem.data.id}`} replace />;
 		}
 
 		const blockItem = searchResult.blocks.data?.[0];
 		if (blockItem?.data) {
-			return <Navigate to={`/${blockItem.network}/block/${blockItem.data.id}`} replace />;
+			return <Navigate to={`/${blockItem.network.name}/block/${blockItem.data.id}`} replace />;
 		}
 
 		const accountItem = searchResult.accounts.data?.[0];
 		if (accountItem?.data) {
-			return <Navigate to={`/${accountItem.network}/account/${accountItem.data.id}`} replace />;
+			return <Navigate to={`/${accountItem.network.name}/account/${accountItem.data.id}`} replace />;
 		}
 	}
 
@@ -204,7 +209,7 @@ export const SearchPage = () => {
 				<CardHeader>
 					Search results
 				</CardHeader>
-				<div css={xxStyle}>
+				<div css={searchDetailsStyle}>
 					For query <code css={queryStyle2}>{query}</code> in {" "}
 					{networkNames.length === 0 && <span>all networks.</span>}
 					{networkNames.length > 0 && (
@@ -229,10 +234,8 @@ export const SearchPage = () => {
 						report
 					/>
 				)}
-			</Card>
-			{searchResult.data &&
-				<Card>
-					<TabbedContent currentTab={tab} onTabChange={setTab}>
+				{searchResult.data &&
+					<TabbedContent css={resultsStyle} currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							value="accounts"
 							label="Accounts"
@@ -290,8 +293,8 @@ export const SearchPage = () => {
 							/>
 						</TabPane>
 					</TabbedContent>
-				</Card>
-			}
+				}
+			</Card>
 		</>
 	);
 };
