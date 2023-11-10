@@ -82,6 +82,10 @@ const errorStyle = css`
 	margin-top: 32px;
 `;
 
+const notFoundStyle = css`
+	margin-top: 48px;
+`;
+
 const loadingStyle = css`
 	text-align: center;
 	word-break: break-all;
@@ -183,26 +187,6 @@ export const SearchPage = () => {
 		);
 	}
 
-	if (searchResult.notFound) {
-		return (
-			<Card>
-				<NotFound>Nothing was found for query <span css={queryStyle}>{query}</span></NotFound>
-			</Card>
-		);
-	}
-
-	if (searchResult.error) {
-		return (
-			<Card>
-				<ErrorMessage
-					message={<>Unexpected error occured while searching for <span css={queryStyle}>{query}</span></>}
-					details={searchResult.error}
-					report
-				/>
-			</Card>
-		);
-	}
-
 	return (
 		<>
 			<Card>
@@ -226,6 +210,15 @@ export const SearchPage = () => {
 						</>
 					)}
 				</div>
+				{searchResult.error && (
+					<Card>
+						<ErrorMessage
+							message={<>Unexpected error occured</>}
+							details={searchResult.error}
+							report
+						/>
+					</Card>
+				)}
 				{searchResult.data?.errors && searchResult.data?.errors.length > 0 && (
 					<ErrorMessage
 						css={errorStyle}
@@ -234,7 +227,10 @@ export const SearchPage = () => {
 						report
 					/>
 				)}
-				{searchResult.data &&
+				{searchResult.data && searchResult.data.totalCount === 0 && (
+					<NotFound css={notFoundStyle}>Nothing was found</NotFound>
+				)}
+				{searchResult.data && searchResult.data.totalCount > 0 && (
 					<TabbedContent css={resultsStyle} currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							value="accounts"
@@ -293,7 +289,7 @@ export const SearchPage = () => {
 							/>
 						</TabPane>
 					</TabbedContent>
-				}
+				)}
 			</Card>
 		</>
 	);

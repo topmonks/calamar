@@ -208,47 +208,45 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 				{networkGroups.map((group, index) => {
 					const allSelected = group.networks.every(it => value.includes(it));
 
-					return (
-						<>
-							<Divider />
-							<ListSubheader css={headerStyle} key={index}>
-								<div>
-									{group.relayChainNetwork?.displayName || "Other"}{" "}
-									{group.relayChainNetwork && <><br /><span style={{fontSize: 12}}>and parachains</span></>}
-								</div>
-								<Link
-									onClick={() => allSelected
-										? removeSelection(group.networks)
-										: addSelection(group.networks)
-									}
-								>
-									{allSelected ? "deselect" : "select"} all
-								</Link>
-							</ListSubheader>
-							{group.networks.map((network) => (
-								<MenuItem
-									css={menuItemStyle}
-									selected={value.includes(network)}
-									onClick={() => setSelection([network])}
-								>
-									<ListItemIcon>
-										<img
-											src={network.icon}
-											css={iconStyle}
-										/>
-									</ListItemIcon>
-									<ListItemText>{network.displayName}</ListItemText>
-									<Checkbox
-										css={checkboxStyle}
-										checked={value.includes(network)}
-										onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
-										onClick={(ev) => ev.stopPropagation()}
-										disableRipple
+					return [
+						<Divider />,
+						<ListSubheader css={headerStyle} key={index}>
+							<div>
+								{group.relayChainNetwork?.displayName || "Other"}{" "}
+								{group.relayChainNetwork && <><br /><span style={{fontSize: 12}}>and parachains</span></>}
+							</div>
+							<Link
+								onClick={() => allSelected
+									? removeSelection(group.networks)
+									: addSelection(group.networks)
+								}
+							>
+								{allSelected ? "deselect" : "select"} all
+							</Link>
+						</ListSubheader>,
+						group.networks.map((network) => (
+							<MenuItem
+								css={menuItemStyle}
+								selected={value.includes(network)}
+								onClick={() => setSelection([network])}
+							>
+								<ListItemIcon>
+									<img
+										src={network.icon}
+										css={iconStyle}
 									/>
-								</MenuItem>
-							))}
-						</>
-					);
+								</ListItemIcon>
+								<ListItemText>{network.displayName}</ListItemText>
+								<Checkbox
+									css={checkboxStyle}
+									checked={value.includes(network)}
+									onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
+									onClick={(ev) => ev.stopPropagation()}
+									disableRipple
+								/>
+							</MenuItem>
+						))
+					];
 				})}
 			</Menu>
 		</>
