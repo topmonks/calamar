@@ -4,12 +4,12 @@ import { Alert } from "@mui/material";
 import { css } from "@emotion/react";
 
 import { Network } from "../../model/network";
-import { ItemsResponse } from "../../model/itemsResponse";
+import { SearchResultItem } from "../../model/searchResultItem";
 import { formatNumber } from "../../utils/number";
 
 import { ItemsTable, ItemsTableAttribute, ItemsTableAttributeProps, ItemsTableProps } from "../ItemsTable";
 import { Link } from "../Link";
-import { SearchResultItem } from "../../model/searchResultItem";
+import { NetworkBadge } from "../NetworkBadge";
 
 const tableStyle = css`
 `;
@@ -19,19 +19,7 @@ const networkColumnStyle = css`
 `;
 
 const networkStyle = css`
-	display: flex;
-	align-items: center;
 	margin-right: 80px;
-
-	white-space: nowrap;
-`;
-
-const networkIconStyle = css`
-	width: 20px;
-	height: 20px;
-	object-fit: contain;
-	margin-right: 16px;
-	flex: 0 0 auto;
 `;
 
 type SearchResultsTableChild<T> = ReactElement<ItemsTableAttributeProps<T, [Network], []>>;
@@ -114,10 +102,7 @@ export const SearchResultsTable = <T extends {id: string, network: Network}>(pro
 				label="Network"
 				colCss={networkColumnStyle}
 				render={(item) => (
-					<div css={networkStyle}>
-						<img src={item.network.icon} css={networkIconStyle} />
-						<div>{item.network.displayName}</div>
-					</div>
+					<NetworkBadge network={item.network} css={networkStyle} />
 				)}
 			/>
 			{itemAttributes}

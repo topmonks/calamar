@@ -97,14 +97,15 @@ const buttonStyle = (theme: Theme) => css`
 
 export type SearchInputProps = FormHTMLAttributes<HTMLFormElement> & {
 	persist?: boolean;
+	defaultNetworks?: Network[];
 };
 
 function SearchInput(props: SearchInputProps) {
-	const { persist, ...restProps } = props;
+	const { persist, defaultNetworks, ...restProps } = props;
 
 	const [qs] = useSearchParams();
 
-	const [networks, setNetworks] = useState<Network[]>(getNetworks(qs.getAll("network") || []));
+	const [networks, setNetworks] = useState<Network[]>(defaultNetworks || getNetworks(qs.getAll("network") || []));
 	const [query, setQuery] = useState<string>(qs.get("query") || "");
 
 	const navigate = useNavigate();
@@ -143,8 +144,8 @@ function SearchInput(props: SearchInputProps) {
 
 	useEffect(() => {
 		setQuery(qs.get("query") || "");
-		setNetworks(getNetworks(qs.getAll("network") || []));
-	}, [qs]);
+		setNetworks(defaultNetworks || getNetworks(qs.getAll("network") || []));
+	}, [qs, defaultNetworks]);
 
 	useEffect(() => {
 		if (persist) {

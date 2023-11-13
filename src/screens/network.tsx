@@ -15,7 +15,7 @@ import { useBlocks } from "../hooks/useBlocks";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
 import { usePage } from "../hooks/usePage";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { useStats } from "../hooks/useStats";
 import { useTab } from "../hooks/useTab";
 import { useTransfers } from "../hooks/useTransfers";

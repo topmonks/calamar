@@ -14,6 +14,7 @@ import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
+import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
 
 export type CallInfoTableProps = {
@@ -34,6 +35,12 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			notFoundMessage="No call found"
 			error={call.error}
 		>
+			<CallInfoTableAttribute
+				label="Network"
+				render={(data) =>
+					<NetworkBadge network={data.network} />
+				}
+			/>
 			<CallInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>

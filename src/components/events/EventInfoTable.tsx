@@ -6,6 +6,7 @@ import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
+import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
 
 export type EventInfoTableProps = {
@@ -26,6 +27,12 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			notFoundMessage="No event found"
 			error={event.error}
 		>
+			<EventInfoTableAttribute
+				label="Network"
+				render={(data) =>
+					<NetworkBadge network={data.network} />
+				}
+			/>
 			<EventInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>

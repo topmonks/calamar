@@ -13,7 +13,7 @@ import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { usePage } from "../hooks/usePage";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { useTab } from "../hooks/useTab";
 
 type ExtrinsicPageParams = {

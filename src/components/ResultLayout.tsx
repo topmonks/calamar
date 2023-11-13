@@ -1,17 +1,15 @@
 /** @jsxImportSource @emotion/react */
-import { Outlet, useLoaderData, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { css, Theme } from "@emotion/react";
 
 import Background from "../assets/detail-page-bgr.svg";
 import { ReactComponent as Logo } from "../assets/calamar-logo-export-02.svg";
 
-import { Network } from "../model/network";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 
-import { NotFoundPage } from "../screens/notFound";
-
-import SearchInput from "./SearchInput";
-import { Link } from "./Link";
 import { Footer } from "./Footer";
+import { Link } from "./Link";
+import SearchInput from "./SearchInput";
 
 const containerStyle = (theme: Theme) => css`
 	--content-wrapper-min-height: 450px;
@@ -161,6 +159,10 @@ export const ResultLayout = () => {
 	const location = useLocation();
 	console.log("LOCATION", location.pathname, location.search);
 
+	const { network } = useNetworkLoaderData<false>();
+
+	console.log("network", network);
+
 	return (
 		<div css={containerStyle}>
 			<div css={backgroundStyle} data-test="background" />
@@ -173,7 +175,7 @@ export const ResultLayout = () => {
 							</Link>
 						</div>
 						<div css={topBarRowStyle}>
-							<SearchInput css={searchInputStyle} />
+							<SearchInput css={searchInputStyle} defaultNetworks={network && [network]} />
 						</div>
 					</div>
 				</div>

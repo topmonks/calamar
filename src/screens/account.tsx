@@ -21,7 +21,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { usePage } from "../hooks/usePage";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { useTab } from "../hooks/useTab";
 import { useTransfers } from "../hooks/useTransfers";
 import { useUsdRates } from "../hooks/useUsdRates";

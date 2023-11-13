@@ -5,7 +5,7 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import { EventInfoTable } from "../components/events/EventInfoTable";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useEvent } from "../hooks/useEvent";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 
 export type EventPageParams = {
 	id: string;

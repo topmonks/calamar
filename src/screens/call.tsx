@@ -10,7 +10,7 @@ import { useCall } from "../hooks/useCall";
 import { useEvents } from "../hooks/useEvents";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { usePage } from "../hooks/usePage";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { useTab } from "../hooks/useTab";
 
 export type CallPageParams = {

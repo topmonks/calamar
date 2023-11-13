@@ -4,7 +4,7 @@ import { MenuItem, Select } from "@mui/material";
 import { Card, CardHeader } from "../components/Card";
 import { Devtool } from "../components/Devtool";
 import { useRuntimeSpecVersions } from "../hooks/useRuntimeSpecVersions";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { useRuntimeMetadataPallets } from "../hooks/useRuntimeMetadataPallets";
 import { tryParseInt } from "../utils/string";
 

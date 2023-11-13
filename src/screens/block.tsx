@@ -13,7 +13,7 @@ import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsics } from "../hooks/useExtrinsics";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useNetworkLoaderData } from "../hooks/useRootLoaderData";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { usePage } from "../hooks/usePage";
 import { useTab } from "../hooks/useTab";
 
