@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useCallback, useState } from "react";
-import { Button, ButtonProps, Checkbox, Divider, ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem } from "@mui/material";
+import { Button, ButtonProps, Checkbox, Divider, ListItem, ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { BlurOn as AllIcon, ArrowDropDown } from "@mui/icons-material";
 import { Theme, css } from "@emotion/react";
@@ -81,10 +81,10 @@ const checkboxStyle = css`
 		left: 0;
 		height: 65%;
 		width: 1px;
-		background-color: ${grey[400]};
+		background-color: rgba(0, 0, 0, .2);
 	}
 
-	.MuiMenuItem-root:not(:hover) &::before {
+	.MuiMenuItem-root:not(:hover):not(:focus) &::before {
 		display: none;
 	}
 `;
@@ -102,12 +102,6 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
 	const open = !!anchorEl;
-
-	const handleClose = useCallback(() => setAnchorEl(undefined), []);
-
-	const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	}, []);
 
 	const setSelection = useCallback((networks: Network[]) => {
 		const newValue = [];
@@ -151,6 +145,26 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 
 		onChange?.(newValue, true);
 	}, [value, networkGroups, onChange]);
+
+	const handleClose = useCallback(() => setAnchorEl(undefined), []);
+
+	const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	}, []);
+
+	const handleItemClick = useCallback((network: Network, event: React.MouseEvent) => {
+		if ("key" in event && event.key === " ") {
+			if (value.includes(network)) {
+				removeSelection([network]);
+			} else {
+				addSelection([network]);
+			}
+
+			return;
+		}
+
+		setSelection([network]);
+	}, [value, addSelection, setSelection]);
 
 	console.log("value", value);
 
@@ -228,7 +242,7 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 							<MenuItem
 								css={menuItemStyle}
 								selected={value.includes(network)}
-								onClick={() => setSelection([network])}
+								onClick={(ev) => handleItemClick(network, ev)}
 							>
 								<ListItemIcon>
 									<img
