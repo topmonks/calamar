@@ -9,7 +9,7 @@ import { extractConnectionItems, paginationToConnectionCursor } from "../utils/i
 import { emptyItemsResponse } from "../utils/itemsResponse";
 import { rawAmountToDecimal } from "../utils/number";
 
-import { fetchArchive, fetchMainSquid } from "./fetchService";
+import { fetchArchive, fetchMainSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 
 export type TransfersFilter =
@@ -32,6 +32,30 @@ export async function getTransfers(
 
 /*** PRIVATE ***/
 
+registerItemFragment("MainSquidTransfer", "Transfer", `
+	id
+	direction
+	account {
+		publicKey
+	}
+	transfer {
+		id
+		blockNumber
+		timestamp
+		extrinsicHash
+		to {
+			publicKey
+		}
+		from {
+			publicKey
+		}
+		amount
+		success
+	}
+`);
+
+registerItemsConnectionFragment("MainSquidTransfersConnection", "TransfersConnection", "...MainSquidTransfer");
+
 async function getMainSquidTransfers(
 	network: string,
 	filter: TransfersFilter | undefined,
@@ -44,35 +68,7 @@ async function getMainSquidTransfers(
 		network,
 		`query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {
 			transfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						transfer {
-							id
-							amount
-							blockNumber
-							success
-							timestamp
-							extrinsicHash
-							to {
-								publicKey
-							}
-							from {
-								publicKey
-							}
-						}
-						account {
-							publicKey
-						}
-						direction
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...MainSquidTransfersConnection
 				${(filter != undefined) ?  "totalCount" : ""}
 			}
 		}`,

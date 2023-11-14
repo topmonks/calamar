@@ -7,12 +7,11 @@ import { simplifyId } from "../utils/id";
 
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
-import { fetchArchive, fetchExplorerSquid } from "./fetchService";
+import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 
 export type BlocksFilter =
 	undefined
-	| { id: string; }
 	| { simplifiedId: string; }
 	| { hash: string; }
 	| { height: number; };
@@ -42,20 +41,37 @@ export async function getBlocks(
 
 /*** PRIVATE ***/
 
+registerItemFragment("ArchiveBlock", "Block", `
+	id
+	hash
+	height
+	timestamp
+	parentHash
+	validator
+	spec {
+		specVersion
+	}
+`);
+
+registerItemFragment("ExplorerSquidBlock", "Block", `
+	id
+	hash
+	height
+	timestamp
+	parentHash
+	validator
+	specVersion
+`);
+
+registerItemsConnectionFragment("ArchiveBlocksConnection", "BlocksConnection", "...ArchiveBlock");
+registerItemsConnectionFragment("ExplorerSquidBlocksConnection", "BlocksConnection", "...ExplorerSquidBlock");
+
 async function getArchiveBlock(network: string, filter: BlocksFilter) {
 	const response = await fetchArchive<{blocks: ArchiveBlock[]}>(
 		network,
 		`query ($filter: BlockWhereInput) {
 			blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				hash
-				height
-				timestamp
-				parentHash
-				validator
-				spec {
-					specVersion
-				}
+				...ArchiveBlock
 			}
 		}`,
 		{
@@ -73,13 +89,7 @@ async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
 		network,
 		`query ($filter: BlockWhereInput) {
 			blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				hash
-				height
-				timestamp
-				parentHash
-				validator
-				specVersion
+				...ExplorerSquidBlock
 			}
 		}`,
 		{
@@ -104,25 +114,7 @@ async function getArchiveBlocks(
 		network,
 		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
 			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						spec {
-							specVersion
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ArchiveBlocksConnection
 				${filter !== undefined ? "totalCount" : "" }
 			}
 		}`,
@@ -156,23 +148,7 @@ async function getExplorerSquidBlocks(
 		network,
 		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
 			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						specVersion
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidBlocksConnection
 				${filter !== undefined ? "totalCount" : "" }
 			}
 		}`,
@@ -207,7 +183,7 @@ export function simplifyBlockId(id: string) {
 	return simplifyId(id, /\d{10}-[^-]{5}/, 1);
 }
 
-function unifyArchiveBlock(block: ArchiveBlock, network: string): Block {
+export function unifyArchiveBlock(block: ArchiveBlock, network: string): Block {
 	return {
 		...block,
 		network: getNetwork(network),
@@ -233,6 +209,18 @@ export function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 		};
 	}
 
+	if ("hash" in filter) {
+		return {
+			hash_eq: filter.hash
+		};
+	}
+
+	if ("height" in filter) {
+		return {
+			height_eq: filter.height
+		};
+	}
+
 	return filter;
 }
 
@@ -247,6 +235,17 @@ export function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
 		};
 	}
 
+	if ("hash" in filter) {
+		return {
+			hash_eq: filter.hash
+		};
+	}
+
+	if ("height" in filter) {
+		return {
+			height_eq: filter.height
+		};
+	}
+
 	return filter;
 }
-

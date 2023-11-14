@@ -1,10 +1,30 @@
 import { DataError, FetchError } from "./error";
+import { uniq } from "./uniq";
 
 export async function fetchGraphql<T = any>(
 	url: string,
 	query: string,
-	variables: object = {}
+	variables: object = {},
+	fragments: Record<string, string> = {}
 ): Promise<T> {
+	const usedFragments: Record<string, string> = {};
+
+	const queue = [query];
+	while (queue.length > 0) {
+		const gql = queue.pop()!;
+
+		const fragmentNames = gql
+			.match(/\.\.\.[^,\s]+/g)
+			?.map(it => it.slice(3))
+			.filter(it => !usedFragments[it]);
+
+		for (const fragmentName of fragmentNames || []) {
+			const fragment = fragments[fragmentName] || "";
+			usedFragments[fragmentName] = fragment;
+			queue.push(fragment);
+		}
+	}
+
 	const response = await fetch(url, {
 		method: "POST",
 
@@ -13,7 +33,7 @@ export async function fetchGraphql<T = any>(
 		},
 
 		body: JSON.stringify({
-			query,
+			query: `${query}\n${Object.values(usedFragments).join("\n")}`,
 			variables,
 		}),
 	});

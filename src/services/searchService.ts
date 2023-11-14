@@ -1,5 +1,8 @@
 import { isHex } from "@polkadot/util";
 
+import { ArchiveExtrinsic } from "../model/archive/archiveExtrinsic";
+import { ArchiveBlock } from "../model/archive/archiveBlock";
+
 import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ExplorerSquidEvent } from "../model/explorer-squid/explorerSquidEvent";
 import { ExplorerSquidExtrinsic } from "../model/explorer-squid/explorerSquidExtrinsic";
@@ -22,20 +25,15 @@ import { extractConnectionItems, paginationToConnectionCursor } from "../utils/i
 import { emptyItemsResponse } from "../utils/itemsResponse";
 import { PickByType } from "../utils/types";
 
-import { BlocksFilter, blocksFilterToExplorerSquidFilter, unifyExplorerSquidBlock } from "./blocksService";
-import { EventsFilter, addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
-import { ExtrinsicsFilter, extrinsicFilterToExplorerSquidFilter, normalizeExtrinsicName, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
-import { fetchExplorerSquid } from "./fetchService";
-import { getNetwork, getNetworks, hasSupport } from "./networksService";
-
+import { BlocksFilter, blocksFilterToArchiveFilter, blocksFilterToExplorerSquidFilter, unifyArchiveBlock, unifyExplorerSquidBlock } from "./blocksService";
+import { addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
+import { ExtrinsicsFilter, extrinsicFilterToArchiveFilter, extrinsicFilterToExplorerSquidFilter, normalizeExtrinsicName, unifyArchiveExtrinsic, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
+import { fetchArchive, fetchExplorerSquid } from "./fetchService";
+import { getNetwork, hasSupport } from "./networksService";
 
 export type SearchPaginationOptions = Record<keyof PickByType<NetworkSearchResult, ItemsResponse<any, true>>, PaginationOptions>;
 
 export async function search(query: string, networks: Network[], pagination: SearchPaginationOptions): Promise<SearchResult> {
-	if (networks.length === 0) {
-		networks = getNetworks();
-	}
-
 	const promiseResults = await Promise.allSettled(
 		networks.map(async (network) =>
 			searchNetwork(network, query, pagination, networks.length === 1)
@@ -136,6 +134,18 @@ export async function search(query: string, networks: Network[], pagination: Sea
 	};
 }
 
+export function getQueryType(network: Network, query: string) {
+	if (isHex(query)) {
+		return "hash";
+	} else if (query?.match(/^\d+$/)) {
+		return "blockHeight";
+	} else if (isEncodedAddress(network, query)) {
+		return "encodedAddress";
+	} else {
+		return "name";
+	}
+}
+
 /*** PRIVATE ***/
 
 type NetworkSearchResult = {
@@ -153,18 +163,27 @@ async function searchNetwork(
 	pagination: SearchPaginationOptions,
 	fetchAll = false
 ) {
-	if (!hasSupport(network.name, "explorer-squid")) {
-		return undefined; // TODO support all networks
-	}
+	switch (getQueryType(network, query)) {
+		case "hash":
+			if (hasSupport(network.name, "explorer-squid")) {
+				return searchNetworkByHash(network, query, pagination);
+			}
 
-	if (isHex(query)) {
-		return searchNetworkByHash(network, query, pagination);
-	} else if (query?.match(/^\d+$/)) {
-		return searchNetworkByBlockHeight(network, parseInt(query), pagination);
-	} else if (isEncodedAddress(network, query)) {
-		return searchNetworkByEncodedAddress(network, query, pagination);
-	} else {
-		return searchNetworkByName(network, query, pagination, fetchAll);
+			return searchNetworkArchiveByHash(network, query, pagination);
+		case "blockHeight":
+			if (hasSupport(network.name, "explorer-squid")) {
+				return searchNetworkByBlockHeight(network, parseInt(query), pagination);
+			}
+
+			return searchNetworkArchiveByBlockHeight(network, parseInt(query), pagination);
+		case "encodedAddress":
+			return searchNetworkByEncodedAddress(network, query, pagination);
+		default:
+			if (hasSupport(network.name, "explorer-squid")) {
+				return searchNetworkByName(network, query, pagination, fetchAll);
+			}
+
+			return undefined;
 	}
 }
 
@@ -194,56 +213,11 @@ async function searchNetworkByHash(
 			$extrinsicsFilter: ExtrinsicWhereInput,
 		) {
 			blocks: blocksConnection(first: $blocksFirst, after: $blocksAfter, where: $blocksFilter, orderBy: id_ASC) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						specVersion
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidBlocksConnection
 				totalCount
 			},
 			extrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_ASC) {
-				edges {
-					node {
-						id
-						extrinsicHash
-						block {
-							id
-							hash
-							height
-							timestamp
-							specVersion
-						}
-						mainCall {
-							callName
-							palletName
-						}
-						indexInBlock
-						success
-						tip
-						fee
-						signerPublicKey
-						error
-						version
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidExtrinsicsConnection
 				totalCount
 			}
 		}`,
@@ -283,6 +257,75 @@ async function searchNetworkByHash(
 	return result;
 }
 
+async function searchNetworkArchiveByHash(
+	network: Network,
+	hash: string,
+	pagination: SearchPaginationOptions,
+) {
+	const blocksFilter: BlocksFilter = {hash};
+	const extrinsicsFilter: ExtrinsicsFilter = {hash};
+
+	const blocksCursor = paginationToConnectionCursor(pagination.blocks);
+	const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
+
+	const response = await fetchArchive<{
+		blocks: ItemsConnection<ArchiveBlock, true>,
+		extrinsics: ItemsConnection<ArchiveExtrinsic, true>,
+	}>(
+		network.name,
+		`query (
+			$blocksFirst: Int!,
+			$blocksAfter: String,
+			$blocksFilter: BlockWhereInput,
+			$extrinsicsFirst: Int!,
+			$extrinsicsAfter: String,
+			$extrinsicsFilter: ExtrinsicWhereInput,
+		) {
+			blocks: blocksConnection(first: $blocksFirst, after: $blocksAfter, where: $blocksFilter, orderBy: id_ASC) {
+				...ArchiveBlocksConnection
+				totalCount
+			},
+			extrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_ASC) {
+				...ArchiveExtrinsicsConnection
+				totalCount
+			}
+		}`,
+		{
+			blocksFirst: blocksCursor.first,
+			blocksAfter: blocksCursor.after,
+			blocksFilter: blocksFilterToArchiveFilter(blocksFilter),
+			extrinsicsFirst: extrinsicsCursor.first,
+			extrinsicsAfter: extrinsicsCursor.after,
+			extrinsicsFilter: extrinsicFilterToArchiveFilter(extrinsicsFilter),
+		}
+	);
+
+	const blocks = await extractConnectionItems(
+		response.blocks,
+		pagination.blocks,
+		unifyArchiveBlock,
+		network.name
+	);
+
+	const extrinsics = await extractConnectionItems(
+		response.extrinsics,
+		pagination.extrinsics,
+		unifyArchiveExtrinsic,
+		network.name
+	);
+
+	const result: NetworkSearchResult = {
+		network,
+		accounts: emptyItemsResponse(0),
+		blocks,
+		extrinsics,
+		events: emptyItemsResponse(0),
+		totalCount: blocks.totalCount + extrinsics.totalCount
+	};
+
+	return result;
+}
+
 async function searchNetworkByBlockHeight(network: Network, height: number, pagination: SearchPaginationOptions) {
 	const blocksFilter: BlocksFilter = {height};
 
@@ -292,23 +335,7 @@ async function searchNetworkByBlockHeight(network: Network, height: number, pagi
 		network.name,
 		`query ($blocksFilter: BlockWhereInput) {
 			blocks: blocksConnection(first: 1, where: $blocksFilter, orderBy: id_ASC) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						specVersion
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidBlocksConnection
 				totalCount
 			},
 		}`,
@@ -321,6 +348,43 @@ async function searchNetworkByBlockHeight(network: Network, height: number, pagi
 		response.blocks,
 		pagination.blocks,
 		unifyExplorerSquidBlock,
+		network.name
+	);
+
+	const result: NetworkSearchResult = {
+		network,
+		accounts: emptyItemsResponse(0),
+		blocks,
+		extrinsics: emptyItemsResponse(0),
+		events: emptyItemsResponse(0),
+		totalCount: blocks.totalCount
+	};
+
+	return result;
+}
+
+async function searchNetworkArchiveByBlockHeight(network: Network, height: number, pagination: SearchPaginationOptions) {
+	const blocksFilter: BlocksFilter = {height};
+
+	const response = await fetchArchive<{
+		blocks: ItemsConnection<ArchiveBlock, true>,
+	}>(
+		network.name,
+		`query ($blocksFilter: BlockWhereInput) {
+			blocks: blocksConnection(first: 1, where: $blocksFilter, orderBy: id_ASC) {
+				...ArchiveBlocksConnection
+				totalCount
+			},
+		}`,
+		{
+			blocksFilter: blocksFilterToArchiveFilter(blocksFilter),
+		}
+	);
+
+	const blocks = await extractConnectionItems(
+		response.blocks,
+		pagination.blocks,
+		unifyArchiveBlock,
 		network.name
 	);
 
@@ -403,143 +467,78 @@ async function searchNetworkByName(
 		}
 	);
 
-	let extrinsicsFilter: ExtrinsicsFilter = {id: ""}; // default failing filter
-	let eventsFilter: EventsFilter = {id: ""}; // default failing filter
+	let extrinsics: ItemsResponse<Extrinsic, true> = emptyItemsResponse(countersResponse.extrinsicsByNameCounter?.total || 0);
+	let events: ItemsResponse<Event, true> = emptyItemsResponse(countersResponse.eventsByNameCounter?.total || 0);
 
 	if (fetchAll) {
-		if (countersResponse.extrinsicsByNameCounter?.total) {
-			extrinsicsFilter = extrinsicName.call
-				? { palletName: extrinsicName.pallet, callName: extrinsicName.call }
-				: { palletName: extrinsicName.pallet };
-		}
+		const extrinsicsFilter = extrinsicName.call
+			? { palletName: extrinsicName.pallet, callName: extrinsicName.call }
+			: { palletName: extrinsicName.pallet };
+		const eventsFilter = eventName.event
+			? { palletName: eventName.pallet, eventName: eventName.event }
+			: { palletName: eventName.pallet };
 
-		if (countersResponse.eventsByNameCounter?.total) {
-			eventsFilter = eventName.event
-				? { palletName: eventName.pallet, eventName: eventName.event }
-				: { palletName: eventName.pallet };
-		}
-	}
+		const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
+		const eventsCursor = paginationToConnectionCursor(pagination.events);
 
-	const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
-	const eventsCursor = paginationToConnectionCursor(pagination.events);
-
-	const response = await fetchExplorerSquid<{
-		extrinsics: ItemsConnection<ExplorerSquidExtrinsic>,
-		events: ItemsConnection<ExplorerSquidEvent>,
-	}>(
-		network.name,
-		`query (
-			$extrinsicsFirst: Int!,
-			$extrinsicsAfter: String,
-			$extrinsicsFilter: ExtrinsicWhereInput,
-			$eventsFirst: Int!,
-			$eventsAfter: String,
-			$eventsFilter: EventWhereInput,
-		) {
-			extrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_DESC) {
-				edges {
-					node {
-						id
-						extrinsicHash
-						block {
-							id
-							hash
-							height
-							timestamp
-							specVersion
-						}
-						mainCall {
-							callName
-							palletName
-						}
-						indexInBlock
-						success
-						tip
-						fee
-						signerPublicKey
-						error
-						version
-					}
+		const response = await fetchExplorerSquid<{
+			extrinsics: ItemsConnection<ExplorerSquidExtrinsic>,
+			events: ItemsConnection<ExplorerSquidEvent>,
+		}>(
+			network.name,
+			`query (
+				$extrinsicsFirst: Int!,
+				$extrinsicsAfter: String,
+				$extrinsicsFilter: ExtrinsicWhereInput,
+				$eventsFirst: Int!,
+				$eventsAfter: String,
+				$eventsFilter: EventWhereInput,
+			) {
+				extrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_DESC) {
+					...ExplorerSquidExtrinsicsConnection
 				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
+				events: eventsConnection(first: $eventsFirst, after: $eventsAfter, where: $eventsFilter, orderBy: id_DESC) {
+					...ExplorerSquidEventsConnection
 				}
+			}`,
+			{
+				extrinsicsFirst: extrinsicsCursor.first,
+				extrinsicsAfter: extrinsicsCursor.after,
+				extrinsicsFilter: extrinsicFilterToExplorerSquidFilter(extrinsicsFilter),
+				eventsFirst: eventsCursor.first,
+				eventsAfter: eventsCursor.after,
+				eventsFilter: eventsFilterToExplorerSquidFilter(eventsFilter),
 			}
-			events: eventsConnection(first: $eventsFirst, after: $eventsAfter, where: $eventsFilter, orderBy: id_DESC) {
-				edges {
-					node {
-						id
-						eventName
-						palletName
-						block {
-							id
-							height
-							timestamp
-							specVersion
-						}
-						extrinsic {
-							id
-						}
-						call {
-							id
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
-			}
-		}`,
-		{
-			extrinsicsFirst: extrinsicsCursor.first,
-			extrinsicsAfter: extrinsicsCursor.after,
-			extrinsicsFilter: extrinsicFilterToExplorerSquidFilter(extrinsicsFilter),
-			eventsFirst: eventsCursor.first,
-			eventsAfter: eventsCursor.after,
-			eventsFilter: eventsFilterToExplorerSquidFilter(eventsFilter),
+		);
 
-		}
-	);
+		response.extrinsics.totalCount = countersResponse.extrinsicsByNameCounter?.total || 0;
+		response.events.totalCount = countersResponse.eventsByNameCounter?.total || 0;
 
-	const extrinsics = await extractConnectionItems(
-		response.extrinsics,
-		pagination.extrinsics,
-		unifyExplorerSquidExtrinsic,
-		network.name
-	);
-
-	const events = await addEventsArgs(
-		network.name,
-		await extractConnectionItems(
-			response.events,
-			pagination.events,
-			unifyExplorerSquidEvent,
+		extrinsics = await extractConnectionItems(
+			response.extrinsics as ItemsConnection<ExplorerSquidExtrinsic, true>,
+			pagination.extrinsics,
+			unifyExplorerSquidExtrinsic,
 			network.name
-		)
-	);
+		);
 
-	const extrinsicsTotalCount = countersResponse.extrinsicsByNameCounter?.total || 0;
-	const eventsTotalCount = countersResponse.eventsByNameCounter?.total || 0;
+		events = await addEventsArgs(
+			network.name,
+			await extractConnectionItems(
+				response.events as ItemsConnection<ExplorerSquidEvent, true>,
+				pagination.events,
+				unifyExplorerSquidEvent,
+				network.name
+			)
+		);
+	}
 
 	const result: NetworkSearchResult = {
 		network,
 		accounts: emptyItemsResponse(0),
 		blocks: emptyItemsResponse(0),
-		extrinsics: {
-			...extrinsics,
-			totalCount: extrinsicsTotalCount
-		},
-		events: {
-			...events,
-			totalCount: eventsTotalCount
-		},
-		totalCount: extrinsicsTotalCount + eventsTotalCount
+		extrinsics,
+		events,
+		totalCount: extrinsics.totalCount + events.totalCount
 	};
 
 	return result;

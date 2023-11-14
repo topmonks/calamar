@@ -3,24 +3,21 @@ import { ExplorerSquidEvent } from "../model/explorer-squid/explorerSquidEvent";
 
 import { Event } from "../model/event";
 import { ItemsConnection } from "../model/itemsConnection";
-import { ItemsCounter } from "../model/itemsCounter";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 
+import { simplifyId } from "../utils/id";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
-import { emptyItemsResponse } from "../utils/itemsResponse";
 import { upperFirst } from "../utils/string";
 
-import { fetchArchive, fetchExplorerSquid } from "./fetchService";
+import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 import { getEventsRuntimeMetadata, getPalletsRuntimeMetadata, getRuntimeEventMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
-import { simplifyId } from "../utils/id";
 
 export type EventsFilter =
 	undefined
 	| { simplifiedId: string; }
-	| { id: string; }
 	| { blockId: string; }
 	| { callId: string; }
 	| { extrinsicId: string; }
@@ -35,50 +32,6 @@ export async function getEvent(network: string, filter: EventsFilter) {
 	}
 
 	return getArchiveEvent(network, filter);
-}
-
-export async function getEventsByName(
-	network: string,
-	name: string,
-	order: EventsOrder = "id_DESC",
-	pagination: PaginationOptions
-): Promise<ItemsResponse<Event>> {
-	const {pallet: palletName, event: eventName} = await normalizeEventName(network, name);
-
-	const filter: EventsFilter = eventName
-		? { palletName: palletName, eventName: eventName }
-		: { palletName: palletName };
-
-
-	if (hasSupport(network, "explorer-squid")) {
-		const counterFilter = eventName
-			? `Events.${palletName}.${eventName}`
-			: `Events.${palletName}`;
-
-		// this call is divided on purpose, otherwise it would timeout when there are no events found.
-		const countResponse = await fetchExplorerSquid<{itemsCounterById: ItemsCounter|null}>(
-			network,
-			`query ($counterFilter: String!) {
-				itemsCounterById(id: $counterFilter) {
-					total
-				}
-			}`,
-			{
-				counterFilter,
-			}
-		);
-
-		if (countResponse.itemsCounterById === null || countResponse.itemsCounterById.total === 0) {
-			return emptyItemsResponse();
-		}
-
-		const events = await getExplorerSquidEvents(network, filter, order, pagination, false);
-		events.totalCount = countResponse.itemsCounterById.total;
-
-		return events;
-	}
-
-	return getArchiveEvents(network, filter, order, pagination, false);
 }
 
 export async function getEvents(
@@ -117,29 +70,55 @@ export async function normalizeEventName(network: string, name: string) {
 
 /*** PRIVATE ***/
 
+registerItemFragment("ArchiveEvent", "Event", `
+	id
+	name
+	indexInBlock
+	block {
+		id
+		height
+		timestamp
+		spec {
+			specVersion
+		}
+	}
+	extrinsic {
+		id
+	}
+	call {
+		id
+	}
+	args
+`);
+
+registerItemFragment("ExplorerSquidEvent", "Event", `
+	id
+	eventName
+	palletName
+	indexInBlock
+	block {
+		id
+		height
+		timestamp
+		specVersion
+	}
+	extrinsic {
+		id
+	}
+	call {
+		id
+	}
+`);
+
+registerItemsConnectionFragment("ArchiveEventsConnection", "EventsConnection", "...ArchiveEvent");
+registerItemsConnectionFragment("ExplorerSquidEventsConnection", "EventsConnection", "...ExplorerSquidEvent");
+
 async function getArchiveEvent(network: string, filter: EventsFilter) {
 	const response = await fetchArchive<{events: ArchiveEvent[]}>(
 		network,
 		`query ($filter: EventWhereInput) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				name
-				indexInBlock
-				block {
-					id
-					height
-					timestamp
-					spec {
-						specVersion
-					}
-				}
-				extrinsic {
-					id
-				}
-				call {
-					id
-				}
-				args
+				...ArchiveEvent
 			}
 		}`,
 		{
@@ -155,22 +134,7 @@ async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
 		network,
 		`query ($filter: EventWhereInput) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				eventName
-				palletName
-				indexInBlock
-				block {
-					id
-					height
-					timestamp
-					specVersion
-				}
-				extrinsic {
-					id
-				}
-				call {
-					id
-				}
+				...ExplorerSquidEvent
 			}
 		}`,
 		{
@@ -197,33 +161,7 @@ async function getArchiveEvents(
 		network,
 		`query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
 			eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
-				edges {
-					node {
-						id
-						name
-						block {
-							id
-							height
-							timestamp
-							spec {
-								specVersion
-							}
-						}
-						extrinsic {
-							id
-						}
-						call {
-							id
-						}
-						args
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ArchiveEventsConnection
 				${fetchTotalCount ? "totalCount" : ""}
 			}
 		}`,
@@ -256,31 +194,7 @@ async function getExplorerSquidEvents(
 		network,
 		`query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
 			eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
-				edges {
-					node {
-						id
-						eventName
-						palletName
-						block {
-							id
-							height
-							timestamp
-							specVersion
-						}
-						extrinsic {
-							id
-						}
-						call {
-							id
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidEventsConnection
 				${fetchTotalCount ? "totalCount" : ""}
 			}
 		}`,
@@ -307,14 +221,12 @@ async function getExplorerSquidEvents(
 async function getArchiveEventArgs(network: string, eventIds: string[]) {
 	const response = await fetchArchive<{events: {id: string, args: any}[]}>(
 		network,
-		`
-			query($ids: [String!]) {
-				events(where: { id_in: $ids }) {
-					id
-					args
-				}
+		`query($ids: [String!]) {
+			events(where: { id_in: $ids }) {
+				id
+				args
 			}
-		`,
+		}`,
 		{
 			ids: eventIds,
 		}
@@ -339,7 +251,7 @@ async function addEventArgs(network: string, event: Event|undefined) {
 	};
 }
 
-export async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
+export async function addEventsArgs<C extends boolean = false>(network: string, items: ItemsResponse<Event, C>) {
 	const eventIds = items.data.map((event) => event.id);
 
 	const argsByEventId = await getArchiveEventArgs(network, eventIds);
@@ -367,7 +279,7 @@ export function simplifyEventId(id: string) {
 	return simplifyId(id, /\d{10}-\d{6}-[^-]{5}/, 2);
 }
 
-async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<Event> {
+export async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<Event> {
 	const [palletName, eventName] = event.name.split(".") as [string, string];
 	const specVersion = event.block.spec.specVersion;
 
@@ -408,7 +320,7 @@ export async function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network
 	};
 }
 
-function eventsFilterToArchiveFilter(filter?: EventsFilter) {
+export function eventsFilterToArchiveFilter(filter?: EventsFilter) {
 	if (!filter) {
 		return undefined;
 	}
@@ -455,8 +367,6 @@ function eventsFilterToArchiveFilter(filter?: EventsFilter) {
 				: filter.palletName
 		};
 	}
-
-	return filter;
 }
 
 export function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
@@ -497,5 +407,14 @@ export function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
 		};
 	}
 
-	return filter;
+	if ("palletName" in filter) {
+		return "eventName" in filter
+			? {
+				palletName_eq: filter.palletName,
+				eventName_eq: filter.eventName
+			}
+			: {
+				palletName_eq: filter.palletName
+			};
+	}
 }
