@@ -80,8 +80,9 @@ export async function search(query: string, networks: Network[], pagination: Sea
 					pageInfo: {
 						page: 1,
 						pageSize: 10, // TODO constant
-						hasNextPage: false,
-						totalPageCount: 1
+						totalPageCount: 1,
+						hasPrevious: false,
+						hasNext: false,
 					},
 					totalCount: 1
 				},
@@ -159,9 +160,9 @@ async function searchNetwork(
 	if (isHex(query)) {
 		return searchNetworkByHash(network, query, pagination);
 	} else if (query?.match(/^\d+$/)) {
-		return searchNetworkByBlockHeight(network, parseInt(query));
+		return searchNetworkByBlockHeight(network, parseInt(query), pagination);
 	} else if (isEncodedAddress(network, query)) {
-		return searchNetworkByEncodedAddress(network, query);
+		return searchNetworkByEncodedAddress(network, query, pagination);
 	} else {
 		return searchNetworkByName(network, query, pagination, fetchAll);
 	}
@@ -256,8 +257,19 @@ async function searchNetworkByHash(
 		}
 	);
 
-	const blocks = await extractConnectionItems(response.blocks, unifyExplorerSquidBlock, network.name);
-	const extrinsics = await extractConnectionItems(response.extrinsics, unifyExplorerSquidExtrinsic, network.name);
+	const blocks = await extractConnectionItems(
+		response.blocks,
+		pagination.blocks,
+		unifyExplorerSquidBlock,
+		network.name
+	);
+
+	const extrinsics = await extractConnectionItems(
+		response.extrinsics,
+		pagination.extrinsics,
+		unifyExplorerSquidExtrinsic,
+		network.name
+	);
 
 	const result: NetworkSearchResult = {
 		network,
@@ -271,7 +283,7 @@ async function searchNetworkByHash(
 	return result;
 }
 
-async function searchNetworkByBlockHeight(network: Network, height: number) {
+async function searchNetworkByBlockHeight(network: Network, height: number, pagination: SearchPaginationOptions) {
 	const blocksFilter: BlocksFilter = {height};
 
 	const response = await fetchExplorerSquid<{
@@ -305,7 +317,12 @@ async function searchNetworkByBlockHeight(network: Network, height: number) {
 		}
 	);
 
-	const blocks = await extractConnectionItems(response.blocks, unifyExplorerSquidBlock, network.name);
+	const blocks = await extractConnectionItems(
+		response.blocks,
+		pagination.blocks,
+		unifyExplorerSquidBlock,
+		network.name
+	);
 
 	const result: NetworkSearchResult = {
 		network,
@@ -319,7 +336,7 @@ async function searchNetworkByBlockHeight(network: Network, height: number) {
 	return result;
 }
 
-async function searchNetworkByEncodedAddress(network: Network, encodedAddress: string) {
+async function searchNetworkByEncodedAddress(network: Network, encodedAddress: string, pagination: SearchPaginationOptions) {
 	const result: NetworkSearchResult = {
 		network,
 		accounts: {
@@ -330,10 +347,11 @@ async function searchNetworkByEncodedAddress(network: Network, encodedAddress: s
 				identity: null
 			}],
 			pageInfo: {
-				page: 1,
-				pageSize: 10,
-				hasNextPage: false,
-				totalPageCount: 1
+				page: pagination.accounts.page,
+				pageSize: pagination.accounts.pageSize,
+				totalPageCount: 1,
+				hasPrevious: false,
+				hasNext: false,
 			},
 			totalCount: 1
 		},
@@ -491,6 +509,7 @@ async function searchNetworkByName(
 
 	const extrinsics = await extractConnectionItems(
 		response.extrinsics,
+		pagination.extrinsics,
 		unifyExplorerSquidExtrinsic,
 		network.name
 	);
@@ -499,6 +518,7 @@ async function searchNetworkByName(
 		network.name,
 		await extractConnectionItems(
 			response.events,
+			pagination.events,
 			unifyExplorerSquidEvent,
 			network.name
 		)
@@ -571,8 +591,9 @@ function networkResultsToSearchResultItems<T extends {id: string, network: Netwo
 		pageInfo: {
 			page: pagination.page,
 			pageSize: pagination.pageSize,
-			hasNextPage: pagination.page * pagination.pageSize < data.length,
-			totalPageCount: Math.ceil(data.length / pagination.pageSize)
+			totalPageCount: Math.ceil(data.length / pagination.pageSize),
+			hasPrevious: pagination.page > 0,
+			hasNext: pagination.page * pagination.pageSize < data.length,
 		},
 		totalCount
 	};

@@ -201,7 +201,12 @@ async function getArchiveExtrinsics(
 		}
 	);
 
-	return extractConnectionItems(response.extrinsicsConnection, unifyArchiveExtrinsic, network);
+	return extractConnectionItems(
+		response.extrinsicsConnection,
+		pagination,
+		unifyArchiveExtrinsic,
+		network
+	);
 }
 
 async function getExplorerSquidExtrinsics(
@@ -258,7 +263,12 @@ async function getExplorerSquidExtrinsics(
 		}
 	);
 
-	return extractConnectionItems(response.extrinsicsConnection, unifyExplorerSquidExtrinsic, network);
+	return extractConnectionItems(
+		response.extrinsicsConnection,
+		pagination,
+		unifyExplorerSquidExtrinsic,
+		network
+	);
 }
 
 /**

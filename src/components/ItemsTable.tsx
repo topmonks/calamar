@@ -191,7 +191,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 				<TablePagination
 					page={pageInfo.page}
 					pageSize={pageInfo.pageSize}
-					hasNextPage={pageInfo.hasNextPage}
+					hasNextPage={pageInfo.hasNext}
 					onPageChange={onPageChange}
 				/>
 			)}

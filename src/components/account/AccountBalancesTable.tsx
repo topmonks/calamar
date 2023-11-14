@@ -101,8 +101,9 @@ export const AccountBalancesTable = (props: AccountBalancesTableProps) => {
 	const pageInfo = useMemo<PageInfo>(() => ({
 		page: pagination.page,
 		pageSize: pagination.pageSize,
-		hasNextPage: pagination.page * pagination.pageSize < data.length,
-		totalPageCount: Math.ceil(data.length / pagination.pageSize)
+		totalPageCount: Math.ceil(data.length / pagination.pageSize),
+		hasPrevious: pagination.page > 0,
+		hasNext: pagination.page * pagination.pageSize < data.length,
 	}), [data, pagination]);
 
 	const handleSortSelected = useCallback((value: SortOrder<SortProperty<AccountBalance>>) => {

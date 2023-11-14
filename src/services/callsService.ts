@@ -168,7 +168,12 @@ async function getArchiveCalls(
 		}
 	);
 
-	return extractConnectionItems(response?.callsConnection, unifyArchiveCall, network);
+	return extractConnectionItems(
+		response.callsConnection,
+		pagination,
+		unifyArchiveCall,
+		network
+	);
 }
 
 async function getExplorerSquidCalls(
@@ -220,7 +225,12 @@ async function getExplorerSquidCalls(
 		}
 	);
 
-	return extractConnectionItems(response.callsConnection, unifyExplorerSquidCall, network);
+	return extractConnectionItems(
+		response.callsConnection,
+		pagination,
+		unifyExplorerSquidCall,
+		network
+	);
 }
 
 async function getArchiveCallsArgs(network: string, callsIds: string[]) {

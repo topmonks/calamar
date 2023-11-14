@@ -8,8 +8,9 @@ export function emptyItemsResponse(totalCount?: number): ItemsResponse<never> {
 		pageInfo: {
 			page: 1,
 			pageSize: 10, // TODO constant
-			hasNextPage: false,
-			totalPageCount: 0
+			totalPageCount: 0,
+			hasPrevious: false,
+			hasNext: false,
 		},
 		totalCount,
 	};

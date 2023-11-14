@@ -58,7 +58,12 @@ export async function getBalances(
 			}
 		);
 
-		const balances = extractConnectionItems(response.accountsConnection, unifyStatsSquidAccountBalance, network);
+		const balances = extractConnectionItems(
+			response.accountsConnection,
+			pagination,
+			unifyStatsSquidAccountBalance,
+			network
+		);
 
 		return balances;
 	}

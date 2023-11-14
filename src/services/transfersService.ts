@@ -84,28 +84,12 @@ async function getMainSquidTransfers(
 		}
 	);
 
-	return await extractConnectionItems(response.transfersConnection, unifyMainSquidTransfer, network);
-}
-
-async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string[]) {
-	const response = await fetchArchive<{extrinsics: {id: string, hash: string}[]}>(
-		network,
-		`query($hashes: [String!], $limit: Int!) {
-			extrinsics(where: { hash_in: $hashes }, limit: $limit) {
-				id,
-				hash
-			}
-		}`,
-		{
-			hashes: extrinsicHashes,
-			limit: extrinsicHashes.length
-		}
+	return await extractConnectionItems(
+		response.transfersConnection,
+		pagination,
+		unifyMainSquidTransfer,
+		network
 	);
-
-	return response.extrinsics.reduce((extrinsicInfoByHash, extrinsic) => {
-		extrinsicInfoByHash[extrinsic.hash] = extrinsic;
-		return extrinsicInfoByHash;
-	}, {} as Record<string, any>);
 }
 
 function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Transfer {

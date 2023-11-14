@@ -235,7 +235,12 @@ async function getArchiveEvents(
 		}
 	);
 
-	return extractConnectionItems(response.eventsConnection, unifyArchiveEvent, network);
+	return extractConnectionItems(
+		response.eventsConnection,
+		pagination,
+		unifyArchiveEvent,
+		network
+	);
 }
 
 async function getExplorerSquidEvents(
@@ -287,7 +292,13 @@ async function getExplorerSquidEvents(
 		}
 	);
 
-	const data = await extractConnectionItems(response.eventsConnection, unifyExplorerSquidEvent, network);
+	const data = await extractConnectionItems(
+		response.eventsConnection,
+		pagination,
+		unifyExplorerSquidEvent,
+		network
+	);
+
 	const events = await addEventsArgs(network, data);
 
 	return events;

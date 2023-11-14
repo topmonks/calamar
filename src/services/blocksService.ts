@@ -134,7 +134,12 @@ async function getArchiveBlocks(
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, unifyArchiveBlock, network);
+	const blocks = extractConnectionItems(
+		response.blocksConnection,
+		pagination,
+		unifyArchiveBlock,
+		network
+	);
 
 	return blocks;
 }
@@ -179,7 +184,12 @@ async function getExplorerSquidBlocks(
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, unifyExplorerSquidBlock, network);
+	const blocks = extractConnectionItems(
+		response.blocksConnection,
+		pagination,
+		unifyExplorerSquidBlock,
+		network
+	);
 
 	return blocks;
 }
