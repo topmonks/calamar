@@ -2,11 +2,12 @@ import { Extrinsic } from "../../model/extrinsic";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
 import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
 import { Time } from "../Time";
+
+import { ExtrinsicLink } from "./ExtrinsicLink";
 
 export type ExtrinsicsTableProps = {
 	network: Network;
@@ -41,9 +42,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			<ExtrinsicsTableAttribute
 				label="ID"
 				render={(extrinsic) =>
-					<Link to={`/${network.name}/extrinsic/${extrinsic.id}`}>
-						{extrinsic.id}
-					</Link>
+					<ExtrinsicLink network={network} id={extrinsic.id} />
 				}
 			/>
 			<ExtrinsicsTableAttribute

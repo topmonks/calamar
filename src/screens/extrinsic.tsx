@@ -27,16 +27,18 @@ export const ExtrinsicPage = () => {
 	const [tab, setTab] = useTab();
 	const [page, setPage] = usePage();
 
-	const extrinsic = useExtrinsic(network.name, { id_eq: id });
+	const extrinsic = useExtrinsic(network.name, { simplifiedId: id });
 
-	const events = useEvents(network.name, { extrinsicId_eq: id }, {
+	const events = useEvents(network.name, extrinsic.data && { extrinsicId: extrinsic.data.id }, {
 		order: "id_ASC",
-		page: tab === "events" ? page : 1
+		page: tab === "events" ? page : 1,
+		skip: !extrinsic.data
 	});
 
-	const calls = useCalls(network.name, { extrinsicId_eq: id }, {
+	const calls = useCalls(network.name, extrinsic.data && { extrinsicId: extrinsic.data.id }, {
 		order: "id_ASC",
-		page: tab === "calls" ? page : 1
+		page: tab === "calls" ? page : 1,
+		skip: !extrinsic.data
 	});
 
 	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);

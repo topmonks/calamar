@@ -15,10 +15,11 @@ import { UsdRates } from "../../model/usdRates";
 
 import { compareProps } from "../../utils/compare";
 
-import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";
 import { ErrorMessage } from "../ErrorMessage";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
+
+import { AccountAddress } from "./AccountAddress";
 
 const networkStyle = css`
 	display: flex;

@@ -1,4 +1,4 @@
-import { Navigate, RouteObject, createBrowserRouter, redirect } from "react-router-dom";
+import { LoaderFunctionArgs, Navigate, RouteObject, createBrowserRouter, redirect } from "react-router-dom";
 
 import { ResultLayout } from "./components/ResultLayout";
 import { getNetwork } from "./services/networksService";
@@ -16,7 +16,23 @@ import { NotFoundPage } from "./screens/notFound";
 import { SearchPage } from "./screens/search";
 import { RuntimePage } from "./screens/runtime";
 
+import { simplifyCallId } from "./services/callsService";
+import { simplifyBlockId } from "./services/blocksService";
+import { simplifyExtrinsicId } from "./services/extrinsicsService";
+import { simplifyEventId } from "./services/eventsService";
+
 import { config } from "./config";
+
+const networkLoader = ({ params }: LoaderFunctionArgs) => {
+	const { network: networkName } = params as { network: string };
+
+	try {
+		const network = getNetwork(networkName);
+		return { network };
+	} catch (e) {
+		throw new Response("Network not found", {status: 404});
+	}
+};
 
 export const routes: RouteObject[] = [
 	{
@@ -34,16 +50,7 @@ export const routes: RouteObject[] = [
 			{
 				id: "network",
 				path: ":network",
-				loader: ({ params }) => {
-					const { network: networkName } = params;
-
-					try {
-						const network = getNetwork(networkName as string);
-						return { network };
-					} catch (e) {
-						throw new Response("Network not found", {status: 404});
-					}
-				},
+				loader: networkLoader,
 				errorElement: <ErrorPage />,
 				children: [
 					{
@@ -51,27 +58,81 @@ export const routes: RouteObject[] = [
 						element: <NetworkPage />,
 					},
 					{
-						path: "extrinsic/:id/:tab?",
-						element: <ExtrinsicPage />,
-					},
-					{
 						path: "block/:id/:tab?",
 						element: <BlockPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyBlockId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/block/${simplifiedId}`);
+							}
+
+							return null;
+						}
+					},
+					{
+						path: "extrinsic/:id/:tab?",
+						element: <ExtrinsicPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyExtrinsicId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/extrinsic/${simplifiedId}`);
+							}
+
+							return null;
+						}
 					},
 					{
 						path: "call/:id/:tab?",
 						element: <CallPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyCallId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/call/${simplifiedId}`);
+							}
+
+							return null;
+						}
+					},
+					{
+						path: "event/:id",
+						element: <EventPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyEventId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/event/${simplifiedId}`);
+							}
+
+							return null;
+						}
 					},
 					{
 						path: "account/:address/:tab?",
 						element: <AccountPage />,
-						loader: ({ params }) => {
-							const { network: networkName, address } = params;
-							const network = networkName ? getNetwork(networkName, false) : undefined;
+						loader: (args) => {
+							const { params } = args;
+							const { address } = params as { address: string };
 
-							if (!network || !address) {
-								return null;
-							}
+							const { network } = networkLoader(args);
 
 							const encodedAddress = encodeAddress(address, network.prefix);
 							if (address !== encodedAddress) {
@@ -82,12 +143,8 @@ export const routes: RouteObject[] = [
 						}
 					},
 					{
-						path: "event/:id",
-						element: <EventPage />,
-					},
-					{
 						path: "latest-extrinsics",
-						element: <Navigate to=".." replace />,
+						element: <Navigate to="../extrinsics" replace />,
 					},
 					{
 						path: "runtime",

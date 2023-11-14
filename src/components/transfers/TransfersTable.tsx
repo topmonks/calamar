@@ -7,10 +7,11 @@ import { PaginatedResource } from "../../model/paginatedResource";
 import { Transfer } from "../../model/transfer";
 import { Network } from "../../model/network";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+import { EventLink } from "../events/EventLink";
+
 import { Currency } from "../Currency";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
 import { Time } from "../Time";
 
 export type TransfersTableProps = {
@@ -44,11 +45,9 @@ function TransfersTable(props: TransfersTableProps) {
 			data-test="transfers-table"
 		>
 			<TransfersTableAttribute
-				label="Extrinsic"
-				render={(transfer) => transfer.extrinsic &&
-					<Link to={`/${network.name}/extrinsic/${transfer.extrinsic.id}`}>
-						{transfer.extrinsic.id}
-					</Link>
+				label="Event"
+				render={(transfer) =>
+					<EventLink network={network} id={transfer.eventId} />
 				}
 			/>
 			<TransfersTableAttribute

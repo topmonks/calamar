@@ -5,7 +5,8 @@ import { Resource } from "../../model/resource";
 import { UsdRates } from "../../model/usdRates";
 import { decodeAddress } from "../../utils/address";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+
 import { Currency } from "../Currency";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";

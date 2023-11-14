@@ -29,21 +29,27 @@ export const BlockPage = () => {
 	const [tab, setTab] = useTab();
 	const [page, setPage] = usePage();
 
-	const block = useBlock(network.name, { id_eq: id });
+	const block = useBlock(network.name, { simplifiedId: id });
 
-	const extrinsics = useExtrinsics(network.name, { blockId_eq: id }, {
+	const extrinsics = useExtrinsics(network.name, block.data && { blockId: block.data.id }, {
+		order: "id_ASC",
 		page: tab === "extrinsics" ? page : 1,
-		refreshFirstPage: true
+		refreshFirstPage: true,
+		skip: !block.data
 	});
 
-	const events = useEvents(network.name, { blockId_eq: id }, {
+	const events = useEvents(network.name, block.data && { blockId: block.data.id }, {
+		order: "id_ASC",
 		page: tab === "events" ? page : 1,
-		refreshFirstPage: true
+		refreshFirstPage: true,
+		skip: !block.data
 	});
 
-	const calls = useCalls(network.name, { blockId_eq: id }, {
+	const calls = useCalls(network.name, block.data && { blockId: block.data.id }, {
+		order: "id_ASC",
 		page: tab === "calls" ? page : 1,
-		refreshFirstPage: true
+		refreshFirstPage: true,
+		skip: !block.data
 	});
 
 	useDOMEventTrigger("data-loaded", !block.loading && !extrinsics.loading && !events.loading && !calls.loading);

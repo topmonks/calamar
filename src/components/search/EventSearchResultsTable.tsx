@@ -1,15 +1,16 @@
 import { css } from "@emotion/react";
 
 import { Event } from "../../model/event";
-import { ItemsResponse } from "../../model/itemsResponse";
 import { SearchResultItem } from "../../model/searchResultItem";
+import { PaginatedResource } from "../../model/paginatedResource";
+
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
+import { EventLink } from "../events/EventLink";
 
 import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
-import { Link } from "../Link";
 
 import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
-import { PaginatedResource } from "../../model/paginatedResource";
 
 const eventArgsColCss = css`
 	width: 35%;
@@ -36,9 +37,7 @@ export const EventSearchResultsTable = (props: EventSearchResultsTable) => {
 			<SearchResultsTableItemAttribute<Event>
 				label="Event (ID)"
 				render={(event) => (
-					<Link to={`/${event.network.name}/event/${event.id}`}>
-						{event.id}
-					</Link>
+					<EventLink network={event.network} id={event.id} />
 				)}
 			/>
 			<SearchResultsTableItemAttribute<Event>
@@ -55,10 +54,8 @@ export const EventSearchResultsTable = (props: EventSearchResultsTable) => {
 			/>
 			<SearchResultsTableItemAttribute<Event>
 				label="Extrinsic"
-				render={(event) => (
-					<Link to={`/${event.network.name}/extrinsic/${event.extrinsicId}`}>
-						{event.extrinsicId}
-					</Link>
+				render={(event) => event.extrinsicId && (
+					<ExtrinsicLink network={event.network} id={event.extrinsicId} />
 				)}
 			/>
 			<SearchResultsTableItemAttribute<Event>

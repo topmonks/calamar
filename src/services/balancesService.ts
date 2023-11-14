@@ -15,7 +15,7 @@ import { fetchStatsSquid } from "./fetchService";
 import { getNetwork, getNetworks, hasSupport } from "./networksService";
 
 export type BalancesFilter =
-	{ id_eq: string; }
+	{ id: string; }
 
 export type BalancesOrder = string | string[];
 

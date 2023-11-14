@@ -15,11 +15,11 @@ export const EventPage = () => {
 	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as EventPageParams;
 
-	const event = useEvent(network.name, { id_eq: id });
+	const event = useEvent(network.name, { simplifiedId: id });
 
 	useDOMEventTrigger("data-loaded", !event.loading);
 
-	return (<>
+	return (
 		<Card>
 			<CardHeader>
 				Event #{id}
@@ -27,5 +27,5 @@ export const EventPage = () => {
 			</CardHeader>
 			<EventInfoTable network={network} event={event} />
 		</Card>
-	</>);
+	);
 };

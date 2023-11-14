@@ -13,5 +13,6 @@ export type ExplorerSquidCall = {
 	};
 	extrinsic: {
 		id: string;
+		indexInBlock: number;
 	}
 }

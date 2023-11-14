@@ -4,7 +4,7 @@ import { Tooltip } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 import { css, Theme } from "@emotion/react";
 
-import { AccountAvatar } from "../components/AccountAvatar";
+import { AccountAvatar } from "../components/account/AccountAvatar";
 import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
 import { AccountIdentityInfo } from "../components/account/AccountIdentityInfo";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
@@ -92,17 +92,17 @@ export const AccountPage = () => {
 
 	const balances = useAccountBalances(address, { refresh: true });
 
-	const extrinsics = useExtrinsics(network.name, { signerAddress_eq: address }, {
+	const extrinsics = useExtrinsics(network.name, { signerAddress: address }, {
 		page: tab === "extrinsics" ? page : 1,
 		refreshFirstPage: true
 	});
 
-	const calls = useCalls(network.name, { callerAddress_eq: address }, {
+	const calls = useCalls(network.name, { callerAddress: address }, {
 		page: tab === "calls" ? page : 1,
 		refreshFirstPage: true
 	});
 
-	const transfers = useTransfers(network.name, { accountAddress_eq: address }, {
+	const transfers = useTransfers(network.name, { accountAddress: address }, {
 		page: tab === "transfers" ? page : 1,
 		refreshFirstPage: true
 	});

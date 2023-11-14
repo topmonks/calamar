@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useLoaderData, useParams } from "react-router-dom";
 
 import { Card, CardHeader } from "../components/Card";
 import { CallInfoTable } from "../components/calls/CallInfoTable";
@@ -14,7 +14,9 @@ import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
 import { useTab } from "../hooks/useTab";
 
 export type CallPageParams = {
+	network: string;
 	id: string;
+	tab?: string;
 };
 
 export const CallPage = () => {
@@ -24,11 +26,12 @@ export const CallPage = () => {
 	const [tab, setTab] = useTab();
 	const [page, setPage] = usePage();
 
-	const call = useCall(network.name, { id_eq: id });
+	const call = useCall(network.name, { simplifiedId: id });
 
-	const events = useEvents(network.name, { callId_eq: id }, {
+	const events = useEvents(network.name, call.data && { callId: call.data.id }, {
 		order: "id_ASC",
-		page: tab === "events" ? page : 1
+		page: tab === "events" ? page : 1,
+		skip: !call.data
 	});
 
 	useDOMEventTrigger("data-loaded", !call.loading && !events.loading);

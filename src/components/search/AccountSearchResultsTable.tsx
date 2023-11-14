@@ -4,7 +4,7 @@ import { PaginatedResource } from "../../model/paginatedResource";
 import { SearchResultItem } from "../../model/searchResultItem";
 import { encodeAddress } from "../../utils/address";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
 
 import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
 

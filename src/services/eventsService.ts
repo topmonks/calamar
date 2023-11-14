@@ -15,14 +15,17 @@ import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 import { getEventsRuntimeMetadata, getPalletsRuntimeMetadata, getRuntimeEventMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
+import { simplifyId } from "../utils/id";
 
 export type EventsFilter =
-	{ id_eq: string; }
-	| { blockId_eq: string; }
-	| { callId_eq: string; }
-	| { extrinsicId_eq: string; }
-	| { palletName_eq: string; }
-	| { palletName_eq: string, eventName_eq: string; };
+	undefined
+	| { simplifiedId: string; }
+	| { id: string; }
+	| { blockId: string; }
+	| { callId: string; }
+	| { extrinsicId: string; }
+	| { palletName: string; }
+	| { palletName: string, eventName: string; };
 
 export type EventsOrder = string | string[];
 
@@ -43,8 +46,8 @@ export async function getEventsByName(
 	const {pallet: palletName, event: eventName} = await normalizeEventName(network, name);
 
 	const filter: EventsFilter = eventName
-		? { palletName_eq: palletName, eventName_eq: eventName }
-		: { palletName_eq: palletName };
+		? { palletName: palletName, eventName: eventName }
+		: { palletName: palletName };
 
 
 	if (hasSupport(network, "explorer-squid")) {
@@ -121,6 +124,7 @@ async function getArchiveEvent(network: string, filter: EventsFilter) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
 				id
 				name
+				indexInBlock
 				block {
 					id
 					height
@@ -154,6 +158,7 @@ async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
 				id
 				eventName
 				palletName
+				indexInBlock
 				block {
 					id
 					height
@@ -337,6 +342,20 @@ export async function addEventsArgs(network: string, items: ItemsResponse<Event>
 	};
 }
 
+
+/**
+ * Get simplified version of extrinsic ID
+ * which will be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-000041-5800a -> 20537612-41
+ */
+export function simplifyEventId(id: string) {
+	return simplifyId(id, /\d{10}-\d{6}-[^-]{5}/, 2);
+}
+
 async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<Event> {
 	const [palletName, eventName] = event.name.split(".") as [string, string];
 	const specVersion = event.block.spec.specVersion;
@@ -351,7 +370,6 @@ async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<
 		eventName,
 		extrinsicId: event.extrinsic?.id || null,
 		callId: event.call?.id || null,
-		args: null,
 		specVersion,
 		metadata: {
 			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
@@ -384,29 +402,46 @@ function eventsFilterToArchiveFilter(filter?: EventsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		const [blockHeight = "", indexInBlock = ""] = filter.simplifiedId.split("-");
+
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				height_eq: parseInt(blockHeight),
+			},
+			indexInBlock_eq: parseInt(indexInBlock)
+		};
+	}
+
+	if ("blockId" in filter) {
+		return {
+			block: {
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("callId_eq" in filter) {
+	}
+
+	if ("callId" in filter) {
 		return {
 			call: {
-				id_eq: filter.callId_eq
+				id_eq: filter.callId
 			}
 		};
-	} else if ("extrinsicId_eq" in filter) {
+	}
+
+	if ("extrinsicId" in filter) {
 		return {
 			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.extrinsicId
 			}
 		};
-	} else if ("palletName_eq" in filter) {
+	}
+
+	if ("palletName" in filter) {
 		return {
-			name_eq: ("eventName_eq" in filter)
-				? `${filter.palletName_eq}.${filter.eventName_eq}`
-				: filter.palletName_eq
+			name_eq: ("eventName" in filter)
+				? `${filter.palletName}.${filter.eventName}`
+				: filter.palletName
 		};
 	}
 
@@ -418,22 +453,35 @@ export function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		const [blockHeight = "", indexInBlock = ""] = filter.simplifiedId.split("-");
+
+		return {
+			blockNumber_eq: parseInt(blockHeight),
+			indexInBlock_eq: parseInt(indexInBlock)
+		};
+	}
+
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("callId_eq" in filter) {
+	}
+
+	if ("callId" in filter) {
 		return {
 			call: {
-				id_eq: filter.callId_eq
+				id_eq: filter.callId
 			}
 		};
-	} else if ("extrinsicId_eq" in filter) {
+	}
+
+	if ("extrinsicId" in filter) {
 		return {
 			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.extrinsicId
 			}
 		};
 	}

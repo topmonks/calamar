@@ -13,7 +13,7 @@ import { fetchArchive, fetchMainSquid } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 
 export type TransfersFilter =
-	{ accountAddress_eq: string };
+	{ accountAddress: string };
 
 export type TransfersOrder = string | string[];
 
@@ -84,24 +84,7 @@ async function getMainSquidTransfers(
 		}
 	);
 
-	const items = await extractConnectionItems(response.transfersConnection, unifyMainSquidTransfer, network);
-	const transfers = await addExtrinsicsInfo(network, items);
-
-	return transfers;
-}
-
-async function addExtrinsicsInfo(network: string, items: ItemsResponse<Omit<Transfer, "extrinsic">>) {
-	const extrinsicHashes = items.data.map((transfer) => transfer.extrinsicHash).filter(Boolean) as string[];
-
-	const extrinsicsInfoByHash = await getArchiveExtrinsicsInfo(network, extrinsicHashes);
-
-	return {
-		...items,
-		data: items.data.map(transfer => ({
-			...transfer,
-			extrinsic: transfer.extrinsicHash ? extrinsicsInfoByHash[transfer.extrinsicHash] : null
-		}))
-	};
+	return await extractConnectionItems(response.transfersConnection, unifyMainSquidTransfer, network);
 }
 
 async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string[]) {
@@ -125,11 +108,12 @@ async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string
 	}, {} as Record<string, any>);
 }
 
-function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Omit<Transfer, "extrinsic"> {
+function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Transfer {
 	const network = getNetwork(networkName);
 
 	return {
 		...transfer,
+		eventId: transfer.transfer.id,
 		accountPublicKey: transfer.account.publicKey,
 		blockNumber: transfer.transfer.blockNumber,
 		timestamp: transfer.transfer.timestamp,
@@ -146,8 +130,8 @@ function transfersFilterToMainSquidFilter(filter?: TransfersFilter) {
 		return undefined;
 	}
 
-	if ("accountAddress_eq" in filter) {
-		const publicKey = decodeAddress(filter.accountAddress_eq);
+	if ("accountAddress" in filter) {
+		const publicKey = decodeAddress(filter.accountAddress);
 
 		return {
 			account: {

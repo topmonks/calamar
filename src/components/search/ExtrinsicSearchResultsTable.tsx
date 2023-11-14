@@ -1,10 +1,11 @@
 import { Extrinsic } from "../../model/extrinsic";
-import { ItemsResponse } from "../../model/itemsResponse";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { SearchResultItem } from "../../model/searchResultItem";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+
 import { ButtonLink } from "../ButtonLink";
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
 import { Link } from "../Link";
 import { Time } from "../Time";
 
@@ -31,9 +32,7 @@ export const ExtrinsicSearchResultsTable = (props: ExtrinsicSearchResultsTable) 
 			<SearchResultsTableItemAttribute<Extrinsic>
 				label="Extrinsic (ID)"
 				render={(extrinsic) => (
-					<Link to={`/${extrinsic.network.name}/extrinsic/${extrinsic.id}`}>
-						{extrinsic.id}
-					</Link>
+					<ExtrinsicLink network={extrinsic.network} id={extrinsic.id} />
 				)}
 			/>
 			<SearchResultsTableItemAttribute<Extrinsic>

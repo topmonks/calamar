@@ -3,6 +3,7 @@ import { Block } from "../model/block";
 import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
+import { simplifyId } from "../utils/id";
 
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
@@ -10,9 +11,11 @@ import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 
 export type BlocksFilter =
-	{ id_eq: string; }
-	| { hash_eq: string; }
-	| { height_eq: number; };
+	undefined
+	| { id: string; }
+	| { simplifiedId: string; }
+	| { hash: string; }
+	| { height: number; };
 
 export type BlocksOrder = string | string[];
 
@@ -181,6 +184,19 @@ async function getExplorerSquidBlocks(
 	return blocks;
 }
 
+/**
+ * Get simplified version of block ID
+ * which will be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-5800a -> 20537612
+ */
+export function simplifyBlockId(id: string) {
+	return simplifyId(id, /\d{10}-[^-]{5}/, 1);
+}
+
 function unifyArchiveBlock(block: ArchiveBlock, network: string): Block {
 	return {
 		...block,
@@ -201,12 +217,24 @@ export function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 		return undefined;
 	}
 
+	if ("simplifiedId" in filter) {
+		return {
+			height_eq: parseInt(filter.simplifiedId)
+		};
+	}
+
 	return filter;
 }
 
 export function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
 	if (!filter) {
 		return undefined;
+	}
+
+	if ("simplifiedId" in filter) {
+		return {
+			height_eq: parseInt(filter.simplifiedId)
+		};
 	}
 
 	return filter;

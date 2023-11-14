@@ -7,6 +7,7 @@ import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
 
 import { decodeAddress } from "../utils/address";
+import { simplifyId } from "../utils/id";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { lowerFirst, upperFirst } from "../utils/string";
 
@@ -16,12 +17,14 @@ import { getCallRuntimeMetadata, getCallsRuntimeMetadata, getPalletsRuntimeMetad
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type ExtrinsicsFilter =
-	{ id_eq: string; }
-	| { hash_eq: string; }
-	| { blockId_eq: string; }
-	| { palletName_eq: string; }
-	| { palletName_eq: string, callName_eq: string; }
-	| { signerAddress_eq: string; };
+	undefined
+	| { id: string; }
+	| { simplifiedId: string; }
+	| { hash: string; }
+	| { blockId: string; }
+	| { palletName: string; }
+	| { palletName: string, callName: string; }
+	| { signerAddress: string; };
 
 export type ExtrinsicsOrder = string | string[];
 
@@ -38,8 +41,8 @@ export async function getExtrinsicsByName(
 	const {pallet: palletName, call: callName} = await normalizeExtrinsicName(network, name);
 
 	const filter: ExtrinsicsFilter = callName
-		? { palletName_eq: palletName, callName_eq: callName }
-		: { palletName_eq: palletName };
+		? { palletName, callName }
+		: { palletName };
 
 	if(hasSupport(network, "explorer-squid")) {
 		const counterFilter = callName
@@ -258,6 +261,19 @@ async function getExplorerSquidExtrinsics(
 	return extractConnectionItems(response.extrinsicsConnection, unifyExplorerSquidExtrinsic, network);
 }
 
+/**
+ * Get simplified version of extrinsic ID
+ * which will be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-000001-5800a -> 20537612-1
+ */
+export function simplifyExtrinsicId(id: string) {
+	return simplifyId(id, /\d{10}-\d{6}-[^-]{5}/, 2);
+}
+
 async function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Promise<Extrinsic> {
 	const [palletName, callName] = extrinsic.call.name.split(".") as [string, string];
 	const specVersion = extrinsic.block.spec.specVersion;
@@ -319,14 +335,27 @@ function extrinsicFilterToArchiveFilter(filter?: ExtrinsicsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		const [blockHeight = "", indexInBlock = ""] = filter.simplifiedId.split("-");
+
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				height_eq: parseInt(blockHeight),
+			},
+			indexInBlock_eq: parseInt(indexInBlock)
+		};
+	}
+
+	if ("blockId" in filter) {
+		return {
+			block: {
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("signerAddress_eq" in filter) {
-		const publicKey = decodeAddress(filter.signerAddress_eq);
+	}
+
+	if ("signerAddress" in filter) {
+		const publicKey = decodeAddress(filter.signerAddress);
 
 		return {
 			OR: [
@@ -334,12 +363,14 @@ function extrinsicFilterToArchiveFilter(filter?: ExtrinsicsFilter) {
 				{ signature_jsonContains: `{"address": { "value": "${publicKey}"} }` },
 			],
 		};
-	} else if ("palletName_eq" in filter) {
+	}
+
+	if ("palletName" in filter) {
 		return {
 			call: {
-				name_eq: ("callName_eq" in filter)
-					? `${filter.palletName_eq}.${filter.callName_eq}`
-					: filter.palletName_eq
+				name_eq: ("callName" in filter)
+					? `${filter.palletName}.${filter.callName}`
+					: filter.palletName
 			}
 		};
 	}
@@ -352,23 +383,38 @@ export function extrinsicFilterToExplorerSquidFilter(filter?: ExtrinsicsFilter) 
 		return undefined;
 	}
 
-	if ("hash_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		const [blockHeight = "", indexInBlock = ""] = filter.simplifiedId.split("-");
+
 		return {
-			extrinsicHash_eq: filter.hash_eq
+			blockNumber_eq: parseInt(blockHeight),
+			indexInBlock_eq: parseInt(indexInBlock)
 		};
-	} else if ("blockId_eq" in filter) {
+	}
+
+	if ("hash" in filter) {
+		return {
+			extrinsicHash_eq: filter.hash
+		};
+	}
+
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("signerAddress_eq" in filter) {
-		const publicKey = decodeAddress(filter.signerAddress_eq);
+	}
+
+	if ("signerAddress" in filter) {
+		const publicKey = decodeAddress(filter.signerAddress);
 
 		return {
 			signerPublicKey_eq: publicKey
 		};
-	} else if ("palletName_eq" in filter) {
+	}
+
+	if ("palletName" in filter) {
 		return {
 			mainCall: {
 				...filter

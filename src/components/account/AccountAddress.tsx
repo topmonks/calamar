@@ -3,13 +3,14 @@ import { useMemo } from "react";
 import { Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 
-import { Network } from "../model/network";
-import { encodeAddress } from "../utils/address";
-import { shortenHash } from "../utils/shortenHash";
+import { Network } from "../../model/network";
+import { encodeAddress } from "../../utils/address";
+import { shortenHash } from "../../utils/shortenHash";
 
-import { Link } from "./Link";
+import CopyToClipboardButton, { CopyToClipboardButtonProps } from "../CopyToClipboardButton";
+import { Link } from "../Link";
+
 import { AccountAvatar } from "./AccountAvatar";
-import CopyToClipboardButton, { CopyToClipboardButtonProps } from "./CopyToClipboardButton";
 
 const accountAddressStyle = css`
 	display: flex;

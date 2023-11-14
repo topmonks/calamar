@@ -2,10 +2,12 @@ import { Block } from "../../model/block";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
 import { Time } from "../Time";
+
+import { BlockLink } from "./BlockLink";
 
 export type BlocksTableProps = {
 	network: Network;
@@ -40,17 +42,12 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 			<BlocksTableAttribute
 				label="Height"
 				render={(block) =>
-					<Link to={`/${network.name}/block/${block.id}`}>
-						{block.height}
-					</Link>
+					<BlockLink network={network} id={block.id} />
 				}
 			/>
 			<BlocksTableAttribute
 				label="Spec version"
-				render={(block) =>
-					<>{block.specVersion}</>
-
-				}
+				render={(block) => block.specVersion}
 			/>
 			{showValidator &&
 				<BlocksTableAttribute

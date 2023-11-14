@@ -2,8 +2,9 @@ import { Block } from "../../model/block";
 import { PaginatedResource } from "../../model/paginatedResource";
 import { SearchResultItem } from "../../model/searchResultItem";
 
-import { AccountAddress } from "../AccountAddress";
-import { Link } from "../Link";
+import { AccountAddress } from "../account/AccountAddress";
+import { BlockLink } from "../blocks/BlockLink";
+
 import { Time } from "../Time";
 
 import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
@@ -29,9 +30,7 @@ export const BlockSearchResultsTable = (props: BlockSearchResultsTable) => {
 			<SearchResultsTableItemAttribute<Block>
 				label="Block (Height)"
 				render={(block) =>
-					<Link to={`/${block.network.name}/block/${block.id}`}>
-						{block.height}
-					</Link>
+					<BlockLink network={block.network} id={block.id} />
 				}
 			/>
 			<SearchResultsTableItemAttribute<Block>

@@ -5,10 +5,13 @@ import { Event } from "../../model/event";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
+
 import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
+
+import { EventLink } from "./EventLink";
 
 const parametersColCss = (showExtrinsic?: boolean) => css`
 	width: ${showExtrinsic ? "40%" : "60%"};
@@ -40,9 +43,7 @@ function EventsTable(props: EventsTableProps) {
 			<EventsItemsTableAttribute
 				label="ID"
 				render={(event) => (
-					<Link to={`/${network.name}/event/${event.id}`}>
-						{event.id}
-					</Link>
+					<EventLink network={network} id={event.id} />
 				)}
 			/>
 			<EventsItemsTableAttribute
@@ -61,9 +62,7 @@ function EventsTable(props: EventsTableProps) {
 				<EventsItemsTableAttribute
 					label="Extrinsic"
 					render={(event) => event.extrinsicId && (
-						<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
-							{event.extrinsicId}
-						</Link>
+						<ExtrinsicLink network={event.network} id={event.extrinsicId} />
 					)}
 				/>
 			)}

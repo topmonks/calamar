@@ -17,5 +17,6 @@ export type ArchiveCall = {
 	}|null;
 	extrinsic: {
 		id: string;
+		indexInBlock: number;
 	}
 }

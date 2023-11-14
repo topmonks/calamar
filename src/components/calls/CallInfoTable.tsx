@@ -9,13 +9,17 @@ import { Resource } from "../../model/resource";
 
 import { encodeAddress } from "../../utils/address";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+import { BlockLink } from "../blocks/BlockLink";
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
+
 import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
-import { Link } from "../Link";
 import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
+
+import { CallLink } from "./CallLink";
 
 export type CallInfoTableProps = {
 	network: Network;
@@ -56,27 +60,21 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network.name}/block/${data.blockId}`}>
-						{data.blockHeight}
-					</Link>
+					<BlockLink network={network} id={data.blockId} />
 				}
 				copyToClipboard={(data) => data.blockId}
 			/>
 			<CallInfoTableAttribute
 				label="Extrinsic"
 				render={(data) =>
-					<Link to={`/${network.name}/extrinsic/${data.extrinsicId}`}>
-						{data.extrinsicId}
-					</Link>
+					<ExtrinsicLink network={network} id={data.extrinsicId} />
 				}
 				copyToClipboard={(data) => data.extrinsicId}
 			/>
 			<CallInfoTableAttribute
 				label="Parent call"
 				render={(data) => data.parentId &&
-					<Link to={`/${network.name}/call/${data.parentId}`}>
-						{data.parentId}
-					</Link>
+					<CallLink network={network} id={data.parentId} />
 				}
 				copyToClipboard={(data) => data.parentId}
 				hide={(data) => !data.parentId}

@@ -11,12 +11,16 @@ import { extractConnectionItems, paginationToConnectionCursor } from "../utils/i
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getCallRuntimeMetadata } from "./runtimeMetadataService";
 import { getNetwork, hasSupport } from "./networksService";
+import { warningAssert } from "../utils/assert";
+import { simplifyId } from "../utils/id";
 
 export type CallsFilter =
-	{ id_eq: string; }
-	| { blockId_eq: string; }
-	| { extrinsicId_eq: string; }
-	| { callerAddress_eq: string; };
+	undefined
+	| { id: string; }
+	| { simplifiedId: string; }
+	| { blockId: string; }
+	| { extrinsicId: string; }
+	| { callerAddress: string; };
 
 export type CallsOrder = string | string[];
 
@@ -143,7 +147,7 @@ async function getArchiveCalls(
 						}
 						extrinsic {
 							id
-							version
+							indexInBlock
 						}
 					}
 				}
@@ -195,6 +199,7 @@ async function getExplorerSquidCalls(
 						}
 						extrinsic {
 							id
+							indexInBlock
 						}
 					}
 				}
@@ -251,6 +256,20 @@ async function addCallArgs(network: string, call: Call|undefined) {
 	};
 }
 
+/**
+ * Get simplified version of call ID which
+ * is used to be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-000003-5800a        -> 20537612-3
+ * - 0020537612-000003-5800a-000001 -> 20537612-3-1
+ */
+export function simplifyCallId(id: string) {
+	return simplifyId(id, /\d{10}-\d{6}-[^-]{5}(-\d{6})?/, 2);
+}
+
 async function unifyArchiveCall(call: ArchiveCall, network: string): Promise<Call> {
 	const [palletName, callName] = call.name.split(".") as [string, string];
 	const specVersion = call.block.spec.specVersion;
@@ -269,7 +288,6 @@ async function unifyArchiveCall(call: ArchiveCall, network: string): Promise<Cal
 		caller: call.origin && call.origin.kind !== "None"
 			? call.origin.value.value
 			: null,
-		args: null,
 		metadata: {
 			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
 		}
@@ -302,19 +320,47 @@ function callsFilterToArchiveFilter(filter?: CallsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		console.log(filter);
+		const [blockHeight = "", indexInBlock = "", childIndex = ""] = filter.simplifiedId.split("-");
+
+		const squidFilter: any = {
+			block: {
+				height_eq: parseInt(blockHeight),
+			},
+			extrinsic: {
+				indexInBlock_eq: parseInt(indexInBlock)
+			},
+			parent: {
+				id_isNull: true
+			}
+		};
+
+		if (childIndex) {
+			squidFilter.parent.id_isNull = false;
+			squidFilter.id_endsWith = childIndex.toString();
+		}
+
+		return squidFilter;
+	}
+
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("extrinsicId_eq" in filter) {
+	}
+
+	if ("extrinsicId" in filter) {
 		return {
 			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.extrinsicId
 			}
 		};
-	} else if ("callerAddress_eq" in filter) {
+	}
+
+	if ("callerAddress" in filter) {
 		throw new Error("Filtering by caller public key in archive not implemented");
 	}
 
@@ -327,20 +373,46 @@ function callsFilterToExplorerSquidFilter(filter?: CallsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("extrinsicId_eq" in filter) {
+	}
+
+	if ("simplifiedId" in filter) {
+		console.log(filter);
+		const [blockHeight = "", indexInBlock = "", childIndex = ""] = filter.simplifiedId.split("-");
+
+		const squidFilter: any = {
+			block: {
+				height_eq: parseInt(blockHeight),
+			},
+			extrinsic: {
+				indexInBlock_eq: parseInt(indexInBlock)
+			},
+			parentId_isNull: true
+		};
+
+		if (childIndex) {
+			squidFilter.parentId_isNull = false;
+			squidFilter.id_endsWith = childIndex.toString();
+		}
+
+		return squidFilter;
+	}
+
+	if ("extrinsicId" in filter) {
 		return {
 			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.extrinsicId
 			}
 		};
-	} else if ("callerAddress_eq" in filter) {
-		const publicKey = decodeAddress(filter.callerAddress_eq);
+	}
+
+	if ("callerAddress" in filter) {
+		const publicKey = decodeAddress(filter.callerAddress);
 
 		return {
 			callerPublicKey_eq: publicKey

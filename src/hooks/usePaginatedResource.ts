@@ -21,6 +21,7 @@ export function usePaginatedResource<T = any, F extends any[] = any[]>(
 
 	const resource = useResource(fetchItems, [...args, { page, pageSize: 10 /* TODO constant */ }], {
 		...restOptions,
+		revalidateOnFocus: false,
 		refresh: refresh || (refreshFirstPage && page === 1)
 	});
 

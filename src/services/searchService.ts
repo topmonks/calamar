@@ -173,8 +173,8 @@ async function searchNetworkByHash(
 	hash: string,
 	pagination: SearchPaginationOptions,
 ) {
-	const blocksFilter: BlocksFilter = {hash_eq: hash};
-	const extrinsicsFilter: ExtrinsicsFilter = {hash_eq: hash};
+	const blocksFilter: BlocksFilter = {hash};
+	const extrinsicsFilter: ExtrinsicsFilter = {hash};
 
 	const blocksCursor = paginationToConnectionCursor(pagination.blocks);
 	const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
@@ -272,7 +272,7 @@ async function searchNetworkByHash(
 }
 
 async function searchNetworkByBlockHeight(network: Network, height: number) {
-	const blocksFilter: BlocksFilter = {height_eq: height};
+	const blocksFilter: BlocksFilter = {height};
 
 	const response = await fetchExplorerSquid<{
 		blocks: ItemsConnection<ExplorerSquidBlock, true>,
@@ -385,20 +385,20 @@ async function searchNetworkByName(
 		}
 	);
 
-	let extrinsicsFilter: ExtrinsicsFilter = {id_eq: ""}; // default failing filter
-	let eventsFilter: EventsFilter = {id_eq: ""}; // default failing filter
+	let extrinsicsFilter: ExtrinsicsFilter = {id: ""}; // default failing filter
+	let eventsFilter: EventsFilter = {id: ""}; // default failing filter
 
 	if (fetchAll) {
 		if (countersResponse.extrinsicsByNameCounter?.total) {
 			extrinsicsFilter = extrinsicName.call
-				? { palletName_eq: extrinsicName.pallet, callName_eq: extrinsicName.call }
-				: { palletName_eq: extrinsicName.pallet };
+				? { palletName: extrinsicName.pallet, callName: extrinsicName.call }
+				: { palletName: extrinsicName.pallet };
 		}
 
 		if (countersResponse.eventsByNameCounter?.total) {
 			eventsFilter = eventName.event
-				? { palletName_eq: eventName.pallet, eventName_eq: eventName.event }
-				: { palletName_eq: eventName.pallet };
+				? { palletName: eventName.pallet, eventName: eventName.event }
+				: { palletName: eventName.pallet };
 		}
 	}
 
