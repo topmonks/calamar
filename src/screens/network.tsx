@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { Theme, css } from "@emotion/react";
 
-import BalancesTable from "../components/balances/BalancesTable";
+import HoldersTable from "../components/account/HoldersTable";
 import BlocksTable from "../components/blocks/BlocksTable";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
@@ -84,8 +84,8 @@ export const NetworkPage = () => {
 	return (
 		<>
 			<CardRow>
-				<Card data-test="network-stats">
-					<CardHeader>
+				<Card data-test="item-info">
+					<CardHeader data-test="item-header">
 						<img css={networkIconStyle} src={network.icon} />
 						{network.displayName}
 					</CardHeader>
@@ -105,7 +105,7 @@ export const NetworkPage = () => {
 					</Card>
 				}
 			</CardRow>
-			<Card data-test="network-related-items">
+			<Card data-test="related-items">
 				<TabbedContent currentTab={tab} onTabChange={setTab}>
 					<TabPane
 						label="Extrinsics"
@@ -159,9 +159,9 @@ export const NetworkPage = () => {
 							count={topHolders.totalCount}
 							loading={topHolders.loading}
 							error={topHolders.error}
-							value="top-holders"
+							value="holders"
 						>
-							<BalancesTable
+							<HoldersTable
 								network={network}
 								balances={topHolders}
 								usdRates={usdRates}

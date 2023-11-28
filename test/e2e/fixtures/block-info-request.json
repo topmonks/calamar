@@ -1,0 +1,34 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($filter: BlockWhereInput) {\n\t\t\tblocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {\n\t\t\t\t...ExplorerSquidBlock\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidBlock on Block {\n\t\t\t\n\tid\n\thash\n\theight\n\ttimestamp\n\tparentHash\n\tvalidator\n\tspecVersion\n\n\t\t}\n\t",
+        "variables": {
+          "filter": {
+            "height_eq": 18278717
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "blocks": [
+            {
+              "id": "0018278717-673df",
+              "hash": "0x673df17beb910e02a3236350024dd6ed1b26c394fca1f5669b7aadc7bcea19af",
+              "height": 18278717,
+              "timestamp": "2023-11-22T12:16:06.000000Z",
+              "parentHash": "0xceb9420e32a1f78525d13126e1f8d8a4db29e8137bd8e981a8e98fb3d5380c35",
+              "validator": "0x36e9dd8a810cd5f94f4f61cc59f1dd1a7df21e88261e6bc1fc23467f015e7b3c",
+              "specVersion": 9431
+            }
+          ]
+        }
+      }
+    }
+  }
+]

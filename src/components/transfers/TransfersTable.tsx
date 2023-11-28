@@ -42,7 +42,7 @@ function TransfersTable(props: TransfersTableProps) {
 			error={transfers.error}
 			pageInfo={transfers.pageInfo}
 			onPageChange={onPageChange}
-			data-test="transfers-table"
+			data-test="transfers-items"
 		>
 			<TransfersTableAttribute
 				label="Event"

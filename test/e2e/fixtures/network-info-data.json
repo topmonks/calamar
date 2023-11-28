@@ -1,0 +1,12 @@
+{
+  "header": "Polkadot",
+  "stats": [
+    "Finalized blocks\n18367749",
+    "Signed extrinsics\n14257153",
+    "Staking inflation\n7.6%",
+    "Staking rewards\n14.9%",
+    "Validators\n297/297",
+    "Nomination pools\n168"
+  ],
+  "totalIssuance": "1.383B"
+}

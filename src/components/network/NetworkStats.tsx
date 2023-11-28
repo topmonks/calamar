@@ -110,7 +110,7 @@ export const NetworkStats = (props: NetworkInfoTableProps) => {
 	}
 
 	return (
-		<div css={statsLayoutStyle}>
+		<div css={statsLayoutStyle} data-test="network-stats">
 			<StatItem title="Finalized blocks" value={stats.data.chainFinalizedBlocks} icon={Block} />
 			<StatItem title="Signed extrinsics" value={stats.data.chainSignedExtrinsics} icon={Signed} />
 			<StatItem title="Staking inflation" value={`${stats.data.stakingInflationRatio.toFixed(1)}%`} icon={Inflation} />

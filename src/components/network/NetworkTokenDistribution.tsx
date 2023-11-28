@@ -76,7 +76,7 @@ export const NetworkTokenDistribution = (props: NetworkTokenDistributionProps) =
 	return (
 		<div>
 			<div>
-				<div css={valueStyle}>
+				<div css={valueStyle} data-test="network-total-issuance">
 					<div css={valueTypeStyle}>Total issuance</div>
 					<div>{formatNumber(stats.data.balancesTotalIssuance, {compact: true})}</div>
 				</div>

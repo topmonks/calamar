@@ -1,0 +1,123 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: AccountWhereInput, $order: [AccountOrderByInput!]!) {\n\t\t\t\taccountsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t\tedges {\n\t\t\t\t\t\tnode {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tfree\n\t\t\t\t\t\t\treserved\n\t\t\t\t\t\t\ttotal\n\t\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tpageInfo {\n\t\t\t\t\t\tendCursor\n\t\t\t\t\t\thasNextPage\n\t\t\t\t\t\thasPreviousPage\n\t\t\t\t\t\tstartCursor\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t}\n\t\t\t}\n",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "order": "total_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "accountsConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "16ZL8yLyXv3V3L3z9ofR1ovFLziyXaN1DPq4yffMAZ9czzBD",
+                  "free": "741294385171453247",
+                  "reserved": "0",
+                  "total": "741294385171453247",
+                  "updatedAtBlock": 18365743
+                }
+              },
+              {
+                "node": {
+                  "id": "13UVJyLnbVp9RBZYFwFGyDvVd1y27Tt8tkntv6Q7JVPhFsTB",
+                  "free": "439881839520680554",
+                  "reserved": "0",
+                  "total": "439881839520680554",
+                  "updatedAtBlock": 18367775
+                }
+              },
+              {
+                "node": {
+                  "id": "12xtAYsRUrmbniiWQqJtECiBQrMn8AypQcXhnQAc6RB6XkLW",
+                  "free": "368897152643727530",
+                  "reserved": "0",
+                  "total": "368897152643727530",
+                  "updatedAtBlock": 18367760
+                }
+              },
+              {
+                "node": {
+                  "id": "13UVJyLnbVp77Z2t6rZ2mGqgqgyRvTu9GbDaaxonzJ1UDQPi",
+                  "free": "0",
+                  "reserved": "357599313927924796",
+                  "total": "357599313927924796",
+                  "updatedAtBlock": 7815500
+                }
+              },
+              {
+                "node": {
+                  "id": "13UVJyLnbVp77Z2t6rXwoAfLPiGe6FVeKuTYPC4T8zWZ8vTS",
+                  "free": "13235477099885044",
+                  "reserved": "311924325223691219",
+                  "total": "325159802323576263",
+                  "updatedAtBlock": 7756250
+                }
+              },
+              {
+                "node": {
+                  "id": "15j4dg5GzsL1bw2U2AWgeyAk6QTxq43V7ZPbXdAmbVLjvDCK",
+                  "free": "321165060770000001",
+                  "reserved": "378830000000",
+                  "total": "321165439600000001",
+                  "updatedAtBlock": 16381100
+                }
+              },
+              {
+                "node": {
+                  "id": "132zsjMwGjNaUXF5XjUCDs2cDEq9Qao51TsL9RSUTGZbinVK",
+                  "free": "241161657172735340",
+                  "reserved": "660000000",
+                  "total": "241161657832735340",
+                  "updatedAtBlock": 17856010
+                }
+              },
+              {
+                "node": {
+                  "id": "1743nDTMZisPgBCYSAgkUn1kVG7MePc9rvMEjoRNf4ipVkF",
+                  "free": "212226527590749654",
+                  "reserved": "0",
+                  "total": "212226527590749654",
+                  "updatedAtBlock": 8434900
+                }
+              },
+              {
+                "node": {
+                  "id": "14Ns6kKbCoka3MS4Hn6b7oRw9fFejG8RH5rq5j63cWUfpPDJ",
+                  "free": "201267913116570326",
+                  "reserved": "1320000000",
+                  "total": "201267914436570326",
+                  "updatedAtBlock": 16381350
+                }
+              },
+              {
+                "node": {
+                  "id": "14gAowz3LaAqYkRjqUZkjZUxKFUzLtN2oZJSfr3ziHBRhwgc",
+                  "free": "174011241121717378",
+                  "reserved": "202910000000",
+                  "total": "174011444031717378",
+                  "updatedAtBlock": 17760879
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            }
+          }
+        }
+      }
+    }
+  }
+]

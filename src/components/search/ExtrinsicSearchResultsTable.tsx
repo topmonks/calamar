@@ -27,6 +27,7 @@ export const ExtrinsicSearchResultsTable = (props: ExtrinsicSearchResultsTable) 
 			notFound={extrinsics.notFound}
 			error={extrinsics.error}
 			itemsPlural="extrinsics"
+			data-test="extrinsics-items"
 			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Extrinsic>

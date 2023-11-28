@@ -116,9 +116,9 @@ export const AccountPage = () => {
 	return (
 		<>
 			<CardRow>
-				<Card css={accountInfoStyle} data-test="account-info">
-					<CardHeader>
-						Account
+				<Card css={accountInfoStyle} data-test="item-info">
+					<CardHeader data-test="item-header">
+						Account{" "}
 						{(account.loading || account.data) &&
 							<AccountAvatar address={address} size={32} css={avatarStyle} />
 						}
@@ -158,7 +158,7 @@ export const AccountPage = () => {
 				</Card>
 			</CardRow>
 			{account.data &&
-				<Card data-test="account-related-items">
+				<Card data-test="related-items">
 					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Balances"

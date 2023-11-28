@@ -574,7 +574,7 @@ function networkResultsToSearchResultItems<T extends {id: string, network: Netwo
 				network: result.network,
 				data: item,
 			});
-		} else if (totalCount > 1) {
+		} else if (items.totalCount > 1) {
 			data.push({
 				id: `${result.network.name}-grouped`,
 				network: result.network,

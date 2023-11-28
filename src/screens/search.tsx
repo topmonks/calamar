@@ -23,7 +23,7 @@ import { useTab } from "../hooks/useTab";
 import { getNetworks, hasSupport } from "../services/networksService";
 import { getQueryType } from "../services/searchService";
 
-import { isDeepEqual } from "../utils/equal";
+import { isDeepEqual } from "../utils/object";
 
 const queryStyle = css`
 	font-weight: normal;
@@ -50,6 +50,8 @@ const queryStyle2 = css`
 	font-family: inherit;
 	background-color: #f5f5f5;
 	border-radius: 6px;
+
+	word-break: break-all;
 
 	&::before {
 		content: open-quote;
@@ -154,7 +156,7 @@ export const SearchPage = () => {
 			&& isDeepEqual(networkNames, previousNetworkNamesRef.current)
 	});
 
-	console.log("results", searchResult);
+	console.log("results!!", searchResult);
 
 	const searchByNameUnsupportNetworks = networks.filter(it =>
 		getQueryType(it, query) === "name" && !hasSupport(it.name, "explorer-squid")
@@ -209,7 +211,7 @@ export const SearchPage = () => {
 
 	return (
 		<>
-			<Card>
+			<Card data-test="search-results">
 				<CardHeader>
 					Search results
 				</CardHeader>
@@ -267,7 +269,11 @@ export const SearchPage = () => {
 					<NotFound css={notFoundStyle}>Nothing was found</NotFound>
 				)}
 				{searchResult.data && searchResult.data.totalCount > 0 && (
-					<TabbedContent css={resultsStyle} currentTab={tab} onTabChange={setTab}>
+					<TabbedContent
+						css={resultsStyle}
+						currentTab={tab}
+						onTabChange={setTab}
+					>
 						<TabPane
 							value="accounts"
 							label="Accounts"

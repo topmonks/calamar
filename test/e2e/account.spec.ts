@@ -1,104 +1,186 @@
-import { Request } from "@playwright/test";
-
-import { encodeAddress } from "../../src/utils/address";
-import { getNetwork } from "../../src/services/networksService";
+import { Locator } from "@playwright/test";
 
 import { clearCapturedPageEvents, waitForPageEvent } from "../utils/events";
-import { mockRequest } from "../utils/mockRequest";
+import { getTableData } from "../utils/getTableData";
+import { matchSquidRequest } from "../utils/matchSquidRequest";
 import { navigate } from "../utils/navigate";
-import { removeContent } from "../utils/removeContent";
-import { test, expect } from "../utils/test";
+import { useDataFixture } from "../utils/useDataFixture";
+import { useRequestFixture } from "../utils/useRequestFixture";
 
-import fixtures from "./account.fixture.json";
+import { expect, test } from "../test";
 
-function isAccountBalanceQuery(request: Request, networkName?: string, address?: string) {
-	const network = networkName ? getNetwork(networkName) : undefined;
-
-	if (!request.url().match(`gs-stats-${network?.name || ""}`)) {
-		return false;
-	}
-
-	if (!request.postDataJSON()?.query.match("accountById")) {
-		return false;
-	}
-
-	if (network && address && request.postDataJSON()?.variables?.address !== encodeAddress(address, network.prefix)) {
-		return false;
-	}
-
-	return true;
-}
+import { TestItem } from "./templates/model";
+import { testItemInfo } from "./templates/testItemInfo";
+import { testItemError } from "./templates/testItemError";
+import { testRelatedItems } from "./templates/testRelatedItems";
+import { testRelatedItemsError } from "./templates/testRelatedItemsError";
+import { mockRequestsWithFixture } from "./templates/utils";
 
 test.describe("Account detail page", () => {
-	const address = "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840";
+	const url = "/kusama/account/GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE";
 
-	// mock balances
+	const account: TestItem = {
+		name: "account",
+		requests: [{
+			queryProp: "identity",
+			squidType: "gs-main",
+			variables: {
+				id: "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE",
+			},
+			dataType: "item"
+		}],
+	};
+
+	const relatedBalances: TestItem = {
+		name: "balance",
+		requests: [{
+			queryProp: "balance",
+			squidType: "gs-stats",
+			dataType: "item"
+		}]
+	};
+
+	const relatedExtrinsics: TestItem = {
+		name: "extrinsic",
+		requests: [{
+			queryProp: "extrinsicsConnection",
+			squidType: "gs-explorer",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	const relatedCalls: TestItem = {
+		name: "call",
+		requests: [{
+			queryProp: "callsConnection",
+			squidType: "gs-explorer",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	const relatedTransfers: TestItem = {
+		name: "transfer",
+		requests: [{
+			queryProp: "transfersConnection",
+			squidType: "gs-main",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	mockRequestsWithFixture(account, [
+		relatedBalances,
+		relatedExtrinsics,
+		relatedCalls,
+		relatedTransfers
+	]);
+
 	test.beforeEach(async ({ page }) => {
-		await page.route("**/*", (route, request) => {
-			for (const balanceFixture of fixtures.balances) {
-				if (isAccountBalanceQuery(request, balanceFixture.network, address)) {
-					return route.fulfill({
-						status: 200,
-						body: JSON.stringify(balanceFixture.response)
-					});
-				}
-			}
-
-			route.continue();
-		});
-
-		await page.route("https://api.coingecko.com/api/v3/simple/price?*", (route, request) => {
-			route.fulfill({
-				status: 200,
-				body: JSON.stringify(fixtures.usdRates)
-			});
+		await page.route("https://api.coingecko.com/api/v3/simple/price?*", async (route, request) => {
+			route.fulfill(await useRequestFixture("usd-rates-request", route));
 		});
 	});
 
-	test("shows account balance info", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+	testItemInfo(url, account);
+	testItemError(url, account);
 
-		const info = page.getByTestId("account-info");
+	testRelatedItems(url, account, relatedBalances);
 
-		// TODO check data
+	testRelatedItems(url, account, relatedExtrinsics);
+	testRelatedItemsError(url, account, relatedExtrinsics, relatedExtrinsics.requests);
 
-		await takeScreenshot("account-info", info);
+	testRelatedItems(url, account, relatedCalls);
+	testRelatedItemsError(url, account, relatedCalls, relatedCalls.requests);
+
+	testRelatedItems(url, account, relatedTransfers);
+	testRelatedItemsError(url, account, relatedTransfers, relatedTransfers.requests);
+
+	test("show account identity info", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/kusama/account/EMRpBNnfAqRb62b14cxmnCdihtUjEeyh6tfyhGwnGwxjY8F");
+
+		const $info = page.getByTestId("item-info");
+		const $header = $info.getByTestId("item-header");
+		const $identityInfo = $info.getByTestId("account-identity-info");
+
+		await expect($header).toHaveText(
+			await useDataFixture("account-identity-data", "header", $header)
+		);
+
+		const getIdentityInfoData = async (locator: Locator) => await locator.locator("> div").allInnerTexts();
+
+		await expect(async () => {
+			const identityInfoData = await getIdentityInfoData($identityInfo);
+			expect(identityInfoData).toEqual(
+				await useDataFixture(
+					"account-identity-data",
+					"identityInfo",
+					$identityInfo,
+					getIdentityInfoData
+				)
+			);
+		}).toPass({timeout: 5000});
+
+		await takeScreenshot("account-identity-info", $info);
+	});
+
+	test("shows error message if account address is not valid", async ({ page, takeScreenshot }) => {
+		const id = "0x123456789";
+
+		await navigate(page, `/kusama/account/${id}`);
+
+		const $info = page.getByTestId("item-info");
+		const $header = $info.getByTestId("item-header");
+		const $error = $info.getByTestId("error");
+
+		await expect($header).toHaveText(
+			await useDataFixture("account-info-data", "invalidAddressHeader", $header)
+		);
+
+		await expect($error).toHaveText(
+			await useDataFixture("account-info-data", "invalidAddressError", $error)
+		);
+
+		await takeScreenshot("account-invlid-address-error", $info);
 	});
 
 	test("shows account balance portfolio", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+		await navigate(page, url);
+
+		const $portfolio = page.getByTestId("account-portfolio");
 
 		for (const type of ["total", "free", "reserved"]) {
-			const balance = page.getByTestId(`porfolio-${type}`);
-			await expect(balance).toBeVisible();
-			await expect(balance).toContainText(fixtures.portfolio.display[type]);
+			const $balance = $portfolio.getByTestId(`porfolio-${type}`);
+			await expect($balance).toBeVisible();
+			await expect($balance).toContainText(
+				await useDataFixture("account-portfolio-data", type, $balance)
+			);
 		}
 
-		const portfolio = page.getByTestId("account-portfolio");
-
 		// check chart by network
-		await expect(page.getByTestId("account-portfolio-chart-by_network")).toBeVisible();
+		await expect($portfolio.getByTestId("account-portfolio-chart-by_network")).toBeVisible();
 		await waitForPageEvent(page, "chart-finished", (event: any) => {
 			return event.detail.containerRef?.getAttribute("data-test") === "account-portfolio-chart-by_network";
 		});
 
-		await takeScreenshot("account-porfolio-by-network", portfolio);
+		await takeScreenshot("account-porfolio-by-network", $portfolio);
 
 		// check chart by type
 		clearCapturedPageEvents(page, ["chart-finished"]);
-		await portfolio.locator("button[value=BY_TYPE]").click(),
+		await $portfolio.locator("button[value=BY_TYPE]").click(),
 
-		await expect(page.getByTestId("account-portfolio-chart-by_type")).toBeVisible();
+		await expect($portfolio.getByTestId("account-portfolio-chart-by_type")).toBeVisible();
 		await waitForPageEvent(page, "chart-finished", (event: any) => {
 			return event.detail.containerRef?.getAttribute("data-test") === "account-portfolio-chart-by_type";
 		});
 
-		await takeScreenshot("account-porfolio-by-type", portfolio);
+		await takeScreenshot("account-porfolio-by-type", $portfolio);
 	});
 
 	test("shows portfolio not found message if no account balances found", async ({ page, takeScreenshot }) => {
-		await page.route("**/*", (route, request) => {
-			if (isAccountBalanceQuery(request)) {
+		await page.route("**/*", (route) => {
+			if (matchSquidRequest(route.request(), {
+				squidType: "gs-stats",
+				queryProp: "balance"
+			})) {
 				return route.fulfill({
 					status: 200,
 					body: JSON.stringify({
@@ -112,40 +194,24 @@ test.describe("Account detail page", () => {
 			route.fallback();
 		});
 
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+		await navigate(page, url);
 
-		const portfolio = page.getByTestId("account-portfolio");
+		const $portfolio = page.getByTestId("account-portfolio");
 
-		const notFoundMessage = portfolio.getByTestId("not-found");
-		await expect(notFoundMessage).toBeVisible();
-		await expect(notFoundMessage).toHaveText("No positive balances with conversion rate to USD found");
+		const $notFoundMessage = $portfolio.getByTestId("not-found");
+		await expect($notFoundMessage).toBeVisible();
+		await expect($notFoundMessage).toHaveText(await useDataFixture("account-portfolio-data", "notFound", $notFoundMessage));
 
-		await takeScreenshot("account-porfolio-not-found", portfolio);
-	});
-
-	test("shows account balances", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("balances-tab").click();
-
-		for (const balanceFixture of fixtures.balances) {
-			if (balanceFixture.response.data) {
-				for (const type of ["total", "free", "reserved"]) {
-					const balance = page.getByTestId(`${balanceFixture.network}-balance-${type}`);
-					await expect(balance).toBeVisible();
-					for (const display of balanceFixture.display?.[type] || []) {
-						await expect(balance).toContainText(display);
-					}
-				}
-			}
-		}
-
-		await takeScreenshot("account-balances", page.getByTestId("account-related-items"));
+		await takeScreenshot("account-porfolio-not-found", $portfolio);
 	});
 
 	test("shows error message if account balances fetch fails", async ({ page, takeScreenshot }) => {
-		await page.route("**/*", (route, request) => {
-			if (isAccountBalanceQuery(request, "kusama")) {
+		await page.route("**/*", (route) => {
+			if (matchSquidRequest(route.request(), {
+				squidType: "gs-stats",
+				network: "kusama",
+				queryProp: "balance",
+			})) {
 				return route.fulfill({
 					status: 200,
 					body: JSON.stringify({
@@ -159,169 +225,23 @@ test.describe("Account detail page", () => {
 			route.fallback();
 		});
 
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
+		await navigate(page, url);
 
-		await page.getByTestId("balances-tab").click();
+		const $relatedItems = page.getByTestId("related-items");
+		const $relatedItemTypeTab = $relatedItems.getByTestId("balances-tab");
+		const $relatedItemTypeTable = $relatedItems.getByTestId("balances-items").locator("table").first();
 
-		for (const balanceFixture of fixtures.balances) {
-			if (balanceFixture.network === "kusama") {
-				const errorMessage = page.getByTestId("kusama-balance-error");
-				await expect(errorMessage).toBeVisible();
-				await expect(errorMessage).toHaveText(/Unexpected error/);
-				await expect(errorMessage).toHaveText(/Kusama balance error/);
-			} else if (balanceFixture.response.data) {
-				for (const type of ["total", "free", "reserved"]) {
-					const balance = page.getByTestId(`${balanceFixture.network}-balance-${type}`);
-					await expect(balance).toBeVisible();
-					for (const display of balanceFixture.display?.[type] || []) {
-						await expect(balance).toContainText(display);
-					}
-				}
-			}
-		}
+		await $relatedItemTypeTab.click();
 
-		await takeScreenshot("account-balances-with-error", page.getByTestId("account-related-items"));
-	});
-
-	test("shows account detail page with extrinsics", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("extrinsics-tab").click();
-
-		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
-
-		const accountRelatedItems = page.getByTestId("account-related-items");
-		await takeScreenshot("account-with-extrinsics", accountRelatedItems);
-	});
-
-	test("shows account detail page with calls", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("calls-tab").click();
-
-		await removeContent(page.locator("[data-test=calls-table] tr td"));
-
-		const accountRelatedItems = page.getByTestId("account-related-items");
-		await takeScreenshot("account-with-calls", accountRelatedItems);
-	});
-
-	test("shows account detail page with transfers", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("transfers-tab").click();
-
-		await removeContent(page.locator("[data-test=transfers-table] tr td"));
-
-		const accountRelatedItems = page.getByTestId("account-related-items");
-		await takeScreenshot("account-with-transfers", accountRelatedItems);
-	});
-
-	test("shows error message if account address is not valid", async ({ page, takeScreenshot }) => {
-		const id = "0x123456789";
-
-		await page.route("**/*", (route, request) => {
-			if (isAccountBalanceQuery(request)) {
-				return route.fulfill({
-					status: 200,
-					body: JSON.stringify({
-						data: {
-							balance: null
-						}
-					})
-				});
-			}
-
-			route.fallback();
-		});
-
-		await navigate(page, `/kusama/account/${id}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Invalid account address/);
-
-		await takeScreenshot("account-not-found");
-	});
-
-	test("shows error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("extrinsics"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Extrinsics error"
-					}]
-				})
-			})
+		await expect($relatedItemTypeTable).toHaveTableData(
+			await useDataFixture(
+				"account-balances-data",
+				"itemsTableWithError",
+				$relatedItemTypeTable,
+				getTableData
+			)
 		);
 
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("extrinsics-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Extrinsics error/);
-
-		const accountRelatedItems = page.getByTestId("account-related-items");
-		await takeScreenshot("account-with-extrinsics-error", accountRelatedItems);
-	});
-
-	test("shows error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("calls"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Calls error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("calls-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Calls error/);
-
-		const accountRelatedItems = page.getByTestId("account-related-items");
-		await takeScreenshot("account-with-calls-error", accountRelatedItems);
-	});
-
-	test("shows error message when transfers items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("transfers"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Transfers error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/account/${address}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("transfers-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Transfers error/);
-
-		const accountRelatedItems = page.getByTestId("account-related-items");
-		await takeScreenshot("account-with-transfers-error", accountRelatedItems);
+		await takeScreenshot("account-balances-with-error", $relatedItems);
 	});
 });

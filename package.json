@@ -73,11 +73,12 @@
   "devDependencies": {
     "@argos-ci/cli": "^0.4.4",
     "@emotion/eslint-plugin": "^11.10.0",
-    "@playwright/test": "^1.37.0",
+    "@playwright/test": "^1.40.0",
     "@polkadot/api": "^10.1.4",
     "@polkadot/apps-config": "^0.124.1",
     "@subsquid/archive-registry": "^2.1.9",
     "@subsquid/ss58": "^0.1.4",
+    "@types/pluralize": "^0.0.33",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "cli-table3": "^0.6.3",
@@ -85,6 +86,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.36.0",
     "eslint-plugin-react": "^7.32.2",
+    "pluralize": "^8.0.0",
     "serve": "^14.2.0",
     "ts-node": "^10.9.1"
   }

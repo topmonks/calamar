@@ -37,7 +37,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			error={extrinsics.error}
 			pageInfo={extrinsics.pageInfo}
 			onPageChange={onPageChange}
-			data-test="extrinsics-table"
+			data-test="extrinsics-items"
 		>
 			<ExtrinsicsTableAttribute
 				label="ID"

@@ -122,7 +122,7 @@ export const AccountBalancesTable = (props: AccountBalancesTableProps) => {
 				pageInfo={pageInfo}
 				onPageChange={onPageChange}
 				sort={sort}
-				data-test="account-balances-table"
+				data-test="balances-items"
 			>
 				<AccountBalancesTableAttribute
 					label="Network"

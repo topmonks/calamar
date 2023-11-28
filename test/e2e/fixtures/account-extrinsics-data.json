@@ -1,0 +1,56 @@
+{
+  "itemsCount": "(52)",
+  "itemsTable": [
+    [
+      "19780727-2",
+      "Balances.transfer_keep_alive",
+      ""
+    ],
+    [
+      "18963360-6",
+      "XcmPallet.limited_teleport_assets",
+      ""
+    ],
+    [
+      "14994065-4",
+      "Balances.transfer_keep_alive",
+      ""
+    ],
+    [
+      "13127471-2",
+      "Utility.batch_all",
+      ""
+    ],
+    [
+      "13127388-2",
+      "Utility.batch_all",
+      ""
+    ],
+    [
+      "10189163-5",
+      "Crowdloan.contribute",
+      ""
+    ],
+    [
+      "10189151-4",
+      "Crowdloan.contribute",
+      ""
+    ],
+    [
+      "9838308-3",
+      "Crowdloan.contribute",
+      ""
+    ],
+    [
+      "9838296-2",
+      "Crowdloan.contribute",
+      ""
+    ],
+    [
+      "9838263-2",
+      "Crowdloan.contribute",
+      ""
+    ]
+  ],
+  "error": "Unexpected error occured while fetching itemsThis error is logged. No need to report it.Detailsextrinsics error"
+}

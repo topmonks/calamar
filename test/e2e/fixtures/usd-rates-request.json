@@ -1,0 +1,74 @@
+[
+  {
+    "request": {
+      "url": "https://api.coingecko.com/api/v3/simple/price?ids=acala%2Castar%2Cajuna-network%2Cbifrost-native-coin%2Ccalamari-network%2Chydradx%2Cinterlay%2Cjoystream%2Ckarura%2Cpha%2Ckintsugi%2Ckusama%2Clitentry%2Clitentry%2Cmoonbeam%2Cmoonriver%2Cpendulum-chain%2Cpha%2Cpolkadot%2Crobonomics-network%2Cshiden%2Ckusama%2Cpolkadot%2Cxxcoin&vs_currencies=usd&precision=full",
+      "method": "GET",
+      "postData": null
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "acala": {
+          "usd": 0.05728641387421618
+        },
+        "ajuna-network": {
+          "usd": 0.03219365389786684
+        },
+        "astar": {
+          "usd": 0.06879217795063797
+        },
+        "bifrost-native-coin": {
+          "usd": 0.2676842552502532
+        },
+        "calamari-network": {
+          "usd": 0.0009224545096462993
+        },
+        "hydradx": {
+          "usd": 0.006664216728911165
+        },
+        "interlay": {
+          "usd": 0.023968898685410446
+        },
+        "joystream": {
+          "usd": 0.04796824631116394
+        },
+        "karura": {
+          "usd": 0.09162634364291665
+        },
+        "kintsugi": {
+          "usd": 0.40122103617817767
+        },
+        "kusama": {
+          "usd": 24.59247994657044
+        },
+        "litentry": {
+          "usd": 0.9108768083256917
+        },
+        "moonbeam": {
+          "usd": 0.25397245327056617
+        },
+        "moonriver": {
+          "usd": 6.898038328587493
+        },
+        "pendulum-chain": {
+          "usd": 0.06764418791974738
+        },
+        "pha": {
+          "usd": 0.10710814682838463
+        },
+        "polkadot": {
+          "usd": 5.204577942575769
+        },
+        "robonomics-network": {
+          "usd": 2.31419256288412
+        },
+        "shiden": {
+          "usd": 0.2342131360928469
+        },
+        "xxcoin": {
+          "usd": 0.07185840073783409
+        }
+      }
+    }
+  }
+]

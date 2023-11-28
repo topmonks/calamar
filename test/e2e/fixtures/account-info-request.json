@@ -1,0 +1,30 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-main-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($id: String!) {\n\t\t\tidentity: identityById(id: $id) {\n\t\t\t\tid\n\t\t\t\tdisplay\n\t\t\t\tlegal\n\t\t\t\tweb\n\t\t\t\temail\n\t\t\t\ttwitter\n\t\t\t\triot\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "id": "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "identity": {
+            "id": "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE",
+            "display": "Fabi 🐒",
+            "legal": null,
+            "web": null,
+            "email": null,
+            "twitter": "@fabiangompf",
+            "riot": null
+          }
+        }
+      }
+    }
+  }
+]

@@ -38,15 +38,15 @@ export const CallPage = () => {
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					Call #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
 				<CallInfoTable network={network} call={call} />
 			</Card>
 			{call.data &&
-				<Card>
+				<Card data-test="related-items">
 					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Events"

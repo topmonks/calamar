@@ -100,6 +100,7 @@ export type ItemsTableProps<T extends ItemsTableItem, S = any, A extends any[] =
 	errorMessage?: string;
 	sort?: SortOrder<any>;
 	pageInfo?: PageInfo;
+	tableProps?: HTMLAttributes<HTMLTableElement>;
 	onPageChange?: (page: number) => void;
 };
 
@@ -115,6 +116,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 		errorMessage = "Unexpected error occured while fetching items",
 		sort,
 		pageInfo,
+		tableProps = {},
 		onPageChange,
 		...restProps
 	} = props;
@@ -140,7 +142,7 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 	return (
 		<div {...restProps} data-class="table">
 			<TableContainer css={containerStyle}>
-				<Table css={tableStyle}>
+				<Table {...tableProps} css={tableStyle}>
 					<colgroup>
 						{Children.map(children, (child) => child && <col css={child.props.colCss} />)}
 					</colgroup>

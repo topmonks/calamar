@@ -32,6 +32,7 @@ export const EventSearchResultsTable = (props: EventSearchResultsTable) => {
 			notFound={events.notFound}
 			error={events.error}
 			itemsPlural="events"
+			data-test="events-items"
 			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Event>

@@ -1,0 +1,37 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($filter: CurrentWhereInput, $order: [CurrentOrderByInput!]!) {\n\t\t\t\tcurrents(limit: 1, where: $filter, orderBy: $order) {\n\t\t\t\t\tchainFinalizedBlocks\n\t\t\t\t\tnominationPoolsMembersAmount\n\t\t\t\t\tnominationPoolsPoolsActiveTotalStake\n\t\t\t\t\tchainSignedExtrinsics\n\t\t\t\t\tstakingTotalStake\n\t\t\t\t\tbalancesTotalIssuance\n\t\t\t\t\tbalancesTransfersAmount\n\t\t\t\t\tstakingActiveValidatorsAmount\n\t\t\t\t\tstakingValidatorsIdealAmount\n\t\t\t\t\tstakingInflationRatio\n\t\t\t\t\tstakingRewardsRatio\n\t\t\t\t\tnominationPoolsPoolsActiveAmount\n\t\t\t\t}\n\t\t\t}\n",
+        "variables": {
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "currents": [
+            {
+              "chainFinalizedBlocks": "18367749",
+              "nominationPoolsMembersAmount": 19920,
+              "nominationPoolsPoolsActiveTotalStake": "98852033621204566",
+              "chainSignedExtrinsics": "14257153",
+              "stakingTotalStake": "7090300341891132974",
+              "balancesTotalIssuance": "13825801413636175309",
+              "balancesTransfersAmount": "12058770",
+              "stakingActiveValidatorsAmount": 297,
+              "stakingValidatorsIdealAmount": 297,
+              "stakingInflationRatio": 7.628310562090151,
+              "stakingRewardsRatio": 14.87489977397366,
+              "nominationPoolsPoolsActiveAmount": 168
+            }
+          ]
+        }
+      }
+    }
+  }
+]

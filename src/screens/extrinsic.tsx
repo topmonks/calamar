@@ -45,8 +45,8 @@ export const ExtrinsicPage = () => {
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					Extrinsic #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
@@ -56,7 +56,7 @@ export const ExtrinsicPage = () => {
 				/>
 			</Card>
 			{extrinsic.data &&
-				<Card>
+				<Card data-test="related-items">
 					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Events"

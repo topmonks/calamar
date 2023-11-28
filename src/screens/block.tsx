@@ -56,8 +56,8 @@ export const BlockPage = () => {
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					Block #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
@@ -67,7 +67,7 @@ export const BlockPage = () => {
 				/>
 			</Card>
 			{block.data &&
-				<Card>
+				<Card data-test="related-items">
 					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Extrinsics"

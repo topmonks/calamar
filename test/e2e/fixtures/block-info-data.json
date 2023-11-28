@@ -1,0 +1,41 @@
+{
+  "header": "Block #18278717",
+  "infoTable": [
+    [
+      "Network",
+      "Polkadot"
+    ],
+    [
+      "Timestamp",
+      "22 Nov 2023 12:16:06 (UTC)"
+    ],
+    [
+      "Block time",
+      ""
+    ],
+    [
+      "Block height",
+      "18278717"
+    ],
+    [
+      "Hash",
+      "0x673df17beb910e02a3236350024dd6ed1b26c394fca1f5669b7aadc7bcea19af"
+    ],
+    [
+      "Parent hash",
+      "0xceb9420e32a1f78525d13126e1f8d8a4db29e8137bd8e981a8e98fb3d5380c35"
+    ],
+    [
+      "Validator",
+      "12F14P9VpqyLtjwTh66z9gDmjYh8rRFY2uV4BYxvPAz9Lhzw"
+    ],
+    [
+      "Spec version",
+      "9431"
+    ]
+  ],
+  "notFoundHeader": "Block #18278717",
+  "notFound": "No block found",
+  "errorHeader": "Block #18278717",
+  "error": "Unexpected error occured while fetching dataThis error is logged. No need to report it.DetailsBlock error"
+}

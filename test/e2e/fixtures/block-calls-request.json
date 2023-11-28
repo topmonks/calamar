@@ -1,0 +1,179 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {\n\t\t\tcallsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...ExplorerSquidCallsConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidCallsConnection on CallsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidCall\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidCall on Call {\n\t\t\t\n\tid\n\tcallName\n\tpalletName\n\tsuccess\n\tcallerPublicKey\n\tparentId\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t\tindexInBlock\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "block": {
+              "id_eq": "0018278717-673df"
+            }
+          },
+          "order": "id_ASC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "callsConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0018278717-000000-673df",
+                  "callName": "set",
+                  "palletName": "Timestamp",
+                  "success": true,
+                  "callerPublicKey": null,
+                  "parentId": null,
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000000-673df",
+                    "indexInBlock": 0
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000001-673df",
+                  "callName": "enter",
+                  "palletName": "ParaInherent",
+                  "success": true,
+                  "callerPublicKey": null,
+                  "parentId": null,
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000001-673df",
+                    "indexInBlock": 1
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000002-673df",
+                  "callName": "transfer_keep_alive",
+                  "palletName": "Balances",
+                  "success": true,
+                  "callerPublicKey": "0x32d804aff686f512841f7f31b7091a31d41fcc5aa89a4eed8d2d2705b62517fe",
+                  "parentId": null,
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000002-673df",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000003-673df",
+                  "callName": "batch_all",
+                  "palletName": "Utility",
+                  "success": true,
+                  "callerPublicKey": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e",
+                  "parentId": null,
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000003-673df",
+                    "indexInBlock": 3
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000003-673df-000001",
+                  "callName": "transfer_allow_death",
+                  "palletName": "Balances",
+                  "success": true,
+                  "callerPublicKey": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e",
+                  "parentId": "0018278717-000003-673df",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000003-673df",
+                    "indexInBlock": 3
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000003-673df-000002",
+                  "callName": "transfer_allow_death",
+                  "palletName": "Balances",
+                  "success": true,
+                  "callerPublicKey": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e",
+                  "parentId": "0018278717-000003-673df",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000003-673df",
+                    "indexInBlock": 3
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000003-673df-000003",
+                  "callName": "transfer_allow_death",
+                  "palletName": "Balances",
+                  "success": true,
+                  "callerPublicKey": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e",
+                  "parentId": "0018278717-000003-673df",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "extrinsic": {
+                    "id": "0018278717-000003-673df",
+                    "indexInBlock": 3
+                  }
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "7",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 7
+          }
+        }
+      }
+    }
+  }
+]

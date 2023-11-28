@@ -31,7 +31,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			error={calls.error}
 			pageInfo={calls.pageInfo}
 			onPageChange={onPageChange}
-			data-test="calls-table"
+			data-test="calls-items"
 		>
 			<CallsTableAttribute
 				label="ID"

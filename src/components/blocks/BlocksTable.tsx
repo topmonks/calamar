@@ -37,7 +37,7 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 			error={blocks.error}
 			pageInfo={blocks.pageInfo}
 			onPageChange={onPageChange}
-			data-test="blocks-table"
+			data-test="blocks-items"
 		>
 			<BlocksTableAttribute
 				label="Height"

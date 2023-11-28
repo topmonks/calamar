@@ -1,0 +1,112 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($filter: CallWhereInput) {\n\t\t\tcalls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {\n\t\t\t\t...ExplorerSquidCall\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidCall on Call {\n\t\t\t\n\tid\n\tcallName\n\tpalletName\n\tsuccess\n\tcallerPublicKey\n\tparentId\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t\tindexInBlock\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "filter": {
+            "block": {
+              "height_eq": 18278717
+            },
+            "extrinsic": {
+              "indexInBlock_eq": 3
+            },
+            "parentId_isNull": true
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "calls": [
+            {
+              "id": "0018278717-000003-673df",
+              "callName": "batch_all",
+              "palletName": "Utility",
+              "success": true,
+              "callerPublicKey": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e",
+              "parentId": null,
+              "block": {
+                "id": "0018278717-673df",
+                "height": 18278717,
+                "timestamp": "2023-11-22T12:16:06.000000Z",
+                "specVersion": 9431
+              },
+              "extrinsic": {
+                "id": "0018278717-000003-673df",
+                "indexInBlock": 3
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://polkadot.explorer.subsquid.io/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query($ids: [String!]) {\n\t\t\tcalls(where: { id_in: $ids }) {\n\t\t\t\tid\n\t\t\t\targs\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "ids": [
+            "0018278717-000003-673df"
+          ]
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "calls": [
+            {
+              "id": "0018278717-000003-673df",
+              "args": {
+                "calls": [
+                  {
+                    "__kind": "Balances",
+                    "value": {
+                      "__kind": "transfer_allow_death",
+                      "dest": {
+                        "__kind": "Id",
+                        "value": "0x92871f0e49fefc71a718a43cb1e165d698023eb7e0457e949282bd6014241cc8"
+                      },
+                      "value": "2862403449700"
+                    }
+                  },
+                  {
+                    "__kind": "Balances",
+                    "value": {
+                      "__kind": "transfer_allow_death",
+                      "dest": {
+                        "__kind": "Id",
+                        "value": "0x900936b39848e507cfdcb361d734784110d2382d595195a2bf7e7138e8588211"
+                      },
+                      "value": "309566836000"
+                    }
+                  },
+                  {
+                    "__kind": "Balances",
+                    "value": {
+                      "__kind": "transfer_allow_death",
+                      "dest": {
+                        "__kind": "Id",
+                        "value": "0x00ed9f18477116a662081c0ab528f83cdc6b529164b1fa4f6b73d274a58d2520"
+                      },
+                      "value": "114834724000"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

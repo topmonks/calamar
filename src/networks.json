@@ -97,8 +97,7 @@
         "symbol": "BNC",
         "squids": {
             "archive": "https://bifrost.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-bifrost/graphql",
-            "main": "https://squid.subsquid.io/gs-main-bifrost/graphql"
+            "explorer": "https://squid.subsquid.io/gs-explorer-bifrost/graphql"
         },
         "coinGeckoId": "bifrost-native-coin"
     },
@@ -130,8 +129,7 @@
         "decimals": 9,
         "symbol": "EQ",
         "squids": {
-            "archive": "https://equilibrium.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-equilibrium/graphql"
+            "archive": "https://equilibrium.explorer.subsquid.io/graphql"
         }
     },
     {
@@ -180,8 +178,7 @@
         "symbol": "INTR",
         "squids": {
             "archive": "https://interlay.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-interlay/graphql",
-            "main": "https://squid.subsquid.io/gs-main-interlay/graphql"
+            "explorer": "https://squid.subsquid.io/gs-explorer-interlay/graphql"
         },
         "coinGeckoId": "interlay"
     },
@@ -189,7 +186,6 @@
         "name": "invarch-tinkernet",
         "displayName": "InvArch Tinkernet",
         "icon": "/assets/network-icons/invarch-tinkernet.svg",
-        "color": "#161616",
         "website": "https://invarch.network/tinkernet/",
         "parachainId": 2125,
         "relayChain": "kusama",
@@ -197,8 +193,7 @@
         "decimals": 12,
         "symbol": "TNKR",
         "squids": {
-            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-invarch-tinkernet/graphql"
+            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql"
         }
     },
     {
@@ -404,7 +399,6 @@
         "symbol": "PHA",
         "squids": {
             "archive": "https://phala.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-phala/graphql",
             "main": "https://squid.subsquid.io/gs-main-phala/graphql"
         },
         "coinGeckoId": "pha"
@@ -521,8 +515,7 @@
         "symbol": "DOT",
         "squids": {
             "archive": "https://statemint.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-statemint/graphql",
-            "main": "https://squid.subsquid.io/gs-main-statemint/graphql"
+            "explorer": "https://squid.subsquid.io/gs-explorer-statemint/graphql"
         },
         "coinGeckoId": "polkadot"
     },
@@ -580,8 +573,7 @@
         "decimals": 9,
         "symbol": "XX",
         "squids": {
-            "archive": "https://xx-network.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-xx-network/graphql"
+            "archive": "https://xx-network.explorer.subsquid.io/graphql"
         },
         "coinGeckoId": "xxcoin"
     }

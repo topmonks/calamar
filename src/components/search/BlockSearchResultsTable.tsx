@@ -25,6 +25,7 @@ export const BlockSearchResultsTable = (props: BlockSearchResultsTable) => {
 			notFound={blocks.notFound}
 			error={blocks.error}
 			itemsPlural="blocks"
+			data-test="blocks-items"
 			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Block>

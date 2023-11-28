@@ -5,22 +5,22 @@ import { Resource } from "../../model/resource";
 import { UsdRates } from "../../model/usdRates";
 import { decodeAddress } from "../../utils/address";
 
-import { AccountAddress } from "../account/AccountAddress";
+import { AccountAddress } from "./AccountAddress";
 
 import { Currency } from "../Currency";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Link } from "../Link";
 
-export type BalancesTableProps = {
+export type HoldersTableProps = {
 	network: Network;
 	balances: PaginatedResource<Balance>;
 	usdRates: Resource<UsdRates>;
 	onPageChange?: (page: number) => void;
 };
 
-const BalancesItemsTableAttribute = ItemsTableAttribute<Balance, never, [UsdRates|undefined]>;
+const HoldersTableAttribute = ItemsTableAttribute<Balance, never, [UsdRates|undefined]>;
 
-function BalancesTable(props: BalancesTableProps) {
+function HoldersTable(props: HoldersTableProps) {
 	const { network, balances, usdRates, onPageChange } = props;
 
 	return (
@@ -33,9 +33,9 @@ function BalancesTable(props: BalancesTableProps) {
 			error={balances.error}
 			pageInfo={balances.pageInfo}
 			onPageChange={onPageChange}
-			data-test="balances-table"
+			data-test="holders-items"
 		>
-			<BalancesItemsTableAttribute
+			<HoldersTableAttribute
 				label="Account"
 				render={(balance) =>
 					<AccountAddress
@@ -46,7 +46,7 @@ function BalancesTable(props: BalancesTableProps) {
 					/>}
 			/>
 
-			<BalancesItemsTableAttribute
+			<HoldersTableAttribute
 				label="Total"
 				render={(balance, usdRates) =>
 					<Currency
@@ -60,7 +60,7 @@ function BalancesTable(props: BalancesTableProps) {
 				}
 			/>
 
-			<BalancesItemsTableAttribute
+			<HoldersTableAttribute
 				label="Free"
 				render={(balance, usdRates) =>
 					<Currency
@@ -74,7 +74,7 @@ function BalancesTable(props: BalancesTableProps) {
 				}
 			/>
 
-			<BalancesItemsTableAttribute
+			<HoldersTableAttribute
 				label="Reserved"
 				render={(balance, usdRates) =>
 					<Currency
@@ -88,7 +88,7 @@ function BalancesTable(props: BalancesTableProps) {
 				}
 			/>
 
-			<BalancesItemsTableAttribute
+			<HoldersTableAttribute
 				label="Last update"
 				render={(balance) =>
 					<Link to={`/${network.name}/search?query=${balance.updatedAtBlock}`}>
@@ -100,4 +100,4 @@ function BalancesTable(props: BalancesTableProps) {
 	);
 }
 
-export default BalancesTable;
+export default HoldersTable;

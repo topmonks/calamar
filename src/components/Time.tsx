@@ -53,7 +53,18 @@ export const Time = (props: TimeProps) => {
 		}
 	}, [time, fromNow]);
 
-	const timeElement = <span data-test="time">{fromNow ? fromNowFormatted : formatted}</span>;
+	const timeElement = (
+		<span
+			data-test="time"
+			data-time-format={
+				fromNow ? "fromNow"
+					: utc ? "utc"
+						: formatProp
+			}
+		>
+			{fromNow ? fromNowFormatted : formatted}
+		</span>
+	);
 
 	if (!tooltip) {
 		return timeElement;

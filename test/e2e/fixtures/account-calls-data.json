@@ -1,0 +1,56 @@
+{
+  "itemsCount": "(69)",
+  "itemsTable": [
+    [
+      "19780727-2",
+      "Balances.transfer_keep_alive",
+      "19780727-2"
+    ],
+    [
+      "18963360-6",
+      "XcmPallet.limited_teleport_assets",
+      "18963360-6"
+    ],
+    [
+      "14994065-4",
+      "Balances.transfer_keep_alive",
+      "14994065-4"
+    ],
+    [
+      "13127471-2-2",
+      "System.remark",
+      "13127471-2"
+    ],
+    [
+      "13127471-2-1",
+      "System.remark",
+      "13127471-2"
+    ],
+    [
+      "13127471-2",
+      "Utility.batch_all",
+      "13127471-2"
+    ],
+    [
+      "13127388-2-2",
+      "System.remark",
+      "13127388-2"
+    ],
+    [
+      "13127388-2-1",
+      "System.remark",
+      "13127388-2"
+    ],
+    [
+      "13127388-2",
+      "Utility.batch_all",
+      "13127388-2"
+    ],
+    [
+      "10189163-5",
+      "Crowdloan.contribute",
+      "10189163-5"
+    ]
+  ],
+  "error": "Unexpected error occured while fetching itemsThis error is logged. No need to report it.Detailscalls error"
+}

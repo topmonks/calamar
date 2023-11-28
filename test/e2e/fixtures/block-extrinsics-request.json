@@ -1,0 +1,135 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: ExtrinsicWhereInput, $order: [ExtrinsicOrderByInput!]!) {\n\t\t\textrinsicsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...ExplorerSquidExtrinsicsConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidExtrinsicsConnection on ExtrinsicsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidExtrinsic\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidExtrinsic on Extrinsic {\n\t\t\t\n\tid\n\textrinsicHash\n\tblock {\n\t\tid\n\t\thash\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\tmainCall {\n\t\tcallName\n\t\tpalletName\n\t}\n\tindexInBlock\n\tsuccess\n\ttip\n\tfee\n\tsignerPublicKey\n\terror\n\tversion\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "block": {
+              "id_eq": "0018278717-673df"
+            }
+          },
+          "order": "id_ASC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "extrinsicsConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0018278717-000000-673df",
+                  "extrinsicHash": "0xdcf25341a2c3e9b94eabca113352b99c578c0ae59e3a74903d2f1896889c2715",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "hash": "0x673df17beb910e02a3236350024dd6ed1b26c394fca1f5669b7aadc7bcea19af",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "mainCall": {
+                    "callName": "set",
+                    "palletName": "Timestamp"
+                  },
+                  "indexInBlock": 0,
+                  "success": true,
+                  "tip": null,
+                  "fee": null,
+                  "signerPublicKey": null,
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000001-673df",
+                  "extrinsicHash": "0xf10d3a55d546c29d43575127b7be48f227b771d0c398ea9518dc90270ee1536c",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "hash": "0x673df17beb910e02a3236350024dd6ed1b26c394fca1f5669b7aadc7bcea19af",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "mainCall": {
+                    "callName": "enter",
+                    "palletName": "ParaInherent"
+                  },
+                  "indexInBlock": 1,
+                  "success": true,
+                  "tip": null,
+                  "fee": null,
+                  "signerPublicKey": null,
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000002-673df",
+                  "extrinsicHash": "0x99e8aac671da4dfd64f928b9bbd90af2340751a23878c36b5777e32c440eab7b",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "hash": "0x673df17beb910e02a3236350024dd6ed1b26c394fca1f5669b7aadc7bcea19af",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "mainCall": {
+                    "callName": "transfer_keep_alive",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "161348041",
+                  "signerPublicKey": "0x32d804aff686f512841f7f31b7091a31d41fcc5aa89a4eed8d2d2705b62517fe",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0018278717-000003-673df",
+                  "extrinsicHash": "0xc06d2f1b8c460e8221a6cfec6e406064d7c5720b26374f8018b39d3ced792d31",
+                  "block": {
+                    "id": "0018278717-673df",
+                    "hash": "0x673df17beb910e02a3236350024dd6ed1b26c394fca1f5669b7aadc7bcea19af",
+                    "height": 18278717,
+                    "timestamp": "2023-11-22T12:16:06.000000Z",
+                    "specVersion": 9431
+                  },
+                  "mainCall": {
+                    "callName": "batch_all",
+                    "palletName": "Utility"
+                  },
+                  "indexInBlock": 3,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "249583871",
+                  "signerPublicKey": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e",
+                  "error": null,
+                  "version": 4
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "4",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 4
+          }
+        }
+      }
+    }
+  }
+]

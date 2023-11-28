@@ -24,6 +24,7 @@ export const AccountSearchResultsTable = (props: AccountSearchResultsTable) => {
 			notFound={accounts.notFound}
 			error={accounts.error}
 			itemsPlural="accounts"
+			data-test="accounts-items"
 			{...tableProps}
 		>
 			<SearchResultsTableItemAttribute<Account>

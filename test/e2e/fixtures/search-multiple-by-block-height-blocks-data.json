@@ -1,0 +1,27 @@
+{
+  "itemsCount": "(3)",
+  "itemsTable": [
+    [
+      "Acala",
+      "123",
+      "2000",
+      "211oiN...RxEymL",
+      ""
+    ],
+    [
+      "Kusama",
+      "123",
+      "1020",
+      "JHsk47...G4rM8M",
+      ""
+    ],
+    [
+      "Polkadot",
+      "123",
+      "0",
+      "146YJH...66vhMS",
+      ""
+    ]
+  ],
+  "error": "Unexpected error occured while searching some networks.This error is logged. No need to report it.DetailsAcala: blocks error\n\nKusama: blocks error\n\nPolkadot: blocks error"
+}

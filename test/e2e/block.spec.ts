@@ -1,141 +1,105 @@
-import { mockRequest } from "../utils/mockRequest";
-import { navigate } from "../utils/navigate";
-import { test, expect } from "../utils/test";
+import { test } from "../test";
+
+import { testItemInfo } from "./templates/testItemInfo";
+import { TestItem } from "./templates/model";
+import { testItemNotFound } from "./templates/testItemNotFound";
+import { testItemError } from "./templates/testItemError";
+import { testRelatedItems } from "./templates/testRelatedItems";
+import { testRelatedItemsError } from "./templates/testRelatedItemsError";
+import { mockRequestsWithFixture } from "./templates/utils";
+import { testRedirect } from "./templates/testRedirect";
 
 test.describe("Block detail page", () => {
-	const blockId = "0014932897-93378";
+	const url = "/polkadot/block/18278717";
 
-	test("shows block detail page with extrinsics", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
+	const block: TestItem = {
+		name: "block",
+		requests: [{
+			queryProp: "blocks",
+			squidType: "gs-explorer",
+			variables: {
+				filter: {
+					height_eq: 18278717
+				}
+			},
+			dataType: "items"
+		}]
+	};
 
-		await takeScreenshot("block-with-extrinsics");
-	});
+	const relatedExtrinsics: TestItem = {
+		name: "extrinsic",
+		requests: [{
+			squidType: "gs-explorer",
+			queryProp: "extrinsicsConnection",
+			variables: {
+				filter: {
+					block: {
+						id_eq: "0018278717-673df"
+					}
+				}
+			},
+			dataType: "itemsConnection"
+		}]
+	};
 
-	test("shows block detail page with calls", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
+	const relatedCalls: TestItem = {
+		name: "call",
+		requests: [{
+			squidType: "gs-explorer",
+			queryProp: "callsConnection",
+			variables: {
+				filter: {
+					block: {
+						id_eq: "0018278717-673df"
+					}
+				}
+			},
+			dataType: "itemsConnection"
+		}]
+	};
 
-		await page.getByTestId("calls-tab").click();
+	const relatedEvents: TestItem = {
+		name: "event",
+		requests: [{
+			squidType: "gs-explorer",
+			queryProp: "eventsConnection",
+			variables: {
+				filter: {
+					block: {
+						id_eq: "0018278717-673df"
+					}
+				}
+			},
+			dataType: "itemsConnection"
+		}, {
+			squidType: "archive",
+			queryProp: "events",
+			dataType: "items"
+		}]
+	};
 
-		await takeScreenshot("block-with-calls");
-	});
+	mockRequestsWithFixture(block, [
+		relatedExtrinsics,
+		relatedCalls,
+		relatedEvents
+	]);
 
-	test("shows block detail page with events", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
+	testItemInfo(url, block);
+	testItemNotFound(url, block);
+	testItemError(url, block);
 
-		await page.getByTestId("events-tab").click();
+	testRelatedItems(url, block, relatedExtrinsics);
+	testRelatedItemsError(url, block, relatedExtrinsics, relatedExtrinsics.requests);
 
-		await takeScreenshot("block-with-events");
-	});
+	testRelatedItems(url, block, relatedCalls);
+	testRelatedItemsError(url, block, relatedCalls, relatedCalls.requests);
 
-	test("shows not found message if block was not found", async ({ page, takeScreenshot }) => {
-		const id = "111-22-3";
+	testRelatedItems(url, block, relatedEvents);
+	testRelatedItemsError(url, block, relatedEvents, relatedEvents.requests);
 
-		await navigate(page, `/kusama/block/${id}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("not-found");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText("No block found");
-
-		await takeScreenshot("block-not-found");
-	});
-
-	test("show error message when block data fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("block"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Block error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Block error/);
-
-		await takeScreenshot("block-error");
-	});
-
-	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("extrinsics"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Extrinsics error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Extrinsics error/);
-
-		await takeScreenshot("block-with-extrinsics-error");
-	});
-
-	test("show error message when calls items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("calls"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Calls error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("calls-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Calls error/);
-
-		await takeScreenshot("block-with-calls-error");
-	});
-
-	test("show error message when events items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("events"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Events error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/block/${blockId}`, {waitUntil: "data-loaded"});
-
-		await page.getByTestId("events-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Events error/);
-
-		await takeScreenshot("block-with-events-error");
-	});
+	testRedirect(
+		"redirects to simplified ID",
+		"/polkadot/block/0018278717-673df",
+		"/polkadot/block/18278717"
+	);
 });

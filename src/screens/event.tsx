@@ -20,8 +20,8 @@ export const EventPage = () => {
 	useDOMEventTrigger("data-loaded", !event.loading);
 
 	return (
-		<Card>
-			<CardHeader>
+		<Card data-test="item-info">
+			<CardHeader data-test="item-header">
 				Event #{id}
 				<CopyToClipboardButton value={id} />
 			</CardHeader>

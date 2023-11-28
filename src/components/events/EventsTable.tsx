@@ -38,7 +38,7 @@ function EventsTable(props: EventsTableProps) {
 			error={events.error}
 			pageInfo={events.pageInfo}
 			onPageChange={onPageChange}
-			data-test="events-table"
+			data-test="events-items"
 		>
 			<EventsItemsTableAttribute
 				label="ID"
