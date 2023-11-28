@@ -525,6 +525,7 @@
         "icon": "/assets/network-icons/subsocial.png",
         "color": "#69058c",
         "website": "http://subsocial.network/",
+        "relayChain": "polkadot",
         "prefix": 28,
         "decimals": 10,
         "symbol": "SUB",

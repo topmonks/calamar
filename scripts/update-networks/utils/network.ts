@@ -3,9 +3,10 @@ import path from "path";
 import colors from "colors";
 import archivesJson from "@subsquid/archive-registry/archives.json";
 
-import { forceSquidUrl, squidTypes, squidUrlTemplates } from "../config/squids";
 import { archiveRegistryArchiveNetworkNames } from "../config/archive-registry";
 import { coinGeckoId } from "../config/coingecko";
+import { forceValues } from "../config/prop-resolution";
+import { forceSquidUrl, squidTypes, squidUrlTemplates } from "../config/squids";
 
 import { CoinGeckoCoin, Network, NetworkResolvableProps, SourceData, SourceType } from "../model";
 
@@ -23,34 +24,41 @@ export function resolveIcon(network: Network) {
 }
 
 export function resolveProperty<K extends keyof NetworkResolvableProps>(network: Network, prop: K, sources: SourceData[], path: SourceType[], forceSource?: SourceType) {
-	const values = path.map(type => {
-		const source = sources.find(source => source.type === type);
-		if (!source) {
-			throw new Error(`Source ${type} not found`);
+	let value: Network[K] | undefined = undefined;
+
+	if (prop in (forceValues[network.name] || {})) {
+		log(log.warn, `Value for property ${prop} is forced`);
+		value = forceValues[network.name]?.[prop];
+	} else {
+		const values = path.map(type => {
+			const source = sources.find(source => source.type === type);
+			if (!source) {
+				throw new Error(`Source ${type} not found`);
+			}
+
+			return source[prop];
+		});
+
+		if (!allEqualOrUndefined(values)) {
+			log(forceSource ? log.warn : log.error, `Source values of ${prop} differ`);
+			for(const type of path) {
+				log(`- ${type}:`.padEnd(20), sources.find(it => it.type === type)?.[prop]);
+			}
+
+			if (!forceSource) {
+				return;
+			}
 		}
 
-		return source[prop];
-	});
+		value = values.filter(it => it !== undefined)[0] as Network[K];
 
-	if (!allEqualOrUndefined(values)) {
-		log(forceSource ? log.warn : log.error, `Source values of ${prop} differ`);
-		for(const type of path) {
-			log(`- ${type}:`.padEnd(20), sources.find(it => it.type === type)?.[prop]);
-		}
-
-		if (!forceSource) {
-			return;
+		if (forceSource) {
+			log(log.warn, `Source ${forceSource} forced for ${prop} value`);
+			value = values[path.indexOf(forceSource)] as Network[K];
 		}
 	}
 
-	let value = values.filter(it => it !== undefined)[0];
-
-	if (forceSource) {
-		log(log.warn, `Source ${forceSource} forced for ${prop} value`);
-		value = values[path.indexOf(forceSource)];
-	}
-
-	network[prop] = value as Network[K];
+	network[prop] = value;
 }
 
 export async function resolveCoinGeckoCoin(network: Network, coins: CoinGeckoCoin[]) {
