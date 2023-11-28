@@ -16,6 +16,12 @@ declare module "@mui/material/styles" {
 	}
 }
 
+declare module "@mui/material/Alert" {
+	interface AlertPropsColorOverrides {
+		neutral: true;
+	}
+}
+
 declare module "@mui/material/Button" {
 	interface ButtonPropsColorOverrides {
 		neutral: true;

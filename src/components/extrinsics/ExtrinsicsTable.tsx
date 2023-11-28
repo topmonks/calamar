@@ -2,17 +2,19 @@ import { Extrinsic } from "../../model/extrinsic";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
 import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
 import { Time } from "../Time";
+
+import { ExtrinsicLink } from "./ExtrinsicLink";
 
 export type ExtrinsicsTableProps = {
 	network: Network;
 	extrinsics: PaginatedResource<Extrinsic>,
 	showAccount?: boolean;
 	showTime?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const ExtrinsicsTableAttribute = ItemsTableAttribute<Extrinsic>;
@@ -23,6 +25,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 		extrinsics,
 		showAccount,
 		showTime,
+		onPageChange
 	} = props;
 
 	return (
@@ -32,15 +35,14 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			notFound={extrinsics.notFound}
 			notFoundMessage="No extrinsics found"
 			error={extrinsics.error}
-			pagination={extrinsics.pagination}
-			data-test="extrinsics-table"
+			pageInfo={extrinsics.pageInfo}
+			onPageChange={onPageChange}
+			data-test="extrinsics-items"
 		>
 			<ExtrinsicsTableAttribute
 				label="ID"
 				render={(extrinsic) =>
-					<Link to={`/${network.name}/extrinsic/${extrinsic.id}`}>
-						{extrinsic.id}
-					</Link>
+					<ExtrinsicLink network={network} id={extrinsic.id} />
 				}
 			/>
 			<ExtrinsicsTableAttribute

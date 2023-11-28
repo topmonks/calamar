@@ -5,7 +5,7 @@ import { css } from "@emotion/react";
 import { DecodedArg } from "../model/decodedMetadata";
 import { noCase } from "../utils/string";
 
-import { AccountAddress } from "./AccountAddress";
+import { AccountAddress } from "./account/AccountAddress";
 import { Network } from "../model/network";
 
 // found in https://github.com/polkadot-js/apps/blob/59c2badf87c29fd8cb5b7dfcc045c3ce451a54bc/packages/react-params/src/Param/findComponent.ts#L51

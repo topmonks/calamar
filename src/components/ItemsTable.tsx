@@ -3,7 +3,7 @@ import { Children, cloneElement, HTMLAttributes, ReactElement, ReactNode } from 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { css, Interpolation, Theme } from "@emotion/react";
 
-import { Pagination } from "../hooks/usePagination";
+import { PageInfo } from "../model/pageInfo";
 import { SortDirection } from "../model/sortDirection";
 import { SortOrder } from "../model/sortOrder";
 
@@ -13,6 +13,10 @@ import NotFound from "./NotFound";
 import { TablePagination } from "./TablePagination";
 import { TableSortOptions, TableSortOptionsProps } from "./TableSortOptions";
 import { TableSortToggle } from "./TableSortToggle";
+
+const containerStyle = css`
+	position: relative;
+`;
 
 const tableStyle = css`
 	table-layout: fixed;
@@ -35,6 +39,15 @@ const cellStyle = css`
 	}
 `;
 
+const loadingOverlayStyle = css`
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255, 255, 255, .5);
+`;
+
 type ItemsTableItem = {
 	id: string;
 }
@@ -51,7 +64,7 @@ export type ItemsTableAttributeProps<T, A extends any[], S> = {
 	onSortChange?: (sortOrder: SortOrder<S>) => void;
 	render: ItemsTableDataFn<T, A, ReactNode>;
 	colSpan?: ItemsTableDataFn<T, A, number>;
-	hide?: ItemsTableDataFn<T, A, boolean>;
+	hide?: ItemsTableDataFn<T, A, boolean|undefined>;
 	_data?: T;
 	_additionalData?: A;
 }
@@ -77,6 +90,7 @@ export const ItemsTableAttribute = <T extends object = any, S = any, A extends a
 };
 
 export type ItemsTableProps<T extends ItemsTableItem, S = any, A extends any[] = []> = HTMLAttributes<HTMLDivElement> & {
+	children: ReactElement<ItemsTableAttributeProps<T, A, S>>|(ReactElement<ItemsTableAttributeProps<T, A, S>>|false|undefined|null)[];
 	data?: T[];
 	additionalData?: A;
 	loading?: boolean;
@@ -85,12 +99,14 @@ export type ItemsTableProps<T extends ItemsTableItem, S = any, A extends any[] =
 	error?: any;
 	errorMessage?: string;
 	sort?: SortOrder<any>;
-	pagination?: Pagination;
-	children: ReactElement<ItemsTableAttributeProps<T, A, S>>|(ReactElement<ItemsTableAttributeProps<T, A, S>>|false|undefined|null)[];
+	pageInfo?: PageInfo;
+	tableProps?: HTMLAttributes<HTMLTableElement>;
+	onPageChange?: (page: number) => void;
 };
 
 export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = []>(props: ItemsTableProps<T, S, A>) => {
 	const {
+		children,
 		data,
 		additionalData,
 		loading,
@@ -99,12 +115,13 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 		error,
 		errorMessage = "Unexpected error occured while fetching items",
 		sort,
-		pagination,
-		children,
+		pageInfo,
+		tableProps = {},
+		onPageChange,
 		...restProps
 	} = props;
 
-	if (loading) {
+	if (!data && loading) {
 		return <Loading />;
 	}
 
@@ -116,16 +133,16 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 		return (
 			<ErrorMessage
 				message={errorMessage}
-				details={error.message}
-				showReported
+				details={error}
+				report
 			/>
 		);
 	}
 
 	return (
 		<div {...restProps} data-class="table">
-			<TableContainer>
-				<Table css={tableStyle}>
+			<TableContainer css={containerStyle}>
+				<Table {...tableProps} css={tableStyle}>
 					<colgroup>
 						{Children.map(children, (child) => child && <col css={child.props.colCss} />)}
 					</colgroup>
@@ -170,8 +187,16 @@ export const ItemsTable = <T extends ItemsTableItem, S = any, A extends any[] = 
 						)}
 					</TableBody>
 				</Table>
+				{loading && <Loading css={loadingOverlayStyle} />}
 			</TableContainer>
-			{pagination && <TablePagination {...pagination} />}
+			{pageInfo && (
+				<TablePagination
+					page={pageInfo.page}
+					pageSize={pageInfo.pageSize}
+					hasNextPage={pageInfo.hasNext}
+					onPageChange={onPageChange}
+				/>
+			)}
 		</div>
 	);
 };

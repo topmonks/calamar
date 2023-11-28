@@ -1,49 +1,46 @@
-import { mockRequest } from "../utils/mockRequest";
-import { navigate } from "../utils/navigate";
-import { test, expect } from "../utils/test";
+import { test } from "../test";
 
+import { TestItem } from "./templates/model";
+import { testItemError } from "./templates/testItemError";
+import { testItemInfo } from "./templates/testItemInfo";
+import { testItemNotFound } from "./templates/testItemNotFound";
+import { testRedirect } from "./templates/testRedirect";
+import { mockRequestsWithFixture } from "./templates/utils";
 
 test.describe("Event detail page", () => {
-	const eventId = "0015163154-000040-44488";
-	test("shows event detail page", async ({ page, takeScreenshot }) => {
-		await navigate(page, `/kusama/event/${eventId}`, {waitUntil: "data-loaded"});
+	const url = "/polkadot/event/18278717-51";
 
-		await takeScreenshot("event");
-	});
+	const event: TestItem = {
+		name: "event",
+		requests: [{
+			squidType: "gs-explorer",
+			queryProp: "events",
+			variables: {
+				filter: {
+					blockNumber_eq: 18278717,
+					indexInBlock_eq: 51
+				}
+			},
+			dataType: "items"
+		}, {
+			squidType: "archive",
+			queryProp: "events",
+			variables: {
+				ids: ["0018278717-000051-673df"]
+			},
+			dataType: "items"
+		}]
+	};
 
-	test("shows not found message if event was not found", async ({ page, takeScreenshot }) => {
-		const id = "111-22-3";
+	mockRequestsWithFixture(event);
 
-		await navigate(page, `/kusama/event/${id}`, {waitUntil: "data-loaded"});
+	testItemInfo(url, event);
+	testItemNotFound(url, event);
+	testItemError(url, event);
 
-		const errorMessage = page.getByTestId("not-found");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText("No event found");
-
-		await takeScreenshot("event-not-found");
-	});
-
-	test("show error message when event data fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("event"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Event error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, `/kusama/event/${eventId}`, {waitUntil: "data-loaded"});
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Event error/);
-
-		await takeScreenshot("event-error");
-	});
+	testRedirect(
+		"redirects to simplified ID",
+		"/polkadot/event/0018278717-000051-673df",
+		"/polkadot/event/18278717-51"
+	);
 });

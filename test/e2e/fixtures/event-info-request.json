@@ -1,0 +1,74 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($filter: EventWhereInput) {\n\t\t\tevents(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {\n\t\t\t\t...ExplorerSquidEvent\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidEvent on Event {\n\t\t\t\n\tid\n\teventName\n\tpalletName\n\tindexInBlock\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t}\n\tcall {\n\t\tid\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "filter": {
+            "blockNumber_eq": 18278717,
+            "indexInBlock_eq": 51
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "events": [
+            {
+              "id": "0018278717-000051-673df",
+              "eventName": "Withdraw",
+              "palletName": "Balances",
+              "indexInBlock": 51,
+              "block": {
+                "id": "0018278717-673df",
+                "height": 18278717,
+                "timestamp": "2023-11-22T12:16:06.000000Z",
+                "specVersion": 9431
+              },
+              "extrinsic": {
+                "id": "0018278717-000003-673df"
+              },
+              "call": {
+                "id": "0018278717-000003-673df"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://polkadot.explorer.subsquid.io/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query($ids: [String!]) {\n\t\t\tevents(where: { id_in: $ids }) {\n\t\t\t\tid\n\t\t\t\targs\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "ids": [
+            "0018278717-000051-673df"
+          ]
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "events": [
+            {
+              "id": "0018278717-000051-673df",
+              "args": {
+                "amount": "249583871",
+                "who": "0x2534454d30f8a028e42654d6b535e0651d1d026ddf115cef59ae1dd71bae074e"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

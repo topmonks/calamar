@@ -1,0 +1,62 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query (\n\t\t\t$blocksFirst: Int!,\n\t\t\t$blocksAfter: String,\n\t\t\t$blocksFilter: BlockWhereInput,\n\t\t\t$extrinsicsFirst: Int!,\n\t\t\t$extrinsicsAfter: String,\n\t\t\t$extrinsicsFilter: ExtrinsicWhereInput,\n\t\t) {\n\t\t\tblocks: blocksConnection(first: $blocksFirst, after: $blocksAfter, where: $blocksFilter, orderBy: id_ASC) {\n\t\t\t\t...ExplorerSquidBlocksConnection\n\t\t\t\ttotalCount\n\t\t\t},\n\t\t\textrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_ASC) {\n\t\t\t\t...ExplorerSquidExtrinsicsConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidBlocksConnection on BlocksConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidBlock\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidExtrinsicsConnection on ExtrinsicsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidExtrinsic\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidExtrinsic on Extrinsic {\n\t\t\t\n\tid\n\textrinsicHash\n\tblock {\n\t\tid\n\t\thash\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\tmainCall {\n\t\tcallName\n\t\tpalletName\n\t}\n\tindexInBlock\n\tsuccess\n\ttip\n\tfee\n\tsignerPublicKey\n\terror\n\tversion\n\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidBlock on Block {\n\t\t\t\n\tid\n\thash\n\theight\n\ttimestamp\n\tparentHash\n\tvalidator\n\tspecVersion\n\n\t\t}\n\t",
+        "variables": {
+          "blocksFirst": 10,
+          "blocksAfter": null,
+          "blocksFilter": {
+            "hash_eq": "0xaff52c40552c33ecd7248506a42d20e2cd44e64bbb299cf6cb979339e90c4211"
+          },
+          "extrinsicsFirst": 10,
+          "extrinsicsAfter": null,
+          "extrinsicsFilter": {
+            "extrinsicHash_eq": "0xaff52c40552c33ecd7248506a42d20e2cd44e64bbb299cf6cb979339e90c4211"
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "blocks": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0000000123-aff52",
+                  "hash": "0xaff52c40552c33ecd7248506a42d20e2cd44e64bbb299cf6cb979339e90c4211",
+                  "height": 123,
+                  "timestamp": "2019-11-28T17:40:42.000000Z",
+                  "parentHash": "0x44047e1fc53d94a3b0bbc4189693cdbccc8c639efea42801717d65c0a5d847bd",
+                  "validator": "0xfcdeb580add093f3b5f06603032c2fe89d329ba372147c100aa0391a44a51601",
+                  "specVersion": 1020
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "1",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 1
+          },
+          "extrinsics": {
+            "edges": [],
+            "pageInfo": {
+              "endCursor": "",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": ""
+            },
+            "totalCount": 0
+          }
+        }
+      }
+    }
+  }
+]

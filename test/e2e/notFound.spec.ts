@@ -1,5 +1,6 @@
 import { navigate } from "../utils/navigate";
-import { test, expect } from "../utils/test";
+
+import { test, expect } from "../test";
 
 test.describe("Not found page", () => {
 	test("shows not found page", async ({ page, takeScreenshot }) => {

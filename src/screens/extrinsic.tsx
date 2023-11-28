@@ -7,30 +7,46 @@ import CopyToClipboardButton from "../components/CopyToClipboardButton";
 import EventsTable from "../components/events/EventsTable";
 import { ExtrinsicInfoTable } from "../components/extrinsics/ExtrinsicInfoTable";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
+
 import { useCalls } from "../hooks/useCalls";
 import { useEvents } from "../hooks/useEvents";
 import { useExtrinsic } from "../hooks/useExtrinsic";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { usePage } from "../hooks/usePage";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
+import { useTab } from "../hooks/useTab";
 
 type ExtrinsicPageParams = {
 	id: string;
 };
 
 export const ExtrinsicPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { id } = useParams() as ExtrinsicPageParams;
 
-	const extrinsic = useExtrinsic(network.name, { id_eq: id });
-	const events = useEvents(network.name, { extrinsicId_eq: id }, "id_ASC");
-	const calls = useCalls(network.name, { extrinsicId_eq: id }, "id_ASC");
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
+
+	const extrinsic = useExtrinsic(network.name, { simplifiedId: id });
+
+	const events = useEvents(network.name, extrinsic.data && { extrinsicId: extrinsic.data.id }, {
+		order: "id_ASC",
+		page: tab === "events" ? page : 1,
+		skip: !extrinsic.data
+	});
+
+	const calls = useCalls(network.name, extrinsic.data && { extrinsicId: extrinsic.data.id }, {
+		order: "id_ASC",
+		page: tab === "calls" ? page : 1,
+		skip: !extrinsic.data
+	});
 
 	useDOMEventTrigger("data-loaded", !extrinsic.loading && !events.loading && !calls.loading);
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					Extrinsic #{id}
 					<CopyToClipboardButton value={id} />
 				</CardHeader>
@@ -40,11 +56,11 @@ export const ExtrinsicPage = () => {
 				/>
 			</Card>
 			{extrinsic.data &&
-				<Card>
-					<TabbedContent>
+				<Card data-test="related-items">
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Events"
-							count={events.pagination.totalCount}
+							count={events.totalCount}
 							loading={events.loading}
 							error={events.error}
 							value="events"
@@ -52,16 +68,22 @@ export const ExtrinsicPage = () => {
 							<EventsTable
 								network={network}
 								events={events}
+								onPageChange={setPage}
 							/>
 						</TabPane>
 						<TabPane
 							label="Calls"
-							count={calls.pagination.totalCount}
+							count={calls.totalCount}
 							loading={calls.loading}
 							error={calls.error}
 							value="calls"
 						>
-							<CallsTable network={network} calls={calls} showAccount />
+							<CallsTable
+								network={network}
+								calls={calls}
+								showAccount
+								onPageChange={setPage}
+							/>
 						</TabPane>
 					</TabbedContent>
 				</Card>

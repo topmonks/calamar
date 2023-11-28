@@ -3,26 +3,26 @@ import { ExplorerSquidEvent } from "../model/explorer-squid/explorerSquidEvent";
 
 import { Event } from "../model/event";
 import { ItemsConnection } from "../model/itemsConnection";
-import { ItemsCounter } from "../model/itemsCounter";
 import { ItemsResponse } from "../model/itemsResponse";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { lowerFirst, upperFirst } from "../utils/string";
+import { simplifyId } from "../utils/id";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
+import { upperFirst } from "../utils/string";
 
-import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
+import { getNetwork, hasSupport } from "./networksService";
 import { getEventsRuntimeMetadata, getPalletsRuntimeMetadata, getRuntimeEventMetadata } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type EventsFilter =
-	{ id_eq: string; }
-	| { blockId_eq: string; }
-	| { callId_eq: string; }
-	| { extrinsicId_eq: string; }
-	| { palletName_eq: string; }
-	| { palletName_eq: string, eventName_eq: string; };
+	undefined
+	| { simplifiedId: string; }
+	| { blockId: string; }
+	| { callId: string; }
+	| { extrinsicId: string; }
+	| { palletName: string; }
+	| { palletName: string, eventName: string; };
 
 export type EventsOrder = string | string[];
 
@@ -32,56 +32,6 @@ export async function getEvent(network: string, filter: EventsFilter) {
 	}
 
 	return getArchiveEvent(network, filter);
-}
-
-export async function getEventsByName(
-	network: string,
-	name: string,
-	order: EventsOrder = "id_DESC",
-	pagination: PaginationOptions
-): Promise<ItemsResponse<Event>> {
-	const {palletName, eventName} = await normalizeEventName(network, name);
-
-	const filter: EventsFilter = eventName
-		? { palletName_eq: palletName, eventName_eq: eventName }
-		: { palletName_eq: palletName };
-
-
-	if (hasSupport(network, "explorer-squid")) {
-		const counterFilter = eventName
-			? `Events.${palletName}.${eventName}`
-			: `Events.${palletName}`;
-
-		// this call is divided on purpose, otherwise it would timeout when there are no events found.
-		const countResponse = await fetchExplorerSquid<{itemsCounterById: ItemsCounter|null}>(
-			network,
-			`query ($counterFilter: String!) {
-				itemsCounterById(id: $counterFilter) {
-					total
-				}
-			}`,
-			{
-				counterFilter,
-			}
-		);
-
-		if (countResponse.itemsCounterById === null || countResponse.itemsCounterById.total === 0) {
-			return {
-				data: [],
-				pagination: {
-					...pagination,
-					hasNextPage: false
-				}
-			};
-		}
-
-		const events = await getExplorerSquidEvents(network, filter, order, pagination, false);
-		events.pagination.totalCount = countResponse.itemsCounterById.total;
-
-		return events;
-	}
-
-	return getArchiveEvents(network, filter, order, pagination, false);
 }
 
 export async function getEvents(
@@ -113,35 +63,62 @@ export async function normalizeEventName(network: string, name: string) {
 	eventName = event?.name || upperFirst(eventName);
 
 	return {
-		palletName,
-		eventName
+		pallet: palletName,
+		event: eventName
 	};
 }
 
 /*** PRIVATE ***/
+
+registerItemFragment("ArchiveEvent", "Event", `
+	id
+	name
+	indexInBlock
+	block {
+		id
+		height
+		timestamp
+		spec {
+			specVersion
+		}
+	}
+	extrinsic {
+		id
+	}
+	call {
+		id
+	}
+	args
+`);
+
+registerItemFragment("ExplorerSquidEvent", "Event", `
+	id
+	eventName
+	palletName
+	indexInBlock
+	block {
+		id
+		height
+		timestamp
+		specVersion
+	}
+	extrinsic {
+		id
+	}
+	call {
+		id
+	}
+`);
+
+registerItemsConnectionFragment("ArchiveEventsConnection", "EventsConnection", "...ArchiveEvent");
+registerItemsConnectionFragment("ExplorerSquidEventsConnection", "EventsConnection", "...ExplorerSquidEvent");
 
 async function getArchiveEvent(network: string, filter: EventsFilter) {
 	const response = await fetchArchive<{events: ArchiveEvent[]}>(
 		network,
 		`query ($filter: EventWhereInput) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				name
-				block {
-					id
-					height
-					timestamp
-					spec {
-						specVersion
-					}
-				}
-				extrinsic {
-					id
-				}
-				call {
-					id
-				}
-				args
+				...ArchiveEvent
 			}
 		}`,
 		{
@@ -149,10 +126,7 @@ async function getArchiveEvent(network: string, filter: EventsFilter) {
 		}
 	);
 
-	const data = response.events[0] && unifyArchiveEvent(response.events[0], network);
-	const event = addItemMetadata(data, getEventMetadata);
-
-	return event;
+	return response.events[0] && unifyArchiveEvent(response.events[0], network);
 }
 
 async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
@@ -160,21 +134,7 @@ async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
 		network,
 		`query ($filter: EventWhereInput) {
 			events(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				eventName
-				palletName
-				block {
-					id
-					height
-					timestamp
-					specVersion
-				}
-				extrinsic {
-					id
-				}
-				call {
-					id
-				}
+				...ExplorerSquidEvent
 			}
 		}`,
 		{
@@ -182,9 +142,8 @@ async function getExplorerSquidEvent(network: string, filter: EventsFilter) {
 		}
 	);
 
-	const data = response.events[0] && unifyExplorerSquidEvent(response.events[0], network);
-	const dataWithMetadata = await addItemMetadata(data, getEventMetadata);
-	const event = await addEventArgs(network, dataWithMetadata);
+	const data = response.events[0] && await unifyExplorerSquidEvent(response.events[0], network);
+	const event = await addEventArgs(network, data);
 
 	return event;
 }
@@ -196,54 +155,30 @@ async function getArchiveEvents(
 	pagination: PaginationOptions,
 	fetchTotalCount = true
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{eventsConnection: ItemsConnection<ArchiveEvent>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
 			eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
-				edges {
-					node {
-						id
-						name
-						block {
-							id
-							height
-							timestamp
-							spec {
-								specVersion
-							}
-						}
-						extrinsic {
-							id
-						}
-						call {
-							id
-						}
-						args
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ArchiveEventsConnection
 				${fetchTotalCount ? "totalCount" : ""}
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: eventsFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	const items = extractConnectionItems(response.eventsConnection, pagination, unifyArchiveEvent, network);
-	const events = await addItemsMetadata(items, getEventMetadata);
-
-	return events;
+	return extractConnectionItems(
+		response.eventsConnection,
+		pagination,
+		unifyArchiveEvent,
+		network
+	);
 }
 
 async function getExplorerSquidEvents(
@@ -253,51 +188,32 @@ async function getExplorerSquidEvents(
 	pagination: PaginationOptions,
 	fetchTotalCount = true
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{eventsConnection: ItemsConnection<ExplorerSquidEvent>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: EventWhereInput, $order: [EventOrderByInput!]!) {
 			eventsConnection(orderBy: $order, where: $filter, first: $first, after: $after) {
-				edges {
-					node {
-						id
-						eventName
-						palletName
-						block {
-							id
-							height
-							timestamp
-							specVersion
-						}
-						extrinsic {
-							id
-						}
-						call {
-							id
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidEventsConnection
 				${fetchTotalCount ? "totalCount" : ""}
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: eventsFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	const data = extractConnectionItems(response.eventsConnection, pagination, unifyExplorerSquidEvent, network);
-	const dataWithMetadata = await addItemsMetadata(data, getEventMetadata);
-	const events = await addEventsArgs(network, dataWithMetadata);
+	const data = await extractConnectionItems(
+		response.eventsConnection,
+		pagination,
+		unifyExplorerSquidEvent,
+		network
+	);
+
+	const events = await addEventsArgs(network, data);
 
 	return events;
 }
@@ -305,14 +221,12 @@ async function getExplorerSquidEvents(
 async function getArchiveEventArgs(network: string, eventIds: string[]) {
 	const response = await fetchArchive<{events: {id: string, args: any}[]}>(
 		network,
-		`
-			query($ids: [String!]) {
-				events(where: { id_in: $ids }) {
-					id
-					args
-				}
+		`query($ids: [String!]) {
+			events(where: { id_in: $ids }) {
+				id
+				args
 			}
-		`,
+		}`,
 		{
 			ids: eventIds,
 		}
@@ -337,7 +251,7 @@ async function addEventArgs(network: string, event: Event|undefined) {
 	};
 }
 
-async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
+export async function addEventsArgs<C extends boolean = false>(network: string, items: ItemsResponse<Event, C>) {
 	const eventIds = items.data.map((event) => event.id);
 
 	const argsByEventId = await getArchiveEventArgs(network, eventIds);
@@ -351,12 +265,27 @@ async function addEventsArgs(network: string, items: ItemsResponse<Event>) {
 	};
 }
 
-function unifyArchiveEvent(event: ArchiveEvent, network: string): Omit<Event, "metadata"> {
+
+/**
+ * Get simplified version of extrinsic ID
+ * which will be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-000041-5800a -> 20537612-41
+ */
+export function simplifyEventId(id: string) {
+	return simplifyId(id, /\d{10}-\d{6}-[^-]{5}/, 2);
+}
+
+export async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<Event> {
 	const [palletName, eventName] = event.name.split(".") as [string, string];
+	const specVersion = event.block.spec.specVersion;
 
 	return {
 		...event,
-		network,
+		network: getNetwork(network),
 		blockId: event.block.id,
 		blockHeight: event.block.height,
 		timestamp: event.block.timestamp,
@@ -364,89 +293,128 @@ function unifyArchiveEvent(event: ArchiveEvent, network: string): Omit<Event, "m
 		eventName,
 		extrinsicId: event.extrinsic?.id || null,
 		callId: event.call?.id || null,
-		args: null,
-		specVersion: event.block.spec.specVersion,
+		specVersion,
+		metadata: {
+			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
+		}
 	};
 }
 
-function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network: string): Omit<Event, "metadata"> {
+export async function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network: string): Promise<Event> {
+	const {palletName, eventName} = event;
+	const specVersion = event.block.specVersion;
+
 	return {
 		...event,
-		network,
+		network: getNetwork(network),
 		blockId: event.block.id,
 		blockHeight: event.block.height,
 		timestamp: event.block.timestamp,
 		extrinsicId: event.extrinsic?.id || null,
 		callId: event.call?.id || null,
 		args: null,
-		specVersion: event.block.specVersion,
+		specVersion,
+		metadata: {
+			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
+		}
 	};
 }
 
-async function getEventMetadata(event: Omit<Event, "metadata">): Promise<Event["metadata"]> {
-	return {
-		event: await getRuntimeEventMetadata(event.network, event.specVersion, event.palletName, event.eventName)
-	};
-}
-
-function eventsFilterToArchiveFilter(filter?: EventsFilter) {
+export function eventsFilterToArchiveFilter(filter?: EventsFilter) {
 	if (!filter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		const [blockHeight = "", indexInBlock = ""] = filter.simplifiedId.split("-");
+
 		return {
 			block: {
-				id_eq: filter.blockId_eq
-			}
-		};
-	} else if ("callId_eq" in filter) {
-		return {
-			call: {
-				id_eq: filter.callId_eq
-			}
-		};
-	} else if ("extrinsicId_eq" in filter) {
-		return {
-			extrinsic: {
-				id_eq: filter.extrinsicId_eq
-			}
-		};
-	} else if ("palletName_eq" in filter) {
-		return {
-			name_eq: ("eventName_eq" in filter)
-				? `${filter.palletName_eq}.${filter.eventName_eq}`
-				: filter.palletName_eq
+				height_eq: parseInt(blockHeight),
+			},
+			indexInBlock_eq: parseInt(indexInBlock)
 		};
 	}
 
-	return filter;
+	if ("blockId" in filter) {
+		return {
+			block: {
+				id_eq: filter.blockId
+			}
+		};
+	}
+
+	if ("callId" in filter) {
+		return {
+			call: {
+				id_eq: filter.callId
+			}
+		};
+	}
+
+	if ("extrinsicId" in filter) {
+		return {
+			extrinsic: {
+				id_eq: filter.extrinsicId
+			}
+		};
+	}
+
+	if ("palletName" in filter) {
+		return {
+			name_eq: ("eventName" in filter)
+				? `${filter.palletName}.${filter.eventName}`
+				: filter.palletName
+		};
+	}
 }
 
-function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
+export function eventsFilterToExplorerSquidFilter(filter?: EventsFilter) {
 	if (!filter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		const [blockHeight = "", indexInBlock = ""] = filter.simplifiedId.split("-");
+
+		return {
+			blockNumber_eq: parseInt(blockHeight),
+			indexInBlock_eq: parseInt(indexInBlock)
+		};
+	}
+
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
-			}
-		};
-	} else if ("callId_eq" in filter) {
-		return {
-			call: {
-				id_eq: filter.callId_eq
-			}
-		};
-	} else if ("extrinsicId_eq" in filter) {
-		return {
-			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.blockId
 			}
 		};
 	}
 
-	return filter;
+	if ("callId" in filter) {
+		return {
+			call: {
+				id_eq: filter.callId
+			}
+		};
+	}
+
+	if ("extrinsicId" in filter) {
+		return {
+			extrinsic: {
+				id_eq: filter.extrinsicId
+			}
+		};
+	}
+
+	if ("palletName" in filter) {
+		return "eventName" in filter
+			? {
+				palletName_eq: filter.palletName,
+				eventName_eq: filter.eventName
+			}
+			: {
+				palletName_eq: filter.palletName
+			};
+	}
 }

@@ -1,8 +1,9 @@
 import { DecodedEvent } from "./decodedMetadata";
+import { Network } from "./network";
 
 export type Event = {
 	id: string;
-	network: string;
+	network: Network;
 	eventName: string;
 	palletName: string;
 	blockId: string;

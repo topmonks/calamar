@@ -1,12 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { CallsFilter, getCall } from "../services/callsService";
 
-import { useResource } from "./useResource";
+import { UseResourceOptions, useResource } from "./useResource";
 
 export function useCall(
 	network: string,
 	filter: CallsFilter,
-	options?: FetchOptions
+	options?: UseResourceOptions
 ) {
 	return useResource(getCall, [network, filter], options);
 }

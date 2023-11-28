@@ -6,16 +6,16 @@ import { StatsSquidAccountBalance } from "../model/stats-squid/statsSquidAccount
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { encodeAddress } from "../utils/formatAddress";
+import { encodeAddress } from "../utils/address";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
+import { emptyItemsResponse } from "../utils/itemsResponse";
 import { rawAmountToDecimal } from "../utils/number";
 
 import { fetchStatsSquid } from "./fetchService";
 import { getNetwork, getNetworks, hasSupport } from "./networksService";
 
-
 export type BalancesFilter =
-	{ id_eq: string; }
+	{ id: string; }
 
 export type BalancesOrder = string | string[];
 
@@ -26,7 +26,7 @@ export async function getBalances(
 	pagination: PaginationOptions,
 ) {
 	if (hasSupport(network, "stats-squid")) {
-		const after = pagination.offset === 0 ? null : pagination.offset.toString();
+		const {first, after} = paginationToConnectionCursor(pagination);
 
 		const response = await fetchStatsSquid<{accountsConnection: ItemsConnection<StatsSquidAccountBalance>}>(
 			network,
@@ -51,27 +51,24 @@ export async function getBalances(
 				}
 			}`,
 			{
-				first: pagination.limit,
+				first,
 				after,
 				filter,
 				order,
 			}
 		);
 
-		const balances = extractConnectionItems(response.accountsConnection, pagination, unifyStatsSquidAccountBalance, network);
+		const balances = extractConnectionItems(
+			response.accountsConnection,
+			pagination,
+			unifyStatsSquidAccountBalance,
+			network
+		);
 
 		return balances;
 	}
 
-	return {
-		data: [],
-		pagination: {
-			offset: 0,
-			limit: 0,
-			hasNextPage: false,
-			totalCount: 0,
-		}
-	};
+	return emptyItemsResponse();
 }
 
 export async function getAccountBalances(address: string) {
@@ -83,8 +80,8 @@ export async function getAccountBalances(address: string) {
 		balanceSupported: !!hasSupport(network.name, "stats-squid"),
 	}));
 
-	const response = await Promise.allSettled(networks.map(async (network, index) => {
-		const accountBalance = accountBalances[index]!;
+	const response = await Promise.allSettled(accountBalances.map(async (accountBalance) => {
+		const { network } = accountBalance;
 
 		const encodedAddress = encodeAddress(address, network.prefix);
 
@@ -117,7 +114,7 @@ export async function getAccountBalances(address: string) {
 	}));
 
 	response.forEach((result, index) => {
-		const accountBalance = accountBalances[index]!;
+		const accountBalance = accountBalances[index] as AccountBalance;
 
 		if (result.status === "rejected") {
 			accountBalance.error = result.reason;

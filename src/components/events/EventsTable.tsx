@@ -5,10 +5,13 @@ import { Event } from "../../model/event";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
+
 import { ButtonLink } from "../ButtonLink";
-import DataViewer from "../DataViewer";
+import { DataViewer } from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
+
+import { EventLink } from "./EventLink";
 
 const parametersColCss = (showExtrinsic?: boolean) => css`
 	width: ${showExtrinsic ? "40%" : "60%"};
@@ -18,12 +21,13 @@ export type EventsTableProps = {
 	network: Network;
 	events: PaginatedResource<Event>;
 	showExtrinsic?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const EventsItemsTableAttribute = ItemsTableAttribute<Event>;
 
 function EventsTable(props: EventsTableProps) {
-	const { network, events, showExtrinsic } = props;
+	const { network, events, showExtrinsic, onPageChange } = props;
 
 	return (
 		<ItemsTable
@@ -32,15 +36,14 @@ function EventsTable(props: EventsTableProps) {
 			notFound={events.notFound}
 			notFoundMessage="No events found"
 			error={events.error}
-			pagination={events.pagination}
-			data-test="events-table"
+			pageInfo={events.pageInfo}
+			onPageChange={onPageChange}
+			data-test="events-items"
 		>
 			<EventsItemsTableAttribute
 				label="ID"
 				render={(event) => (
-					<Link to={`/${network.name}/event/${event.id}`}>
-						{event.id}
-					</Link>
+					<EventLink network={network} id={event.id} />
 				)}
 			/>
 			<EventsItemsTableAttribute
@@ -59,9 +62,7 @@ function EventsTable(props: EventsTableProps) {
 				<EventsItemsTableAttribute
 					label="Extrinsic"
 					render={(event) => event.extrinsicId && (
-						<Link to={`/${network.name}/extrinsic/${event.extrinsicId}`}>
-							{event.extrinsicId}
-						</Link>
+						<ExtrinsicLink network={event.network} id={event.extrinsicId} />
 					)}
 				/>
 			)}

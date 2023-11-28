@@ -112,15 +112,19 @@ export const AccountPortfolio = (props: AccountPortfolioProps) => {
 	}
 
 	if (balances.notFound || stats.total.eq(0)) {
-		return <NotFound css={notFoundStyle}>No positive balances with conversion rate to USD found</NotFound>;
+		return (
+			<NotFound css={notFoundStyle}>
+				No positive balances with conversion rate to USD found
+			</NotFound>
+		);
 	}
 
 	if (balances.error) {
 		return (
 			<ErrorMessage
 				message="Unexpected error occured while fetching data"
-				details={balances.error.message}
-				showReported
+				details={balances.error}
+				report
 			/>
 		);
 	}

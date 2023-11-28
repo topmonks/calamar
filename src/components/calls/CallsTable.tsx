@@ -2,21 +2,25 @@ import { Call } from "../../model/call";
 import { Network } from "../../model/network";
 import { PaginatedResource } from "../../model/paginatedResource";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
+
 import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
-import { Link } from "../Link";
+
+import { CallLink } from "./CallLink";
 
 export type CallsTableProps = {
 	network: Network;
 	calls: PaginatedResource<Call>;
 	showAccount?: boolean;
+	onPageChange?: (page: number) => void;
 };
 
 const CallsTableAttribute = ItemsTableAttribute<Call>;
 
 export const CallsTable = (props: CallsTableProps) => {
-	const { network, calls, showAccount } = props;
+	const { network, calls, showAccount, onPageChange } = props;
 
 	return (
 		<ItemsTable
@@ -25,15 +29,14 @@ export const CallsTable = (props: CallsTableProps) => {
 			notFound={calls.notFound}
 			notFoundMessage="No calls found"
 			error={calls.error}
-			pagination={calls.pagination}
-			data-test="calls-table"
+			pageInfo={calls.pageInfo}
+			onPageChange={onPageChange}
+			data-test="calls-items"
 		>
 			<CallsTableAttribute
 				label="ID"
 				render={(call) =>
-					<Link to={`/${network.name}/call/${call.id}`}>
-						{call.id}
-					</Link>
+					<CallLink network={network} id={call.id} />
 				}
 			/>
 			<CallsTableAttribute
@@ -64,9 +67,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			<CallsTableAttribute
 				label="Extrinsic"
 				render={(call) =>
-					<Link to={`/${network.name}/extrinsic/${call.extrinsicId}`}>
-						{call.extrinsicId}
-					</Link>
+					<ExtrinsicLink network={network} id={call.extrinsicId} />
 				}
 			/>
 		</ItemsTable>

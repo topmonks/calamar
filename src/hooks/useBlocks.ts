@@ -1,13 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
-import { BlocksFilter, BlocksOrder, getBlocks } from "../services/blocksService";
+import { BlocksFilter, getBlocks } from "../services/blocksService";
 
-import { usePaginatedResource } from "./usePaginatedResource";
+import { UsePaginatedResourceOptions, usePaginatedResource } from "./usePaginatedResource";
 
 export function useBlocks(
 	network: string,
 	filter: BlocksFilter | undefined,
-	order?: BlocksOrder,
-	options?: FetchOptions
+	options?: UsePaginatedResourceOptions
 ) {
-	return usePaginatedResource(getBlocks, [network, filter, order], options);
+	return usePaginatedResource(getBlocks, [network, filter, options?.order], options);
 }

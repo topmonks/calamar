@@ -1,13 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
-import { CallsFilter, CallsOrder, getCalls } from "../services/callsService";
+import { CallsFilter, getCalls } from "../services/callsService";
 
-import { usePaginatedResource } from "./usePaginatedResource";
+import { UsePaginatedResourceOptions, usePaginatedResource } from "./usePaginatedResource";
 
 export function useCalls(
 	network: string,
 	filter: CallsFilter,
-	order?: CallsOrder,
-	options?: FetchOptions,
+	options?: UsePaginatedResourceOptions,
 ) {
-	return usePaginatedResource(getCalls, [network, filter, order], options);
+	return usePaginatedResource(getCalls, [network, filter, options?.order], options);
 }

@@ -1,13 +1,11 @@
-import { FetchOptions } from "../model/fetchOptions";
 import { getTransfers, TransfersFilter, TransfersOrder } from "../services/transfersService";
 
-import { usePaginatedResource } from "./usePaginatedResource";
+import { usePaginatedResource, UsePaginatedResourceOptions } from "./usePaginatedResource";
 
 export function useTransfers(
 	network: string,
 	filter: TransfersFilter | undefined,
-	order?: TransfersOrder,
-	options?: FetchOptions
+	options?: UsePaginatedResourceOptions
 ) {
-	return usePaginatedResource(getTransfers, [network, filter, order], options);
+	return usePaginatedResource(getTransfers, [network, filter, options?.order], options);
 }

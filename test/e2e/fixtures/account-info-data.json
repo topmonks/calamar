@@ -1,0 +1,25 @@
+{
+  "header": "Account Fabi 🐒",
+  "infoTable": [
+    [
+      "Network",
+      "Kusama"
+    ],
+    [
+      "Kusama address",
+      "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE"
+    ],
+    [
+      "Substrate address",
+      "5Fq7vdZQCQg51vEryiF7B9Hs8DP4geiLAqL9syy9KGzbMpG6"
+    ],
+    [
+      "Public key",
+      "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+    ]
+  ],
+  "errorHeader": "Account GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE",
+  "error": "Unexpected error occured while fetching dataThis error is logged. No need to report it.DetailsAccount error",
+  "invalidAddressHeader": "Account 0x123456789",
+  "invalidAddressError": "Unexpected error occured while fetching dataThis error is logged. No need to report it.DetailsInvalid account address"
+}

@@ -1,0 +1,572 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-main-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {\n\t\t\ttransfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...MainSquidTransfersConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment MainSquidTransfersConnection on TransfersConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...MainSquidTransfer\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment MainSquidTransfer on Transfer {\n\t\t\t\n\tid\n\tdirection\n\taccount {\n\t\tpublicKey\n\t}\n\ttransfer {\n\t\tid\n\t\tblockNumber\n\t\ttimestamp\n\t\textrinsicHash\n\t\tto {\n\t\t\tpublicKey\n\t\t}\n\t\tfrom {\n\t\t\tpublicKey\n\t\t}\n\t\tamount\n\t\tsuccess\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "account": {
+              "publicKey_eq": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+            }
+          },
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "transfersConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0019780727-000040-9c0ba-from",
+                  "direction": "From",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0019780727-000040-9c0ba",
+                    "blockNumber": 19780727,
+                    "timestamp": "2023-09-21T19:23:00.000000Z",
+                    "extrinsicHash": "0xd63828eea567b31e8888412324b5b66011280d7c035f8d67fa1c919628321621",
+                    "to": {
+                      "publicKey": "0x76b94432fd5d47fb05347563cd63880f24e1e425b9da4b457ceff9afc852aa14"
+                    },
+                    "from": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "amount": "1030000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0015120624-000679-84900-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0015120624-000679-84900",
+                    "blockNumber": 15120624,
+                    "timestamp": "2022-10-31T08:45:24.015000Z",
+                    "extrinsicHash": "0xb341435a91916c081473b7941a14b4f04e26ccfc891f5b9b70b5fb7ee587b640",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642700000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0015120552-000845-f8081-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0015120552-000845-f8081",
+                    "blockNumber": 15120552,
+                    "timestamp": "2022-10-31T08:38:12.015000Z",
+                    "extrinsicHash": "0x6149072afd71baee16540a364097762fb648db623437434f7ae8eaab53d176c6",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642500000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0015120516-000198-cf19c-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0015120516-000198-cf19c",
+                    "blockNumber": 15120516,
+                    "timestamp": "2022-10-31T08:34:36.027000Z",
+                    "extrinsicHash": "0xfbaf0820702c9e97037cf5a5b34c51d08d902dd8a5a47d619877c5472e09c254",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642b00000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0015120391-000917-fe3a0-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0015120391-000917-fe3a0",
+                    "blockNumber": 15120391,
+                    "timestamp": "2022-10-31T08:22:06.010000Z",
+                    "extrinsicHash": "0x6ccab320cbfc314b8412eec04da8ed93337e06ebdee07b908d7b1ff0d785c3bf",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642d00000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0014994065-000048-1655d-from",
+                  "direction": "From",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0014994065-000048-1655d",
+                    "blockNumber": 14994065,
+                    "timestamp": "2022-10-22T13:34:06.011000Z",
+                    "extrinsicHash": "0x8c19c389c81c914332351f609c2f86bf1181df447d9e1f4e31d7d5365048db7b",
+                    "to": {
+                      "publicKey": "0x76b94432fd5d47fb05347563cd63880f24e1e425b9da4b457ceff9afc852aa14"
+                    },
+                    "from": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "amount": "3900000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910738-000826-96268-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0013910738-000826-96268",
+                    "blockNumber": 13910738,
+                    "timestamp": "2022-08-08T02:40:00.008000Z",
+                    "extrinsicHash": "0x2c50856b554f556bc7c8d42a931efe64d5bcc0664ed13421e03f4b2c2041afed",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641c00000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910688-000742-b4cd2-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0013910688-000742-b4cd2",
+                    "blockNumber": 13910688,
+                    "timestamp": "2022-08-08T02:35:00.015000Z",
+                    "extrinsicHash": "0x72a5916b90de7a4b5e2eec2755579d1c9c8afe19f52e214f2b9cfe691d678083",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642300000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910676-000400-28d9f-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0013910676-000400-28d9f",
+                    "blockNumber": 13910676,
+                    "timestamp": "2022-08-08T02:33:42.015000Z",
+                    "extrinsicHash": "0xdc2596d852b0dfd2ff581ccf2e1e0903b9184c5e2e60c074c4a40d77bcb46094",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641b00000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910640-000387-f3c00-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                  },
+                  "transfer": {
+                    "id": "0013910640-000387-f3c00",
+                    "blockNumber": 13910640,
+                    "timestamp": "2022-08-08T02:30:06.040000Z",
+                    "extrinsicHash": "0x7afffe22d93bf83ab0b4f0b074935a2d1ee5e713f6a14a4b30c8ac354f8187b0",
+                    "to": {
+                      "publicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641f00000000000000000000000000000000000000"
+                    },
+                    "amount": "250000000000000",
+                    "success": true
+                  }
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 61
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-main-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {\n\t\t\ttransfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...MainSquidTransfersConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment MainSquidTransfersConnection on TransfersConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...MainSquidTransfer\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment MainSquidTransfer on Transfer {\n\t\t\t\n\tid\n\tdirection\n\taccount {\n\t\tpublicKey\n\t}\n\ttransfer {\n\t\tid\n\t\tblockNumber\n\t\ttimestamp\n\t\textrinsicHash\n\t\tto {\n\t\t\tpublicKey\n\t\t}\n\t\tfrom {\n\t\t\tpublicKey\n\t\t}\n\t\tamount\n\t\tsuccess\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "account": {
+              "publicKey_eq": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+            }
+          },
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "transfersConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0018144337-000328-618e0-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0018144337-000328-618e0",
+                    "blockNumber": 18144337,
+                    "timestamp": "2023-05-30T22:59:30.000000Z",
+                    "extrinsicHash": "0x2fffb606e82b8b259514dfaaf71152ee15711e481d5abd8058e3fc62e49d864b",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e644900000000000000000000000000000000000000"
+                    },
+                    "amount": "1000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910626-000968-a5e23-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0013910626-000968-a5e23",
+                    "blockNumber": 13910626,
+                    "timestamp": "2022-08-08T02:28:42.005000Z",
+                    "extrinsicHash": "0x9c99a46ded3ff8ebeffe6b20187ef2a377b1edbb7dce8f2f96f2b1062299b11d",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641b00000000000000000000000000000000000000"
+                    },
+                    "amount": "25000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910555-000319-3d885-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0013910555-000319-3d885",
+                    "blockNumber": 13910555,
+                    "timestamp": "2022-08-08T02:21:36.017000Z",
+                    "extrinsicHash": "0x961adf302be0ff78adfa39d58a0e19f3970e2eec3fa7c8105b0521a2e776f191",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641c00000000000000000000000000000000000000"
+                    },
+                    "amount": "1000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910545-000737-a124e-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0013910545-000737-a124e",
+                    "blockNumber": 13910545,
+                    "timestamp": "2022-08-08T02:20:36.008000Z",
+                    "extrinsicHash": "0xb416664844ae36fffb8d93a55f3010438a11330903715d34efd7dd7394337d1e",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642300000000000000000000000000000000000000"
+                    },
+                    "amount": "20000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910496-000538-d47c5-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0013910496-000538-d47c5",
+                    "blockNumber": 13910496,
+                    "timestamp": "2022-08-08T02:15:42.022000Z",
+                    "extrinsicHash": "0x5ce3450aedab0f28c2961b67f57989144b1683f98e339ddb717dff69241a0077",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641f00000000000000000000000000000000000000"
+                    },
+                    "amount": "10000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910476-000527-3aa85-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0013910476-000527-3aa85",
+                    "blockNumber": 13910476,
+                    "timestamp": "2022-08-08T02:13:36.027000Z",
+                    "extrinsicHash": "0xa1c6ace8c45a2202e9e03fb66335672547435fdd2a0e7ee435e5647c495a064c",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e642200000000000000000000000000000000000000"
+                    },
+                    "amount": "2000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013910438-000524-da6f3-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0013910438-000524-da6f3",
+                    "blockNumber": 13910438,
+                    "timestamp": "2022-08-08T02:09:48.015000Z",
+                    "extrinsicHash": "0x58d60a9a4f5abdc053033e9f54f25aa3722c125307b37628807c76671bd0ce1c",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e641900000000000000000000000000000000000000"
+                    },
+                    "amount": "25000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012703541-000144-c201f-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0012703541-000144-c201f",
+                    "blockNumber": 12703541,
+                    "timestamp": "2022-05-16T03:05:00.039000Z",
+                    "extrinsicHash": "0x1446caa9029183fbf09da1615354cf0ef523954e89a317b04fb241f888688526",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e644800000000000000000000000000000000000000"
+                    },
+                    "amount": "21000000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012700812-000523-cfd1f-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0012700812-000523-cfd1f",
+                    "blockNumber": 12700812,
+                    "timestamp": "2022-05-15T22:31:26.039000Z",
+                    "extrinsicHash": "0x465868668838db42750bf2d80e1d8128327d52a758c9f0b7ca0afac6a076e47d",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e640100000000000000000000000000000000000000"
+                    },
+                    "amount": "98400000000000",
+                    "success": true
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012700809-000939-5bd22-to",
+                  "direction": "To",
+                  "account": {
+                    "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                  },
+                  "transfer": {
+                    "id": "0012700809-000939-5bd22",
+                    "blockNumber": 12700809,
+                    "timestamp": "2022-05-15T22:30:54.037000Z",
+                    "extrinsicHash": "0xbd19c45c6206e82989c08186cdb250a4364e1fd1f343f4cceea2834cb687be56",
+                    "to": {
+                      "publicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+                    },
+                    "from": {
+                      "publicKey": "0x6d6f646c70792f6366756e640200000000000000000000000000000000000000"
+                    },
+                    "amount": "23100000000000",
+                    "success": true
+                  }
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 57
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-main-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {\n\t\t\ttransfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...MainSquidTransfersConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment MainSquidTransfersConnection on TransfersConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...MainSquidTransfer\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment MainSquidTransfer on Transfer {\n\t\t\t\n\tid\n\tdirection\n\taccount {\n\t\tpublicKey\n\t}\n\ttransfer {\n\t\tid\n\t\tblockNumber\n\t\ttimestamp\n\t\textrinsicHash\n\t\tto {\n\t\t\tpublicKey\n\t\t}\n\t\tfrom {\n\t\t\tpublicKey\n\t\t}\n\t\tamount\n\t\tsuccess\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "account": {
+              "publicKey_eq": "0x123456789"
+            }
+          },
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "transfersConnection": {
+            "edges": [],
+            "pageInfo": {
+              "endCursor": "",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": ""
+            },
+            "totalCount": 0
+          }
+        }
+      }
+    }
+  }
+]

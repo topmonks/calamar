@@ -4,15 +4,16 @@ import { MainSquidTransfer } from "../model/main-squid/mainSquidTransfer";
 import { PaginationOptions } from "../model/paginationOptions";
 import { Transfer } from "../model/transfer";
 
-import { decodeAddress } from "../utils/formatAddress";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { decodeAddress } from "../utils/address";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
+import { emptyItemsResponse } from "../utils/itemsResponse";
 import { rawAmountToDecimal } from "../utils/number";
 
-import { fetchArchive, fetchMainSquid } from "./fetchService";
+import { fetchArchive, fetchMainSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
 
 export type TransfersFilter =
-	{ accountAddress_eq: string };
+	{ accountAddress: string };
 
 export type TransfersOrder = string | string[];
 
@@ -26,18 +27,34 @@ export async function getTransfers(
 		return getMainSquidTransfers(network, filter, order, pagination);
 	}
 
-	return {
-		data: [],
-		pagination: {
-			offset: 0,
-			limit: 0,
-			hasNextPage: false,
-			totalCount: 0,
-		}
-	};
+	return emptyItemsResponse();
 }
 
 /*** PRIVATE ***/
+
+registerItemFragment("MainSquidTransfer", "Transfer", `
+	id
+	direction
+	account {
+		publicKey
+	}
+	transfer {
+		id
+		blockNumber
+		timestamp
+		extrinsicHash
+		to {
+			publicKey
+		}
+		from {
+			publicKey
+		}
+		amount
+		success
+	}
+`);
+
+registerItemsConnectionFragment("MainSquidTransfersConnection", "TransfersConnection", "...MainSquidTransfer");
 
 async function getMainSquidTransfers(
 	network: string,
@@ -45,98 +62,38 @@ async function getMainSquidTransfers(
 	order: TransfersOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchMainSquid<{transfersConnection: ItemsConnection<MainSquidTransfer>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: TransferWhereInput, $order: [TransferOrderByInput!]!) {
 			transfersConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						transfer {
-							id
-							amount
-							blockNumber
-							success
-							timestamp
-							extrinsicHash
-							to {
-								publicKey
-							}
-							from {
-								publicKey
-							}
-						}
-						account {
-							publicKey
-						}
-						direction
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...MainSquidTransfersConnection
 				${(filter != undefined) ?  "totalCount" : ""}
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: transfersFilterToMainSquidFilter(filter),
 			order,
 		}
 	);
 
-	const items = extractConnectionItems(response.transfersConnection, pagination, unifyMainSquidTransfer, network);
-	const transfers = await addExtrinsicsInfo(network, items);
-
-	return transfers;
-}
-
-async function addExtrinsicsInfo(network: string, items: ItemsResponse<Omit<Transfer, "extrinsic">>) {
-	const extrinsicHashes = items.data.map((transfer) => transfer.extrinsicHash).filter(Boolean) as string[];
-
-	const extrinsicsInfoByHash = await getArchiveExtrinsicsInfo(network, extrinsicHashes);
-
-	return {
-		...items,
-		data: items.data.map(transfer => ({
-			...transfer,
-			extrinsic: transfer.extrinsicHash ? extrinsicsInfoByHash[transfer.extrinsicHash] : null
-		}))
-	};
-}
-
-async function getArchiveExtrinsicsInfo(network: string, extrinsicHashes: string[]) {
-	const response = await fetchArchive<{extrinsics: {id: string, hash: string}[]}>(
-		network,
-		`query($hashes: [String!], $limit: Int!) {
-			extrinsics(where: { hash_in: $hashes }, limit: $limit) {
-				id,
-				hash
-			}
-		}`,
-		{
-			hashes: extrinsicHashes,
-			limit: extrinsicHashes.length
-		}
+	return await extractConnectionItems(
+		response.transfersConnection,
+		pagination,
+		unifyMainSquidTransfer,
+		network
 	);
-
-	return response.extrinsics.reduce((extrinsicInfoByHash, extrinsic) => {
-		extrinsicInfoByHash[extrinsic.hash] = extrinsic;
-		return extrinsicInfoByHash;
-	}, {} as Record<string, any>);
 }
 
-function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Omit<Transfer, "extrinsic"> {
+function unifyMainSquidTransfer(transfer: MainSquidTransfer, networkName: string): Transfer {
 	const network = getNetwork(networkName);
 
 	return {
 		...transfer,
+		eventId: transfer.transfer.id,
 		accountPublicKey: transfer.account.publicKey,
 		blockNumber: transfer.transfer.blockNumber,
 		timestamp: transfer.transfer.timestamp,
@@ -153,8 +110,8 @@ function transfersFilterToMainSquidFilter(filter?: TransfersFilter) {
 		return undefined;
 	}
 
-	if ("accountAddress_eq" in filter) {
-		const publicKey = decodeAddress(filter.accountAddress_eq);
+	if ("accountAddress" in filter) {
+		const publicKey = decodeAddress(filter.accountAddress);
 
 		return {
 			account: {

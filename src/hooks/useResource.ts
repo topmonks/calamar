@@ -1,59 +1,61 @@
-import { useRollbar } from "@rollbar/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import useSwr, { SWRConfiguration } from "swr";
 
-import { FetchOptions } from "../model/fetchOptions";
 import { Resource } from "../model/resource";
-import { DataError } from "../utils/error";
+import { NonFatalError } from "../utils/error";
+
+export interface UseResourceOptions extends SWRConfiguration {
+	/**
+	 * Use this if the data are not needed based on some condition.
+	 *
+	 * Behaves like normal except the data fetch is not actually
+	 * performed and results with "Not found".
+	 */
+	skip?: boolean;
+
+	/**
+	 * Refetch data in regular interval specified by `refreshInterval` (default 3000ms)
+	 */
+	refresh?: boolean;
+}
 
 export function useResource<T = any, F extends any[] = any[]>(
 	fetchItem: (...args: F) => T|undefined|Promise<T|undefined>,
 	args: F,
-	options?: FetchOptions
+	options: UseResourceOptions = {}
 ) {
-	const rollbar = useRollbar();
+	const {skip, refresh, refreshInterval = 3000, ...swrOptions} = options;
 
-	const [data, setData] = useState<T>();
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<any>();
+	const swrKey = !skip
+		? [fetchItem, args] as const
+		: null;
 
-	const fetchData = useCallback(async () => {
-		if (options?.waitUntil) {
-			// wait until all required condition are met
-			return;
-		}
-
-		if (!options?.skip) {
-			try {
-				const data = await fetchItem(...args);
-				setData(data);
-			} catch(e) {
-				if (e instanceof DataError) {
-					rollbar.error(e);
-					setError(e);
-				} else {
-					throw e;
-				}
-			}
-		}
-
-		setLoading(false);
-	}, [fetchItem, JSON.stringify(args), options?.waitUntil, options?.skip]);
+	const {data, isLoading, error, mutate} = useSwr(swrKey, swrFetcher, {
+		...swrOptions,
+		refreshInterval: refresh ? refreshInterval : undefined,
+	});
 
 	useEffect(() => {
-		setData(undefined);
-		setError(undefined);
-		setLoading(true);
-		fetchData();
-	}, [fetchData]);
+		if (error && !(error instanceof NonFatalError)) {
+			throw error;
+		}
+	}, [error]);
 
-	return useMemo(
-		() => ({
-			data,
-			loading,
-			notFound: !loading && !error && !data,
-			error,
-			refetch: fetchData
-		}) as Resource<T>,
-		[data, loading, error, fetchData]
-	);
+	return useMemo<Resource<T>>(() => ({
+		data,
+		loading: isLoading,
+		error,
+		notFound: !isLoading && !error && !data,
+		refetch: mutate
+	}), [data, isLoading, error]);
+}
+
+/*** PRIVATE ***/
+
+type DataFetcher<T, F extends any[]> = (...args: F) => T|undefined|Promise<T|undefined>;
+
+function swrFetcher<T = any, F extends any[] = any[]>(
+	[fetchItem, args]: [DataFetcher<T, F>, F],
+) {
+	return fetchItem(...args);
 }

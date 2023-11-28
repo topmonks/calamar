@@ -22,4 +22,26 @@ export const rollbarConfig: Configuration = {
 	enabled: config.rollbar.enabled
 };
 
-export const rollbar = new Rollbar(rollbarConfig);
+const rollbar = new Rollbar(rollbarConfig);
+
+if (!config.rollbar.enabled && window.location.hostname === "localhost") {
+	// if the rollbar is disabled on localhost, print
+	// the message about reporting to the console
+	// so it is obvious when it would happen
+
+	const notifier = (rollbar as any).client.notifier;
+	const log = notifier.log;
+
+	notifier.log = function (item: any, callback: any) {
+		console.warn(`The following ${item.level} item would be reported to Rollbar`);
+
+		if (!item._isUncaught) {
+			const consoleAction = ["error", "critical"].includes(item.level) ? "error" : "warn";
+			console[consoleAction](...item._originalArgs);
+		}
+
+		log.apply(this, [item, callback]);
+	};
+}
+
+export { rollbar };

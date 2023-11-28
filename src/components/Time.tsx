@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 import enGB from "date-fns/locale/en-GB";
 import { format as formatTime, formatInTimeZone as formatTimeInTimeZone } from "date-fns-tz";
@@ -23,7 +23,11 @@ export const Time = (props: TimeProps) => {
 		tooltip = false
 	} = props;
 
-	const [fromNowFormatted, setFromNowFormatted] = useState<string>();
+	const formatFromNow = useCallback((time: string|Date|number) => {
+		return formatDistanceToNowStrict(new Date(time), {addSuffix: true, locale: enGB});
+	}, []);
+
+	const [fromNowFormatted, setFromNowFormatted] = useState<string>(formatFromNow(time));
 
 	const formatted = useMemo(() => {
 		let format = formatProp;
@@ -42,14 +46,25 @@ export const Time = (props: TimeProps) => {
 	useEffect(() => {
 		if (fromNow) {
 			const interval = setInterval(() =>
-				setFromNowFormatted(formatDistanceToNowStrict(new Date(time), {addSuffix: true, locale: enGB}))
+				setFromNowFormatted(formatFromNow(time))
 			);
 
 			return () => clearInterval(interval);
 		}
 	}, [time, fromNow]);
 
-	const timeElement = <span data-test="time">{fromNow ? fromNowFormatted : formatted}</span>;
+	const timeElement = (
+		<span
+			data-test="time"
+			data-time-format={
+				fromNow ? "fromNow"
+					: utc ? "utc"
+						: formatProp
+			}
+		>
+			{fromNow ? fromNowFormatted : formatted}
+		</span>
+	);
 
 	if (!tooltip) {
 		return timeElement;

@@ -1,29 +1,61 @@
 /** @jsxImportSource @emotion/react */
-import { useCallback, useEffect } from "react";
-import { Divider, ListItemIcon, ListItemText, ListSubheader, MenuItem, Select, SelectProps } from "@mui/material";
-import { css } from "@emotion/react";
+import { useCallback, useState } from "react";
+import { Button, ButtonProps, Checkbox, Divider, ListItem, ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem } from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { BlurOn as AllIcon, ArrowDropDown } from "@mui/icons-material";
+import { Theme, css } from "@emotion/react";
 
-import { useNetworks } from "../hooks/useNetworks";
 import { useNetworkGroups } from "../hooks/useNetworkGroups";
+import { Network } from "../model/network";
 
-const selectStyle = css`
-	&.MuiInputBase-root {
-		.MuiSelect-select {
-			display: flex;
-			align-items: center;
-			padding-left: 16px;
-		}
+import { Link } from "./Link";
+
+const buttonStyle = css`
+	display: flex;
+	gap: 12px;
+
+	padding-left: 16px;
+	padding-right: 8px;
+
+	flex: 1 0 auto;
+
+	border-radius: 8px;
+	border: solid 1px #c4cdd5;
+	border-right: none;
+
+	font-size: 1rem;
+	font-weight: 400;
+
+	&, &:hover {
+		background-color: ${grey[100]};
 	}
+`;
 
+const headerStyle = css`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	padding-top: 12px;
+	padding-bottom: 20px;
+
+	line-height: 1.2;
+
+	a {
+		font-weight: 400;
+		cursor: pointer;
+	}
+`;
+
+const menuItemStyle = css`
 	.MuiListItemIcon-root {
-		min-width: 36px;
-
-		img {
-			width: 24px;
-			height: 24px;
-		}
+		min-width: 0px;
+		margin-right: 16px;
 	}
 
+	.MuiListItemText-root {
+		margin-right: 24px;
+	}
 `;
 
 const iconStyle = css`
@@ -33,60 +65,204 @@ const iconStyle = css`
 	border-radius: 0px;
 `;
 
-type NetworkSelectProps = Omit<SelectProps, "value" | "onChange"> & {
-	value?: string;
-	onChange?: (value: string, isUserAction: boolean) => void;
-};
+const checkboxStyle = css`
+	margin: -6px -16px;
+	margin-left: auto;
 
-const NetworkSelect = (props: NetworkSelectProps) => {
-	const { value, onChange, ...selectProps } = props;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	padding-right: 16px;
 
-	const networks = useNetworks();
+	font-weight: 400;
+
+	&::before {
+		content: " ";
+		position: absolute;
+		left: 0;
+		height: 65%;
+		width: 1px;
+		background-color: rgba(0, 0, 0, .2);
+	}
+
+	.MuiMenuItem-root:not(:hover):not(:focus) &::before {
+		display: none;
+	}
+`;
+
+interface NetworkSelectProps extends Omit<ButtonProps, "value" | "onChange"> {
+	value: Network[];
+	onChange: (value: Network[], isUserAction: boolean) => void;
+}
+
+export const NetworkSelect = (props: NetworkSelectProps) => {
+	const { value, onChange, ...buttonProps } = props;
 
 	const networkGroups = useNetworkGroups();
 
-	useEffect(() => {
-		const network = networks.find((it) => it.name === value);
+	const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
-		if (!network && onChange && networks.length > 0) {
-			onChange(networkGroups[0]!.networks[0]!.name, false);
+	const open = !!anchorEl;
+
+	const setSelection = useCallback((networks: Network[]) => {
+		const newValue = [];
+
+		for (const networkGroup of networkGroups) {
+			for (const network of networkGroup.networks) {
+				if (networks.includes(network)) {
+					newValue.push(network);
+				}
+			}
 		}
-	}, [value, onChange, networkGroups]);
 
-	const handleNetworkChange = useCallback(
-		(e: any) => {
-			onChange && onChange(e.target.value, true);
-		},
-		[onChange]
-	);
+		onChange?.(newValue, true);
+		handleClose();
+	}, [onChange]);
+
+	const addSelection = useCallback((networks: Network[]) => {
+		const newValue = [];
+
+		for (const networkGroup of networkGroups) {
+			for (const network of networkGroup.networks) {
+				if (networks.includes(network) || value.includes(network)) {
+					newValue.push(network);
+				}
+			}
+		}
+
+		onChange?.(newValue, true);
+	}, [value, networkGroups, onChange]);
+
+	const removeSelection = useCallback((networks: Network[]) => {
+		const newValue = [];
+
+		for (const networkGroup of networkGroups) {
+			for (const network of networkGroup.networks) {
+				if (value.includes(network) && !networks.includes(network)) {
+					newValue.push(network);
+				}
+			}
+		}
+
+		onChange?.(newValue, true);
+	}, [value, networkGroups, onChange]);
+
+	const handleClose = useCallback(() => setAnchorEl(undefined), []);
+
+	const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	}, []);
+
+	const handleItemClick = useCallback((network: Network, event: React.MouseEvent) => {
+		if ("key" in event && event.key === " ") {
+			if (value.includes(network)) {
+				removeSelection([network]);
+			} else {
+				addSelection([network]);
+			}
+
+			return;
+		}
+
+		setSelection([network]);
+	}, [value, addSelection, setSelection]);
+
+	console.log("value", value);
+
 
 	return (
-		<Select
-			{...selectProps}
-			onChange={handleNetworkChange}
-			value={value || ""}
-			css={selectStyle}
-		>
-			{networkGroups.map((group, index) => [
-				index > 0 && <Divider />,
-				<ListSubheader key={index}>
-					{group.relayChainNetwork?.displayName || "Other"}
-					{group.relayChainNetwork && <span> and parachains</span>}
-				</ListSubheader>,
-				...group.networks.map((network) => (
-					<MenuItem key={network.name} value={network.name}>
-						<ListItemIcon>
-							<img
-								src={network.icon}
-								css={iconStyle}
-							/>
-						</ListItemIcon>
-						<ListItemText>{network.displayName}</ListItemText>
-					</MenuItem>
-				))
-			])}
-		</Select>
+		<>
+			<Button
+				{...buttonProps}
+				id="basic-button"
+				aria-controls={open ? "networks-menu" : undefined}
+				aria-haspopup="true"
+				aria-expanded={open ? "true" : undefined}
+				onClick={handleClick}
+				css={buttonStyle}
+			>
+				{value.length === 0 && (
+					<>
+						<AllIcon css={[iconStyle, {color: "#e6007a"}]} />
+						<span>All networks</span>
+					</>
+				)}
+				{value.length === 1 && (
+					<>
+						<img src={value[0]?.icon} css={iconStyle} />
+						<span>{value[0]?.displayName}</span>
+					</>
+				)}
+				{value.length > 1 && (
+					<>
+						{value.slice(0, 3).map((network) => <img src={network.icon} css={iconStyle} />)}
+						{value.length > 3 && <span>+ {value.length - 3} other</span>}
+					</>
+				)}
+				<ArrowDropDown />
+			</Button>
+			<Menu
+				id="networks-menu"
+				anchorEl={anchorEl}
+				open={open}
+				onClose={handleClose}
+				MenuListProps={{
+					"aria-labelledby": "basic-button",
+				}}
+			>
+				<MenuItem
+					css={menuItemStyle}
+					selected={value.length === 0}
+					onClick={() => setSelection([])}
+				>
+					<ListItemIcon>
+						<AllIcon css={[iconStyle, {color: "#e6007a"}]} />
+					</ListItemIcon>
+					<ListItemText>All networks</ListItemText>
+				</MenuItem>
+				{networkGroups.map((group, index) => {
+					const allSelected = group.networks.every(it => value.includes(it));
+
+					return [
+						<Divider />,
+						<ListSubheader css={headerStyle} key={index}>
+							<div>
+								{group.relayChainNetwork?.displayName || "Other"}{" "}
+								{group.relayChainNetwork && <><br /><span style={{fontSize: 12}}>and parachains</span></>}
+							</div>
+							<Link
+								onClick={() => allSelected
+									? removeSelection(group.networks)
+									: addSelection(group.networks)
+								}
+							>
+								{allSelected ? "deselect" : "select"} all
+							</Link>
+						</ListSubheader>,
+						group.networks.map((network) => (
+							<MenuItem
+								css={menuItemStyle}
+								selected={value.includes(network)}
+								onClick={(ev) => handleItemClick(network, ev)}
+							>
+								<ListItemIcon>
+									<img
+										src={network.icon}
+										css={iconStyle}
+									/>
+								</ListItemIcon>
+								<ListItemText>{network.displayName}</ListItemText>
+								<Checkbox
+									css={checkboxStyle}
+									checked={value.includes(network)}
+									onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
+									onClick={(ev) => ev.stopPropagation()}
+									disableRipple
+								/>
+							</MenuItem>
+						))
+					];
+				})}
+			</Menu>
+		</>
 	);
 };
-
-export default NetworkSelect;

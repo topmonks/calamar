@@ -2,10 +2,14 @@ import { Event } from "../../model/event";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
+import { BlockLink } from "../blocks/BlockLink";
+import { CallLink } from "../calls/CallLink";
+import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
+
 import { ButtonLink } from "../ButtonLink";
-import DataViewer from "../DataViewer";
+import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
-import { Link } from "../Link";
+import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
 
 export type EventInfoTableProps = {
@@ -27,6 +31,12 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			error={event.error}
 		>
 			<EventInfoTableAttribute
+				label="Network"
+				render={(data) =>
+					<NetworkBadge network={data.network} />
+				}
+			/>
+			<EventInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.timestamp} utc />
@@ -41,33 +51,21 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<EventInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link
-						to={`/${network.name}/block/${data.blockId}`}
-					>
-						{data.blockHeight}
-					</Link>
+					<BlockLink network={network} id={data.blockId} />
 				}
 				copyToClipboard={(data) => data.blockHeight.toString()}
 			/>
 			<EventInfoTableAttribute
 				label="Extrinsic"
 				render={(data) => data.extrinsicId &&
-					<Link
-						to={`/${network.name}/extrinsic/${data.extrinsicId}`}
-					>
-						{data.extrinsicId}
-					</Link>
+					<ExtrinsicLink network={network} id={data.extrinsicId} />
 				}
 				copyToClipboard={(data) => data.extrinsicId}
 			/>
 			<EventInfoTableAttribute
 				label="Call"
 				render={(data) => data.callId &&
-					<Link
-						to={`/${network.name}/call/${data.callId}`}
-					>
-						{data.callId}
-					</Link>
+					<CallLink network={network} id={data.callId} />
 				}
 				copyToClipboard={(data) => data.callId}
 			/>

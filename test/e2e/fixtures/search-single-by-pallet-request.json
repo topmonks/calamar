@@ -1,0 +1,622 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query (\n\t\t\t$extrinsicsByNameCounterId: String!,\n\t\t\t$eventsByNameCounterId: String!\n\t\t) {\n\t\t\textrinsicsByNameCounter: itemsCounterById(id: $extrinsicsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t\teventsByNameCounter: itemsCounterById(id: $eventsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "extrinsicsByNameCounterId": "Extrinsics.Balances",
+          "eventsByNameCounterId": "Events.Balances"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "extrinsicsByNameCounter": {
+            "total": 5942157
+          },
+          "eventsByNameCounter": {
+            "total": 67248957
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query (\n\t\t\t\t$extrinsicsFirst: Int!,\n\t\t\t\t$extrinsicsAfter: String,\n\t\t\t\t$extrinsicsFilter: ExtrinsicWhereInput,\n\t\t\t\t$eventsFirst: Int!,\n\t\t\t\t$eventsAfter: String,\n\t\t\t\t$eventsFilter: EventWhereInput,\n\t\t\t) {\n\t\t\t\textrinsics: extrinsicsConnection(first: $extrinsicsFirst, after: $extrinsicsAfter, where: $extrinsicsFilter, orderBy: id_DESC) {\n\t\t\t\t\t...ExplorerSquidExtrinsicsConnection\n\t\t\t\t}\n\t\t\t\tevents: eventsConnection(first: $eventsFirst, after: $eventsAfter, where: $eventsFilter, orderBy: id_DESC) {\n\t\t\t\t\t...ExplorerSquidEventsConnection\n\t\t\t\t}\n\t\t\t}\n\n\t\tfragment ExplorerSquidExtrinsicsConnection on ExtrinsicsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidExtrinsic\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidEventsConnection on EventsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidEvent\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidEvent on Event {\n\t\t\t\n\tid\n\teventName\n\tpalletName\n\tindexInBlock\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t}\n\tcall {\n\t\tid\n\t}\n\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidExtrinsic on Extrinsic {\n\t\t\t\n\tid\n\textrinsicHash\n\tblock {\n\t\tid\n\t\thash\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\tmainCall {\n\t\tcallName\n\t\tpalletName\n\t}\n\tindexInBlock\n\tsuccess\n\ttip\n\tfee\n\tsignerPublicKey\n\terror\n\tversion\n\n\t\t}\n\t",
+        "variables": {
+          "extrinsicsFirst": 10,
+          "extrinsicsAfter": null,
+          "extrinsicsFilter": {
+            "mainCall": {
+              "palletName_eq": "Balances"
+            }
+          },
+          "eventsFirst": 10,
+          "eventsAfter": null,
+          "eventsFilter": {
+            "palletName_eq": "Balances"
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "extrinsics": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0020744545-000005-90414",
+                  "extrinsicHash": "0x5529e2f56ad63064d7f1c21eb5407c53ee46641716d17c6f28fca279780dd019",
+                  "block": {
+                    "id": "0020744545-90414",
+                    "hash": "0x9041490520c6589953d81eaa21570702653c90c322f9b8e737d1d25cf79803ea",
+                    "height": 20744545,
+                    "timestamp": "2023-11-27T20:42:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_allow_death",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 5,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "524453669",
+                  "signerPublicKey": "0xe611260a37d446f021fbb298533892d4355ecdfa4ca3682ddb02d4b221f809ed",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744535-000002-c41cc",
+                  "extrinsicHash": "0xfb3279947a05a87bf60cc75b31d0d9e2b2ad8ac31a8d0c86ed272cee295a2848",
+                  "block": {
+                    "id": "0020744535-c41cc",
+                    "hash": "0xc41cc511028cebbcbf81af350953a1c604fe98cfb376f164645356b93ccb3bfc",
+                    "height": 20744535,
+                    "timestamp": "2023-11-27T20:41:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "524453669",
+                  "signerPublicKey": "0x8c116c4158254ca725fe174087062723a7ab23e7c6a800087f2499949e901b37",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744475-000004-96dab",
+                  "extrinsicHash": "0xf73064de4bf1b6b71e9629cbf763ed90131fa2223e71a704bbe62a6cce8ef764",
+                  "block": {
+                    "id": "0020744475-96dab",
+                    "hash": "0x96dab4c7e41357981f7e454c21acbe2fa0939706fb17a90b106621a71888fc6a",
+                    "height": 20744475,
+                    "timestamp": "2023-11-27T20:35:06.001000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 4,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "524453669",
+                  "signerPublicKey": "0x1d63cdebbb0552547bb5086658d504292e7597e49734943bc95d573ef5fa97a9",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744463-000004-02e59",
+                  "extrinsicHash": "0x2710b5d352811045d4f34cea28a4c3f65bd491cc5355e8ac55a7911a21a2b468",
+                  "block": {
+                    "id": "0020744463-02e59",
+                    "hash": "0x02e594ae7397721f5373b33e5a1b28b61f7484557c0cadb26c4aa2af48ffde87",
+                    "height": 20744463,
+                    "timestamp": "2023-11-27T20:33:54.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_allow_death",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 4,
+                  "success": true,
+                  "tip": "1000000000",
+                  "fee": "541120319",
+                  "signerPublicKey": "0x90ef637a377048446b168a92065bbb4c4946ec69d4521ca9ff831231b3bdff8c",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744456-000002-448f3",
+                  "extrinsicHash": "0x831f43973f6d1dd5f621adee03f72b3c1b3301bf0c392e21564f29e0c3d925fb",
+                  "block": {
+                    "id": "0020744456-448f3",
+                    "hash": "0x448f34da9fe705026af3467e68ffaefae941a1cdc34baa27abc0a858eb752746",
+                    "height": 20744456,
+                    "timestamp": "2023-11-27T20:33:12.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_keep_alive",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "530828816",
+                  "signerPublicKey": "0x6c31080f216de564c34d46bf8fae71606a955aacd00a9a9b9f1f932fe6118711",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744451-000002-09bc1",
+                  "extrinsicHash": "0x4d1de9602c7c9b2a359a6edaf0e15b1e937ad4483f245dc42fb0614d8e78fbfd",
+                  "block": {
+                    "id": "0020744451-09bc1",
+                    "hash": "0x09bc1c738f4690779b341371e3c4e51095c4bc1b2c06ae5595f221dddb371844",
+                    "height": 20744451,
+                    "timestamp": "2023-11-27T20:32:42.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_allow_death",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "527786999",
+                  "signerPublicKey": "0x7a6452ca7e570077e3183676f132958b961413ee0c072e4f666cf8419c5027a2",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744445-000002-6be1b",
+                  "extrinsicHash": "0x2d0f14967421af9a250cd42e6f52bf4d88692f5ea5f6c264b444904d5a8938d2",
+                  "block": {
+                    "id": "0020744445-6be1b",
+                    "hash": "0x6be1bfd5bd8b4cc6ea97c4ce727050e71affa903bda819f4c4243c39df3cf669",
+                    "height": 20744445,
+                    "timestamp": "2023-11-27T20:32:06.001000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_allow_death",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "531120329",
+                  "signerPublicKey": "0x68f1ef3ec9218a3ee52324d35d8227529e29ea39383ca9c2942d357af0c58342",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744425-000002-e389c",
+                  "extrinsicHash": "0xa714b7040a40219b8177fad4cc6f154f43ff85589f5a5730a3431aed35e6f3f6",
+                  "block": {
+                    "id": "0020744425-e389c",
+                    "hash": "0xe389c88cb7abe5712b6238e43021b995dc41bee913e1e207b2988179a5a68dc8",
+                    "height": 20744425,
+                    "timestamp": "2023-11-27T20:30:06.001000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_allow_death",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "537786989",
+                  "signerPublicKey": "0x68e8ca19a25c1aee85d10ef31f6426d23b2fc84b9953aa2056029fade59450d6",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744415-000002-ca461",
+                  "extrinsicHash": "0xd9cf36ede38866b900529b5fd7262745c2aaa523c95f2d8894008d61f7ec6855",
+                  "block": {
+                    "id": "0020744415-ca461",
+                    "hash": "0xca461a94e6dd21a9b27e06efb28103a93220d66290ea640bfaaf9d2a7811c626",
+                    "height": 20744415,
+                    "timestamp": "2023-11-27T20:29:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "524453669",
+                  "signerPublicKey": "0x26799cd6900a727b7987d751e7623aec74ddf018d0f606a6aa2cfb086747485a",
+                  "error": null,
+                  "version": 4
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744385-000002-006cc",
+                  "extrinsicHash": "0x166e4428dc5e17c22d873b130fe54803505fd3797934cfe740de8e2dca3c408e",
+                  "block": {
+                    "id": "0020744385-006cc",
+                    "hash": "0x006ccaff8e57abd26b1aeb02d7b52c5df5b28a36b844f4e6b7b6c988bd006527",
+                    "height": 20744385,
+                    "timestamp": "2023-11-27T20:26:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "mainCall": {
+                    "callName": "transfer_keep_alive",
+                    "palletName": "Balances"
+                  },
+                  "indexInBlock": 2,
+                  "success": true,
+                  "tip": "0",
+                  "fee": "524162156",
+                  "signerPublicKey": "0x8c116c4158254ca725fe174087062723a7ab23e7c6a800087f2499949e901b37",
+                  "error": null,
+                  "version": 4
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            }
+          },
+          "events": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0020744545-000051-90414",
+                  "eventName": "Deposit",
+                  "palletName": "Balances",
+                  "indexInBlock": 51,
+                  "block": {
+                    "id": "0020744545-90414",
+                    "height": 20744545,
+                    "timestamp": "2023-11-27T20:42:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744545-000005-90414"
+                  },
+                  "call": {
+                    "id": "0020744545-000005-90414"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744545-000049-90414",
+                  "eventName": "Deposit",
+                  "palletName": "Balances",
+                  "indexInBlock": 49,
+                  "block": {
+                    "id": "0020744545-90414",
+                    "height": 20744545,
+                    "timestamp": "2023-11-27T20:42:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744545-000005-90414"
+                  },
+                  "call": {
+                    "id": "0020744545-000005-90414"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744545-000048-90414",
+                  "eventName": "Transfer",
+                  "palletName": "Balances",
+                  "indexInBlock": 48,
+                  "block": {
+                    "id": "0020744545-90414",
+                    "height": 20744545,
+                    "timestamp": "2023-11-27T20:42:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744545-000005-90414"
+                  },
+                  "call": {
+                    "id": "0020744545-000005-90414"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744545-000047-90414",
+                  "eventName": "Endowed",
+                  "palletName": "Balances",
+                  "indexInBlock": 47,
+                  "block": {
+                    "id": "0020744545-90414",
+                    "height": 20744545,
+                    "timestamp": "2023-11-27T20:42:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744545-000005-90414"
+                  },
+                  "call": {
+                    "id": "0020744545-000005-90414"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744545-000045-90414",
+                  "eventName": "Withdraw",
+                  "palletName": "Balances",
+                  "indexInBlock": 45,
+                  "block": {
+                    "id": "0020744545-90414",
+                    "height": 20744545,
+                    "timestamp": "2023-11-27T20:42:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744545-000005-90414"
+                  },
+                  "call": {
+                    "id": "0020744545-000005-90414"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744535-000043-c41cc",
+                  "eventName": "Deposit",
+                  "palletName": "Balances",
+                  "indexInBlock": 43,
+                  "block": {
+                    "id": "0020744535-c41cc",
+                    "height": 20744535,
+                    "timestamp": "2023-11-27T20:41:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744535-000002-c41cc"
+                  },
+                  "call": {
+                    "id": "0020744535-000002-c41cc"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744535-000041-c41cc",
+                  "eventName": "Deposit",
+                  "palletName": "Balances",
+                  "indexInBlock": 41,
+                  "block": {
+                    "id": "0020744535-c41cc",
+                    "height": 20744535,
+                    "timestamp": "2023-11-27T20:41:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744535-000002-c41cc"
+                  },
+                  "call": {
+                    "id": "0020744535-000002-c41cc"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744535-000040-c41cc",
+                  "eventName": "Transfer",
+                  "palletName": "Balances",
+                  "indexInBlock": 40,
+                  "block": {
+                    "id": "0020744535-c41cc",
+                    "height": 20744535,
+                    "timestamp": "2023-11-27T20:41:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744535-000002-c41cc"
+                  },
+                  "call": {
+                    "id": "0020744535-000002-c41cc"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744535-000039-c41cc",
+                  "eventName": "DustLost",
+                  "palletName": "Balances",
+                  "indexInBlock": 39,
+                  "block": {
+                    "id": "0020744535-c41cc",
+                    "height": 20744535,
+                    "timestamp": "2023-11-27T20:41:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744535-000002-c41cc"
+                  },
+                  "call": {
+                    "id": "0020744535-000002-c41cc"
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0020744535-000037-c41cc",
+                  "eventName": "Withdraw",
+                  "palletName": "Balances",
+                  "indexInBlock": 37,
+                  "block": {
+                    "id": "0020744535-c41cc",
+                    "height": 20744535,
+                    "timestamp": "2023-11-27T20:41:06.000000Z",
+                    "specVersion": 1000000
+                  },
+                  "extrinsic": {
+                    "id": "0020744535-000002-c41cc"
+                  },
+                  "call": {
+                    "id": "0020744535-000002-c41cc"
+                  }
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://kusama.explorer.subsquid.io/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query($ids: [String!]) {\n\t\t\tevents(where: { id_in: $ids }) {\n\t\t\t\tid\n\t\t\t\targs\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "ids": [
+            "0020744545-000051-90414",
+            "0020744545-000049-90414",
+            "0020744545-000048-90414",
+            "0020744545-000047-90414",
+            "0020744545-000045-90414",
+            "0020744535-000043-c41cc",
+            "0020744535-000041-c41cc",
+            "0020744535-000040-c41cc",
+            "0020744535-000039-c41cc",
+            "0020744535-000037-c41cc"
+          ]
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "events": [
+            {
+              "id": "0020744535-000037-c41cc",
+              "args": {
+                "amount": "524453669",
+                "who": "0x8c116c4158254ca725fe174087062723a7ab23e7c6a800087f2499949e901b37"
+              }
+            },
+            {
+              "id": "0020744535-000039-c41cc",
+              "args": {
+                "account": "0x8c116c4158254ca725fe174087062723a7ab23e7c6a800087f2499949e901b37",
+                "amount": "135546331"
+              }
+            },
+            {
+              "id": "0020744535-000040-c41cc",
+              "args": {
+                "amount": "9475837844",
+                "from": "0x8c116c4158254ca725fe174087062723a7ab23e7c6a800087f2499949e901b37",
+                "to": "0xa777a57920a7fc3eef1cb05b4fa6f87ac4329a343c06745b6f58a716ee4dd8c6"
+              }
+            },
+            {
+              "id": "0020744535-000041-c41cc",
+              "args": {
+                "amount": "419562935",
+                "who": "0x6d6f646c70792f74727372790000000000000000000000000000000000000000"
+              }
+            },
+            {
+              "id": "0020744535-000043-c41cc",
+              "args": {
+                "amount": "104890734",
+                "who": "0x0c92d4e41eddd3bec4ce4caf3610213e3b3b143a6c0319766961aecc27e124ff"
+              }
+            },
+            {
+              "id": "0020744545-000045-90414",
+              "args": {
+                "amount": "524453669",
+                "who": "0xe611260a37d446f021fbb298533892d4355ecdfa4ca3682ddb02d4b221f809ed"
+              }
+            },
+            {
+              "id": "0020744545-000047-90414",
+              "args": {
+                "account": "0xf4d59b887a5c91d80b58e45228068d67b55fc6dd26171012532e62fd8a66dbb7",
+                "freeBalance": "50000000000"
+              }
+            },
+            {
+              "id": "0020744545-000048-90414",
+              "args": {
+                "amount": "50000000000",
+                "from": "0xe611260a37d446f021fbb298533892d4355ecdfa4ca3682ddb02d4b221f809ed",
+                "to": "0xf4d59b887a5c91d80b58e45228068d67b55fc6dd26171012532e62fd8a66dbb7"
+              }
+            },
+            {
+              "id": "0020744545-000049-90414",
+              "args": {
+                "amount": "419562935",
+                "who": "0x6d6f646c70792f74727372790000000000000000000000000000000000000000"
+              }
+            },
+            {
+              "id": "0020744545-000051-90414",
+              "args": {
+                "amount": "104890734",
+                "who": "0x36ed432555d82a6fe15f2517dc871f1d02c72d8d5aa1bce703288d180ff1fdf6"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

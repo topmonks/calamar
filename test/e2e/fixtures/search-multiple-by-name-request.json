@@ -1,0 +1,80 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query (\n\t\t\t$extrinsicsByNameCounterId: String!,\n\t\t\t$eventsByNameCounterId: String!\n\t\t) {\n\t\t\textrinsicsByNameCounter: itemsCounterById(id: $extrinsicsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t\teventsByNameCounter: itemsCounterById(id: $eventsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "extrinsicsByNameCounterId": "Extrinsics.Balances.transfer",
+          "eventsByNameCounterId": "Events.Balances.Transfer"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "extrinsicsByNameCounter": {
+            "total": 5143119
+          },
+          "eventsByNameCounter": {
+            "total": 12051104
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query (\n\t\t\t$extrinsicsByNameCounterId: String!,\n\t\t\t$eventsByNameCounterId: String!\n\t\t) {\n\t\t\textrinsicsByNameCounter: itemsCounterById(id: $extrinsicsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t\teventsByNameCounter: itemsCounterById(id: $eventsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "extrinsicsByNameCounterId": "Extrinsics.Balances.transfer",
+          "eventsByNameCounterId": "Events.Balances.Transfer"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "extrinsicsByNameCounter": {
+            "total": 5366557
+          },
+          "eventsByNameCounter": {
+            "total": 2630782
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-acala/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query (\n\t\t\t$extrinsicsByNameCounterId: String!,\n\t\t\t$eventsByNameCounterId: String!\n\t\t) {\n\t\t\textrinsicsByNameCounter: itemsCounterById(id: $extrinsicsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t\teventsByNameCounter: itemsCounterById(id: $eventsByNameCounterId) {\n\t\t\t\ttotal\n\t\t\t}\n\t\t}\n",
+        "variables": {
+          "extrinsicsByNameCounterId": "Extrinsics.Balances.transfer",
+          "eventsByNameCounterId": "Events.Balances.Transfer"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "extrinsicsByNameCounter": {
+            "total": 566680
+          },
+          "eventsByNameCounter": {
+            "total": 2860350
+          }
+        }
+      }
+    }
+  }
+]

@@ -1,193 +1,127 @@
-import { mockRequest } from "../utils/mockRequest";
-import { navigate } from "../utils/navigate";
-import { removeContent } from "../utils/removeContent";
-import { test, expect } from "../utils/test";
+import { Locator } from "@playwright/test";
 
-import fixtures from "./network.fixture.json";
+import { waitForPageEvent } from "../utils/events";
+import { navigate } from "../utils/navigate";
+import { useDataFixture } from "../utils/useDataFixture";
+import { useRequestFixture } from "../utils/useRequestFixture";
+
+import { expect, test } from "../test";
+
+import { TestItem } from "./templates/model";
+import { testRelatedItems } from "./templates/testRelatedItems";
+import { mockRequestsWithFixture } from "./templates/utils";
 
 test.describe("Network page", () => {
+	const url = "/polkadot";
+
+	const network: TestItem = {
+		name: "network",
+		requests: [{
+			queryProp: "currents",
+			squidType: "gs-stats",
+			dataType: "item"
+		}]
+	};
+
+	const relatedExtrinsics: TestItem = {
+		name: "extrinsic",
+		requests: [{
+			queryProp: "extrinsicsConnection",
+			squidType: "gs-explorer",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	const relatedBlocks: TestItem = {
+		name: "block",
+		requests: [{
+			queryProp: "blocksConnection",
+			squidType: "gs-explorer",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	const relatedTransfers: TestItem = {
+		name: "transfer",
+		requests: [{
+			queryProp: "transfersConnection",
+			squidType: "gs-main",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	const relatedHolders: TestItem = {
+		name: "holder",
+		requests: [{
+			queryProp: "accountsConnection",
+			squidType: "gs-stats",
+			dataType: "itemsConnection"
+		}]
+	};
+
+	mockRequestsWithFixture(network, [
+		relatedExtrinsics,
+		relatedBlocks,
+		relatedTransfers,
+		relatedHolders
+	]);
 
 	test.beforeEach(async ({ page }) => {
-		await page.route("**/*", (route, request) => {
-
-			if (request.url().match("gs-stats-polkadot") && request.postDataJSON()?.query.match("currents")) {
-				return route.fulfill({
-					status: 200,
-					body: JSON.stringify(fixtures.stats)
-				});
-			}
-
-			route.continue();
+		await page.route("https://api.coingecko.com/api/v3/simple/price?*", async (route, request) => {
+			route.fulfill(await useRequestFixture("usd-rates-request", route));
 		});
 	});
 
-	test("redirects to /:network", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot/latest-extrinsics", {waitUntil: "data-loaded"});
-		await page.waitForURL(/\/polkadot/);
+	test("show network stats", async ({ page, takeScreenshot }) => {
+		await navigate(page, "/polkadot");
+
+		const $info = page.getByTestId("item-info");
+		const $header = $info.getByTestId("item-header");
+		const $stats = $info.getByTestId("network-stats");
+
+		await expect($header).toHaveText(
+			await useDataFixture("network-info-data", "header", $header)
+		);
+
+		const getNetworkStatsData = async (locator: Locator) => await locator.locator("> div").allInnerTexts();
+
+		await expect(async () => {
+			const networkStatsData = await getNetworkStatsData($stats);
+			expect(networkStatsData).toEqual(
+				await useDataFixture(
+					"network-info-data",
+					"stats",
+					$stats,
+					getNetworkStatsData
+				)
+			);
+		}).toPass({timeout: 5000});
+
+		await takeScreenshot("network-info", $info);
 	});
 
-	test("shows stats", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		const stats = page.getByTestId("network-stats");
-		await takeScreenshot("network-stats", stats);
-	});
-
-	test("shows token distribution", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
+	test("shows network token distribution", async ({ page, takeScreenshot }) => {
+		await navigate(page, url);
 
 		const tokenDistribution = page.getByTestId("network-token-distribution");
-		await takeScreenshot("network-stats", tokenDistribution);
-	});
 
-	test("shows latest extrinsics tab", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("extrinsics-tab").click();
-
-		await removeContent(page.locator("[data-test=extrinsics-table] tr td"));
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-latest-extrinsics", relatedItems);
-	});
-
-	test("shows latest blocks tab", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("blocks-tab").click();
-
-		await removeContent(page.locator("[data-test=blocks-table] tr td"));
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-latest-blocks", relatedItems);
-	});
-
-	test("shows latest transfers tab", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("transfers-tab").click();
-
-		await removeContent(page.locator("[data-test=transfers-table] tr td"));
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-latest-transfers", relatedItems);
-	});
-
-	test("shows top holders tab", async ({ page, takeScreenshot }) => {
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("top-holders-tab").click();
-
-		await removeContent(page.locator("[data-test=balances-table] tr td"));
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-top-holders", relatedItems);
-	});
-
-	test("show error message when extrinsics items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("extrinsics"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Extrinsics error"
-					}]
-				})
-			})
+		const $totalIssuance = tokenDistribution.getByTestId("network-total-issuance").locator("div").last();
+		await expect($totalIssuance).toBeVisible();
+		await expect($totalIssuance).toContainText(
+			await useDataFixture("network-info-data", "totalIssuance", $totalIssuance)
 		);
 
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
+		await expect(tokenDistribution.getByTestId("network-token-distribution-chart")).toBeVisible();
+		await waitForPageEvent(page, "chart-finished", (event: any) => {
+			return event.detail.containerRef?.getAttribute("data-test") === "network-token-distribution-chart";
+		});
 
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Extrinsics error/);
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-latest-extrinsics-error", relatedItems);
+		await takeScreenshot("network-token-distribution", tokenDistribution);
 	});
 
-	test("show error message when blocks items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("blocks"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Blocks error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("blocks-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Blocks error/);
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-latest-blocks-error", relatedItems);
-	});
-
-	test("show error message when transfers items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("transfers"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Transfers error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("transfers-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Transfers error/);
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-latest-transfers-error", relatedItems);
-	});
-
-	test("show error message when top holders items fetch fails", async ({ page, takeScreenshot }) => {
-		mockRequest(
-			page,
-			(request) => request.postData()?.match("accounts"),
-			(route) => route.fulfill({
-				status: 200,
-				body: JSON.stringify({
-					errors: [{
-						message: "Top holders error"
-					}]
-				})
-			})
-		);
-
-		await navigate(page, "/polkadot", {waitUntil: "data-loaded"});
-
-		await page.getByTestId("top-holders-tab").click();
-
-		const errorMessage = page.getByTestId("error");
-		await expect(errorMessage).toBeVisible();
-		await expect(errorMessage).toHaveText(/Unexpected error/);
-		await expect(errorMessage).toHaveText(/Top holders error/);
-
-		const relatedItems = page.getByTestId("network-related-items");
-		await takeScreenshot("network-top-holders-error", relatedItems);
-	});
+	testRelatedItems(url, network, relatedExtrinsics, { testCount: false });
+	testRelatedItems(url, network, relatedBlocks, { testCount: false });
+	testRelatedItems(url, network, relatedTransfers, { testCount: false });
+	testRelatedItems(url, network, relatedHolders, { testCount: false });
 });
 

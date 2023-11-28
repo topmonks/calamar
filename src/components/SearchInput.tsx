@@ -5,7 +5,10 @@ import { Button, FormGroup, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { css, Theme } from "@emotion/react";
 
-import NetworkSelect from "./NetworkSelect";
+import { Network } from "../model/network";
+import { getNetworks } from "../services/networksService";
+
+import { NetworkSelect } from "./NetworkSelect";
 
 const formGroupStyle = css`
 	flex-direction: row;
@@ -93,61 +96,62 @@ const buttonStyle = (theme: Theme) => css`
 `;
 
 export type SearchInputProps = FormHTMLAttributes<HTMLFormElement> & {
-	defaultNetwork?: string;
-	persistNetwork?: boolean;
-	onNetworkChange?: (network?: string) => void;
+	persist?: boolean;
+	defaultNetworks?: Network[];
 };
 
 function SearchInput(props: SearchInputProps) {
-	const { defaultNetwork, persistNetwork, onNetworkChange, ...restProps } = props;
-
-	console.log("default network", defaultNetwork);
+	const { persist, defaultNetworks, ...restProps } = props;
 
 	const [qs] = useSearchParams();
-	const query = qs.get("query");
-	console.log(qs, query);
 
-	const [network, setNetwork] = useState<string | undefined>(defaultNetwork);
-	const [search, setSearch] = useState<string>(query || "");
+	const [networks, setNetworks] = useState<Network[]>(defaultNetworks || getNetworks(qs.getAll("network") || []));
+	const [query, setQuery] = useState<string>(qs.get("query") || "");
 
 	const navigate = useNavigate();
 
-	const handleNetworkSelect = useCallback((network: string, isUserAction: boolean) => {
-		if (isUserAction && persistNetwork) {
-			console.log("store", network);
-			localStorage.setItem("network", network);
+	const storeNetworks = (networks: Network[]) => localStorage.setItem("networks", JSON.stringify(networks.map(it => it.name)));
+	const loadNetworks = () => getNetworks(JSON.parse(localStorage.getItem("networks") || "[]"));
+
+	const handleNetworkSelect = useCallback((networks: Network[], isUserAction: boolean) => {
+		if (isUserAction && persist) {
+			console.log("store", networks);
+			storeNetworks(networks);
 		}
 
-		setNetwork(network);
-	}, [persistNetwork]);
+		setNetworks(networks);
+	}, [persist]);
 
-	const handleSubmit = useCallback(
-		(e: any) => {
-			if (!network) {
-				return;
-			}
+	const handleSubmit = useCallback((ev: any) => {
+		ev.preventDefault();
 
-			e.preventDefault();
-			localStorage.setItem("network", network);
-			navigate(`/${network}/search?query=${search}`);
-		},
-		[navigate, network, search]
-	);
-
-	useEffect(() => {
-		setSearch(query || "");
-	}, [query]);
-
-	useEffect(() => {
-		if (persistNetwork) {
-			const network = localStorage.getItem("network");
-			network && setNetwork(network);
+		if (networks.length > 0) {
+			storeNetworks(networks);
 		}
-	}, [persistNetwork]);
+
+		const searchParams = new URLSearchParams({
+			query: query
+		});
+
+		for (const network of networks) {
+			searchParams.append("network", network.name);
+		}
+
+		console.log("SEARCH", `/search?${searchParams.toString()}`);
+
+		navigate(`/search?${searchParams.toString()}`);
+	}, [navigate, networks, query]);
 
 	useEffect(() => {
-		onNetworkChange?.(network);
-	}, [onNetworkChange, network]);
+		setQuery(qs.get("query") || "");
+		setNetworks(defaultNetworks || getNetworks(qs.getAll("network") || []));
+	}, [qs, defaultNetworks]);
+
+	useEffect(() => {
+		if (persist) {
+			setNetworks(loadNetworks());
+		}
+	}, [persist]);
 
 	return (
 		<form {...restProps} onSubmit={handleSubmit}>
@@ -155,15 +159,15 @@ function SearchInput(props: SearchInputProps) {
 				<NetworkSelect
 					css={networkSelectStyle}
 					onChange={handleNetworkSelect}
-					value={network}
+					value={networks}
 				/>
 				<TextField
 					css={textFieldStyle}
 					fullWidth
 					id="search"
-					onChange={(e) => setSearch(e.target.value)}
+					onChange={(e) => setQuery(e.target.value)}
 					placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
-					value={search}
+					value={query}
 				/>
 				<Button
 					css={buttonStyle}
@@ -172,6 +176,7 @@ function SearchInput(props: SearchInputProps) {
 					type="submit"
 					variant="contained"
 					color="primary"
+					data-class="search-button"
 				>
 					<span className="text">Search</span>
 				</Button>

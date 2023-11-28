@@ -1,11 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 import { css, Theme } from "@emotion/react";
 
-import { AccountAvatar } from "../components/AccountAvatar";
+import { AccountAvatar } from "../components/account/AccountAvatar";
 import { AccountBalancesTable } from "../components/account/AccountBalancesTable";
 import { AccountIdentityInfo } from "../components/account/AccountIdentityInfo";
 import { AccountInfoTable } from "../components/account/AccountInfoTable";
@@ -21,9 +20,11 @@ import { useAccountBalances } from "../hooks/useAccountBalances";
 import { useCalls } from "../hooks/useCalls";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsics } from "../hooks/useExtrinsics";
-import { useUsdRates } from "../hooks/useUsdRates";
+import { usePage } from "../hooks/usePage";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
+import { useTab } from "../hooks/useTab";
 import { useTransfers } from "../hooks/useTransfers";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
+import { useUsdRates } from "../hooks/useUsdRates";
 
 import { hasSupport } from "../services/networksService";
 
@@ -81,32 +82,43 @@ export type AccountPageParams = {
 };
 
 export const AccountPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 	const { address } = useParams() as AccountPageParams;
 
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
+
 	const account = useAccount(network.name, address);
-	const balances = useAccountBalances(address);
-	const extrinsics = useExtrinsics(network.name, { signerAddress_eq: address });
-	const calls = useCalls(network.name, { callerAddress_eq: address });
-	const transfers = useTransfers(network.name, { accountAddress_eq: address });
+
+	const balances = useAccountBalances(address, { refresh: true });
+
+	const extrinsics = useExtrinsics(network.name, { signerAddress: address }, {
+		page: tab === "extrinsics" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const calls = useCalls(network.name, { callerAddress: address }, {
+		page: tab === "calls" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const transfers = useTransfers(network.name, { accountAddress: address }, {
+		page: tab === "transfers" ? page : 1,
+		refreshFirstPage: true
+	});
 
 	const usdRates = useUsdRates();
 
-	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
+	console.log("USD RATES", usdRates.loading, {...usdRates});
 
-	useEffect(() => {
-		if (extrinsics.pagination.offset === 0) {
-			const interval = setInterval(extrinsics.refetch, 3000);
-			return () => clearInterval(interval);
-		}
-	}, [extrinsics]);
+	useDOMEventTrigger("data-loaded", !account.loading && !extrinsics.loading && !calls.loading && !transfers.loading && !usdRates.loading);
 
 	return (
 		<>
 			<CardRow>
-				<Card css={accountInfoStyle} data-test="account-info">
-					<CardHeader>
-						Account
+				<Card css={accountInfoStyle} data-test="item-info">
+					<CardHeader data-test="item-header">
+						Account{" "}
 						{(account.loading || account.data) &&
 							<AccountAvatar address={address} size={32} css={avatarStyle} />
 						}
@@ -146,8 +158,8 @@ export const AccountPage = () => {
 				</Card>
 			</CardRow>
 			{account.data &&
-				<Card data-test="account-related-items">
-					<TabbedContent>
+				<Card data-test="related-items">
+					<TabbedContent currentTab={tab} onTabChange={setTab}>
 						<TabPane
 							label="Balances"
 							count={balances.data?.length}
@@ -155,37 +167,59 @@ export const AccountPage = () => {
 							error={balances.error}
 							value="balances"
 						>
-							<AccountBalancesTable balances={balances} usdRates={usdRates} />
+							<AccountBalancesTable
+								balances={balances}
+								usdRates={usdRates}
+								pagination={{
+									page,
+									pageSize: 10 // TODO constant
+								}}
+								onPageChange={setPage}
+							/>
 						</TabPane>
 						<TabPane
 							label="Extrinsics"
-							count={extrinsics.pagination.totalCount}
+							count={extrinsics.totalCount}
 							loading={extrinsics.loading}
 							error={extrinsics.error}
 							value="extrinsics"
 						>
-							<ExtrinsicsTable network={network} extrinsics={extrinsics} showTime />
+							<ExtrinsicsTable
+								network={network}
+								extrinsics={extrinsics}
+								showTime
+								onPageChange={setPage}
+							/>
 						</TabPane>
 						{hasSupport(network.name, "explorer-squid") &&
 							<TabPane
 								label="Calls"
-								count={calls.pagination.totalCount}
+								count={calls.totalCount}
 								loading={calls.loading}
 								error={calls.error}
 								value="calls"
 							>
-								<CallsTable network={network} calls={calls} />
+								<CallsTable
+									network={network}
+									calls={calls}
+									onPageChange={setPage}
+								/>
 							</TabPane>
 						}
 						{hasSupport(network.name, "main-squid") &&
 							<TabPane
 								label="Transfers"
-								count={transfers.pagination.totalCount}
+								count={transfers.totalCount}
 								loading={transfers.loading}
 								error={transfers.error}
 								value="transfers"
 							>
-								<TransfersTable network={network} transfers={transfers} showTime />
+								<TransfersTable
+									network={network}
+									transfers={transfers}
+									showTime
+									onPageChange={setPage}
+								/>
 							</TabPane>
 						}
 					</TabbedContent>

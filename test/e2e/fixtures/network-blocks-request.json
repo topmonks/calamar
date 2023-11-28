@@ -1,0 +1,143 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {\n\t\t\tblocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...ExplorerSquidBlocksConnection\n\t\t\t\t\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidBlocksConnection on BlocksConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidBlock\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidBlock on Block {\n\t\t\t\n\tid\n\thash\n\theight\n\ttimestamp\n\tparentHash\n\tvalidator\n\tspecVersion\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "blocksConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0018367775-ff622",
+                  "hash": "0xff6228de2d16e35a89a2e844c0b2c77dad47948189c311845505bcd9526d8da8",
+                  "height": 18367775,
+                  "timestamp": "2023-11-28T17:02:36.001000Z",
+                  "parentHash": "0x8a579e477f03146fd2899707ea659e9f4395faa1a9d7316c42c1e7be5c4f8564",
+                  "validator": "0xd8e943700c6625ff869b258c77221ea5fe0a01380faf6059d28be5f69405fd51",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367774-8a579",
+                  "hash": "0x8a579e477f03146fd2899707ea659e9f4395faa1a9d7316c42c1e7be5c4f8564",
+                  "height": 18367774,
+                  "timestamp": "2023-11-28T17:02:30.000000Z",
+                  "parentHash": "0x353409a5e9a1d2d2f8cd4cc650bd0e7f02a682dbb7fe31fe895897cdd5b44988",
+                  "validator": "0x1ae3a39de384cc366c0c0693e82a9b38397a35b201ffc33e383469df052e4227",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367773-35340",
+                  "hash": "0x353409a5e9a1d2d2f8cd4cc650bd0e7f02a682dbb7fe31fe895897cdd5b44988",
+                  "height": 18367773,
+                  "timestamp": "2023-11-28T17:02:24.001000Z",
+                  "parentHash": "0xe8f6f75d443049668a88f6b692bd49735781da3017cb615059d4b6962924e08c",
+                  "validator": "0xb81712e18e76cfe727bda3fa65662405f584f1ed059aac110ab6f41851ba7e26",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367772-e8f6f",
+                  "hash": "0xe8f6f75d443049668a88f6b692bd49735781da3017cb615059d4b6962924e08c",
+                  "height": 18367772,
+                  "timestamp": "2023-11-28T17:02:18.000000Z",
+                  "parentHash": "0xb24ad97550d286dfb3092b518d2bb60260f506ae5549462f1031dbce0a285e02",
+                  "validator": "0x62f93efa125cfb7f0ec984625f8fc53cdc2f8aa936fc7d1b846831d132e4f701",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367771-b24ad",
+                  "hash": "0xb24ad97550d286dfb3092b518d2bb60260f506ae5549462f1031dbce0a285e02",
+                  "height": 18367771,
+                  "timestamp": "2023-11-28T17:02:12.000000Z",
+                  "parentHash": "0x10e67940202adf20cae69c7996a2ab3484f34f8fbc7d0d257a380fafe2c2cf8a",
+                  "validator": "0x06e11fd0d4df6c4765eb346aac47682cb7871da9ecfd235255f6eadb8392b20d",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367770-10e67",
+                  "hash": "0x10e67940202adf20cae69c7996a2ab3484f34f8fbc7d0d257a380fafe2c2cf8a",
+                  "height": 18367770,
+                  "timestamp": "2023-11-28T17:02:06.000000Z",
+                  "parentHash": "0x79ee5bf480e249246e284efd48751477e6d1eeb81fc47f06dbcc2325fb6842ee",
+                  "validator": "0xc6bfc6a3cade13b0fc2d1ad1741f3fb4562b89c7f3bfb5622dcdae02db653455",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367769-79ee5",
+                  "hash": "0x79ee5bf480e249246e284efd48751477e6d1eeb81fc47f06dbcc2325fb6842ee",
+                  "height": 18367769,
+                  "timestamp": "2023-11-28T17:02:00.000000Z",
+                  "parentHash": "0x524a51043f0d056f4fd5f26ab69eeea0e23ab476096f751b82275ee4ab6d7732",
+                  "validator": "0x4877511245f8954e48858da743b9eb3544681c27ffd8802c8ea1669e961a2b61",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367768-524a5",
+                  "hash": "0x524a51043f0d056f4fd5f26ab69eeea0e23ab476096f751b82275ee4ab6d7732",
+                  "height": 18367768,
+                  "timestamp": "2023-11-28T17:01:54.000000Z",
+                  "parentHash": "0x6b701ee7d9d838c7e7a438b2d03d79ee2d1e2d78cfae19de8c1c3d69f885ea50",
+                  "validator": "0x7cbb0ed8bf228935241774290753bf282020d73e45f6724b0196c97b3bd53462",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367767-6b701",
+                  "hash": "0x6b701ee7d9d838c7e7a438b2d03d79ee2d1e2d78cfae19de8c1c3d69f885ea50",
+                  "height": 18367767,
+                  "timestamp": "2023-11-28T17:01:48.000000Z",
+                  "parentHash": "0x73deb8f39b23f96356c332ccd238ad70d49da3fd71dad5e6b84ab0d177e6f5d5",
+                  "validator": "0xa28942a9d2e8c8501860b847eecedc45d602e614b8b0849b959607d0dec3d071",
+                  "specVersion": 9431
+                }
+              },
+              {
+                "node": {
+                  "id": "0018367766-73deb",
+                  "hash": "0x73deb8f39b23f96356c332ccd238ad70d49da3fd71dad5e6b84ab0d177e6f5d5",
+                  "height": 18367766,
+                  "timestamp": "2023-11-28T17:01:42.000000Z",
+                  "parentHash": "0x61806b80117cb6887449f1e11b2904612fcb37e026110ee8d27c6fb397cae374",
+                  "validator": "0x3e5f05e5397c92e440de154097981b2c1fab4893b210cc2a8680b8096a6bef23",
+                  "specVersion": 9431
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            }
+          }
+        }
+      }
+    }
+  }
+]

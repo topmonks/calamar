@@ -51,7 +51,7 @@ export const AccountIdentityInfo = (props: AccountIdentityInfoProps) => {
 	}
 
 	return (
-		<div css={identityItemsStyle} {...divProps}>
+		<div css={identityItemsStyle} {...divProps} data-test="account-identity-info">
 			{identity.web &&
 				<Tooltip
 					arrow

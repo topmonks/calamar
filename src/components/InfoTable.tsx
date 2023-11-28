@@ -136,7 +136,7 @@ export type InfoTableProps<T extends object, A extends any[] = []> = TableContai
 	additionalData?: A;
 	loading?: boolean;
 	notFound?: boolean;
-	notFoundMessage?: string;
+	notFoundMessage?: ReactNode;
 	error?: any;
 	errorMessage?: string;
 	children: ReactElement<InfoTableAttributeProps<T, A>>|(ReactElement<InfoTableAttributeProps<T, A>>|false|undefined|null)[];
@@ -167,8 +167,8 @@ export const InfoTable = <T extends object, A extends any[] = []>(props: InfoTab
 		return (
 			<ErrorMessage
 				message={errorMessage}
-				details={error.message}
-				showReported
+				details={error}
+				report
 			/>
 		);
 	}

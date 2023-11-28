@@ -1,100 +1,170 @@
-import { Navigate, createBrowserRouter, redirect } from "react-router-dom";
+import { LoaderFunctionArgs, Navigate, RouteObject, createBrowserRouter, redirect } from "react-router-dom";
 
 import { ResultLayout } from "./components/ResultLayout";
 import { getNetwork } from "./services/networksService";
-import { encodeAddress } from "./utils/formatAddress";
+import { encodeAddress } from "./utils/address";
 
 import { AccountPage } from "./screens/account";
 import { BlockPage } from "./screens/block";
 import { CallPage } from "./screens/call";
-import { NetworkPage } from "./screens/network";
+import { ErrorPage } from "./screens/error";
 import { EventPage } from "./screens/event";
 import { ExtrinsicPage } from "./screens/extrinsic";
 import { HomePage } from "./screens/home";
+import { NetworkPage } from "./screens/network";
 import { NotFoundPage } from "./screens/notFound";
 import { SearchPage } from "./screens/search";
 import { RuntimePage } from "./screens/runtime";
 
+import { simplifyCallId } from "./services/callsService";
+import { simplifyBlockId } from "./services/blocksService";
+import { simplifyExtrinsicId } from "./services/extrinsicsService";
+import { simplifyEventId } from "./services/eventsService";
+
 import { config } from "./config";
 
-export const router = createBrowserRouter([
+const networkLoader = ({ params }: LoaderFunctionArgs) => {
+	const { network: networkName } = params as { network: string };
+
+	try {
+		const network = getNetwork(networkName);
+		return { network };
+	} catch (e) {
+		throw new Response("Network not found", {status: 404});
+	}
+};
+
+export const routes: RouteObject[] = [
 	{
 		path: "/",
 		element: <HomePage />,
 	},
 	{
-		id: "root",
-		path: ":network",
-		loader: ({ params }) => {
-			const { network: networkName } = params;
-			const network = networkName ? getNetwork(networkName, false) : undefined;
-
-			return { network };
-		},
 		element: <ResultLayout />,
 		children: [
 			{
-				index: true,
-				element: <NetworkPage />,
-			},
-			{
-				path: "extrinsic/:id",
-				element: <ExtrinsicPage />,
-			},
-			{
-				path: "search",
+				path: "search/:tab?",
 				element: <SearchPage />,
+				errorElement: <ErrorPage />,
 			},
 			{
-				path: "block/:id",
-				element: <BlockPage />,
-			},
-			{
-				path: "call/:id",
-				element: <CallPage />,
-			},
-			{
-				path: "account/:address",
-				element: <AccountPage />,
-				loader: ({ params }) => {
-					const { network: networkName, address } = params;
-					const network = networkName ? getNetwork(networkName, false) : undefined;
+				id: "network",
+				path: ":network",
+				loader: networkLoader,
+				errorElement: <ErrorPage />,
+				children: [
+					{
+						path: ":tab?",
+						element: <NetworkPage />,
+					},
+					{
+						path: "block/:id/:tab?",
+						element: <BlockPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
 
-					if (!network || !address) {
-						return null;
-					}
+							const simplifiedId = simplifyBlockId(id);
 
-					const encodedAddress = encodeAddress(address, network.prefix);
-					if (address !== encodedAddress) {
-						return redirect(`/${network.name}/account/${encodedAddress}`);
-					}
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/block/${simplifiedId}`);
+							}
 
-					return null;
-				}
+							return null;
+						}
+					},
+					{
+						path: "extrinsic/:id/:tab?",
+						element: <ExtrinsicPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyExtrinsicId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/extrinsic/${simplifiedId}`);
+							}
+
+							return null;
+						}
+					},
+					{
+						path: "call/:id/:tab?",
+						element: <CallPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyCallId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/call/${simplifiedId}`);
+							}
+
+							return null;
+						}
+					},
+					{
+						path: "event/:id",
+						element: <EventPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { id } = params as { id: string };
+
+							const simplifiedId = simplifyEventId(id);
+
+							if (id !== simplifiedId) {
+								const { network } = networkLoader(args);
+								return redirect(`/${network.name}/event/${simplifiedId}`);
+							}
+
+							return null;
+						}
+					},
+					{
+						path: "account/:address/:tab?",
+						element: <AccountPage />,
+						loader: (args) => {
+							const { params } = args;
+							const { address } = params as { address: string };
+
+							const { network } = networkLoader(args);
+
+							const encodedAddress = encodeAddress(address, network.prefix);
+							if (address !== encodedAddress) {
+								return redirect(`/${network.name}/account/${encodedAddress}`);
+							}
+
+							return null;
+						}
+					},
+					{
+						path: "latest-extrinsics",
+						element: <Navigate to="../extrinsics" replace />,
+					},
+					{
+						path: "runtime",
+						element: config.devtools.enabled ? <RuntimePage /> : <NotFoundPage />,
+					},
+					{
+						path: "runtime/:specVersion",
+						element: config.devtools.enabled ? <RuntimePage /> : <NotFoundPage />,
+					},
+					{
+						path: "*",
+						element: <NotFoundPage />,
+					},
+				],
 			},
-			{
-				path: "event/:id",
-				element: <EventPage />,
-			},
-			{
-				path: "latest-extrinsics",
-				element: <Navigate to=".." replace />,
-			},
-			{
-				path: "runtime",
-				element: config.devtools.enabled ? <RuntimePage /> : <NotFoundPage />,
-			},
-			{
-				path: "runtime/:specVersion",
-				element: config.devtools.enabled ? <RuntimePage /> : <NotFoundPage />,
-			},
-			{
-				path: "*",
-				element: <NotFoundPage />,
-			},
-		],
-	},
-], {
+		]
+	}
+];
+
+export const router = createBrowserRouter(routes, {
 	basename: window.location.hostname === "localhost"
 		? undefined
 		: process.env.PUBLIC_URL

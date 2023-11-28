@@ -5,9 +5,10 @@ import { isEthereumAddress } from "@polkadot/util-crypto";
 import { Account } from "../../model/account";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
-import { encodeAddress } from "../../utils/formatAddress";
+import { encodeAddress } from "../../utils/address";
 
 import {InfoTable, InfoTableAttribute } from "../InfoTable";
+import { NetworkBadge } from "../NetworkBadge";
 
 export type AccountInfoTableProps = HTMLAttributes<HTMLDivElement> & {
 	network: Network;
@@ -28,6 +29,12 @@ export const AccountInfoTable = (props: AccountInfoTableProps) => {
 			error={account.error}
 			{...tableProps}
 		>
+			<AccountInfoTableAttribute
+				label="Network"
+				render={(data) =>
+					<NetworkBadge network={data.network} />
+				}
+			/>
 			<AccountInfoTableAttribute
 				label={`${network.displayName} address`}
 				render={(data) => encodeAddress(data.address, network.prefix)}

@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { Children, cloneElement, PropsWithChildren, ReactElement, ReactNode, useState } from "react";
-import { Theme, css } from "@emotion/react";
+import { Children, cloneElement, HTMLAttributes, PropsWithChildren, ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { CircularProgress, Tab, TabProps, Tabs } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Warning";
+import { Theme, css } from "@emotion/react";
+
+import { formatNumber } from "../utils/number";
 
 const tabsWrapperStyle = css`
 	margin-bottom: 16px;
@@ -52,26 +54,27 @@ const tabLoadingStyle = (theme: Theme) => css`
 
 export type TabPaneProps = Omit<TabProps, "children"> & PropsWithChildren<{
 	label: ReactNode;
+	value: string;
 	count?: number;
 	loading?: boolean;
 	error?: boolean;
-	value: string;
+	hide?: boolean;
 }>
 
 export const TabPane = (props: TabPaneProps) => {
 	return <>{props.children}</>;
 };
 
-export type TabbedContentProps = {
+export interface TabbedContentProps extends HTMLAttributes<HTMLDivElement> {
 	children: ReactElement<TabPaneProps>|(ReactElement<TabPaneProps>|false)[];
+	currentTab?: string;
+	onTabChange: (tab: string) => void;
 }
 
 export const TabbedContent = (props: TabbedContentProps) => {
-	const { children } = props;
+	const { children, currentTab: tab, onTabChange, ...divProps } = props;
 
-	const [tab, setTab] = useState<string | undefined>(undefined);
-
-	const tabHandles = Children.map(children, (child) => {
+	const tabHandles = useMemo(() => Children.map(children, (child) => {
 		if (!child) {
 			return null;
 		}
@@ -82,9 +85,14 @@ export const TabbedContent = (props: TabbedContentProps) => {
 			count,
 			loading,
 			error,
+			hide,
 			children, // ignore
 			...restProps
 		} = child.props;
+
+		if (hide && tab !== value) {
+			return null;
+		}
 
 		return (
 			<Tab
@@ -94,8 +102,8 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				label={
 					<>
 						<span>{label}</span>
-						{Number.isInteger(count) && <span data-test="count" css={tabCountStyle}>({count})</span>}
-						{(loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
+						{count !== undefined && <span data-test="count" css={tabCountStyle}>({formatNumber(count)})</span>}
+						{(count === undefined && loading) && <CircularProgress css={tabLoadingStyle} size={14} />}
 						{!!error && <ErrorIcon css={tabErrorStyle} />}
 					</>
 				}
@@ -104,17 +112,28 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				{...restProps}
 			/>
 		);
-	});
+	}), [children]);
 
-	const tabPanes = Children.map(children, (child) => child && cloneElement(child, {key: child.props.value}));
+	const tabPanes = useMemo(() => Children.map(children, (child) => child && cloneElement(child, {key: child.props.value})), [children]);
+	const currentTabPane = tabPanes.find((it) => it.props.value === tab);
+
+	const handleTabChange = useCallback((ev: any, value: string) => {
+		onTabChange?.(value);
+	}, [onTabChange]);
+
+	useEffect(() => {
+		if (!currentTabPane) {
+			tabHandles[0] && onTabChange?.(tabHandles[0].props.value);
+		}
+	}, [currentTabPane, tabHandles, onTabChange]);
 
 	return (
-		<>
+		<div {...divProps}>
 			<div css={tabsWrapperStyle}>
 				<Tabs
 					css={tabsStyle}
-					onChange={(_, tab) => setTab(tab)}
-					value={tab || tabHandles[0]!.props.value}
+					onChange={handleTabChange}
+					value={tab || tabHandles[0]?.props.value}
 					variant="scrollable"
 					scrollButtons={false}
 				>
@@ -122,7 +141,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				</Tabs>
 
 			</div>
-			{tab ? tabPanes.find((it) => it.props.value === tab) : tabPanes[0]}
-		</>
+			{currentTabPane}
+		</div>
 	);
 };

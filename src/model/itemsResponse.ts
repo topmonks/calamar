@@ -1,9 +1,9 @@
-export type ItemsResponse<T = any> = {
+import { PageInfo } from "./pageInfo";
+
+export type ItemsResponse<T = any, C extends boolean = false> = {
 	data: T[];
-	pagination: {
-		offset: number;
-		limit: number;
-		hasNextPage: boolean;
-		totalCount?: number;
-	}
-}
+	pageInfo: PageInfo;
+	totalCount?: number;
+} & (C extends true ? {
+	totalCount: number;
+} : object)

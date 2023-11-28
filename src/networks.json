@@ -129,8 +129,7 @@
         "decimals": 9,
         "symbol": "EQ",
         "squids": {
-            "archive": "https://equilibrium.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-equilibrium/graphql"
+            "archive": "https://equilibrium.explorer.subsquid.io/graphql"
         }
     },
     {
@@ -194,8 +193,7 @@
         "decimals": 12,
         "symbol": "TNKR",
         "squids": {
-            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-invarch-tinkernet/graphql"
+            "archive": "https://invarch-tinkernet.explorer.subsquid.io/graphql"
         }
     },
     {
@@ -509,7 +507,6 @@
         "name": "statemint",
         "displayName": "Statemint",
         "icon": "/assets/network-icons/statemint.png",
-        "color": "#86e62a",
         "website": "https://www.parity.io/",
         "parachainId": 1000,
         "relayChain": "polkadot",
@@ -577,8 +574,7 @@
         "decimals": 9,
         "symbol": "XX",
         "squids": {
-            "archive": "https://xx-network.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-xx-network/graphql"
+            "archive": "https://xx-network.explorer.subsquid.io/graphql"
         },
         "coinGeckoId": "xxcoin"
     }

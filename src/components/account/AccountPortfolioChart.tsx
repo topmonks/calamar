@@ -54,7 +54,7 @@ export enum AccountPortfolioChartMode {
 
 export type AccountPortfolioChartProps = HTMLAttributes<HTMLDivElement> & {
 	balances: AccountBalance[];
-	usdRates: UsdRates;
+	usdRates?: UsdRates;
 	mode: AccountPortfolioChartMode;
 };
 

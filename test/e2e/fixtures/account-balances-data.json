@@ -1,0 +1,93 @@
+{
+  "itemsCount": "(35)",
+  "itemsTable": [
+    [
+      "Polkadot\n14mR4x...27YNTE\nprefix: 0",
+      "8,865.048 DOT\n$46,138.83",
+      "8,739.79 DOT\n$45,486.92",
+      "125.258 DOT\n$651.92"
+    ],
+    [
+      "Kusama\nGLjawu...D66wGE\nprefix: 2",
+      "14.7053 KSM\n$361.64",
+      "4.7053 KSM\n$115.72",
+      "10 KSM\n$245.92"
+    ],
+    [
+      "Acala\n24e1et...xzMdsr\nprefix: 10",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Aleph Zero Testnet\n5Fq7vd...zbMpG6\nprefix: 42",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Amplitude\n6ke1oW...uuaqRK\nprefix: 57",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Astar Network\nZhiMvX...zYwjYw\nprefix: 5",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Bajun Network\nbUMbQK...JNc7cn\nprefix: 1337",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Bifrost Kusama\nfVNcv4...b3E5ct\nprefix: 6",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Calamari Network\ndmxheR...VHSxDb\nprefix: 78",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Equilibrium\ncg6sV1...wDKwnz\nprefix: 68",
+      "Account balance for this network is not currently supported."
+    ]
+  ],
+  "itemsTableWithError": [
+    [
+      "Polkadot\n14mR4x...27YNTE\nprefix: 0",
+      "8,865.048 DOT\n$46,138.83",
+      "8,739.79 DOT\n$45,486.92",
+      "125.258 DOT\n$651.92"
+    ],
+    [
+      "Kusama\nGLjawu...D66wGE\nprefix: 2",
+      "Unexpected error occured while fetching data\nThis error is logged. No need to report it.\nDetails"
+    ],
+    [
+      "Acala\n24e1et...xzMdsr\nprefix: 10",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Aleph Zero Testnet\n5Fq7vd...zbMpG6\nprefix: 42",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Amplitude\n6ke1oW...uuaqRK\nprefix: 57",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Astar Network\nZhiMvX...zYwjYw\nprefix: 5",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Bajun Network\nbUMbQK...JNc7cn\nprefix: 1337",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Bifrost Kusama\nfVNcv4...b3E5ct\nprefix: 6",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Calamari Network\ndmxheR...VHSxDb\nprefix: 78",
+      "Account balance for this network is not currently supported."
+    ],
+    [
+      "Equilibrium\ncg6sV1...wDKwnz\nprefix: 68",
+      "Account balance for this network is not currently supported."
+    ]
+  ]
+}

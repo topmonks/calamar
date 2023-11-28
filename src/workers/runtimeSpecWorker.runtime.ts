@@ -20,12 +20,12 @@ class RuntimeSpecWorkerRuntime extends WebWorkerRuntime implements RuntimeSpecWo
 
 		const response = await fetchArchive<{metadata: {hex: `0x${string}`}[]}>(
 			network, `
-						query ($specVersion: Int!) {
-							metadata(where: {specVersion_eq: $specVersion}, orderBy: specVersion_DESC) {
-								hex
-							}
-						}
-					`,
+				query ($specVersion: Int!) {
+					metadata(where: {specVersion_eq: $specVersion}, orderBy: specVersion_DESC) {
+						hex
+					}
+				}
+			`,
 			{
 				specVersion
 			}

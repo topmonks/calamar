@@ -5,19 +5,20 @@ import { Call } from "../model/call";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
 
-import { addItemMetadata, addItemsMetadata } from "../utils/addMetadata";
-import { extractConnectionItems } from "../utils/extractConnectionItems";
-import { decodeAddress } from "../utils/formatAddress";
+import { decodeAddress } from "../utils/address";
+import { simplifyId } from "../utils/id";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
-import { fetchArchive, fetchExplorerSquid } from "./fetchService";
+import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getCallRuntimeMetadata } from "./runtimeMetadataService";
-import { hasSupport } from "./networksService";
+import { getNetwork, hasSupport } from "./networksService";
 
 export type CallsFilter =
-	{ id_eq: string; }
-	| { blockId_eq: string; }
-	| { extrinsicId_eq: string; }
-	| { callerAddress_eq: string; };
+	undefined
+	| { simplifiedId: string; }
+	| { blockId: string; }
+	| { extrinsicId: string; }
+	| { callerAddress: string; };
 
 export type CallsOrder = string | string[];
 
@@ -44,30 +45,57 @@ export async function getCalls(
 
 /*** PRIVATE ***/
 
+registerItemFragment("ArchiveCall", "Call", `
+	id
+	name
+	success
+	origin
+	args
+	block {
+		timestamp
+		id
+		height
+		spec {
+			specVersion
+		}
+	}
+	parent {
+		id
+	}
+	extrinsic {
+		id
+		indexInBlock
+	}
+`);
+
+registerItemFragment("ExplorerSquidCall", "Call", `
+	id
+	callName
+	palletName
+	success
+	callerPublicKey
+	parentId
+	block {
+		id
+		height
+		timestamp
+		specVersion
+	}
+	extrinsic {
+		id
+		indexInBlock
+	}
+`);
+
+registerItemsConnectionFragment("ArchiveCallsConnection", "CallsConnection", "...ArchiveCall");
+registerItemsConnectionFragment("ExplorerSquidCallsConnection", "CallsConnection", "...ExplorerSquidCall");
+
 async function getArchiveCall(network: string, filter: CallsFilter) {
 	const response = await fetchArchive<{calls: ArchiveCall[]}>(
 		network,
 		`query ($filter: CallWhereInput) {
 			calls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				name
-				success
-				origin
-				args
-				block {
-					timestamp
-					id
-					height
-					spec {
-						specVersion
-					}
-				}
-				parent {
-					id
-				}
-				extrinsic {
-					id
-				}
+				...ArchiveCall
 			}
 		}`,
 		{
@@ -75,10 +103,7 @@ async function getArchiveCall(network: string, filter: CallsFilter) {
 		}
 	);
 
-	const data = response.calls[0] && unifyArchiveCall(response.calls[0], network);
-	const call = await addItemMetadata(data, getCallMetadata);
-
-	return call;
+	return response.calls[0] && unifyArchiveCall(response.calls[0], network);
 }
 
 async function getExplorerSquidCall(network: string, filter: CallsFilter) {
@@ -86,21 +111,7 @@ async function getExplorerSquidCall(network: string, filter: CallsFilter) {
 		network,
 		`query ($filter: CallWhereInput) {
 			calls(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				callName
-				palletName
-				success
-				callerPublicKey
-				parentId
-				block {
-					id
-					height
-					timestamp
-					specVersion
-				}
-				extrinsic {
-					id
-				}
+				...ExplorerSquidCall
 			}
 		}`,
 		{
@@ -108,9 +119,8 @@ async function getExplorerSquidCall(network: string, filter: CallsFilter) {
 		}
 	);
 
-	const data = response.calls[0] && unifyExplorerSquidCall(response.calls[0], network);
-	const dataWithMetadata = await addItemMetadata(data, getCallMetadata);
-	const call = await addCallArgs(network, dataWithMetadata);
+	const data = response.calls[0] && await unifyExplorerSquidCall(response.calls[0], network);
+	const call = await addCallArgs(network, data);
 
 	return call;
 }
@@ -121,58 +131,30 @@ async function getArchiveCalls(
 	order: CallsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{callsConnection: ItemsConnection<ArchiveCall>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						name
-						success
-						origin
-						args
-						block {
-							timestamp
-							id
-							height
-							spec {
-								specVersion
-							}
-						}
-						parent {
-							id
-							name
-						}
-						extrinsic {
-							id
-							version
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ArchiveCallsConnection
 				totalCount
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: callsFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	const data = extractConnectionItems(response?.callsConnection, pagination, unifyArchiveCall, network);
-	const calls = await addItemsMetadata(data, getCallMetadata);
-
-	return calls;
+	return extractConnectionItems(
+		response.callsConnection,
+		pagination,
+		unifyArchiveCall,
+		network
+	);
 }
 
 async function getExplorerSquidCalls(
@@ -181,52 +163,30 @@ async function getExplorerSquidCalls(
 	order: CallsOrder = "id_DESC",
 	pagination: PaginationOptions,
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{callsConnection: ItemsConnection<ExplorerSquidCall>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {
 			callsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						callName
-						palletName
-						success
-						callerPublicKey
-						parentId
-						block {
-							id
-							height
-							timestamp
-							specVersion
-						}
-						extrinsic {
-							id
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidCallsConnection
 				totalCount
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: callsFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	const data = extractConnectionItems(response.callsConnection, pagination, unifyExplorerSquidCall, network);
-	const calls = await addItemsMetadata(data, getCallMetadata);
-
-	return calls;
+	return extractConnectionItems(
+		response.callsConnection,
+		pagination,
+		unifyExplorerSquidCall,
+		network
+	);
 }
 
 async function getArchiveCallsArgs(network: string, callsIds: string[]) {
@@ -262,45 +222,62 @@ async function addCallArgs(network: string, call: Call|undefined) {
 	};
 }
 
-function unifyArchiveCall(call: ArchiveCall, network: string): Omit<Call, "metadata"> {
+/**
+ * Get simplified version of call ID which
+ * is used to be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-000003-5800a        -> 20537612-3
+ * - 0020537612-000003-5800a-000001 -> 20537612-3-1
+ */
+export function simplifyCallId(id: string) {
+	return simplifyId(id, /\d{10}-\d{6}-[^-]{5}(-\d{6})?/, 2);
+}
+
+async function unifyArchiveCall(call: ArchiveCall, network: string): Promise<Call> {
 	const [palletName, callName] = call.name.split(".") as [string, string];
+	const specVersion = call.block.spec.specVersion;
 
 	return {
 		...call,
-		network,
+		network: getNetwork(network),
 		callName,
 		palletName,
 		blockId: call.block.id,
 		blockHeight: call.block.height,
 		timestamp: call.block.timestamp,
 		extrinsicId: call.extrinsic.id,
-		specVersion: call.block.spec.specVersion,
+		specVersion,
 		parentId: call.parent?.id || null,
 		caller: call.origin && call.origin.kind !== "None"
 			? call.origin.value.value
 			: null,
-		args: null
+		metadata: {
+			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+		}
 	};
 }
 
-function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string): Omit<Call, "metadata"> {
+async function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string): Promise<Call> {
+	const {palletName, callName} = call;
+	const specVersion = call.block.specVersion;
+
 	return {
 		...call,
-		network,
+		network: getNetwork(network),
 		blockId: call.block.id,
 		blockHeight: call.block.height,
 		timestamp: call.block.timestamp,
 		extrinsicId: call.extrinsic.id,
-		specVersion: call.block.specVersion,
+		specVersion,
 		parentId: call.parentId,
 		caller: call.callerPublicKey,
-		args: null
-	};
-}
-
-async function getCallMetadata(call: Omit<Call, "metadata">): Promise<Call["metadata"]> {
-	return {
-		call: await getCallRuntimeMetadata(call.network, call.specVersion, call.palletName, call.callName)
+		args: null,
+		metadata: {
+			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+		}
 	};
 }
 
@@ -309,20 +286,51 @@ function callsFilterToArchiveFilter(filter?: CallsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		console.log(filter);
+		const [blockHeight = "", indexInBlock = "", childIndex = ""] = filter.simplifiedId.split("-");
+
+		const squidFilter: any = {
+			block: {
+				height_eq: parseInt(blockHeight),
+			},
+			extrinsic: {
+				indexInBlock_eq: parseInt(indexInBlock)
+			},
+			parent: {
+				id_isNull: true
+			}
+		};
+
+		if (childIndex) {
+			squidFilter.parent.id_isNull = false;
+			squidFilter.id_endsWith = childIndex.toString();
+		}
+
+		return squidFilter;
+	}
+
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("extrinsicId_eq" in filter) {
+	}
+
+	if ("extrinsicId" in filter) {
 		return {
 			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.extrinsicId
 			}
 		};
-	} else if ("callerAddress_eq" in filter) {
-		throw new Error("Filtering by caller public key in archive not implemented");
+	}
+
+	if ("callerAddress" in filter) {
+		console.warn("Filtering calls by caller public key in archive is not implemented");
+		return {
+			id_eq: "" // failing filter
+		};
 	}
 
 
@@ -334,20 +342,46 @@ function callsFilterToExplorerSquidFilter(filter?: CallsFilter) {
 		return undefined;
 	}
 
-	if ("blockId_eq" in filter) {
+	if ("simplifiedId" in filter) {
+		console.log(filter);
+		const [blockHeight = "", indexInBlock = "", childIndex = ""] = filter.simplifiedId.split("-");
+
+		const squidFilter: any = {
+			block: {
+				height_eq: parseInt(blockHeight),
+			},
+			extrinsic: {
+				indexInBlock_eq: parseInt(indexInBlock)
+			},
+			parentId_isNull: true
+		};
+
+		if (childIndex) {
+			squidFilter.parentId_isNull = false;
+			squidFilter.id_endsWith = childIndex.toString();
+		}
+
+		return squidFilter;
+	}
+
+	if ("blockId" in filter) {
 		return {
 			block: {
-				id_eq: filter.blockId_eq
+				id_eq: filter.blockId
 			}
 		};
-	} else if ("extrinsicId_eq" in filter) {
+	}
+
+	if ("extrinsicId" in filter) {
 		return {
 			extrinsic: {
-				id_eq: filter.extrinsicId_eq
+				id_eq: filter.extrinsicId
 			}
 		};
-	} else if ("callerAddress_eq" in filter) {
-		const publicKey = decodeAddress(filter.callerAddress_eq);
+	}
+
+	if ("callerAddress" in filter) {
+		const publicKey = decodeAddress(filter.callerAddress);
 
 		return {
 			callerPublicKey_eq: publicKey

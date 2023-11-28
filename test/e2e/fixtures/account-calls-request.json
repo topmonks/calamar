@@ -1,0 +1,506 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {\n\t\t\tcallsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...ExplorerSquidCallsConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidCallsConnection on CallsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidCall\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidCall on Call {\n\t\t\t\n\tid\n\tcallName\n\tpalletName\n\tsuccess\n\tcallerPublicKey\n\tparentId\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t\tindexInBlock\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "callerPublicKey_eq": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840"
+          },
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "callsConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0019780727-000002-9c0ba",
+                  "callName": "transfer_keep_alive",
+                  "palletName": "Balances",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": null,
+                  "block": {
+                    "id": "0019780727-9c0ba",
+                    "height": 19780727,
+                    "timestamp": "2023-09-21T19:23:00.000000Z",
+                    "specVersion": 9430
+                  },
+                  "extrinsic": {
+                    "id": "0019780727-000002-9c0ba",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0018963360-000006-41f61",
+                  "callName": "limited_teleport_assets",
+                  "palletName": "XcmPallet",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": null,
+                  "block": {
+                    "id": "0018963360-41f61",
+                    "height": 18963360,
+                    "timestamp": "2023-07-26T22:41:30.000000Z",
+                    "specVersion": 9430
+                  },
+                  "extrinsic": {
+                    "id": "0018963360-000006-41f61",
+                    "indexInBlock": 6
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0014994065-000004-1655d",
+                  "callName": "transfer_keep_alive",
+                  "palletName": "Balances",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": null,
+                  "block": {
+                    "id": "0014994065-1655d",
+                    "height": 14994065,
+                    "timestamp": "2022-10-22T13:34:06.011000Z",
+                    "specVersion": 9291
+                  },
+                  "extrinsic": {
+                    "id": "0014994065-000004-1655d",
+                    "indexInBlock": 4
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013127471-000002-b3d8d-000002",
+                  "callName": "remark",
+                  "palletName": "System",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": "0013127471-000002-b3d8d",
+                  "block": {
+                    "id": "0013127471-b3d8d",
+                    "height": 13127471,
+                    "timestamp": "2022-06-14T15:25:30.013000Z",
+                    "specVersion": 9230
+                  },
+                  "extrinsic": {
+                    "id": "0013127471-000002-b3d8d",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013127471-000002-b3d8d-000001",
+                  "callName": "remark",
+                  "palletName": "System",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": "0013127471-000002-b3d8d",
+                  "block": {
+                    "id": "0013127471-b3d8d",
+                    "height": 13127471,
+                    "timestamp": "2022-06-14T15:25:30.013000Z",
+                    "specVersion": 9230
+                  },
+                  "extrinsic": {
+                    "id": "0013127471-000002-b3d8d",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013127471-000002-b3d8d",
+                  "callName": "batch_all",
+                  "palletName": "Utility",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": null,
+                  "block": {
+                    "id": "0013127471-b3d8d",
+                    "height": 13127471,
+                    "timestamp": "2022-06-14T15:25:30.013000Z",
+                    "specVersion": 9230
+                  },
+                  "extrinsic": {
+                    "id": "0013127471-000002-b3d8d",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013127388-000002-f6c26-000002",
+                  "callName": "remark",
+                  "palletName": "System",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": "0013127388-000002-f6c26",
+                  "block": {
+                    "id": "0013127388-f6c26",
+                    "height": 13127388,
+                    "timestamp": "2022-06-14T15:17:12.018000Z",
+                    "specVersion": 9230
+                  },
+                  "extrinsic": {
+                    "id": "0013127388-000002-f6c26",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013127388-000002-f6c26-000001",
+                  "callName": "remark",
+                  "palletName": "System",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": "0013127388-000002-f6c26",
+                  "block": {
+                    "id": "0013127388-f6c26",
+                    "height": 13127388,
+                    "timestamp": "2022-06-14T15:17:12.018000Z",
+                    "specVersion": 9230
+                  },
+                  "extrinsic": {
+                    "id": "0013127388-000002-f6c26",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0013127388-000002-f6c26",
+                  "callName": "batch_all",
+                  "palletName": "Utility",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": null,
+                  "block": {
+                    "id": "0013127388-f6c26",
+                    "height": 13127388,
+                    "timestamp": "2022-06-14T15:17:12.018000Z",
+                    "specVersion": 9230
+                  },
+                  "extrinsic": {
+                    "id": "0013127388-000002-f6c26",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0010189163-000005-0c224",
+                  "callName": "contribute",
+                  "palletName": "Crowdloan",
+                  "success": true,
+                  "callerPublicKey": "0xa69484f2b10ec2f1dea19394423d576f91c6b5ab2315b389f4e108bcf0aa2840",
+                  "parentId": null,
+                  "block": {
+                    "id": "0010189163-0c224",
+                    "height": 10189163,
+                    "timestamp": "2021-11-21T09:40:42.009000Z",
+                    "specVersion": 9122
+                  },
+                  "extrinsic": {
+                    "id": "0010189163-000005-0c224",
+                    "indexInBlock": 5
+                  }
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 69
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {\n\t\t\tcallsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...ExplorerSquidCallsConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidCallsConnection on CallsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidCall\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidCall on Call {\n\t\t\t\n\tid\n\tcallName\n\tpalletName\n\tsuccess\n\tcallerPublicKey\n\tparentId\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t\tindexInBlock\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "callerPublicKey_eq": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737"
+          },
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "callsConnection": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0016832516-000002-74481",
+                  "callName": "validate",
+                  "palletName": "Staking",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0016832516-74481",
+                    "height": 16832516,
+                    "timestamp": "2023-02-28T11:29:30.001000Z",
+                    "specVersion": 9370
+                  },
+                  "extrinsic": {
+                    "id": "0016832516-000002-74481",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0016832478-000002-d3414-000003",
+                  "callName": "validate",
+                  "palletName": "Staking",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": "0016832478-000002-d3414",
+                  "block": {
+                    "id": "0016832478-d3414",
+                    "height": 16832478,
+                    "timestamp": "2023-02-28T11:25:42.001000Z",
+                    "specVersion": 9370
+                  },
+                  "extrinsic": {
+                    "id": "0016832478-000002-d3414",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0016832478-000002-d3414-000002",
+                  "callName": "set_keys",
+                  "palletName": "Session",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": "0016832478-000002-d3414",
+                  "block": {
+                    "id": "0016832478-d3414",
+                    "height": 16832478,
+                    "timestamp": "2023-02-28T11:25:42.001000Z",
+                    "specVersion": 9370
+                  },
+                  "extrinsic": {
+                    "id": "0016832478-000002-d3414",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0016832478-000002-d3414-000001",
+                  "callName": "bond",
+                  "palletName": "Staking",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": "0016832478-000002-d3414",
+                  "block": {
+                    "id": "0016832478-d3414",
+                    "height": 16832478,
+                    "timestamp": "2023-02-28T11:25:42.001000Z",
+                    "specVersion": 9370
+                  },
+                  "extrinsic": {
+                    "id": "0016832478-000002-d3414",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0016832478-000002-d3414",
+                  "callName": "batch_all",
+                  "palletName": "Utility",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0016832478-d3414",
+                    "height": 16832478,
+                    "timestamp": "2023-02-28T11:25:42.001000Z",
+                    "specVersion": 9370
+                  },
+                  "extrinsic": {
+                    "id": "0016832478-000002-d3414",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0016832413-000002-d71c3",
+                  "callName": "withdraw_unbonded",
+                  "palletName": "Staking",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0016832413-d71c3",
+                    "height": 16832413,
+                    "timestamp": "2023-02-28T11:19:12.000000Z",
+                    "specVersion": 9370
+                  },
+                  "extrinsic": {
+                    "id": "0016832413-000002-d71c3",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012225612-000004-15a30",
+                  "callName": "contribute",
+                  "palletName": "Crowdloan",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0012225612-15a30",
+                    "height": 12225612,
+                    "timestamp": "2022-04-12T20:28:00.023000Z",
+                    "specVersion": 9180
+                  },
+                  "extrinsic": {
+                    "id": "0012225612-000004-15a30",
+                    "indexInBlock": 4
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012225609-000002-a838f",
+                  "callName": "contribute",
+                  "palletName": "Crowdloan",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0012225609-a838f",
+                    "height": 12225609,
+                    "timestamp": "2022-04-12T20:27:42.009000Z",
+                    "specVersion": 9180
+                  },
+                  "extrinsic": {
+                    "id": "0012225609-000002-a838f",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012225607-000002-49f5e",
+                  "callName": "contribute",
+                  "palletName": "Crowdloan",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0012225607-49f5e",
+                    "height": 12225607,
+                    "timestamp": "2022-04-12T20:27:30.033000Z",
+                    "specVersion": 9180
+                  },
+                  "extrinsic": {
+                    "id": "0012225607-000002-49f5e",
+                    "indexInBlock": 2
+                  }
+                }
+              },
+              {
+                "node": {
+                  "id": "0012225602-000002-6dbdd",
+                  "callName": "contribute",
+                  "palletName": "Crowdloan",
+                  "success": true,
+                  "callerPublicKey": "0x4ea378f0cd9285451e51e00c2e68851a57a36662990baa9226ab5c7734e05737",
+                  "parentId": null,
+                  "block": {
+                    "id": "0012225602-6dbdd",
+                    "height": 12225602,
+                    "timestamp": "2022-04-12T20:27:00.016000Z",
+                    "specVersion": 9180
+                  },
+                  "extrinsic": {
+                    "id": "0012225602-000002-6dbdd",
+                    "indexInBlock": 2
+                  }
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "10",
+              "hasNextPage": true,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 76
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($first: Int!, $after: String, $filter: CallWhereInput, $order: [CallOrderByInput!]!) {\n\t\t\tcallsConnection(first: $first, after: $after, where: $filter, orderBy: $order) {\n\t\t\t\t...ExplorerSquidCallsConnection\n\t\t\t\ttotalCount\n\t\t\t}\n\t\t}\n\n\t\tfragment ExplorerSquidCallsConnection on CallsConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidCall\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidCall on Call {\n\t\t\t\n\tid\n\tcallName\n\tpalletName\n\tsuccess\n\tcallerPublicKey\n\tparentId\n\tblock {\n\t\tid\n\t\theight\n\t\ttimestamp\n\t\tspecVersion\n\t}\n\textrinsic {\n\t\tid\n\t\tindexInBlock\n\t}\n\n\t\t}\n\t",
+        "variables": {
+          "first": 10,
+          "after": null,
+          "filter": {
+            "callerPublicKey_eq": "0x123456789"
+          },
+          "order": "id_DESC"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "callsConnection": {
+            "edges": [],
+            "pageInfo": {
+              "endCursor": "",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": ""
+            },
+            "totalCount": 0
+          }
+        }
+      }
+    }
+  }
+]

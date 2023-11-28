@@ -1,11 +1,13 @@
 import { Block } from "../../model/block";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
-import { encodeAddress } from "../../utils/formatAddress";
+import { encodeAddress } from "../../utils/address";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
 import { Link } from "../Link";
+import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
 
 export type BlockInfoTableProps = {
@@ -26,6 +28,12 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			notFoundMessage="No block found"
 			error={block.error}
 		>
+			<BlockInfoTableAttribute
+				label="Network"
+				render={(data) =>
+					<NetworkBadge network={data.network} />
+				}
+			/>
 			<BlockInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>

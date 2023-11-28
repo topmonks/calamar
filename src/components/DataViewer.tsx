@@ -282,5 +282,3 @@ export const DataViewer = (props: DataViewerProps) => {
 		</div>
 	);
 };
-
-export default DataViewer;

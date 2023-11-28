@@ -1,0 +1,131 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($blocksFilter: BlockWhereInput) {\n\t\t\tblocks: blocksConnection(first: 1, where: $blocksFilter, orderBy: id_ASC) {\n\t\t\t\t...ExplorerSquidBlocksConnection\n\t\t\t\ttotalCount\n\t\t\t},\n\t\t}\n\n\t\tfragment ExplorerSquidBlocksConnection on BlocksConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidBlock\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidBlock on Block {\n\t\t\t\n\tid\n\thash\n\theight\n\ttimestamp\n\tparentHash\n\tvalidator\n\tspecVersion\n\n\t\t}\n\t",
+        "variables": {
+          "blocksFilter": {
+            "height_eq": 123
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "blocks": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0000000123-ba7ac",
+                  "hash": "0xba7acee2e2fe4ced01fccf638bdeb7404f902c89f7f5b0d2372c62cf8beaff35",
+                  "height": 123,
+                  "timestamp": "2020-05-26T15:49:24.000000Z",
+                  "parentHash": "0xf751938b38d08085d0927d81ff07f7646b79a28cac5956302095699da241e06a",
+                  "validator": "0x88ee494d719d68a18aade04903839ea37b6be99552ceceb530674b237afa9166",
+                  "specVersion": 0
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "1",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 1
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-acala/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($blocksFilter: BlockWhereInput) {\n\t\t\tblocks: blocksConnection(first: 1, where: $blocksFilter, orderBy: id_ASC) {\n\t\t\t\t...ExplorerSquidBlocksConnection\n\t\t\t\ttotalCount\n\t\t\t},\n\t\t}\n\n\t\tfragment ExplorerSquidBlocksConnection on BlocksConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidBlock\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidBlock on Block {\n\t\t\t\n\tid\n\thash\n\theight\n\ttimestamp\n\tparentHash\n\tvalidator\n\tspecVersion\n\n\t\t}\n\t",
+        "variables": {
+          "blocksFilter": {
+            "height_eq": 123
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "blocks": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0000000123-c9c16",
+                  "hash": "0xc9c16c1adb632457a876e5c6a8b810e54a485748fd813de487b0f473a4cad5f0",
+                  "height": 123,
+                  "timestamp": "2021-12-18T04:05:48.669000Z",
+                  "parentHash": "0x90bafcb68711d45b563d95e7a57a85100d4280cc83b573bc33391b1b64a3518e",
+                  "validator": "0x0642caac4bb7be8367c277371825e1314be4ec99d9a0d0e2ed12289693009a6f",
+                  "specVersion": 2000
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "1",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 1
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-explorer-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "query ($blocksFilter: BlockWhereInput) {\n\t\t\tblocks: blocksConnection(first: 1, where: $blocksFilter, orderBy: id_ASC) {\n\t\t\t\t...ExplorerSquidBlocksConnection\n\t\t\t\ttotalCount\n\t\t\t},\n\t\t}\n\n\t\tfragment ExplorerSquidBlocksConnection on BlocksConnection {\n\t\t\t\n\t\tedges {\n\t\t\tnode {\n\t\t\t\t...ExplorerSquidBlock\n\t\t\t}\n\t\t}\n\t\tpageInfo {\n\t\t\tendCursor\n\t\t\thasNextPage\n\t\t\thasPreviousPage\n\t\t\tstartCursor\n\t\t}\n\t\n\t\t}\n\t\n\n\t\tfragment ExplorerSquidBlock on Block {\n\t\t\t\n\tid\n\thash\n\theight\n\ttimestamp\n\tparentHash\n\tvalidator\n\tspecVersion\n\n\t\t}\n\t",
+        "variables": {
+          "blocksFilter": {
+            "height_eq": 123
+          }
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "blocks": {
+            "edges": [
+              {
+                "node": {
+                  "id": "0000000123-aff52",
+                  "hash": "0xaff52c40552c33ecd7248506a42d20e2cd44e64bbb299cf6cb979339e90c4211",
+                  "height": 123,
+                  "timestamp": "2019-11-28T17:40:42.000000Z",
+                  "parentHash": "0x44047e1fc53d94a3b0bbc4189693cdbccc8c639efea42801717d65c0a5d847bd",
+                  "validator": "0xfcdeb580add093f3b5f06603032c2fe89d329ba372147c100aa0391a44a51601",
+                  "specVersion": 1020
+                }
+              }
+            ],
+            "pageInfo": {
+              "endCursor": "1",
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "1"
+            },
+            "totalCount": 1
+          }
+        }
+      }
+    }
+  }
+]

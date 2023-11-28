@@ -3,16 +3,18 @@ import { Block } from "../model/block";
 import { ExplorerSquidBlock } from "../model/explorer-squid/explorerSquidBlock";
 import { ItemsConnection } from "../model/itemsConnection";
 import { PaginationOptions } from "../model/paginationOptions";
+import { simplifyId } from "../utils/id";
 
-import { extractConnectionItems } from "../utils/extractConnectionItems";
+import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
-import { fetchArchive, fetchExplorerSquid } from "./fetchService";
-import { hasSupport } from "./networksService";
+import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
+import { getNetwork, hasSupport } from "./networksService";
 
 export type BlocksFilter =
-	{ id_eq: string; }
-	| { hash_eq: string; }
-	| { height_eq: number; };
+	undefined
+	| { simplifiedId: string; }
+	| { hash: string; }
+	| { height: number; };
 
 export type BlocksOrder = string | string[];
 
@@ -39,20 +41,37 @@ export async function getBlocks(
 
 /*** PRIVATE ***/
 
+registerItemFragment("ArchiveBlock", "Block", `
+	id
+	hash
+	height
+	timestamp
+	parentHash
+	validator
+	spec {
+		specVersion
+	}
+`);
+
+registerItemFragment("ExplorerSquidBlock", "Block", `
+	id
+	hash
+	height
+	timestamp
+	parentHash
+	validator
+	specVersion
+`);
+
+registerItemsConnectionFragment("ArchiveBlocksConnection", "BlocksConnection", "...ArchiveBlock");
+registerItemsConnectionFragment("ExplorerSquidBlocksConnection", "BlocksConnection", "...ExplorerSquidBlock");
+
 async function getArchiveBlock(network: string, filter: BlocksFilter) {
 	const response = await fetchArchive<{blocks: ArchiveBlock[]}>(
 		network,
 		`query ($filter: BlockWhereInput) {
 			blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				hash
-				height
-				timestamp
-				parentHash
-				validator
-				spec {
-					specVersion
-				}
+				...ArchiveBlock
 			}
 		}`,
 		{
@@ -60,7 +79,7 @@ async function getArchiveBlock(network: string, filter: BlocksFilter) {
 		}
 	);
 
-	const block = response.blocks[0] && unifyArchiveBlock(response.blocks[0]);
+	const block = response.blocks[0] && unifyArchiveBlock(response.blocks[0], network);
 
 	return block;
 }
@@ -70,13 +89,7 @@ async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
 		network,
 		`query ($filter: BlockWhereInput) {
 			blocks(limit: 1, offset: 0, where: $filter, orderBy: id_DESC) {
-				id
-				hash
-				height
-				timestamp
-				parentHash
-				validator
-				specVersion
+				...ExplorerSquidBlock
 			}
 		}`,
 		{
@@ -84,7 +97,7 @@ async function getExplorerSquidBlock(network: string, filter: BlocksFilter) {
 		}
 	);
 
-	const block = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0]);
+	const block = response.blocks[0] && unifyExplorerSquidBlock(response.blocks[0], network);
 
 	return block;
 }
@@ -95,43 +108,30 @@ async function getArchiveBlocks(
 	order: BlocksOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchArchive<{blocksConnection: ItemsConnection<ArchiveBlock>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
 			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						spec {
-							specVersion
-						}
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ArchiveBlocksConnection
 				${filter !== undefined ? "totalCount" : "" }
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: blocksFilterToArchiveFilter(filter),
 			order,
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, pagination, unifyArchiveBlock);
+	const blocks = extractConnectionItems(
+		response.blocksConnection,
+		pagination,
+		unifyArchiveBlock,
+		network
+	);
 
 	return blocks;
 }
@@ -142,59 +142,83 @@ async function getExplorerSquidBlocks(
 	order: BlocksOrder = "id_DESC",
 	pagination: PaginationOptions
 ) {
-	const after = pagination.offset === 0 ? null : pagination.offset.toString();
+	const {first, after} = paginationToConnectionCursor(pagination);
 
 	const response = await fetchExplorerSquid<{blocksConnection: ItemsConnection<ExplorerSquidBlock>}>(
 		network,
 		`query ($first: Int!, $after: String, $filter: BlockWhereInput, $order: [BlockOrderByInput!]!) {
 			blocksConnection(first: $first, after: $after, where: $filter, orderBy: $order) {
-				edges {
-					node {
-						id
-						hash
-						height
-						timestamp
-						parentHash
-						validator
-						specVersion
-					}
-				}
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
-					startCursor
-				}
+				...ExplorerSquidBlocksConnection
 				${filter !== undefined ? "totalCount" : "" }
 			}
 		}`,
 		{
-			first: pagination.limit,
+			first,
 			after,
 			filter: blocksFilterToExplorerSquidFilter(filter),
 			order,
 		}
 	);
 
-	const blocks = extractConnectionItems(response.blocksConnection, pagination, unifyExplorerSquidBlock);
+	const blocks = extractConnectionItems(
+		response.blocksConnection,
+		pagination,
+		unifyExplorerSquidBlock,
+		network
+	);
 
 	return blocks;
 }
 
-function unifyArchiveBlock(block: ArchiveBlock): Block {
+/**
+ * Get simplified version of block ID
+ * which will be displayed to the user.
+ *
+ * It doesn't include block hash and parts have no leading zeros.
+ *
+ * examples:
+ * - 0020537612-5800a -> 20537612
+ */
+export function simplifyBlockId(id: string) {
+	return simplifyId(id, /\d{10}-[^-]{5}/, 1);
+}
+
+export function unifyArchiveBlock(block: ArchiveBlock, network: string): Block {
 	return {
 		...block,
+		network: getNetwork(network),
 		specVersion: block.spec.specVersion
 	};
 }
 
-function unifyExplorerSquidBlock(block: ExplorerSquidBlock): Block {
-	return block;
+export function unifyExplorerSquidBlock(block: ExplorerSquidBlock, network: string): Block {
+	return {
+		...block,
+		network: getNetwork(network),
+	};
 }
 
 export function blocksFilterToArchiveFilter(filter?: BlocksFilter) {
 	if (!filter) {
 		return undefined;
+	}
+
+	if ("simplifiedId" in filter) {
+		return {
+			height_eq: parseInt(filter.simplifiedId)
+		};
+	}
+
+	if ("hash" in filter) {
+		return {
+			hash_eq: filter.hash
+		};
+	}
+
+	if ("height" in filter) {
+		return {
+			height_eq: filter.height
+		};
 	}
 
 	return filter;
@@ -205,6 +229,23 @@ export function blocksFilterToExplorerSquidFilter(filter?: BlocksFilter) {
 		return undefined;
 	}
 
+	if ("simplifiedId" in filter) {
+		return {
+			height_eq: parseInt(filter.simplifiedId)
+		};
+	}
+
+	if ("hash" in filter) {
+		return {
+			hash_eq: filter.hash
+		};
+	}
+
+	if ("height" in filter) {
+		return {
+			height_eq: filter.height
+		};
+	}
+
 	return filter;
 }
-

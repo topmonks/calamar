@@ -1,0 +1,30 @@
+{
+  "itemsCount": "(4)",
+  "itemsTable": [
+    [
+      "18278717-3",
+      "Utility.batch_all",
+      "1qnJN7...4t8GT7",
+      "18278717-3"
+    ],
+    [
+      "18278717-3-1",
+      "Balances.transfer_allow_death",
+      "1qnJN7...4t8GT7",
+      "18278717-3"
+    ],
+    [
+      "18278717-3-2",
+      "Balances.transfer_allow_death",
+      "1qnJN7...4t8GT7",
+      "18278717-3"
+    ],
+    [
+      "18278717-3-3",
+      "Balances.transfer_allow_death",
+      "1qnJN7...4t8GT7",
+      "18278717-3"
+    ]
+  ],
+  "error": "Unexpected error occured while fetching itemsThis error is logged. No need to report it.Detailscalls error"
+}

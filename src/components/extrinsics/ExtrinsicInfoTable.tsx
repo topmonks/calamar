@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { Chip } from "@mui/material";
 
 import CrossIcon from "../../assets/cross-icon.png";
@@ -7,13 +8,15 @@ import { Extrinsic } from "../../model/extrinsic";
 import { Network } from "../../model/network";
 import { Resource } from "../../model/resource";
 
-import { encodeAddress } from "../../utils/formatAddress";
+import { encodeAddress } from "../../utils/address";
 
-import { AccountAddress } from "../AccountAddress";
+import { AccountAddress } from "../account/AccountAddress";
+import { BlockLink } from "../blocks/BlockLink";
+
 import { ButtonLink } from "../ButtonLink";
-import DataViewer from "../DataViewer";
+import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
-import { Link } from "../Link";
+import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
 
 export type ExtrinsicInfoTableProps = {
@@ -35,6 +38,12 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			error={extrinsic.error}
 		>
 			<ExtrinsicInfoTableAttribute
+				label="Network"
+				render={(data) =>
+					<NetworkBadge network={data.network} />
+				}
+			/>
+			<ExtrinsicInfoTableAttribute
 				label="Timestamp"
 				render={(data) =>
 					<Time time={data.timestamp} timezone utc />
@@ -54,9 +63,7 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<ExtrinsicInfoTableAttribute
 				label="Block"
 				render={(data) =>
-					<Link to={`/${network.name}/block/${data.blockId}`}>
-						{data.blockHeight}
-					</Link>
+					<BlockLink network={network} id={data.blockId} />
 				}
 				copyToClipboard={(data) => data.blockHeight.toString()}
 			/>

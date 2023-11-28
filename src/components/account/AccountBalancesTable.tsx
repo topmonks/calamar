@@ -1,22 +1,25 @@
 /** @jsxImportSource @emotion/react */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Alert } from "@mui/material";
 import { css } from "@emotion/react";
 import Decimal from "decimal.js";
 
-import { usePagination } from "../../hooks/usePagination";
 import { AccountBalance } from "../../model/accountBalance";
+import { PageInfo } from "../../model/pageInfo";
+import { PaginationOptions } from "../../model/paginationOptions";
+import { Resource } from "../../model/resource";
 import { SortDirection } from "../../model/sortDirection";
 import { SortOrder } from "../../model/sortOrder";
 import { SortProperty } from "../../model/sortProperty";
-import { Resource } from "../../model/resource";
 import { UsdRates } from "../../model/usdRates";
+
 import { compareProps } from "../../utils/compare";
 
-import { AccountAddress } from "../AccountAddress";
 import { Currency } from "../Currency";
 import { ErrorMessage } from "../ErrorMessage";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
+
+import { AccountAddress } from "./AccountAddress";
 
 const networkStyle = css`
 	display: flex;
@@ -62,22 +65,22 @@ const SortProperties = {
 	RESERVED: (balance: AccountBalanceWithUsdRate) => balanceSort(balance, "reserved")
 };
 
-export type AccountBalanceOverview = {
+export type AccountBalancesTableProps = {
 	balances: Resource<AccountBalance[]>;
 	usdRates: Resource<UsdRates>;
+	pagination: PaginationOptions;
+	onPageChange?: (page: number) => void;
 }
 
-const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [UsdRates]>;
+const AccountBalancesTableAttribute = ItemsTableAttribute<AccountBalance, SortProperty<AccountBalance>, [UsdRates|undefined]>;
 
-export const AccountBalancesTable = (props: AccountBalanceOverview) => {
-	const { balances, usdRates } = props;
+export const AccountBalancesTable = (props: AccountBalancesTableProps) => {
+	const { balances, usdRates, pagination, onPageChange } = props;
 
 	const [sort, setSort] = useState<SortOrder<SortProperty<AccountBalanceWithUsdRate>>>({
 		property: SortProperties.TOTAL,
 		direction: SortDirection.DESC
 	});
-
-	const pagination = usePagination();
 
 	const data = useMemo(() => {
 		return balances.data
@@ -92,26 +95,22 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 	}, [balances, usdRates, sort]);
 
 	const pageData = useMemo(() => {
-		return data?.slice(pagination.offset, pagination.offset + pagination.limit);
-	}, [data, pagination.offset, pagination.limit]);
+		return data?.slice((pagination.page - 1) * pagination.pageSize, pagination.page * pagination.pageSize);
+	}, [data, pagination.page, pagination.pageSize]);
 
-	useEffect(() => {
-		if (data) {
-			pagination.set({
-				...pagination,
-				hasNextPage: pagination.offset + pagination.limit < data.length
-			});
-		}
-	}, [data, pagination.offset, pagination.limit]);
+	const pageInfo = useMemo<PageInfo>(() => ({
+		page: pagination.page,
+		pageSize: pagination.pageSize,
+		totalPageCount: Math.ceil(data.length / pagination.pageSize),
+		hasPrevious: pagination.page > 0,
+		hasNext: pagination.page * pagination.pageSize < data.length,
+	}), [data, pagination]);
 
 	const handleSortSelected = useCallback((value: SortOrder<SortProperty<AccountBalance>>) => {
 		console.log("set sort", value);
 		setSort(value);
-		pagination.set({
-			...pagination,
-			offset: 0
-		});
-	}, [pagination]);
+		onPageChange?.(0);
+	}, [onPageChange]);
 
 	return (
 		<div>
@@ -120,9 +119,10 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 				additionalData={[usdRates.data]}
 				loading={balances.loading || usdRates.loading}
 				error={balances.error}
-				pagination={pagination}
+				pageInfo={pageInfo}
+				onPageChange={onPageChange}
 				sort={sort}
-				data-test="account-balances-table"
+				data-test="balances-items"
 			>
 				<AccountBalancesTableAttribute
 					label="Network"
@@ -170,7 +170,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 									amount={balance.balance.total}
 									currency={balance.network.symbol}
 									decimalPlaces="optimal"
-									usdRate={usdRates[balance.network.name]}
+									usdRate={usdRates?.[balance.network.name]}
 									showFullInTooltip
 									showUsdValue
 									data-test={`${balance.network.name}-balance-total`}
@@ -183,9 +183,10 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							}
 							{balance.error &&
 								<ErrorMessage
-									message="Unexpected error occured while fetching data"
-									details={balance.error.message}
 									data-test={`${balance.network.name}-balance-error`}
+									message="Unexpected error occured while fetching data"
+									details={balance.error}
+									report
 								/>
 							}
 						</>
@@ -203,7 +204,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							amount={balance.balance.free}
 							currency={balance.network.symbol}
 							decimalPlaces="optimal"
-							usdRate={usdRates[balance.network.name]}
+							usdRate={usdRates?.[balance.network.name]}
 							showFullInTooltip
 							showUsdValue
 							data-test={`${balance.network.name}-balance-free`}
@@ -222,7 +223,7 @@ export const AccountBalancesTable = (props: AccountBalanceOverview) => {
 							amount={balance.balance.reserved}
 							currency={balance.network.symbol}
 							decimalPlaces="optimal"
-							usdRate={usdRates[balance.network.name]}
+							usdRate={usdRates?.[balance.network.name]}
 							showFullInTooltip
 							showUsdValue
 							data-test={`${balance.network.name}-balance-reserved`}

@@ -1,24 +1,27 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect } from "react";
 import { Theme, css } from "@emotion/react";
 
-import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
-import { Card, CardHeader, CardRow } from "../components/Card";
-import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
-import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
-import { TabbedContent, TabPane } from "../components/TabbedContent";
-import { useTransfers } from "../hooks/useTransfers";
-import TransfersTable from "../components/transfers/TransfersTable";
-import { hasSupport } from "../services/networksService";
-import { useBlocks } from "../hooks/useBlocks";
+import HoldersTable from "../components/account/HoldersTable";
 import BlocksTable from "../components/blocks/BlocksTable";
-import { useBalances } from "../hooks/useBalances";
-import BalancesTable from "../components/balances/BalancesTable";
-import { useStats } from "../hooks/useStats";
+import { Card, CardHeader, CardRow } from "../components/Card";
+import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
 import { NetworkStats } from "../components/network/NetworkStats";
-import { useUsdRates } from "../hooks/useUsdRates";
-import { useRootLoaderData } from "../hooks/useRootLoaderData";
 import { NetworkTokenDistribution } from "../components/network/NetworkTokenDistribution";
+import { TabbedContent, TabPane } from "../components/TabbedContent";
+import TransfersTable from "../components/transfers/TransfersTable";
+
+import { useBalances } from "../hooks/useBalances";
+import { useBlocks } from "../hooks/useBlocks";
+import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
+import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
+import { usePage } from "../hooks/usePage";
+import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
+import { useStats } from "../hooks/useStats";
+import { useTab } from "../hooks/useTab";
+import { useTransfers } from "../hooks/useTransfers";
+import { useUsdRates } from "../hooks/useUsdRates";
+
+import { hasSupport } from "../services/networksService";
 
 const networkIconStyle = css`
 	vertical-align: text-bottom;
@@ -36,12 +39,33 @@ const tokenDistributionStyle = (theme: Theme) => css`
 `;
 
 export const NetworkPage = () => {
-	const { network } = useRootLoaderData();
+	const { network } = useNetworkLoaderData();
 
-	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, "id_DESC");
-	const blocks = useBlocks(network.name, undefined, "id_DESC");
-	const transfers = useTransfers(network.name, undefined, "id_DESC");
-	const topHolders = useBalances(network.name, undefined, "total_DESC");
+	const [tab, setTab] = useTab();
+	const [page, setPage] = usePage();
+
+	console.log("tab", tab);
+
+	const extrinsics = useExtrinsicsWithoutTotalCount(network.name, undefined, {
+		page: tab === "extrinsics" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const blocks = useBlocks(network.name, undefined, {
+		page: tab === "blocks" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const transfers = useTransfers(network.name, undefined, {
+		page: tab === "transfers" ? page : 1,
+		refreshFirstPage: true
+	});
+
+	const topHolders = useBalances(network.name, undefined, {
+		order: "total_DESC",
+		page: tab === "top-holders" ? page : 1,
+		refreshFirstPage: true
+	});
 
 	const stats = useStats(network.name, undefined);
 
@@ -49,18 +73,19 @@ export const NetworkPage = () => {
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
 
-	useEffect(() => {
+	// TODO
+	/*useEffect(() => {
 		if (extrinsics.pagination.offset === 0) {
 			const interval = setInterval(extrinsics.refetch, 3000);
 			return () => clearInterval(interval);
 		}
-	}, [extrinsics]);
+	}, [extrinsics]);*/
 
 	return (
 		<>
 			<CardRow>
-				<Card data-test="network-stats">
-					<CardHeader>
+				<Card data-test="item-info">
+					<CardHeader data-test="item-header">
 						<img css={networkIconStyle} src={network.icon} />
 						{network.displayName}
 					</CardHeader>
@@ -80,51 +105,69 @@ export const NetworkPage = () => {
 					</Card>
 				}
 			</CardRow>
-
-
-			<Card data-test="network-related-items">
-				<TabbedContent>
+			<Card data-test="related-items">
+				<TabbedContent currentTab={tab} onTabChange={setTab}>
 					<TabPane
 						label="Extrinsics"
-						count={extrinsics.pagination.totalCount}
+						count={extrinsics.totalCount}
 						loading={extrinsics.loading}
 						error={extrinsics.error}
 						value="extrinsics"
 					>
-						<ExtrinsicsTable network={network} extrinsics={extrinsics} showAccount showTime />
+						<ExtrinsicsTable
+							network={network}
+							extrinsics={extrinsics}
+							showAccount
+							showTime
+							onPageChange={setPage}
+						/>
 					</TabPane>
 					<TabPane
 						label="Blocks"
-						count={blocks.pagination.totalCount}
+						count={blocks.totalCount}
 						loading={blocks.loading}
 						error={blocks.error}
 						value="blocks"
 					>
-						<BlocksTable network={network} blocks={blocks} showValidator showTime />
+						<BlocksTable
+							network={network}
+							blocks={blocks}
+							showValidator
+							showTime
+							onPageChange={setPage}
+						/>
 					</TabPane>
-
-
 					{hasSupport(network.name, "main-squid") &&
-							<TabPane
-								label="Transfers"
-								count={transfers.pagination.totalCount}
-								loading={transfers.loading}
-								error={transfers.error}
-								value="transfers"
-							>
-								<TransfersTable network={network} transfers={transfers} showTime />
-							</TabPane>
+						<TabPane
+							label="Transfers"
+							count={transfers.totalCount}
+							loading={transfers.loading}
+							error={transfers.error}
+							value="transfers"
+						>
+							<TransfersTable
+								network={network}
+								transfers={transfers}
+								showTime
+								onPageChange={setPage}
+							/>
+						</TabPane>
 					}
 					{hasSupport(network.name, "stats-squid") &&
-							<TabPane
-								label="Top holders"
-								count={topHolders.pagination.totalCount}
-								loading={topHolders.loading}
-								error={topHolders.error}
-								value="top-holders"
-							>
-								<BalancesTable network={network} balances={topHolders} usdRates={usdRates} />
-							</TabPane>
+						<TabPane
+							label="Top holders"
+							count={topHolders.totalCount}
+							loading={topHolders.loading}
+							error={topHolders.error}
+							value="holders"
+						>
+							<HoldersTable
+								network={network}
+								balances={topHolders}
+								usdRates={usdRates}
+								onPageChange={setPage}
+							/>
+						</TabPane>
 					}
 				</TabbedContent>
 			</Card>

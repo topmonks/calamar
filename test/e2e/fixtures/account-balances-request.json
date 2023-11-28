@@ -1,0 +1,140 @@
+[
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "\n\t\t\t\tquery ($address: String!) {\n\t\t\t\t\tbalance: accountById(id: $address) {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tfree\n\t\t\t\t\t\treserved\n\t\t\t\t\t\ttotal\n\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\n",
+        "variables": {
+          "address": "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "balance": {
+            "id": "GLjawuGpmgzma4JkR4A56esGofJVKXWdDAuGeF6o5D66wGE",
+            "free": "4705349881534",
+            "reserved": "10000000000000",
+            "total": "14705349881534",
+            "updatedAtBlock": 19780727
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "\n\t\t\t\tquery ($address: String!) {\n\t\t\t\t\tbalance: accountById(id: $address) {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tfree\n\t\t\t\t\t\treserved\n\t\t\t\t\t\ttotal\n\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\n",
+        "variables": {
+          "address": "14mR4xpU4BwYTTFNwMJ7KJ81yqNiNxGUFL4e3GxVsN27YNTE"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "balance": {
+            "id": "14mR4xpU4BwYTTFNwMJ7KJ81yqNiNxGUFL4e3GxVsN27YNTE",
+            "free": "87397896679124",
+            "reserved": "1252580000000",
+            "total": "88650476679124",
+            "updatedAtBlock": 17113189
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "\n\t\t\t\tquery ($address: String!) {\n\t\t\t\t\tbalance: accountById(id: $address) {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tfree\n\t\t\t\t\t\treserved\n\t\t\t\t\t\ttotal\n\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\n",
+        "variables": {
+          "address": "EMRpBNnfAqRb62b14cxmnCdihtUjEeyh6tfyhGwnGwxjY8F"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "balance": {
+            "id": "EMRpBNnfAqRb62b14cxmnCdihtUjEeyh6tfyhGwnGwxjY8F",
+            "free": "292972938052712",
+            "reserved": "33333333000",
+            "total": "293006271385712",
+            "updatedAtBlock": 18144450
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "\n\t\t\t\tquery ($address: String!) {\n\t\t\t\t\tbalance: accountById(id: $address) {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tfree\n\t\t\t\t\t\treserved\n\t\t\t\t\t\ttotal\n\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\n",
+        "variables": {
+          "address": "12n7JCHytb5yGyDfBzrv1yfnRjbtcsPwKDnQkKzLrZkzB68m"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "balance": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-kusama/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "\n\t\t\t\tquery ($address: String!) {\n\t\t\t\t\tbalance: accountById(id: $address) {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tfree\n\t\t\t\t\t\treserved\n\t\t\t\t\t\ttotal\n\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\n",
+        "variables": {
+          "address": "0x123456789"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "balance": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "url": "https://squid.subsquid.io/gs-stats-polkadot/graphql",
+      "method": "POST",
+      "postData": {
+        "query": "\n\t\t\t\tquery ($address: String!) {\n\t\t\t\t\tbalance: accountById(id: $address) {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tfree\n\t\t\t\t\t\treserved\n\t\t\t\t\t\ttotal\n\t\t\t\t\t\tupdatedAtBlock\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\n",
+        "variables": {
+          "address": "0x123456789"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "balance": null
+        }
+      }
+    }
+  }
+]
