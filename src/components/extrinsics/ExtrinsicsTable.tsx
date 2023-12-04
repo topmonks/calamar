@@ -49,7 +49,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 				label="Name"
 				render={(extrinsic) =>
 					<ButtonLink
-						to={`/${network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
+						to={`/search/extrinsics?query=${extrinsic.palletName}.${extrinsic.callName}&network=${network.name}`}
 						size="small"
 						color="secondary"
 					>

@@ -3,18 +3,15 @@ import { ExplorerSquidExtrinsic } from "../model/explorer-squid/explorerSquidExt
 
 import { Extrinsic } from "../model/extrinsic";
 import { ItemsConnection } from "../model/itemsConnection";
-import { ItemsCounter } from "../model/itemsCounter";
 import { PaginationOptions } from "../model/paginationOptions";
 
 import { decodeAddress } from "../utils/address";
 import { simplifyId } from "../utils/id";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
-import { lowerFirst, upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
-import { getCallRuntimeMetadata, getCallsRuntimeMetadata, getPalletsRuntimeMetadata } from "./runtimeMetadataService";
-import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
+import { getRuntimeMetadataCall } from "./runtimeMetadataService";
 
 export type ExtrinsicsFilter =
 	undefined
@@ -43,27 +40,6 @@ export async function getExtrinsics(
 	}
 
 	return getArchiveExtrinsics(network, filter, order, pagination, fetchTotalCount);
-}
-
-export async function normalizeExtrinsicName(network: string, name: string) {
-	let [palletName = "", callName = ""] = name.toLowerCase().split(".");
-
-	const latestRuntimeSpecVersion = await getLatestRuntimeSpecVersion(network);
-
-	const pallets = await getPalletsRuntimeMetadata(network, latestRuntimeSpecVersion);
-	const pallet = await pallets.and(it => it.name.toLowerCase() === palletName).first();
-
-	const calls = pallet && await getCallsRuntimeMetadata(network, latestRuntimeSpecVersion, pallet.name);
-	const call = await calls?.and(it => it.name.toLowerCase() === callName).first();
-
-	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	palletName = pallet?.name || upperFirst(palletName);
-	callName = call?.name || lowerFirst(callName);
-
-	return {
-		pallet: palletName,
-		call: callName
-	};
 }
 
 /*** PRIVATE ***/
@@ -216,7 +192,7 @@ export function simplifyExtrinsicId(id: string) {
 
 export async function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network: string): Promise<Extrinsic> {
 	const [palletName, callName] = extrinsic.call.name.split(".") as [string, string];
-	const specVersion = extrinsic.block.spec.specVersion;
+	const specVersion = extrinsic.block.spec.specVersion.toString();
 
 	return {
 		...extrinsic,
@@ -233,14 +209,14 @@ export async function unifyArchiveExtrinsic(extrinsic: ArchiveExtrinsic, network
 		tip: extrinsic.tip ? BigInt(extrinsic.tip) : null,
 		specVersion,
 		metadata: {
-			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+			call: await getRuntimeMetadataCall(network, specVersion, palletName, callName)
 		}
 	};
 }
 
 export async function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrinsic, network: string): Promise<Extrinsic> {
 	const {palletName, callName} = extrinsic.mainCall;
-	const specVersion = extrinsic.block.specVersion;
+	const specVersion = extrinsic.block.specVersion.toString();
 
 	return {
 		...extrinsic,
@@ -259,14 +235,8 @@ export async function unifyExplorerSquidExtrinsic(extrinsic: ExplorerSquidExtrin
 		tip: extrinsic.tip ? BigInt(extrinsic.tip) : null,
 		specVersion,
 		metadata: {
-			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+			call: await getRuntimeMetadataCall(network, specVersion, palletName, callName)
 		}
-	};
-}
-
-export async function getExtrinsicMetadata(extrinsic: Omit<Extrinsic, "metadata">): Promise<Extrinsic["metadata"]> {
-	return {
-		call: await getCallRuntimeMetadata(extrinsic.network.name, extrinsic.specVersion, extrinsic.palletName, extrinsic.callName)
 	};
 }
 

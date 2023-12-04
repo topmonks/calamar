@@ -14,14 +14,13 @@ import { HomePage } from "./screens/home";
 import { NetworkPage } from "./screens/network";
 import { NotFoundPage } from "./screens/notFound";
 import { SearchPage } from "./screens/search";
-import { RuntimePage } from "./screens/runtime";
+import { RuntimePalletPage, RuntimePage, RuntimePalletsPage, RuntimeCallPage, RuntimeEventPage, RuntimeConstantPage, RuntimeStoragePage, RuntimeErrorPage } from "./screens/runtime";
 
 import { simplifyCallId } from "./services/callsService";
 import { simplifyBlockId } from "./services/blocksService";
 import { simplifyExtrinsicId } from "./services/extrinsicsService";
 import { simplifyEventId } from "./services/eventsService";
-
-import { config } from "./config";
+import { normalizeCallName, normalizeConstantName, normalizeErrorName, normalizeEventName, normalizePalletName, normalizeStorageName } from "./services/runtimeMetadataService";
 
 const networkLoader = ({ params }: LoaderFunctionArgs) => {
 	const { network: networkName } = params as { network: string };
@@ -148,11 +147,133 @@ export const routes: RouteObject[] = [
 					},
 					{
 						path: "runtime",
-						element: config.devtools.enabled ? <RuntimePage /> : <NotFoundPage />,
-					},
-					{
-						path: "runtime/:specVersion",
-						element: config.devtools.enabled ? <RuntimePage /> : <NotFoundPage />,
+						children: [
+							{
+								index: true,
+								element: <RuntimePage />,
+							},
+							{
+								path: ":specVersion",
+								children: [
+									{
+										index: true,
+										element: <RuntimePalletsPage />,
+									},
+									{
+										id: "runtime-pallet",
+										path: ":palletName",
+										loader: async (args) => {
+											const { params } = args;
+											const { specVersion, palletName } = params as { specVersion: string, palletName: string };
+
+											const { network } = networkLoader(args);
+
+											console.log("pallet loader", specVersion, palletName);
+
+											return {
+												palletName: await normalizePalletName(network, palletName, specVersion)
+											};
+										},
+										children: [
+											{
+												path: ":tab?",
+												element: <RuntimePalletPage />,
+											},
+											{
+												id: "runtime-call",
+												path: "calls/:callName",
+												loader: async (args) => {
+													const { params } = args;
+													const { specVersion, palletName, callName } = params as { specVersion: string, palletName: string, callName: string };
+
+													const { network } = networkLoader(args);
+
+													const callFullName = `${palletName}.${callName}`;
+													const normalizedCallFullName = await normalizeCallName(network, callFullName, specVersion);
+
+													return {
+														callName: normalizedCallFullName.split(".")[1] as string
+													};
+												},
+												element: <RuntimeCallPage />
+											},
+											{
+												id: "runtime-event",
+												path: "events/:eventName",
+												loader: async (args) => {
+													const { params } = args;
+													const { specVersion, palletName, eventName } = params as { specVersion: string, palletName: string, eventName: string };
+
+													const { network } = networkLoader(args);
+
+													const eventFullName = `${palletName}.${eventName}`;
+													const normalizedEventFullName = await normalizeEventName(network, eventFullName, specVersion);
+
+													return {
+														eventName: normalizedEventFullName.split(".")[1] as string
+													};
+												},
+												element: <RuntimeEventPage />
+											},
+											{
+												id: "runtime-constant",
+												path: "constants/:constantName",
+												loader: async (args) => {
+													const { params } = args;
+													const { specVersion, palletName, constantName } = params as { specVersion: string, palletName: string, constantName: string };
+
+													const { network } = networkLoader(args);
+
+													const constantFullName = `${palletName}.${constantName}`;
+													const normalizedConstantFullName = await normalizeConstantName(network, constantFullName, specVersion);
+
+													return {
+														constantName: normalizedConstantFullName.split(".")[1] as string
+													};
+												},
+												element: <RuntimeConstantPage />
+											},
+											{
+												id: "runtime-storage",
+												path: "storages/:storageName",
+												loader: async (args) => {
+													const { params } = args;
+													const { specVersion, palletName, storageName } = params as { specVersion: string, palletName: string, storageName: string };
+
+													const { network } = networkLoader(args);
+
+													const storageFullName = `${palletName}.${storageName}`;
+													const normalizedStorageFullName = await normalizeStorageName(network, storageFullName, specVersion);
+
+													return {
+														storageName: normalizedStorageFullName.split(".")[1] as string
+													};
+												},
+												element: <RuntimeStoragePage />
+											},
+											{
+												id: "runtime-error",
+												path: "errors/:errorName",
+												loader: async (args) => {
+													const { params } = args;
+													const { specVersion, palletName, errorName } = params as { specVersion: string, palletName: string, errorName: string };
+
+													const { network } = networkLoader(args);
+
+													const errorFullName = `${palletName}.${errorName}`;
+													const normalizedErrorFullName = await normalizeErrorName(network, errorFullName, specVersion);
+
+													return {
+														errorName: normalizedErrorFullName.split(".")[1] as string
+													};
+												},
+												element: <RuntimeErrorPage />
+											}
+										]
+									},
+								]
+							}
+						]
 					},
 					{
 						path: "*",

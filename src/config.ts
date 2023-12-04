@@ -12,7 +12,4 @@ export const config = {
 		buildTimestamp: buildTimeEnv.REACT_APP_BUILD_TIMESTAMP,
 		publishTimestamp: runtimeEnv.REACT_APP_PUBLISH_TIMESTAMP
 	},
-	devtools: {
-		enabled: localStorage.getItem("devtools") === "1"
-	}
 };

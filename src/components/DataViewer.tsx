@@ -4,15 +4,12 @@ import { css, Theme } from "@emotion/react";
 import { IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
-import { config } from "../config";
-
-import { DecodedArg } from "../model/decodedMetadata";
 import { Network } from "../model/network";
+import { RuntimeMetadataArg } from "../model/runtime-metadata/runtimeMetadataArg";
 
 import CopyToClipboardButton from "./CopyToClipboardButton";
 import { DataViewerValueJson } from "./DataViewerValueJson";
 import { DataViewerValueParsed } from "./DataViewerValueParsed";
-import { Devtool } from "./Devtool";
 
 const dataViewerStyle = css`
 	display: flex;
@@ -126,27 +123,26 @@ const closeButtonStyle = css`
 	z-index: 10;
 `;
 
-export type DataViewerMode = "json" | "parsed" | "meta";
+export type DataViewerMode = "json" | "parsed";
 
-const MODES: (DataViewerMode|false)[] = [
+const MODES: DataViewerMode[] = [
 	"parsed",
-	"json",
-	config.devtools.enabled && "meta"
+	"json"
 ];
 
 const modeLabels: Record<DataViewerMode, ReactNode> = {
 	parsed: "Parsed",
 	json: "Raw",
-	meta: <Devtool>Meta</Devtool>
 };
 
 type ModeSelectProps = {
+	modes: DataViewerMode[];
 	value: DataViewerMode;
 	onChange: (mode: DataViewerMode) => void;
 };
 
 const ModeSelect = (props: ModeSelectProps) => {
-	const {value, onChange} = props;
+	const {modes, value, onChange} = props;
 
 	return (
 		<ToggleButtonGroup
@@ -155,7 +151,7 @@ const ModeSelect = (props: ModeSelectProps) => {
 			value={value}
 			onChange={(_, mode) => mode && onChange(mode)}
 		>
-			{MODES.map(mode => mode &&
+			{modes.map(mode => mode &&
 				<ToggleButton key={mode} css={modeButtonStyle} value={mode}>
 					{modeLabels[mode]}
 				</ToggleButton>
@@ -205,8 +201,8 @@ const DataViewerModalHandle = (props: DataViewerModalHandleProps) => {
 export type DataViewerProps = {
 	network: Network;
 	data: any;
-	metadata?: DecodedArg[];
-	modes?: DataViewerMode[];
+	rawData?: any;
+	metadata?: RuntimeMetadataArg[];
 	defaultMode?: DataViewerMode;
 	simple?: boolean;
 	copyToClipboard?: boolean;
@@ -216,6 +212,7 @@ export const DataViewer = (props: DataViewerProps) => {
 	const {
 		network,
 		data,
+		rawData = data,
 		metadata,
 		defaultMode = MODES.find(Boolean),
 		simple,
@@ -235,8 +232,8 @@ export const DataViewer = (props: DataViewerProps) => {
 	}, [data]);
 
 	const jsonContent = useMemo(() => (!simple || defaultMode === "json") && (
-		<DataViewerValueJson value={data} />
-	), [data]);
+		<DataViewerValueJson value={rawData} />
+	), [rawData]);
 
 	const parsedContent = useMemo(() => (!simple || defaultMode === "parsed") && (
 		<DataViewerValueParsed
@@ -256,19 +253,18 @@ export const DataViewer = (props: DataViewerProps) => {
 			]}
 		>
 			<div css={[controlsStyle, simple && simpleControlsStyle]}>
-				{!simple && <ModeSelect value={mode} onChange={setMode} />}
+				{!simple && <ModeSelect modes={MODES} value={mode} onChange={setMode} />}
 				{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
 				{!simple &&
 					<DataViewerModalHandle>
 						<div css={dataViewerStyle}>
 							<div css={[controlsStyle]}>
-								<ModeSelect value={mode} onChange={setMode} />
+								<ModeSelect modes={MODES} value={mode} onChange={setMode} />
 								{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
 							</div>
 							<div css={scrollAreaStyle}>
 								{mode === "json" && jsonContent}
 								{mode === "parsed" && parsedContent}
-								{metadata && mode === "meta" && <DataViewerValueJson value={metadata} />}
 							</div>
 						</div>
 					</DataViewerModalHandle>
@@ -277,7 +273,6 @@ export const DataViewer = (props: DataViewerProps) => {
 			<div css={scrollAreaStyle}>
 				{mode === "json" && jsonContent}
 				{mode === "parsed" && parsedContent}
-				{mode === "meta" && <DataViewerValueJson value={metadata} />}
 			</div>
 		</div>
 	);

@@ -17,7 +17,7 @@ export async function getLatestRuntimeSpecVersion(network: string) {
 		throw new Error(`Cannot get latest spec for network '${network}'`);
 	}
 
-	return latestSpec.specVersion;
+	return latestSpec.specVersion.toString();
 }
 
 export async function getRuntimeSpecVersions(network: string) {
@@ -31,5 +31,5 @@ export async function getRuntimeSpecVersions(network: string) {
 		`
 	);
 
-	return response.metadata.map(it => it.specVersion);
+	return response.metadata.map(it => it.specVersion.toString());
 }

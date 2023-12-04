@@ -1,5 +1,8 @@
 export interface RuntimeMetadataPallet {
 	network: string;
-	specVersion: number;
+	specVersion: string;
 	name: string;
+	callsCount: number;
+	eventsCount: number;
+	constantsCount: number;
 }

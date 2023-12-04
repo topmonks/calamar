@@ -5,6 +5,7 @@ import HoldersTable from "../components/account/HoldersTable";
 import BlocksTable from "../components/blocks/BlocksTable";
 import { Card, CardHeader, CardRow } from "../components/Card";
 import ExtrinsicsTable from "../components/extrinsics/ExtrinsicsTable";
+import { Link } from "../components/Link";
 import { NetworkStats } from "../components/network/NetworkStats";
 import { NetworkTokenDistribution } from "../components/network/NetworkTokenDistribution";
 import { TabbedContent, TabPane } from "../components/TabbedContent";
@@ -14,8 +15,9 @@ import { useBalances } from "../hooks/useBalances";
 import { useBlocks } from "../hooks/useBlocks";
 import { useDOMEventTrigger } from "../hooks/useDOMEventTrigger";
 import { useExtrinsicsWithoutTotalCount } from "../hooks/useExtrinsicsWithoutTotalCount";
-import { usePage } from "../hooks/usePage";
+import { useLatestRuntimeSpecVersion } from "../hooks/useLatestRuntimeSpecVersion";
 import { useNetworkLoaderData } from "../hooks/useNetworkLoaderData";
+import { usePage } from "../hooks/usePage";
 import { useStats } from "../hooks/useStats";
 import { useTab } from "../hooks/useTab";
 import { useTransfers } from "../hooks/useTransfers";
@@ -23,10 +25,19 @@ import { useUsdRates } from "../hooks/useUsdRates";
 
 import { hasSupport } from "../services/networksService";
 
+const itemInfoStyle = css`
+	display: flex;
+	flex-direction: column;
+`;
+
 const networkIconStyle = css`
 	vertical-align: text-bottom;
 	margin-right: 8px;
 	height: 32px;
+`;
+
+const latestSpecVersionStyle = css`
+	margin-top: auto;
 `;
 
 const tokenDistributionStyle = (theme: Theme) => css`
@@ -69,22 +80,16 @@ export const NetworkPage = () => {
 
 	const stats = useStats(network.name, undefined);
 
+	const latestRuntimeSpecVersion = useLatestRuntimeSpecVersion(network.name);
+
 	const usdRates = useUsdRates();
 
 	useDOMEventTrigger("data-loaded", !extrinsics.loading && !blocks.loading && !transfers.loading && !topHolders.loading && !usdRates.loading);
 
-	// TODO
-	/*useEffect(() => {
-		if (extrinsics.pagination.offset === 0) {
-			const interval = setInterval(extrinsics.refetch, 3000);
-			return () => clearInterval(interval);
-		}
-	}, [extrinsics]);*/
-
 	return (
 		<>
 			<CardRow>
-				<Card data-test="item-info">
+				<Card data-test="item-info" css={itemInfoStyle}>
 					<CardHeader data-test="item-header">
 						<img css={networkIconStyle} src={network.icon} />
 						{network.displayName}
@@ -92,6 +97,9 @@ export const NetworkPage = () => {
 					{hasSupport(network.name, "stats-squid") &&
 						<NetworkStats stats={stats} network={network} />
 					}
+					<div css={latestSpecVersionStyle}>
+						Latest spec version: <Link to={`/${network.name}/runtime`}>{latestRuntimeSpecVersion.data}</Link>
+					</div>
 				</Card>
 				{hasSupport(network.name, "stats-squid") &&
 					<Card css={tokenDistributionStyle} data-test="network-token-distribution">

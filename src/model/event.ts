@@ -1,5 +1,5 @@
-import { DecodedEvent } from "./decodedMetadata";
 import { Network } from "./network";
+import { RuntimeMetadataEvent } from "./runtime-metadata/runtimeMetadataEvent";
 
 export type Event = {
 	id: string;
@@ -9,11 +9,11 @@ export type Event = {
 	blockId: string;
 	blockHeight: number;
 	timestamp: string;
-	specVersion: number;
+	specVersion: string;
 	extrinsicId: string|null;
 	callId: string|null;
 	args: any|null;
 	metadata: {
-		event?: DecodedEvent
+		event?: RuntimeMetadataEvent
 	}
 }
