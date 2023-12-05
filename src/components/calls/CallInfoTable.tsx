@@ -13,13 +13,15 @@ import { AccountAddress } from "../account/AccountAddress";
 import { BlockLink } from "../blocks/BlockLink";
 import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
 
-import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
+import { Link } from "../Link";
 import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
 
 import { CallLink } from "./CallLink";
+import { CallNameButton } from "./CallNameButton";
+import { CallRuntimeMetadataButton } from "./CallRuntimeMetadataButton";
 
 export type CallInfoTableProps = {
 	network: Network;
@@ -105,13 +107,10 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			<CallInfoTableAttribute
 				label="Name"
 				render={(data) =>
-					<ButtonLink
-						to={`/search/extrinsics?query=${data.palletName}.${data.callName}&network=${network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{data.palletName}.{data.callName}
-					</ButtonLink>
+					<>
+						<CallNameButton call={data} />
+						{data.metadata.call && <CallRuntimeMetadataButton call={data} />}
+					</>
 				}
 			/>
 			<CallInfoTableAttribute
@@ -127,7 +126,11 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 			/>
 			<CallInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.specVersion}
+				render={(data) =>
+					<Link to={`/${data.network.name}/runtime/${data.specVersion}`}>
+						{data.specVersion}
+					</Link>
+				}
 			/>
 		</InfoTable>
 	);

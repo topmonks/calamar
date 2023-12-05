@@ -4,9 +4,9 @@ import { SearchResultItem } from "../../model/searchResultItem";
 
 import { AccountAddress } from "../account/AccountAddress";
 
-import { ButtonLink } from "../ButtonLink";
 import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
-import { Link } from "../Link";
+import { ExtrinsicNameButton } from "../extrinsics/ExtrinsicNameButton";
+
 import { Time } from "../Time";
 
 import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
@@ -38,15 +38,7 @@ export const ExtrinsicSearchResultsTable = (props: ExtrinsicSearchResultsTable) 
 			/>
 			<SearchResultsTableItemAttribute<Extrinsic>
 				label="Name"
-				render={(extrinsic) => (
-					<ButtonLink
-						to={`/search/extrinsics?query=${extrinsic.palletName}.${extrinsic.callName}&network=${extrinsic.network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{extrinsic.palletName}.{extrinsic.callName}
-					</ButtonLink>
-				)}
+				render={(extrinsic) => <ExtrinsicNameButton extrinsic={extrinsic} />}
 			/>
 			<SearchResultsTableItemAttribute<Extrinsic>
 				label="Account"

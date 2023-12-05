@@ -6,8 +6,8 @@ import { PaginatedResource } from "../../model/paginatedResource";
 
 import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
 import { EventLink } from "../events/EventLink";
+import { EventNameButton } from "../events/EventNameButton";
 
-import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 
 import { SearchResultsTable, SearchResultsTableItemAttribute, SearchResultsTableProps } from "./SearchResultsTable";
@@ -43,15 +43,7 @@ export const EventSearchResultsTable = (props: EventSearchResultsTable) => {
 			/>
 			<SearchResultsTableItemAttribute<Event>
 				label="Name"
-				render={(event) => (
-					<ButtonLink
-						to={`/search/events?query=${event.palletName}.${event.eventName}&network=${event.network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{event.palletName}.{event.eventName}
-					</ButtonLink>
-				)}
+				render={(event) => <EventNameButton event={event} />}
 			/>
 			<SearchResultsTableItemAttribute<Event>
 				label="Extrinsic"

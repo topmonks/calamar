@@ -8,6 +8,7 @@ import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 import { Time } from "../Time";
 
 import { ExtrinsicLink } from "./ExtrinsicLink";
+import { ExtrinsicNameButton } from "./ExtrinsicNameButton";
 
 export type ExtrinsicsTableProps = {
 	network: Network;
@@ -47,15 +48,7 @@ function ExtrinsicsTable(props: ExtrinsicsTableProps) {
 			/>
 			<ExtrinsicsTableAttribute
 				label="Name"
-				render={(extrinsic) =>
-					<ButtonLink
-						to={`/search/extrinsics?query=${extrinsic.palletName}.${extrinsic.callName}&network=${network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{extrinsic.palletName}.{extrinsic.callName}
-					</ButtonLink>
-				}
+				render={(extrinsic) => <ExtrinsicNameButton extrinsic={extrinsic} />}
 			/>
 			{showAccount &&
 				<ExtrinsicsTableAttribute

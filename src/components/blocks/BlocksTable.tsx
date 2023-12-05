@@ -5,6 +5,7 @@ import { PaginatedResource } from "../../model/paginatedResource";
 import { AccountAddress } from "../account/AccountAddress";
 
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
+import { Link } from "../Link";
 import { Time } from "../Time";
 
 import { BlockLink } from "./BlockLink";
@@ -47,7 +48,11 @@ function ExtrinsicsTable(props: BlocksTableProps) {
 			/>
 			<BlocksTableAttribute
 				label="Spec version"
-				render={(block) => block.specVersion}
+				render={(block) =>
+					<Link to={`/${block.network.name}/runtime/${block.specVersion}`}>
+						{block.specVersion}
+					</Link>
+				}
 			/>
 			{showValidator &&
 				<BlocksTableAttribute

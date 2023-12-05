@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import { css, Theme } from "@emotion/react";
-import { IconButton, Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { IconButton, Modal, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
+import { AutoStories, Close } from "@mui/icons-material";
 
 import { Network } from "../model/network";
 import { RuntimeMetadataArg } from "../model/runtime-metadata/runtimeMetadataArg";
@@ -91,6 +91,7 @@ const simpleControlsStyle = css`
 	align-items: flex-start;
 	margin-bottom: 0;
 	margin-left: 12px;
+	padding-top: 2px;
 `;
 
 const modeButtonsStyle = css`
@@ -104,21 +105,20 @@ const modeButtonStyle = css`
 	line-height: 24px;
 `;
 
-const fullscreenButtonStyle = css`
-	padding: 2px;
-	margin-left: 8px;
-`;
+const buttonStyle = css`
+	margin: -4px 0;
+	margin-left: 4px;
 
-const copyButtonStyle = css`
-	padding: 2px;
+	&:last-child {
+		margin-right: -2px;
+	}
 `;
 
 const closeButtonStyle = css`
 	position: absolute;
 	top: 0;
 	right: 0;
-	margin: 12px;
-	padding: 0;
+	margin: 8px;
 
 	z-index: 10;
 `;
@@ -169,7 +169,7 @@ const DataViewerModalHandle = (props: DataViewerModalHandleProps) => {
 
 	return (
 		<>
-			<IconButton css={fullscreenButtonStyle} onClick={() => setShowModal(true)}>
+			<IconButton css={buttonStyle} onClick={() => setShowModal(true)}>
 				<svg
 					height="20"
 					viewBox="0 0 20 20"
@@ -254,13 +254,13 @@ export const DataViewer = (props: DataViewerProps) => {
 		>
 			<div css={[controlsStyle, simple && simpleControlsStyle]}>
 				{!simple && <ModeSelect modes={MODES} value={mode} onChange={setMode} />}
-				{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
+				{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={buttonStyle} />}
 				{!simple &&
 					<DataViewerModalHandle>
 						<div css={dataViewerStyle}>
 							<div css={[controlsStyle]}>
 								<ModeSelect modes={MODES} value={mode} onChange={setMode} />
-								{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={copyButtonStyle} />}
+								{copyToClipboard && <CopyToClipboardButton value={copyToClipboardValue} css={buttonStyle} />}
 							</div>
 							<div css={scrollAreaStyle}>
 								{mode === "json" && jsonContent}

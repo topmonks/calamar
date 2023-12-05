@@ -49,7 +49,7 @@ export function RuntimeMetadataConstantsTable(props: ConstantsTableProps) {
 			<RuntimeMetadataConstantsTableAttribute
 				label="Description"
 				render={(data) => (
-					<RuntimeMetadataDescription onlyLine={1} ellipsis>
+					<RuntimeMetadataDescription lineClamp={1}>
 						{data.description}
 					</RuntimeMetadataDescription>
 				)}

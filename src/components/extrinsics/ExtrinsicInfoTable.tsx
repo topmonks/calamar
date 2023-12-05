@@ -13,11 +13,14 @@ import { encodeAddress } from "../../utils/address";
 import { AccountAddress } from "../account/AccountAddress";
 import { BlockLink } from "../blocks/BlockLink";
 
-import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
+import { Link } from "../Link";
 import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
+
+import { ExtrinsicNameButton } from "./ExtrinsicNameButton";
+import { ExtrinsicRuntimeMetadataButton } from "./ExtrinsicRuntimeMetadataButton";
 
 export type ExtrinsicInfoTableProps = {
 	network: Network;
@@ -93,13 +96,10 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			<ExtrinsicInfoTableAttribute
 				label="Name"
 				render={(data) =>
-					<ButtonLink
-						to={`/search/extrinsics?query=${data.palletName}.${data.callName}&network=${network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{data.palletName}.{data.callName}
-					</ButtonLink>
+					<>
+						<ExtrinsicNameButton extrinsic={data} />
+						{data.metadata.call && <ExtrinsicRuntimeMetadataButton extrinsic={data} />}
+					</>
 				}
 			/>
 			<ExtrinsicInfoTableAttribute
@@ -137,7 +137,11 @@ export const ExtrinsicInfoTable = (props: ExtrinsicInfoTableProps) => {
 			/>
 			<ExtrinsicInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.specVersion}
+				render={(data) =>
+					<Link to={`/${data.network.name}/runtime/${data.specVersion}`}>
+						{data.specVersion}
+					</Link>
+				}
 			/>
 		</InfoTable>
 	);
