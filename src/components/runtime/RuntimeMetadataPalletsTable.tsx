@@ -27,7 +27,7 @@ export function RuntimeMetadataPalletsTable(props: ExtrinsicsTableProps) {
 			notFound={pallets.notFound}
 			notFoundMessage="No extrinsics found"
 			error={pallets.error}
-			data-test="runtime-metadata-pallets-items"
+			data-test="pallets-items"
 		>
 			<RuntimeMetadataPalletsTableAttribute
 				label="Pallet"

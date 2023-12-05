@@ -35,7 +35,7 @@ export function RuntimeMetadataErrorsTable(props: ErrorsTableProps) {
 			notFound={errors.notFound}
 			notFoundMessage="No extrinsics found"
 			error={errors.error}
-			data-test="runtime-metadata-errors-items"
+			data-test="errors-items"
 		>
 			<RuntimeMetadataErrorsTableAttribute
 				label="Error"

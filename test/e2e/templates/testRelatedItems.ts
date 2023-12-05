@@ -10,6 +10,7 @@ import { TestItem } from "./model";
 
 export interface TestRelatedItemsOptions {
 	testCount?: boolean;
+	hasTab?: boolean;
 	wrapperTestId?: string;
 }
 
@@ -18,20 +19,22 @@ export function testRelatedItems(url: string, item: TestItem, relatedItem: TestI
 		await navigate(page, url);
 
 		const $relatedItems = page.getByTestId(options.wrapperTestId || "related-items");
-		const $relatedItemsTab = $relatedItems.getByTestId(`${pluralize(relatedItem.name)}-tab`);
 		const $relatedItemsTable = $relatedItems.getByTestId(`${pluralize(relatedItem.name)}-items`).locator("table").first();
 
-		await $relatedItemsTab.click();
+		if (options.hasTab || options.hasTab === undefined) {
+			const $relatedItemsTab = $relatedItems.getByTestId(`${pluralize(relatedItem.name)}-tab`);
+			await $relatedItemsTab.click();
 
-		if (options.testCount || options.testCount === undefined) {
-			const $relatedItemsCount = $relatedItemsTab.getByTestId("count");
-			await expect($relatedItemsCount).toHaveText(
-				await useDataFixture(
-					`${item.name}-${pluralize(relatedItem.name)}-data`,
-					"itemsCount",
-					$relatedItemsCount,
-				)
-			);
+			if (options.testCount || options.testCount === undefined) {
+				const $relatedItemsCount = $relatedItemsTab.getByTestId("count");
+				await expect($relatedItemsCount).toHaveText(
+					await useDataFixture(
+						`${item.name}-${pluralize(relatedItem.name)}-data`,
+						"itemsCount",
+						$relatedItemsCount,
+					)
+				);
+			}
 		}
 
 		await expect($relatedItemsTable).toHaveTableData(

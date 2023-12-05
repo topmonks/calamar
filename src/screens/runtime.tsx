@@ -65,7 +65,7 @@ export const RuntimePalletsPage = () => {
 			network={network}
 			specVersion={specVersion}
 		>
-			<Card>
+			<Card data-test="related-items">
 				<CardHeader>Pallets</CardHeader>
 				<RuntimeMetadataPalletsTable
 					network={network}
@@ -107,7 +107,7 @@ export const RuntimePalletPage = () => {
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}`} className="highlighted">{palletName}</Link>,
 			]}
 		>
-			<Card>
+			<Card data-test="related-items">
 				<CardHeader>{palletName}</CardHeader>
 				{itemsFound &&
 					<TabbedContent currentTab={tab} onTabChange={setTab}>
@@ -213,8 +213,8 @@ export const RuntimeCallPage = () => {
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/calls/${callName.toLowerCase()}`} className="highlighted">{callName}</Link>,
 			]}
 		>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					{palletName}.{callName}
 				</CardHeader>
 				<RuntimeMetadataCallInfoTable network={network} call={call} />
@@ -243,12 +243,12 @@ export const RuntimeEventPage = () => {
 			breadcrumbs={[
 				<Link to={`/${network.name}/runtime/${specVersion}`}>Pallets</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}`} className="highlighted">{palletName}</Link>,
-				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/events`}>events</Link>,
+				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/events`}>Events</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/events/${eventName.toLowerCase()}`} className="highlighted">{eventName}</Link>,
 			]}
 		>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					{palletName}.{eventName}
 				</CardHeader>
 				<RuntimeMetadataEventInfoTable network={network} event={event} />
@@ -277,12 +277,12 @@ export const RuntimeConstantPage = () => {
 			breadcrumbs={[
 				<Link to={`/${network.name}/runtime/${specVersion}`}>Pallets</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}`} className="highlighted">{palletName}</Link>,
-				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/constants`}>Constant</Link>,
+				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/constants`}>Constants</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/constants/${constantName.toLowerCase()}`} className="highlighted">{constantName}</Link>,
 			]}
 		>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					{palletName}.{constantName}
 				</CardHeader>
 				<RuntimeMetadataConstantInfoTable network={network} constant={constant} />
@@ -311,12 +311,12 @@ export const RuntimeStoragePage = () => {
 			breadcrumbs={[
 				<Link to={`/${network.name}/runtime/${specVersion}`}>Pallets</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}`} className="highlighted">{palletName}</Link>,
-				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/storages`}>Storage</Link>,
+				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/storages`}>Storages</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/storages/${storageName.toLowerCase()}`} className="highlighted">{storageName}</Link>,
 			]}
 		>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					{palletName}.{storageName}
 				</CardHeader>
 				<RuntimeMetadataStorageInfoTable network={network} storage={storage} />
@@ -345,12 +345,12 @@ export const RuntimeErrorPage = () => {
 			breadcrumbs={[
 				<Link to={`/${network.name}/runtime/${specVersion}`}>Pallets</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}`} className="highlighted">{palletName}</Link>,
-				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/errors`}>Error</Link>,
+				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/errors`}>Errors</Link>,
 				<Link to={`/${network.name}/runtime/${specVersion}/${palletName.toLowerCase()}/errors/${errorName.toLowerCase()}`} className="highlighted">{errorName}</Link>,
 			]}
 		>
-			<Card>
-				<CardHeader>
+			<Card data-test="item-info">
+				<CardHeader data-test="item-header">
 					{palletName}.{errorName}
 				</CardHeader>
 				<RuntimeMetadataErrorInfoTable error={error} />

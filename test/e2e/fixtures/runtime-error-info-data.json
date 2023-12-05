@@ -1,0 +1,13 @@
+{
+  "header": "Balances.DeadAccount",
+  "infoTable": [
+    [
+      "Error",
+      "Balances.DeadAccount"
+    ],
+    [
+      "Description",
+      "Beneficiary account must pre-exist."
+    ]
+  ]
+}

@@ -39,7 +39,7 @@ export function RuntimeMetadataStoragesTable(props: StoragesTableProps) {
 			notFound={storages.notFound}
 			notFoundMessage="No extrinsics found"
 			error={storages.error}
-			data-test="runtime-metadata-storages-items"
+			data-test="storages-items"
 		>
 			<RuntimeMetadataStoragesTableAttribute
 				label="Storage"

@@ -34,6 +34,7 @@ class RuntimeSpecWorkerRuntime extends WebWorkerRuntime implements RuntimeSpecWo
 		);
 
 		console.log("hex downloaded", network, specVersion);
+		console.log(JSON.stringify(response));
 
 		response.metadata[0] && await this.decodeAndSaveRuntimeMetadata(network, specVersion, response.metadata[0].hex);
 	}

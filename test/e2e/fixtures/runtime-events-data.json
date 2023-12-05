@@ -1,0 +1,110 @@
+{
+  "itemsCount": "(21)",
+  "itemsTable": [
+    [
+      "BalanceSet",
+      "2",
+      "A balance was set by root."
+    ],
+    [
+      "Burned",
+      "2",
+      "Some amount was burned from an account."
+    ],
+    [
+      "Deposit",
+      "2",
+      "Some amount was deposited (e.g. for transaction fees)."
+    ],
+    [
+      "DustLost",
+      "2",
+      "An account was removed whose balance was non-zero but below ExistentialDeposit,resulting in an outright loss."
+    ],
+    [
+      "Endowed",
+      "2",
+      "An account was created with some free balance."
+    ],
+    [
+      "Frozen",
+      "2",
+      "Some balance was frozen."
+    ],
+    [
+      "Issued",
+      "1",
+      "Total issuance was increased by amount, creating a credit to be balanced."
+    ],
+    [
+      "Locked",
+      "2",
+      "Some balance was locked."
+    ],
+    [
+      "Minted",
+      "2",
+      "Some amount was minted into an account."
+    ],
+    [
+      "Rescinded",
+      "1",
+      "Total issuance was decreased by amount, creating a debt to be balanced."
+    ],
+    [
+      "ReserveRepatriated",
+      "4",
+      "Some balance was moved from the reserve of the first account to the second account.Final argument indicates the destination balance type."
+    ],
+    [
+      "Reserved",
+      "2",
+      "Some balance was reserved (moved from free to reserved)."
+    ],
+    [
+      "Restored",
+      "2",
+      "Some amount was restored into an account."
+    ],
+    [
+      "Slashed",
+      "2",
+      "Some amount was removed from the account (e.g. for misbehavior)."
+    ],
+    [
+      "Suspended",
+      "2",
+      "Some amount was suspended from an account (it can be restored later)."
+    ],
+    [
+      "Thawed",
+      "2",
+      "Some balance was thawed."
+    ],
+    [
+      "Transfer",
+      "3",
+      "Transfer succeeded."
+    ],
+    [
+      "Unlocked",
+      "2",
+      "Some balance was unlocked."
+    ],
+    [
+      "Unreserved",
+      "2",
+      "Some balance was unreserved (moved from reserved to free)."
+    ],
+    [
+      "Upgraded",
+      "1",
+      "An account was upgraded."
+    ],
+    [
+      "Withdraw",
+      "2",
+      "Some amount was withdrawn from the account (e.g. for transaction fees)."
+    ]
+  ]
+}

@@ -39,7 +39,7 @@ export function RuntimeMetadataEventsTable(props: ExtrinsicsTableProps) {
 			notFound={events.notFound}
 			notFoundMessage="No extrinsics found"
 			error={events.error}
-			data-test="runtime-metadata-events-items"
+			data-test="events-items"
 		>
 			<RuntimeMetadataEventsTableAttribute
 				label="Events"

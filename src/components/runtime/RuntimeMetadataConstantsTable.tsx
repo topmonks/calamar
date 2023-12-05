@@ -35,7 +35,7 @@ export function RuntimeMetadataConstantsTable(props: ConstantsTableProps) {
 			notFound={constants.notFound}
 			notFoundMessage="No extrinsics found"
 			error={constants.error}
-			data-test="runtime-metadata-constants-items"
+			data-test="constants-items"
 		>
 			<RuntimeMetadataConstantsTableAttribute
 				label="Constant"

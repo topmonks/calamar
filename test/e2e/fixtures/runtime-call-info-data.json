@@ -1,0 +1,17 @@
+{
+  "header": "Balances.force_set_balance",
+  "infoTable": [
+    [
+      "Call",
+      "Balances.force_set_balance"
+    ],
+    [
+      "Description",
+      "See [Pallet::force_set_balance]."
+    ],
+    [
+      "Parameters",
+      "Parsed\nRaw\n0\n\t\nwho\n\t\nAccountIdLookupOf\n\t\nMultiAddress\n\n\n1\n\t\nnew_free\n\t\nBalance\n\t\nCompact<u128>"
+    ]
+  ]
+}

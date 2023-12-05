@@ -40,7 +40,7 @@ export function RuntimeMetadataCallsTable(props: ExtrinsicsTableProps) {
 			notFound={calls.notFound}
 			notFoundMessage="No extrinsics found"
 			error={calls.error}
-			data-test="runtime-metadata-calls-items"
+			data-test="calls-items"
 		>
 			<RuntimeMetadataCallsTableAttribute
 				label="Call"
