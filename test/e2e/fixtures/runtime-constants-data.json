@@ -1,0 +1,25 @@
+{
+  "itemsCount": "(5)",
+  "itemsTable": [
+    [
+      "ExistentialDeposit",
+      "The minimum amount required to keep an account open. MUST BE GREATER THAN ZERO! …"
+    ],
+    [
+      "MaxFreezes",
+      "The maximum number of individual freeze locks that can exist on an account at any time."
+    ],
+    [
+      "MaxHolds",
+      "The maximum number of holds that can exist on an account at any time."
+    ],
+    [
+      "MaxLocks",
+      "The maximum number of locks that should exist on an account. Not strictly enforced, but used for weight estimation."
+    ],
+    [
+      "MaxReserves",
+      "The maximum number of named reserves that can exist on an account."
+    ]
+  ]
+}

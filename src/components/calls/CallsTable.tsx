@@ -43,7 +43,7 @@ export const CallsTable = (props: CallsTableProps) => {
 				label="Name"
 				render={(call) =>
 					<ButtonLink
-						to={`/${network.name}/search?query=${call.palletName}.${call.callName}`}
+						to={`/search/extrinsics?query=${call.palletName}.${call.callName}&network=${network.name}`}
 						size="small"
 						color="secondary"
 					>

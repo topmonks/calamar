@@ -45,7 +45,7 @@ export const EventSearchResultsTable = (props: EventSearchResultsTable) => {
 				label="Name"
 				render={(event) => (
 					<ButtonLink
-						to={`/${event.network.name}/search?query=${event.palletName}.${event.eventName}`}
+						to={`/search/events?query=${event.palletName}.${event.eventName}&network=${event.network.name}`}
 						size="small"
 						color="secondary"
 					>

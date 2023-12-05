@@ -8,12 +8,10 @@ import { PaginationOptions } from "../model/paginationOptions";
 
 import { simplifyId } from "../utils/id";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
-import { upperFirst } from "../utils/string";
 
 import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
-import { getEventsRuntimeMetadata, getPalletsRuntimeMetadata, getRuntimeEventMetadata } from "./runtimeMetadataService";
-import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
+import { getRuntimeMetadataEvent } from "./runtimeMetadataService";
 
 export type EventsFilter =
 	undefined
@@ -45,27 +43,6 @@ export async function getEvents(
 	}
 
 	return getArchiveEvents(network, filter, order, pagination);
-}
-
-export async function normalizeEventName(network: string, name: string) {
-	let [palletName = "", eventName = ""] = name.toLowerCase().split(".");
-
-	const latestRuntimeSpecVersion = await getLatestRuntimeSpecVersion(network);
-
-	const pallets = await getPalletsRuntimeMetadata(network, latestRuntimeSpecVersion);
-	const pallet = await pallets.and(it => it.name.toLowerCase() === palletName).first();
-
-	const events = pallet && await getEventsRuntimeMetadata(network, latestRuntimeSpecVersion, pallet.name);
-	const event = await events?.and(it => it.name.toLowerCase() === eventName).first();
-
-	// use found names from runtime metadata or try to fix the first letter casing as fallback
-	palletName = pallet?.name || upperFirst(palletName);
-	eventName = event?.name || upperFirst(eventName);
-
-	return {
-		pallet: palletName,
-		event: eventName
-	};
 }
 
 /*** PRIVATE ***/
@@ -265,7 +242,6 @@ export async function addEventsArgs<C extends boolean = false>(network: string, 
 	};
 }
 
-
 /**
  * Get simplified version of extrinsic ID
  * which will be displayed to the user.
@@ -281,7 +257,7 @@ export function simplifyEventId(id: string) {
 
 export async function unifyArchiveEvent(event: ArchiveEvent, network: string): Promise<Event> {
 	const [palletName, eventName] = event.name.split(".") as [string, string];
-	const specVersion = event.block.spec.specVersion;
+	const specVersion = event.block.spec.specVersion.toString();
 
 	return {
 		...event,
@@ -295,14 +271,14 @@ export async function unifyArchiveEvent(event: ArchiveEvent, network: string): P
 		callId: event.call?.id || null,
 		specVersion,
 		metadata: {
-			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
+			event: await getRuntimeMetadataEvent(network, specVersion, palletName, eventName)
 		}
 	};
 }
 
 export async function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network: string): Promise<Event> {
 	const {palletName, eventName} = event;
-	const specVersion = event.block.specVersion;
+	const specVersion = event.block.specVersion.toString();
 
 	return {
 		...event,
@@ -315,7 +291,7 @@ export async function unifyExplorerSquidEvent(event: ExplorerSquidEvent, network
 		args: null,
 		specVersion,
 		metadata: {
-			event: await getRuntimeEventMetadata(network, specVersion, palletName, eventName)
+			event: await getRuntimeMetadataEvent(network, specVersion, palletName, eventName)
 		}
 	};
 }

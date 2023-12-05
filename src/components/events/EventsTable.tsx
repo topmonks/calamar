@@ -50,7 +50,7 @@ function EventsTable(props: EventsTableProps) {
 				label="Name"
 				render={(event) =>
 					<ButtonLink
-						to={`/${network.name}/search?query=${event.palletName}.${event.eventName}`}
+						to={`/search/events?query=${event.palletName}.${event.eventName}&network=${network.name}`}
 						size="small"
 						color="secondary"
 					>

@@ -1,0 +1,17 @@
+{
+  "header": "Balances.BalanceSet",
+  "infoTable": [
+    [
+      "Event",
+      "Balances.BalanceSet"
+    ],
+    [
+      "Description",
+      "A balance was set by root."
+    ],
+    [
+      "Parameters",
+      "Parsed\nRaw\n0\n\t\nwho\n\t\nAccountId\n\t\nAccountId32\n\n\n1\n\t\nfree\n\t\nBalance\n\t\nu128"
+    ]
+  ]
+}

@@ -91,7 +91,7 @@ function HoldersTable(props: HoldersTableProps) {
 			<HoldersTableAttribute
 				label="Last update"
 				render={(balance) =>
-					<Link to={`/${network.name}/search?query=${balance.updatedAtBlock}`}>
+					<Link to={`/search/blocks?query=${balance.updatedAtBlock}&network=${network.name}`}>
 						{balance.updatedAtBlock}
 					</Link>
 				}

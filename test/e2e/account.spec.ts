@@ -83,7 +83,9 @@ test.describe("Account detail page", () => {
 	testItemInfo(url, account);
 	testItemError(url, account);
 
-	testRelatedItems(url, account, relatedBalances);
+	testRelatedItems(url, account, relatedBalances, {
+		testCount: false
+	});
 
 	testRelatedItems(url, account, relatedExtrinsics);
 	testRelatedItemsError(url, account, relatedExtrinsics, relatedExtrinsics.requests);

@@ -1,0 +1,40 @@
+{
+  "itemsCount": "(7)",
+  "itemsTable": [
+    [
+      "Account",
+      "1",
+      "The Balances pallet example of storing the balance of an account. …"
+    ],
+    [
+      "Freezes",
+      "1",
+      "Freeze locks on account balances."
+    ],
+    [
+      "Holds",
+      "1",
+      "Holds on account balances."
+    ],
+    [
+      "InactiveIssuance",
+      "0",
+      "The total units of outstanding deactivated balance in the system."
+    ],
+    [
+      "Locks",
+      "1",
+      "Any liquidity locks on some account balances. NOTE: Should only be accessed when setting, changing and freeing a lock."
+    ],
+    [
+      "Reserves",
+      "1",
+      "Named reserves on some account balances."
+    ],
+    [
+      "TotalIssuance",
+      "0",
+      "The total units issued in the system."
+    ]
+  ]
+}

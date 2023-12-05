@@ -17,12 +17,16 @@ const formGroupStyle = css`
 `;
 
 const networkSelectStyle = (theme: Theme) => css`
+	flex: 1 0 auto;
+
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 
+	border-right: none;
+
 	&, &:hover, &.Mui-focused {
 		.MuiOutlinedInput-notchedOutline {
-			border-color: #c4cdd5;
+			border-color: #bdbdbd;
 			border-right: none;
 		}
 	}
@@ -34,7 +38,7 @@ const networkSelectStyle = (theme: Theme) => css`
 		display: block;
 		width: 1px;
 		height: 24px;
-		background-color: #c4cdd5;
+		background-color: #bdbdbd;
 		z-index: 10;
 	}
 
@@ -59,7 +63,7 @@ const textFieldStyle = css`
 
 		&, &:hover, &.Mui-focused {
 			.MuiOutlinedInput-notchedOutline {
-				border-color: #c4cdd5;
+				border-color: #bdbdbd;
 				border-right: none;
 			}
 		}
@@ -160,6 +164,7 @@ function SearchInput(props: SearchInputProps) {
 					css={networkSelectStyle}
 					onChange={handleNetworkSelect}
 					value={networks}
+					multiselect
 				/>
 				<TextField
 					css={textFieldStyle}

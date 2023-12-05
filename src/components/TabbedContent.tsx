@@ -72,9 +72,9 @@ export interface TabbedContentProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const TabbedContent = (props: TabbedContentProps) => {
-	const { children, currentTab: tab, onTabChange, ...divProps } = props;
+	const { children, currentTab, onTabChange, ...divProps } = props;
 
-	const tabHandles = useMemo(() => Children.map(children, (child) => {
+	const tabHandles = Children.map(children, (child) => {
 		if (!child) {
 			return null;
 		}
@@ -90,7 +90,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 			...restProps
 		} = child.props;
 
-		if (hide && tab !== value) {
+		if (hide && currentTab !== value) {
 			return null;
 		}
 
@@ -112,20 +112,21 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				{...restProps}
 			/>
 		);
-	}), [children]);
+	});
 
-	const tabPanes = useMemo(() => Children.map(children, (child) => child && cloneElement(child, {key: child.props.value})), [children]);
-	const currentTabPane = tabPanes.find((it) => it.props.value === tab);
+	const tabPanes = Children.map(children, (child) =>
+		child && cloneElement(child, {key: child.props.value})
+	);
 
 	const handleTabChange = useCallback((ev: any, value: string) => {
 		onTabChange?.(value);
 	}, [onTabChange]);
 
 	useEffect(() => {
-		if (!currentTabPane) {
+		if (!currentTab) {
 			tabHandles[0] && onTabChange?.(tabHandles[0].props.value);
 		}
-	}, [currentTabPane, tabHandles, onTabChange]);
+	}, [currentTab]);
 
 	return (
 		<div {...divProps}>
@@ -133,7 +134,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				<Tabs
 					css={tabsStyle}
 					onChange={handleTabChange}
-					value={tab || tabHandles[0]?.props.value}
+					value={currentTab || tabHandles[0]?.props.value}
 					variant="scrollable"
 					scrollButtons={false}
 				>
@@ -141,7 +142,7 @@ export const TabbedContent = (props: TabbedContentProps) => {
 				</Tabs>
 
 			</div>
-			{currentTabPane}
+			{tabPanes.find((it) => it.props.value === currentTab)}
 		</div>
 	);
 };

@@ -1,5 +1,4 @@
 import { DataError, FetchError } from "./error";
-import { uniq } from "./uniq";
 
 export async function fetchGraphql<T = any>(
 	url: string,

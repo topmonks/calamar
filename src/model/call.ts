@@ -1,5 +1,5 @@
-import { DecodedCall } from "./decodedMetadata";
 import { Network } from "./network";
+import { RuntimeMetadataCall } from "./runtime-metadata/runtimeMetadataCall";
 
 export type Call = {
 	id: string;
@@ -14,8 +14,8 @@ export type Call = {
 	caller: string|null;
 	args: any|null;
 	success: boolean;
-	specVersion: number;
+	specVersion: string;
 	metadata: {
-		call?: DecodedCall
+		call?: RuntimeMetadataCall
 	}
 }

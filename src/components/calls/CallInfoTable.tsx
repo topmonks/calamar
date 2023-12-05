@@ -106,7 +106,7 @@ export const CallInfoTable = (props: CallInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network.name}/search?query=${data.palletName}.${data.callName}`}
+						to={`/search/extrinsics?query=${data.palletName}.${data.callName}&network=${network.name}`}
 						size="small"
 						color="secondary"
 					>

@@ -1,0 +1,50 @@
+{
+  "itemsCount": "(9)",
+  "itemsTable": [
+    [
+      "force_set_balance",
+      "2",
+      "See [Pallet::force_set_balance]."
+    ],
+    [
+      "force_transfer",
+      "3",
+      "See [Pallet::force_transfer]."
+    ],
+    [
+      "force_unreserve",
+      "2",
+      "See [Pallet::force_unreserve]."
+    ],
+    [
+      "set_balance_deprecated",
+      "3",
+      "See [Pallet::set_balance_deprecated]."
+    ],
+    [
+      "transfer",
+      "2",
+      "See [Pallet::transfer]."
+    ],
+    [
+      "transfer_all",
+      "2",
+      "See [Pallet::transfer_all]."
+    ],
+    [
+      "transfer_allow_death",
+      "2",
+      "See [Pallet::transfer_allow_death]."
+    ],
+    [
+      "transfer_keep_alive",
+      "2",
+      "See [Pallet::transfer_keep_alive]."
+    ],
+    [
+      "upgrade_accounts",
+      "1",
+      "See [Pallet::upgrade_accounts]."
+    ]
+  ]
+}

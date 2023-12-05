@@ -40,7 +40,7 @@ export const ExtrinsicSearchResultsTable = (props: ExtrinsicSearchResultsTable) 
 				label="Name"
 				render={(extrinsic) => (
 					<ButtonLink
-						to={`/${extrinsic.network.name}/search?query=${extrinsic.palletName}.${extrinsic.callName}`}
+						to={`/search/extrinsics?query=${extrinsic.palletName}.${extrinsic.callName}&network=${extrinsic.network.name}`}
 						size="small"
 						color="secondary"
 					>

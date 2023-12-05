@@ -536,22 +536,6 @@
         }
     },
     {
-        "name": "t0rn",
-        "displayName": "t0rn",
-        "icon": "/assets/network-icons/t0rn.png",
-        "color": "#212322",
-        "website": "https://t3rn.io/",
-        "parachainId": 3333,
-        "relayChain": "rococo",
-        "prefix": 42,
-        "decimals": 12,
-        "symbol": "T0RN",
-        "squids": {
-            "archive": "https://t0rn.explorer.subsquid.io/graphql",
-            "explorer": "https://squid.subsquid.io/gs-explorer-t0rn/graphql"
-        }
-    },
-    {
         "name": "vara",
         "displayName": "Vara",
         "icon": "/assets/network-icons/vara.svg",

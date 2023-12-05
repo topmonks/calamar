@@ -1,5 +1,5 @@
-import { DecodedCall } from "./decodedMetadata";
 import { Network } from "./network";
+import { RuntimeMetadataCall } from "./runtime-metadata/runtimeMetadataCall";
 
 export type Extrinsic = {
 	id: string;
@@ -19,9 +19,9 @@ export type Extrinsic = {
 	fee: bigint|null;
 	error: object|null;
 	version: number;
-	specVersion: number;
+	specVersion: string;
 	metadata: {
-		call: DecodedCall|undefined,
+		call?: RuntimeMetadataCall,
 		// TODO error?: any
 	}
 }

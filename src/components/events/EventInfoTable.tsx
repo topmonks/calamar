@@ -73,7 +73,7 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 				label="Name"
 				render={(data) =>
 					<ButtonLink
-						to={`/${network.name}/search?query=${data.palletName}.${data.eventName}`}
+						to={`/search/events?query=${data.palletName}.${data.eventName}&network=${network.name}`}
 						size="small"
 						color="secondary"
 					>

@@ -2,7 +2,7 @@
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { css } from "@emotion/react";
 
-import { DecodedArg } from "../model/decodedMetadata";
+import { RuntimeMetadataArg } from "../model/runtime-metadata/runtimeMetadataArg";
 import { noCase } from "../utils/string";
 
 import { AccountAddress } from "./account/AccountAddress";
@@ -77,7 +77,7 @@ type ValueOfKindProps = {
 		__kind: string,
 		value: any;
 	};
-	valueMetadata?: DecodedArg;
+	valueMetadata?: RuntimeMetadataArg;
 }
 
 const ValueOfKind = (props: ValueOfKindProps) => {
@@ -110,7 +110,7 @@ const ValueOfKind = (props: ValueOfKindProps) => {
 type MaybeAccountLinkValueProps = {
 	network: Network;
 	value: any;
-	valueMetadata: DecodedArg;
+	valueMetadata: RuntimeMetadataArg;
 }
 
 const AccountValue = (props: MaybeAccountLinkValueProps) => {
@@ -150,19 +150,19 @@ const AccountValue = (props: MaybeAccountLinkValueProps) => {
 export type DataViewerValueParsedProps = {
 	network: Network;
 	value: any;
-	metadata?: DecodedArg[]|DecodedArg;
+	metadata?: RuntimeMetadataArg[]|RuntimeMetadataArg;
 };
 
 export const DataViewerValueParsed = (props: DataViewerValueParsedProps) => {
 	const { network, metadata } = props;
 	let { value } = props;
 
-	if (metadata && ADDRESS_TYPES.includes((metadata as DecodedArg).type)) {
+	if (metadata && ADDRESS_TYPES.includes((metadata as RuntimeMetadataArg).type)) {
 		return (
 			<AccountValue
 				network={network}
 				value={value}
-				valueMetadata={metadata as DecodedArg}
+				valueMetadata={metadata as RuntimeMetadataArg}
 			/>
 		);
 	}

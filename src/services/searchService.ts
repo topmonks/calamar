@@ -26,10 +26,12 @@ import { emptyItemsResponse } from "../utils/itemsResponse";
 import { PickByType } from "../utils/types";
 
 import { BlocksFilter, blocksFilterToArchiveFilter, blocksFilterToExplorerSquidFilter, unifyArchiveBlock, unifyExplorerSquidBlock } from "./blocksService";
-import { addEventsArgs, eventsFilterToExplorerSquidFilter, normalizeEventName, unifyExplorerSquidEvent } from "./eventsService";
-import { ExtrinsicsFilter, extrinsicFilterToArchiveFilter, extrinsicFilterToExplorerSquidFilter, normalizeExtrinsicName, unifyArchiveExtrinsic, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
+import { addEventsArgs, eventsFilterToExplorerSquidFilter, unifyExplorerSquidEvent } from "./eventsService";
+import { ExtrinsicsFilter, extrinsicFilterToArchiveFilter, extrinsicFilterToExplorerSquidFilter, unifyArchiveExtrinsic, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
+import { normalizeCallName, normalizeEventName } from "./runtimeMetadataService";
+import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type SearchPaginationOptions = Record<keyof PickByType<NetworkSearchResult, ItemsResponse<any, true>>, PaginationOptions>;
 
@@ -434,16 +436,22 @@ async function searchNetworkByName(
 	pagination: SearchPaginationOptions,
 	fetchAll: boolean,
 ) {
-	const extrinsicName = await normalizeExtrinsicName(network.name, query);
-	const eventName = await normalizeEventName(network.name, query);
+	console.log(network.name);
+	const latestSpecVersion = await getLatestRuntimeSpecVersion(network.name);
 
-	const extrinsicsByNameCounterId = extrinsicName.call
-		? `Extrinsics.${extrinsicName.pallet}.${extrinsicName.call}`
-		: `Extrinsics.${extrinsicName.pallet}`;
+	const extrinsicFullName = await normalizeCallName(network, query, latestSpecVersion);
+	const [extrinsicPalletName = "", extrinsicCallName = ""] = extrinsicFullName.split(".");
 
-	const eventsByNameCounterId = eventName.event
-		? `Events.${eventName.pallet}.${eventName.event}`
-		: `Events.${eventName.pallet}`;
+	const eventFullName = await normalizeEventName(network, query, latestSpecVersion);
+	const [eventPalletName = "", eventName = ""] = eventFullName.split(".");
+
+	const extrinsicsByNameCounterId = extrinsicCallName
+		? `Extrinsics.${extrinsicPalletName}.${extrinsicCallName}`
+		: `Extrinsics.${extrinsicPalletName}`;
+
+	const eventsByNameCounterId = eventName
+		? `Events.${eventPalletName}.${eventName}`
+		: `Events.${eventPalletName}`;
 
 	const countersResponse = await fetchExplorerSquid<{
 		extrinsicsByNameCounter: {total: number} | null,
@@ -471,12 +479,12 @@ async function searchNetworkByName(
 	let events: ItemsResponse<Event, true> = emptyItemsResponse(countersResponse.eventsByNameCounter?.total || 0);
 
 	if (fetchAll) {
-		const extrinsicsFilter = extrinsicName.call
-			? { palletName: extrinsicName.pallet, callName: extrinsicName.call }
-			: { palletName: extrinsicName.pallet };
-		const eventsFilter = eventName.event
-			? { palletName: eventName.pallet, eventName: eventName.event }
-			: { palletName: eventName.pallet };
+		const extrinsicsFilter = extrinsicCallName
+			? { palletName: extrinsicPalletName, callName: extrinsicCallName }
+			: { palletName: extrinsicPalletName };
+		const eventsFilter = eventName
+			? { palletName: eventPalletName, eventName: eventName }
+			: { palletName: eventPalletName };
 
 		const extrinsicsCursor = paginationToConnectionCursor(pagination.extrinsics);
 		const eventsCursor = paginationToConnectionCursor(pagination.events);

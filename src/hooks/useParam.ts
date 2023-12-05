@@ -35,7 +35,7 @@ export function useParam<T extends string>(name: string) {
 			pathname: newPath,
 			search: newQs.toString()
 		}, {replace: options.replace});
-	}, [location, params, navigate]);
+	}, [location, navigate]);
 
 	return [value, setValue] as const;
 }

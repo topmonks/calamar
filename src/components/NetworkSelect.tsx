@@ -17,11 +17,8 @@ const buttonStyle = css`
 	padding-left: 16px;
 	padding-right: 8px;
 
-	flex: 1 0 auto;
-
 	border-radius: 8px;
-	border: solid 1px #c4cdd5;
-	border-right: none;
+	border: solid 1px #bdbdbd;
 
 	font-size: 1rem;
 	font-weight: 400;
@@ -91,11 +88,12 @@ const checkboxStyle = css`
 
 interface NetworkSelectProps extends Omit<ButtonProps, "value" | "onChange"> {
 	value: Network[];
+	multiselect?: boolean;
 	onChange: (value: Network[], isUserAction: boolean) => void;
 }
 
 export const NetworkSelect = (props: NetworkSelectProps) => {
-	const { value, onChange, ...buttonProps } = props;
+	const { value, multiselect, onChange, ...buttonProps } = props;
 
 	const networkGroups = useNetworkGroups();
 
@@ -194,7 +192,7 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 				)}
 				{value.length > 1 && (
 					<>
-						{value.slice(0, 3).map((network) => <img src={network.icon} css={iconStyle} />)}
+						{value.slice(0, 3).map((network) => <img src={network.icon} css={iconStyle} key={network.name} />)}
 						{value.length > 3 && <span>+ {value.length - 3} other</span>}
 					</>
 				)}
@@ -209,40 +207,47 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 					"aria-labelledby": "basic-button",
 				}}
 			>
-				<MenuItem
-					css={menuItemStyle}
-					selected={value.length === 0}
-					onClick={() => setSelection([])}
-				>
-					<ListItemIcon>
-						<AllIcon css={[iconStyle, {color: "#e6007a"}]} />
-					</ListItemIcon>
-					<ListItemText>All networks</ListItemText>
-				</MenuItem>
+				{multiselect && [
+					<MenuItem
+						css={menuItemStyle}
+						selected={value.length === 0}
+						onClick={() => setSelection([])}
+						key={"all"}
+					>
+						<ListItemIcon>
+							<AllIcon css={[iconStyle, {color: "#e6007a"}]} />
+						</ListItemIcon>
+						<ListItemText>All networks</ListItemText>
+					</MenuItem>,
+					<Divider key="all-divider" />
+				]}
 				{networkGroups.map((group, index) => {
 					const allSelected = group.networks.every(it => value.includes(it));
 
 					return [
-						<Divider />,
-						<ListSubheader css={headerStyle} key={index}>
+						index > 0 && <Divider key={`divider-${index}`} />,
+						<ListSubheader css={headerStyle} key={`subheader-${index}`}>
 							<div>
 								{group.relayChainNetwork?.displayName || "Other"}{" "}
 								{group.relayChainNetwork && <><br /><span style={{fontSize: 12}}>and parachains</span></>}
 							</div>
-							<Link
-								onClick={() => allSelected
-									? removeSelection(group.networks)
-									: addSelection(group.networks)
-								}
-							>
-								{allSelected ? "deselect" : "select"} all
-							</Link>
+							{multiselect && (
+								<Link
+									onClick={() => allSelected
+										? removeSelection(group.networks)
+										: addSelection(group.networks)
+									}
+								>
+									{allSelected ? "deselect" : "select"} all
+								</Link>
+							)}
 						</ListSubheader>,
 						group.networks.map((network) => (
 							<MenuItem
 								css={menuItemStyle}
 								selected={value.includes(network)}
 								onClick={(ev) => handleItemClick(network, ev)}
+								key={network.name}
 							>
 								<ListItemIcon>
 									<img
@@ -251,13 +256,15 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 									/>
 								</ListItemIcon>
 								<ListItemText>{network.displayName}</ListItemText>
-								<Checkbox
-									css={checkboxStyle}
-									checked={value.includes(network)}
-									onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
-									onClick={(ev) => ev.stopPropagation()}
-									disableRipple
-								/>
+								{multiselect && (
+									<Checkbox
+										css={checkboxStyle}
+										checked={value.includes(network)}
+										onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
+										onClick={(ev) => ev.stopPropagation()}
+										disableRipple
+									/>
+								)}
 							</MenuItem>
 						))
 					];

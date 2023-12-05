@@ -10,7 +10,7 @@ import { simplifyId } from "../utils/id";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 
 import { fetchArchive, fetchExplorerSquid, registerItemFragment, registerItemsConnectionFragment } from "./fetchService";
-import { getCallRuntimeMetadata } from "./runtimeMetadataService";
+import { getRuntimeMetadataCall } from "./runtimeMetadataService";
 import { getNetwork, hasSupport } from "./networksService";
 
 export type CallsFilter =
@@ -238,7 +238,7 @@ export function simplifyCallId(id: string) {
 
 async function unifyArchiveCall(call: ArchiveCall, network: string): Promise<Call> {
 	const [palletName, callName] = call.name.split(".") as [string, string];
-	const specVersion = call.block.spec.specVersion;
+	const specVersion = call.block.spec.specVersion.toString();
 
 	return {
 		...call,
@@ -255,14 +255,14 @@ async function unifyArchiveCall(call: ArchiveCall, network: string): Promise<Cal
 			? call.origin.value.value
 			: null,
 		metadata: {
-			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+			call: await getRuntimeMetadataCall(network, specVersion, palletName, callName)
 		}
 	};
 }
 
 async function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string): Promise<Call> {
 	const {palletName, callName} = call;
-	const specVersion = call.block.specVersion;
+	const specVersion = call.block.specVersion.toString();
 
 	return {
 		...call,
@@ -276,7 +276,7 @@ async function unifyExplorerSquidCall(call: ExplorerSquidCall, network: string):
 		caller: call.callerPublicKey,
 		args: null,
 		metadata: {
-			call: await getCallRuntimeMetadata(network, specVersion, palletName, callName)
+			call: await getRuntimeMetadataCall(network, specVersion, palletName, callName)
 		}
 	};
 }
