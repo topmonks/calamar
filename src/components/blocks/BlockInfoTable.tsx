@@ -84,7 +84,11 @@ export const BlockInfoTable = (props: BlockInfoTableProps) => {
 			/>
 			<BlockInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.specVersion}
+				render={(data) =>
+					<Link to={`/${data.network.name}/runtime/${data.specVersion}`}>
+						{data.specVersion}
+					</Link>
+				}
 			/>
 		</InfoTable>
 

@@ -4,6 +4,7 @@ import { SearchResultItem } from "../../model/searchResultItem";
 
 import { AccountAddress } from "../account/AccountAddress";
 import { BlockLink } from "../blocks/BlockLink";
+import { Link } from "../Link";
 
 import { Time } from "../Time";
 
@@ -37,7 +38,9 @@ export const BlockSearchResultsTable = (props: BlockSearchResultsTable) => {
 			<SearchResultsTableItemAttribute<Block>
 				label="Spec version"
 				render={(block) =>
-					<>{block.specVersion}</>
+					<Link to={`/${block.network.name}/runtime/${block.specVersion}`}>
+						{block.specVersion}
+					</Link>
 				}
 			/>
 			<SearchResultsTableItemAttribute<Block>

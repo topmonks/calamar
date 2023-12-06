@@ -75,7 +75,8 @@ const valueStyle = css`
 `;
 
 const copyButtonStyle = css`
-	margin-left: 16px;
+	margin: -4px 0;
+	margin-left: 12px;
 `;
 
 type InfoTableDataFn<T, A extends any[], R> = (data: T, ...additionalData: A) => R;

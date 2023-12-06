@@ -9,6 +9,7 @@ import { ButtonLink } from "../ButtonLink";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 
 import { CallLink } from "./CallLink";
+import { CallNameButton } from "./CallNameButton";
 
 export type CallsTableProps = {
 	network: Network;
@@ -41,15 +42,7 @@ export const CallsTable = (props: CallsTableProps) => {
 			/>
 			<CallsTableAttribute
 				label="Name"
-				render={(call) =>
-					<ButtonLink
-						to={`/search/extrinsics?query=${call.palletName}.${call.callName}&network=${network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{call.palletName}.{call.callName}
-					</ButtonLink>
-				}
+				render={(call) => <CallNameButton call={call} />}
 			/>
 			{showAccount && (
 				<CallsTableAttribute

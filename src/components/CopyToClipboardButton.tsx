@@ -4,7 +4,6 @@ import { IconButton, IconButtonProps, Tooltip } from "@mui/material";
 import { css } from "@emotion/react";
 
 const buttonStyle = css`
-	padding: 0;
 `;
 
 export type CopyToClipboardButtonProps = Omit<IconButtonProps, "value"|"size"> & {

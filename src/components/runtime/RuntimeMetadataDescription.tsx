@@ -2,7 +2,7 @@
 import Markdown from "react-markdown";
 import { css } from "@emotion/react";
 
-const descriptionStyle = css`
+const descriptionStyle = (darkMode?: boolean) => css`
 	padding: 16px;
 	padding: 0;;
 	height: 100%;
@@ -25,11 +25,12 @@ const descriptionStyle = css`
 
 	code {
 		padding: 2px 6px;
-		background-color: #f5f5f5;
-		background-color: rgba(0, 0, 0, .065);
 		border-radius: 8px;
 		font-size: 14px;
 		line-height: 20px;
+
+		${!darkMode && css`background-color: rgba(0, 0, 0, .065);`}
+		${darkMode && css`background-color: rgba(255, 255, 255, .2);`}
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -37,45 +38,36 @@ const descriptionStyle = css`
 	}
 `;
 
-const ellipsisStyle = css`
+const lineClampStyle = (lines: number ) => css`
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 1;
+	-webkit-line-clamp: ${lines};
 	overflow: hidden;
 `;
 
 export interface RuntimeMetadataDescription {
-	onlyLine?: number;
-	ellipsis?: boolean;
+	lineClamp?: number;
+	darkMode?: boolean;
 	className?: string;
 	children: string;
 }
 
 export const RuntimeMetadataDescription = (props: RuntimeMetadataDescription) => {
-	const {onlyLine, ellipsis, className, children} = props;
+	const {lineClamp, darkMode, className, children} = props;
 
-	let text = children;
-
-	if (onlyLine) {
-		const lines = children.split("\n");
-		text = lines[onlyLine - 1] as string;
-
-		if (ellipsis && lines.length > 1) {
-			text += " …";
-		}
-	}
+	const text = children;
 
 	return (
 		<Markdown
 			className={className}
 			css={[
-				descriptionStyle,
-				ellipsis && ellipsisStyle
+				descriptionStyle(darkMode),
+				lineClamp && lineClampStyle(lineClamp)
 			]}
 			disallowedElements={["a"]}
 			unwrapDisallowed
 		>
-			{text}
+			{text.replace(/\n/, "&nbsp;\n")}
 		</Markdown>
 	);
 };

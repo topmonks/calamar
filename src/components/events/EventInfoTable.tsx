@@ -6,11 +6,14 @@ import { BlockLink } from "../blocks/BlockLink";
 import { CallLink } from "../calls/CallLink";
 import { ExtrinsicLink } from "../extrinsics/ExtrinsicLink";
 
-import { ButtonLink } from "../ButtonLink";
 import { DataViewer } from "../DataViewer";
 import { InfoTable, InfoTableAttribute } from "../InfoTable";
+import { Link } from "../Link";
 import { NetworkBadge } from "../NetworkBadge";
 import { Time } from "../Time";
+
+import { EventNameButton } from "./EventNameButton";
+import { EventRuntimeMetadataButton } from "./EventRuntimeMetadataButton";
 
 export type EventInfoTableProps = {
 	network: Network;
@@ -72,13 +75,10 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			<EventInfoTableAttribute
 				label="Name"
 				render={(data) =>
-					<ButtonLink
-						to={`/search/events?query=${data.palletName}.${data.eventName}&network=${network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{data.palletName}.{data.eventName}
-					</ButtonLink>
+					<>
+						<EventNameButton event={data} />
+						{data.metadata.event && <EventRuntimeMetadataButton event={data} />}
+					</>
 				}
 			/>
 			<EventInfoTableAttribute
@@ -95,7 +95,11 @@ export const EventInfoTable = (props: EventInfoTableProps) => {
 			/>
 			<EventInfoTableAttribute
 				label="Spec version"
-				render={(data) => data.specVersion}
+				render={(data) =>
+					<Link to={`/${data.network.name}/runtime/${data.specVersion}`}>
+						{data.specVersion}
+					</Link>
+				}
 			/>
 		</InfoTable>
 	);

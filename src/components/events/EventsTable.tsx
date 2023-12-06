@@ -12,6 +12,7 @@ import { DataViewer } from "../DataViewer";
 import { ItemsTable, ItemsTableAttribute } from "../ItemsTable";
 
 import { EventLink } from "./EventLink";
+import { EventNameButton } from "./EventNameButton";
 
 const parametersColCss = (showExtrinsic?: boolean) => css`
 	width: ${showExtrinsic ? "40%" : "60%"};
@@ -48,15 +49,7 @@ function EventsTable(props: EventsTableProps) {
 			/>
 			<EventsItemsTableAttribute
 				label="Name"
-				render={(event) =>
-					<ButtonLink
-						to={`/search/events?query=${event.palletName}.${event.eventName}&network=${network.name}`}
-						size="small"
-						color="secondary"
-					>
-						{event.palletName}.{event.eventName}
-					</ButtonLink>
-				}
+				render={(event) => <EventNameButton event={event} />}
 			/>
 			{showExtrinsic && (
 				<EventsItemsTableAttribute

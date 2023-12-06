@@ -39,7 +39,7 @@ const cardHeaderStyle = css`
 
 	[data-class=copy-button] {
 		vertical-align: text-bottom;
-		margin: 6px 0;
+		margin: 2px 0;
 		margin-left: 16px;
 	}
 `;
