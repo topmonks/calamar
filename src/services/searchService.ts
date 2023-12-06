@@ -24,13 +24,14 @@ import { NetworkError, NonFatalError } from "../utils/error";
 import { extractConnectionItems, paginationToConnectionCursor } from "../utils/itemsConnection";
 import { emptyItemsResponse } from "../utils/itemsResponse";
 import { PickByType } from "../utils/types";
+import { uniqBy } from "../utils/uniq";
 
 import { BlocksFilter, blocksFilterToArchiveFilter, blocksFilterToExplorerSquidFilter, unifyArchiveBlock, unifyExplorerSquidBlock } from "./blocksService";
 import { addEventsArgs, eventsFilterToExplorerSquidFilter, unifyExplorerSquidEvent } from "./eventsService";
 import { ExtrinsicsFilter, extrinsicFilterToArchiveFilter, extrinsicFilterToExplorerSquidFilter, unifyArchiveExtrinsic, unifyExplorerSquidExtrinsic } from "./extrinsicsService";
 import { fetchArchive, fetchExplorerSquid } from "./fetchService";
 import { getNetwork, hasSupport } from "./networksService";
-import { normalizeCallName, normalizeEventName } from "./runtimeMetadataService";
+import { getRuntimeMetadataCallsByName, getRuntimeMetadataEventsByName, getRuntimeMetadataPalletsByName, normalizeCallName, normalizeEventName } from "./runtimeMetadataService";
 import { getLatestRuntimeSpecVersion } from "./runtimeSpecService";
 
 export type SearchPaginationOptions = Record<keyof PickByType<NetworkSearchResult, ItemsResponse<any, true>>, PaginationOptions>;
@@ -134,6 +135,58 @@ export async function search(query: string, networks: Network[], pagination: Sea
 		errors,
 		totalCount
 	};
+}
+
+export async function autocompleteSearchQuery(query: string, networks: Network[]) {
+	if (!query) {
+		return [];
+	}
+
+	const networkNames = networks.map(it => it.name);
+
+	let pallet: string|undefined;
+
+	if (query.includes(".")) {
+		[pallet = "", query = ""] = query.split(".");
+	}
+
+	console.log("autocomplete", pallet, query, networkNames);
+
+	const pallets = await getRuntimeMetadataPalletsByName(query, it => (networkNames.length === 0 || networkNames.includes(it.network)) && !pallet);
+	const calls = await getRuntimeMetadataCallsByName(query, it => (networkNames.length === 0 || networkNames.includes(it.network)) && (!pallet || it.pallet === pallet));
+	const events = await getRuntimeMetadataEventsByName(query, it => (networkNames.length === 0 || networkNames.includes(it.network)) && (!pallet || it.pallet === pallet));
+
+	const palletOptions = uniqBy(pallets, it => it.name).map(it => ({
+		label: it.name,
+		highlight: [0, query.length],
+		type: "pallet"
+	}));
+
+	const callOptions = uniqBy(calls, it => `${it.pallet}.${it.name}`).map(it => ({
+		label: `${it.pallet}.${it.name}`,
+		highlight: [
+			it.pallet.length + 1,
+			it.pallet.length + 1 + query.length
+		],
+		type: "call"
+	}));
+
+	const eventOptions = uniqBy(events, it => `${it.pallet}.${it.name}`).map(it => ({
+		label: `${it.pallet}.${it.name}`,
+		highlight: [
+			it.pallet.length + 1,
+			it.pallet.length + 1 + query.length
+		],
+		type: "event"
+	}));
+
+	return [
+		...palletOptions,
+		...[
+			...callOptions,
+			...eventOptions
+		].sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()))
+	];
 }
 
 export function getQueryType(network: Network, query: string) {
@@ -574,7 +627,10 @@ function networkResultsToSearchResultItems<T extends {id: string, network: Netwo
 	for (const result of networkResults) {
 		const items = result[itemsType];
 
-		if (items.totalCount === 1) {
+		if (items.totalCount === 1 && items.data.length > 0) {
+			// if positive total count found and also some data are fetched
+			// (extrinsics and events by name do not fetch data when searching multiple networks)
+
 			const item = items.data[0] as unknown as T;
 
 			data.push({
@@ -582,11 +638,11 @@ function networkResultsToSearchResultItems<T extends {id: string, network: Netwo
 				network: result.network,
 				data: item,
 			});
-		} else if (items.totalCount > 1) {
+		} else if (items.totalCount >= 1) {
 			data.push({
 				id: `${result.network.name}-grouped`,
 				network: result.network,
-				groupedCount: items.totalCount > 1 ? items.totalCount : undefined
+				groupedCount: items.totalCount
 			});
 		}
 

@@ -13,6 +13,10 @@ const customEvents = ["data-loaded", "chart-finished"];
 export async function navigate(page: Page, url: string, options: GotoOptions = {}) {
 	let customEvent: string|undefined = undefined;
 
+	await page.goto(url, {waitUntil: "commit"});
+	await page.evaluate(() => localStorage.setItem("skip-runtime-metadata-preload", "true"));
+	await page.evaluate(() => localStorage.setItem("runtime-metadata-preloaded", "true"));
+
 	if (options.waitUntil && customEvents.includes(options.waitUntil)) {
 		customEvent = options.waitUntil;
 		options.waitUntil = "domcontentloaded";

@@ -45,6 +45,7 @@ const statsLayoutStyle = css`
 	display: grid;
 	width: 100%;
 	height: auto;
+	margin-bottom: 32px;
 
 	gap: 10px;
 

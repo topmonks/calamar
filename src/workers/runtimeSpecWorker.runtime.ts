@@ -10,6 +10,7 @@ import { fetchArchive } from "../services/fetchService";
 import { WebWorkerRuntime } from "../utils/webWorker";
 
 import { RuntimeSpecWorkerMethods } from "./runtimeSpecWorker";
+import { RuntimeMetadataAutocomplete } from "../model/runtime-metadata/runtimeMetadataAutocomplete";
 
 /**
  * The reason to obtaining runtime metadata in a web worker is
@@ -34,7 +35,6 @@ class RuntimeSpecWorkerRuntime extends WebWorkerRuntime implements RuntimeSpecWo
 		);
 
 		console.log("hex downloaded", network, specVersion);
-		console.log(JSON.stringify(response));
 
 		response.metadata[0] && await this.decodeAndSaveRuntimeMetadata(network, specVersion, response.metadata[0].hex);
 	}
@@ -60,7 +60,7 @@ class RuntimeSpecWorkerRuntime extends WebWorkerRuntime implements RuntimeSpecWo
 			repository.events,
 			repository.constants,
 			repository.storages,
-			repository.errors
+			repository.errors,
 		], async () => {
 			await repository.specs.put({
 				network,

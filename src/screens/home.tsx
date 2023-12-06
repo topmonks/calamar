@@ -8,6 +8,7 @@ import SearchInput from "../components/SearchInput";
 import { Footer } from "../components/Footer";
 import { Card } from "../components/Card";
 import { ButtonLink } from "../components/ButtonLink";
+
 import { useNetworkGroups } from "../hooks/useNetworkGroups";
 
 const containerStyle = (theme: Theme) => css`
@@ -109,8 +110,7 @@ const searchInputStyle = (theme: Theme) => css`
 	flex: 1 1 auto;
 
 	.MuiInputBase-root {
-		.MuiInputBase-input,
-		.MuiSelect-select {
+		&.MuiOutlinedInput-root .MuiAutocomplete-input {
 			padding: 16px 24px;
 		}
 	}
@@ -213,7 +213,7 @@ export const HomePage = () => {
 						persist
 					/>
 				</div>
-				<div css={networksStyle}>
+				<div css={networksStyle} data-test="networks">
 					{networkGroups.map((group) =>
 						<Card css={networksGroupStyle} key={group.relayChainNetwork?.name || "other"}>
 							<div css={newtorkGroupTitleStyle}>

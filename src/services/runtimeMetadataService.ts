@@ -1,4 +1,4 @@
-import { Table } from "dexie";
+import { Collection, Table } from "dexie";
 
 import { Network } from "../model/network";
 import { RuntimeMetadataCall } from "../model/runtime-metadata/runtimeMetadataCall";
@@ -16,57 +16,69 @@ import { RuntimeSpecWorker } from "../workers/runtimeSpecWorker";
 
 export async function getRuntimeMetadataPallets(network: string, specVersion: string, filter?: (it: RuntimeMetadataPallet) => boolean) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.pallets, {network, specVersion}, filter).toArray();
+	return applyFilter(runtimeMetadataRepository.pallets.where({network, specVersion}), filter).toArray();
+}
+
+export async function getRuntimeMetadataPalletsByName(namePrefix: string, filter?: (it: RuntimeMetadataPallet) => boolean) {
+	return applyFilter(runtimeMetadataRepository.pallets.where("name").startsWithIgnoreCase(namePrefix), filter).toArray();
 }
 
 export async function getRuntimeMetadataCalls(network: string, specVersion: string, pallet: string, filter?: (it: RuntimeMetadataCall) => boolean) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.calls, {network, specVersion, pallet}, filter).toArray();
+	return applyFilter(runtimeMetadataRepository.calls.where({network, specVersion, pallet}), filter).toArray();
+}
+
+export async function getRuntimeMetadataCallsByName(namePrefix: string, filter?: (it: RuntimeMetadataCall) => boolean) {
+	return applyFilter(runtimeMetadataRepository.calls.where("name").startsWithIgnoreCase(namePrefix), filter).toArray();
 }
 
 export async function getRuntimeMetadataEvents(network: string, specVersion: string, pallet: string, filter?: (it: RuntimeMetadataEvent) => boolean) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.events, {network, specVersion, pallet}, filter).toArray();
+	return applyFilter(runtimeMetadataRepository.events.where({network, specVersion, pallet}), filter).toArray();
+}
+
+export async function getRuntimeMetadataEventsByName(namePrefix: string, filter?: (it: RuntimeMetadataEvent) => boolean) {
+	return applyFilter(runtimeMetadataRepository.events.where("name").startsWithIgnoreCase(namePrefix), filter).toArray();
 }
 
 export async function getRuntimeMetadataConstants(network: string, specVersion: string, pallet: string, filter?: (it: RuntimeMetadataConstant) => boolean) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.constants, {network, specVersion, pallet}, filter).toArray();
+	return applyFilter(runtimeMetadataRepository.constants.where({network, specVersion, pallet}), filter).toArray();
 }
 
 export async function getRuntimeMetadataStorages(network: string, specVersion: string, pallet: string, filter?: (it: RuntimeMetadataStorage) => boolean) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.storages, {network, specVersion, pallet}, filter).toArray();
+	return applyFilter(runtimeMetadataRepository.storages.where({network, specVersion, pallet}), filter).toArray();
 }
 
 export async function getRuntimeMetadataErrors(network: string, specVersion: string, pallet: string, filter?: (it: RuntimeMetadataError) => boolean) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.errors, {network, specVersion, pallet}, filter).toArray();
+	return applyFilter(runtimeMetadataRepository.errors.where({network, specVersion, pallet}), filter).toArray();
 }
 
 export async function getRuntimeMetadataCall(network: string, specVersion: string, pallet: string, name: string) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.calls, {network, specVersion, pallet, name}).first();
+	return runtimeMetadataRepository.calls.where({network, specVersion, pallet, name}).first();
 }
 
 export async function getRuntimeMetadataEvent(network: string, specVersion: string, pallet: string, name: string) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.events, {network, specVersion, pallet, name}).first();
+	return runtimeMetadataRepository.events.where({network, specVersion, pallet, name}).first();
 }
 
 export async function getRuntimeMetadataConstant(network: string, specVersion: string, pallet: string, name: string) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.constants, {network, specVersion, pallet, name}).first();
+	return runtimeMetadataRepository.constants.where({network, specVersion, pallet, name}).first();
 }
 
 export async function getRuntimeMetadataStorage(network: string, specVersion: string, pallet: string, name: string) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.storages, {network, specVersion, pallet, name}).first();
+	return runtimeMetadataRepository.storages.where({network, specVersion, pallet, name}).first();
 }
 
 export async function getRuntimeMetadataError(network: string, specVersion: string, pallet: string, name: string) {
 	await loadRuntimeMetadata(network, specVersion);
-	return queryStore(runtimeMetadataRepository.errors, {network, specVersion, pallet, name}).first();
+	return runtimeMetadataRepository.errors.where({network, specVersion, pallet, name}).first();
 }
 
 export async function normalizePalletName(network: Network, name: string, specVersion: string) {
@@ -147,7 +159,7 @@ export async function normalizeErrorName(network: Network, name: string, specVer
 
 /*** PRIVATE ***/
 
-async function loadRuntimeMetadata(network: string, specVersion: string) {
+export async function loadRuntimeMetadata(network: string, specVersion: string) {
 	await self.navigator.locks.request(`runtime-metadata/${network}/${specVersion}`, async () => {
 		const spec = await runtimeMetadataRepository.specs.get([network, specVersion]);
 
@@ -165,9 +177,7 @@ async function loadRuntimeMetadata(network: string, specVersion: string) {
 	});
 }
 
-function queryStore<T>(table: Table<T>, where: Record<string, any>, filter?: (it: T) => boolean) {
-	let collection = table.where(where);
-
+function applyFilter<T>(collection: Collection<T>, filter?: (it: T) => boolean) {
 	if (filter) {
 		collection = collection.filter(filter);
 	}
