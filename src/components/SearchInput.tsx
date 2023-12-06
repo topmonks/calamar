@@ -1,10 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import { FormHTMLAttributes, useCallback, useEffect, useState } from "react";
+import { FormHTMLAttributes, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button, FormGroup, TextField } from "@mui/material";
+import { Autocomplete, Button, FormGroup, TextField, debounce } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { css, Theme } from "@emotion/react";
 
+import { useAutocompleteSearchQuery } from "../hooks/useAutocompleteSearchQuery";
 import { Network } from "../model/network";
 import { getNetworks } from "../services/networksService";
 
@@ -17,7 +18,7 @@ const formGroupStyle = css`
 `;
 
 const networkSelectStyle = (theme: Theme) => css`
-	flex: 1 0 auto;
+	flex: 0 0 auto;
 
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
@@ -53,6 +54,18 @@ const networkSelectStyle = (theme: Theme) => css`
 	}
 `;
 
+const inputStyle = css`
+	flex: 1 0 auto;
+
+	.MuiOutlinedInput-root {
+		padding: 0 !important;
+
+		.MuiAutocomplete-input {
+			padding: 12px 16px;
+		}
+	}
+`;
+
 const textFieldStyle = css`
 	.MuiInputBase-root {
 		border-radius: 0;
@@ -68,6 +81,25 @@ const textFieldStyle = css`
 			}
 		}
 	}
+`;
+
+const autocompleteNameStyle = css`
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 16px;
+	font-size: 14px;
+`;
+
+const autocompleteTypeStyle = css`
+	margin-left: auto;
+	flex: 0 0 auto;
+	font-size: 12px;
+	opacity: .75;
+	border: solid 1px gray;
+	border-radius: 8px;
+	padding: 0 4px;
+	background-color: rgba(0, 0, 0, .025);
 `;
 
 const buttonStyle = (theme: Theme) => css`
@@ -99,6 +131,14 @@ const buttonStyle = (theme: Theme) => css`
 	}
 `;
 
+function storeNetworks(networks: Network[]) {
+	localStorage.setItem("networks", JSON.stringify(networks.map(it => it.name)));
+}
+
+function loadNetworks() {
+	return getNetworks(JSON.parse(localStorage.getItem("networks") || "[]"));
+}
+
 export type SearchInputProps = FormHTMLAttributes<HTMLFormElement> & {
 	persist?: boolean;
 	defaultNetworks?: Network[];
@@ -109,13 +149,15 @@ function SearchInput(props: SearchInputProps) {
 
 	const [qs] = useSearchParams();
 
-	const [networks, setNetworks] = useState<Network[]>(defaultNetworks || getNetworks(qs.getAll("network") || []));
-	const [query, setQuery] = useState<string>(qs.get("query") || "");
-
 	const navigate = useNavigate();
 
-	const storeNetworks = (networks: Network[]) => localStorage.setItem("networks", JSON.stringify(networks.map(it => it.name)));
-	const loadNetworks = () => getNetworks(JSON.parse(localStorage.getItem("networks") || "[]"));
+	const [networks, setNetworks] = useState<Network[]>(defaultNetworks || getNetworks(qs.getAll("network") || []));
+	const [query, setQuery] = useState<string>(qs.get("query") || "");
+	const [autocompleteQuery, _setAutocompleteQuery] = useState<string>(query || "");
+
+	const setAutocompleteQuery = useMemo(() => debounce(_setAutocompleteQuery, 250), []);
+
+	const autocompleteSuggestions = useAutocompleteSearchQuery(autocompleteQuery, networks);
 
 	const handleNetworkSelect = useCallback((networks: Network[], isUserAction: boolean) => {
 		if (isUserAction && persist) {
@@ -125,6 +167,11 @@ function SearchInput(props: SearchInputProps) {
 
 		setNetworks(networks);
 	}, [persist]);
+
+	const handleQueryChange = useCallback((ev: any, value: string) => {
+		setQuery(value);
+		setAutocompleteQuery(value);
+	}, []);
 
 	const handleSubmit = useCallback((ev: any) => {
 		ev.preventDefault();
@@ -166,13 +213,35 @@ function SearchInput(props: SearchInputProps) {
 					value={networks}
 					multiselect
 				/>
-				<TextField
-					css={textFieldStyle}
-					fullWidth
-					id="search"
-					onChange={(e) => setQuery(e.target.value)}
-					placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
-					value={query}
+				<Autocomplete
+					css={inputStyle}
+					freeSolo
+					includeInputInList
+					autoComplete
+					disableClearable
+					options={autocompleteSuggestions.data || []}
+					filterOptions={it => it}
+					inputValue={query}
+					onInputChange={handleQueryChange}
+					renderOption={(props, option) => (
+						<li {...props}>
+							<div css={autocompleteNameStyle}>
+								{option.label.slice(0, option.highlight[0])}
+								<strong>{option.label.slice(option.highlight[0], option.highlight[1])}</strong>
+								{option.label.slice(option.highlight[1])}
+							</div>
+							<div css={autocompleteTypeStyle}>{option.type}</div>
+						</li>
+					)}
+					renderInput={(params) =>
+						<TextField
+							{...params}
+							css={textFieldStyle}
+							fullWidth
+							id="search"
+							placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
+						/>
+					}
 				/>
 				<Button
 					css={buttonStyle}

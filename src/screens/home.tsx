@@ -109,8 +109,7 @@ const searchInputStyle = (theme: Theme) => css`
 	flex: 1 1 auto;
 
 	.MuiInputBase-root {
-		.MuiInputBase-input,
-		.MuiSelect-select {
+		&.MuiOutlinedInput-root .MuiAutocomplete-input {
 			padding: 16px 24px;
 		}
 	}

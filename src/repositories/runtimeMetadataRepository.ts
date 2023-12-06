@@ -22,12 +22,12 @@ export class RuntimeMetadataRepository extends Dexie {
 
 		this.version(1).stores({
 			specs: "[network+specVersion]",
-			pallets: "[network+specVersion+name],[network+specVersion]",
-			calls: "[network+specVersion+pallet+name],[network+specVersion+pallet]",
-			events: "[network+specVersion+pallet+name],[network+specVersion+pallet]",
+			pallets: "[network+specVersion+name],[network+specVersion],name",
+			calls: "[network+specVersion+pallet+name],[network+specVersion+pallet],name",
+			events: "[network+specVersion+pallet+name],[network+specVersion+pallet],name",
 			constants: "[network+specVersion+pallet+name],[network+specVersion+pallet]",
 			storages: "[network+specVersion+pallet+name],[network+specVersion+pallet]",
-			errors: "[network+specVersion+pallet+name],[network+specVersion+pallet]"
+			errors: "[network+specVersion+pallet+name],[network+specVersion+pallet]",
 		});
 	}
 }
