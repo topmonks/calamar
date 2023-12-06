@@ -205,7 +205,7 @@ function SearchInput(props: SearchInputProps) {
 	}, [persist]);
 
 	return (
-		<form {...restProps} onSubmit={handleSubmit}>
+		<form {...restProps} onSubmit={handleSubmit} data-test="search-input">
 			<FormGroup row css={formGroupStyle}>
 				<NetworkSelect
 					css={networkSelectStyle}

@@ -213,7 +213,7 @@ export const HomePage = () => {
 						persist
 					/>
 				</div>
-				<div css={networksStyle}>
+				<div css={networksStyle} data-test="networks">
 					{networkGroups.map((group) =>
 						<Card css={networksGroupStyle} key={group.relayChainNetwork?.name || "other"}>
 							<div css={newtorkGroupTitleStyle}>

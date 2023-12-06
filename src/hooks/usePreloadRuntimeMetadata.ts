@@ -7,6 +7,10 @@ export function usePreloadRuntimeMetadata() {
 	const [progress, setProgress] = useState<number>(localStorage.getItem("runtime-metadata-preloaded") ? 100 : 0);
 
 	useEffect(() => {
+		if (localStorage.getItem("skip-runtime-metadata-preload")) {
+			return;
+		}
+
 		Promise.allSettled(getNetworks().map(async (it) => {
 			try {
 				const specVersion = await getLatestRuntimeSpecVersion(it.name);
