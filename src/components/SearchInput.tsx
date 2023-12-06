@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { FormHTMLAttributes, useCallback, useEffect, useMemo, useState } from "react";
+import { FormHTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Autocomplete, Button, FormGroup, TextField, debounce } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -10,6 +10,11 @@ import { Network } from "../model/network";
 import { getNetworks } from "../services/networksService";
 
 import { NetworkSelect } from "./NetworkSelect";
+
+const formStyle = css`
+	position: relative;
+	text-align: left;
+`;
 
 const formGroupStyle = css`
 	flex-direction: row;
@@ -48,7 +53,7 @@ const networkSelectStyle = (theme: Theme) => css`
 			min-width: 0;
 		}
 
-		.MuiListItemText-root {
+		> span {
 			display: none;
 		}
 	}
@@ -88,7 +93,6 @@ const autocompleteNameStyle = css`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding-right: 16px;
-	font-size: 14px;
 `;
 
 const autocompleteTypeStyle = css`
@@ -151,6 +155,8 @@ function SearchInput(props: SearchInputProps) {
 
 	const navigate = useNavigate();
 
+	const formRef = useRef<HTMLFormElement>(null);
+
 	const [networks, setNetworks] = useState<Network[]>(defaultNetworks || getNetworks(qs.getAll("network") || []));
 	const [query, setQuery] = useState<string>(qs.get("query") || "");
 	const [autocompleteQuery, _setAutocompleteQuery] = useState<string>(query || "");
@@ -205,35 +211,46 @@ function SearchInput(props: SearchInputProps) {
 	}, [persist]);
 
 	return (
-		<form {...restProps} onSubmit={handleSubmit} data-test="search-input">
-			<FormGroup row css={formGroupStyle}>
-				<NetworkSelect
-					css={networkSelectStyle}
-					onChange={handleNetworkSelect}
-					value={networks}
-					multiselect
-				/>
-				<Autocomplete
-					css={inputStyle}
-					freeSolo
-					includeInputInList
-					autoComplete
-					disableClearable
-					options={autocompleteSuggestions.data || []}
-					filterOptions={it => it}
-					inputValue={query}
-					onInputChange={handleQueryChange}
-					renderOption={(props, option) => (
-						<li {...props}>
-							<div css={autocompleteNameStyle}>
-								{option.label.slice(0, option.highlight[0])}
-								<strong>{option.label.slice(option.highlight[0], option.highlight[1])}</strong>
-								{option.label.slice(option.highlight[1])}
-							</div>
-							<div css={autocompleteTypeStyle}>{option.type}</div>
-						</li>
-					)}
-					renderInput={(params) =>
+		<form {...restProps} css={formStyle} onSubmit={handleSubmit} data-test="search-input" ref={formRef}>
+			<Autocomplete
+				css={inputStyle}
+				freeSolo
+				includeInputInList
+				autoComplete
+				disableClearable
+				options={autocompleteSuggestions.data || []}
+				disablePortal
+				fullWidth
+				filterOptions={it => it}
+				inputValue={query}
+				onInputChange={handleQueryChange}
+				renderOption={(props, option) => (
+					<li {...props}>
+						<div css={autocompleteNameStyle}>
+							{option.label.slice(0, option.highlight[0])}
+							<strong>{option.label.slice(option.highlight[0], option.highlight[1])}</strong>
+							{option.label.slice(option.highlight[1])}
+						</div>
+						<div css={autocompleteTypeStyle}>{option.type}</div>
+					</li>
+				)}
+				componentsProps={{
+					popper: {
+						anchorEl: formRef.current,
+						placement: "bottom-start",
+						style: {
+							width: "100%"
+						}
+					}
+				}}
+				renderInput={(params) =>
+					<FormGroup row css={formGroupStyle}>
+						<NetworkSelect
+							css={networkSelectStyle}
+							onChange={handleNetworkSelect}
+							value={networks}
+							multiselect
+						/>
 						<TextField
 							{...params}
 							css={textFieldStyle}
@@ -241,20 +258,20 @@ function SearchInput(props: SearchInputProps) {
 							id="search"
 							placeholder="Extrinsic hash / account address / block hash / block height / extrinsic name / event name"
 						/>
-					}
-				/>
-				<Button
-					css={buttonStyle}
-					onClick={handleSubmit}
-					startIcon={<SearchIcon />}
-					type="submit"
-					variant="contained"
-					color="primary"
-					data-class="search-button"
-				>
-					<span className="text">Search</span>
-				</Button>
-			</FormGroup>
+						<Button
+							css={buttonStyle}
+							onClick={handleSubmit}
+							startIcon={<SearchIcon />}
+							type="submit"
+							variant="contained"
+							color="primary"
+							data-class="search-button"
+						>
+							<span className="text">Search</span>
+						</Button>
+					</FormGroup>
+				}
+			/>
 		</form>
 	);
 }
