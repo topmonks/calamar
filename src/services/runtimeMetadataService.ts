@@ -159,7 +159,7 @@ export async function normalizeErrorName(network: Network, name: string, specVer
 
 /*** PRIVATE ***/
 
-async function loadRuntimeMetadata(network: string, specVersion: string) {
+export async function loadRuntimeMetadata(network: string, specVersion: string) {
 	await self.navigator.locks.request(`runtime-metadata/${network}/${specVersion}`, async () => {
 		const spec = await runtimeMetadataRepository.specs.get([network, specVersion]);
 

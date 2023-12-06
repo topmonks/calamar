@@ -8,6 +8,7 @@ import SearchInput from "../components/SearchInput";
 import { Footer } from "../components/Footer";
 import { Card } from "../components/Card";
 import { ButtonLink } from "../components/ButtonLink";
+
 import { useNetworkGroups } from "../hooks/useNetworkGroups";
 
 const containerStyle = (theme: Theme) => css`
