@@ -20,9 +20,9 @@ export const WarningBar = () => {
 	return (
 		<>
 			<div css={barStyle}>
-				On January 31, Calamar and its datasources will become into <strong>self-hosted only mode</strong>.<br />
-				It is a reaction on recent event from Subsquid that Firesquid Archives and GiantSquid are being <strong>shut down</strong>.<br />
-				We appologize for any inconvenience.<br />
+				On January 31, Calamar and its data sources will go into self-hosted only mode.<br />
+				This is following the deprecation of Firesquid archives and its resulting effect on Giant Squid.<br />
+				We apologize for any inconvenience.
 				<Link to="#">Read more</Link>
 			</div>
 			<Outlet />
