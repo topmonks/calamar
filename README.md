@@ -7,9 +7,12 @@ This app is based on [Create React App](https://facebook.github.io/create-react-
 > [!WARNING]
 > Since January 31, Calamar and its data source can only be **self-hosted**.
 > This is following the deprecation of Firesquid archives and its resulting effect on Giant Squid.
-> We apologize for any inconvenience.
 >
 > Read more about [data sources](https://github.com/topmonks/calamar/wiki/Data-sources).
+>
+> *We are looking for a solution to make Calamar online and publicly available again, but we have no ETA yet.*
+>
+> We apologize for any inconvenience.
 
 ## Setup
 
