@@ -26,15 +26,12 @@ Edit `src/networks.json` and configure your network and its data source's endpoi
 <details>
 	<summary>Network configuration structure</summary>
 
-- **name**: network identificator used in url's etc (required, `"polkadot"`)
+- **name**: network identificator used in url etc. (required, `"polkadot"`)
 - **displayName**: name of the network to be displayed in the app (required, `"Polkadot"`)
 - **icon**: path to icon asset (required, e.g. `"/assets/network-icons/polkadot.svg"`)
 - **color**: color associated with the network (optional, e.g. `"#e6007a"`)
-- **website**: website of the network (optional, e.g. `"https://polkadot.network/"`)
-- **parachainId**: id of the parachaing (optional, e.g. `0`)
-- **relayChain**: `name` of relay chain network (optional, e.g. `"polkadot"`)
 - **prefix**: SS58 prefix (required, e.g. `0`)
-- **decimals**: number of decimal for the network's symbol (required, e.g. `10`)
+- **decimals**: number of decimals for the network's symbol (required, e.g. `10`)
 - **symbol**: network's symbol (required, `"DOT"`)
 - **squids**:
 	- **archive**: GraphQL API explorer of the Firesquid archive (required, e.g. `"https://polkadot.explorer.subsquid.io/graphql"`)
