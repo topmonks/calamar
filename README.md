@@ -4,13 +4,6 @@ Calamar is a block explorer for Polkadot, Kusama and their parachains. The explo
 
 This app is based on [Create React App](https://facebook.github.io/create-react-app/docs/getting-started).
 
-> [!WARNING]
-> Since January 31, Calamar and its data source can only be **self-hosted**.
-> This is following the deprecation of Firesquid archives and its resulting effect on Giant Squid.
-> We apologize for any inconvenience.
->
-> To setup data sources follow this guide.
-
 ## Setup
 
 Clone the repo and install the NPM dependencies.
@@ -22,28 +15,6 @@ $ npm install
 ```
 
 Edit `src/networks.json` and configure your network and its data source's endpoints.
-
-<details>
-	<summary>Network configuration structure</summary>
-
-- **name**: network identificator used in url's etc (required, `"polkadot"`)
-- **displayName**: name of the network to be displayed in the app (required, `"Polkadot"`)
-- **icon**: path to icon asset (required, e.g. `"/assets/network-icons/polkadot.svg"`)
-- **color**: color associated with the network (optional, e.g. `"#e6007a"`)
-- **website**: website of the network (optional, e.g. `"https://polkadot.network/"`)
-- **parachainId**: id of the parachaing (optional, e.g. `0`)
-- **relayChain**: `name` of relay chain network (optional, e.g. `"polkadot"`)
-- **prefix**: SS58 prefix (required, e.g. `0`)
-- **decimals**: number of decimal for the network's symbol (required, e.g. `10`)
-- **symbol**: network's symbol (required, `"DOT"`)
-- **squids**:
-	- **archive**: GraphQL API explorer of the Firesquid archive (required, e.g. `"https://polkadot.explorer.subsquid.io/graphql"`)
-	- **explorer**: GiantSquid explorer squid (optional, but highly recommended, e.g. `"https://squid.subsquid.io/gs-explorer-polkadot/graphql"`)
-	- **main**: GiantSquid main squid (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
-	- **identites**: GiantSquid main squid if it contains indentity data (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
-	- **stats**: GianSquid stats squid (optional, e.g. `"https://squid.subsquid.io/gs-stats-polkadot/graphql"`)
-- **coinGeckoId**: CoinGecko network ID to fetch USD values (optional, `"polkadot"`)
-</details>
 
 ## Run locally
 
