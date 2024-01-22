@@ -10,6 +10,7 @@ import { Card } from "../components/Card";
 import { ButtonLink } from "../components/ButtonLink";
 
 import { useNetworkGroups } from "../hooks/useNetworkGroups";
+import { useNetworks } from "../hooks/useNetworks";
 
 const containerStyle = (theme: Theme) => css`
 	--content-min-height: 900px;
@@ -130,33 +131,25 @@ const networksStyle = css`
 	margin-top: 64px;
 	margin-bottom: 48px;
 	padding: 0 16px;
+
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: center;
 `;
 
-const networksGroupStyle = (theme: Theme) => css`
-	margin: 24px 0;
-	padding: 16px;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, auto));
-	gap: 16px;
+const networkStyle = (theme: Theme) => css`
+	margin: 0;
+	padding: 8px;
+
+	width: 100%;
+
+	${theme.breakpoints.up("sm")} {
+		width: 230px;
+	}
 
 	${theme.breakpoints.up("md")} {
-		padding: 16px;
-	}
-`;
-
-const newtorkGroupTitleStyle = css`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	font-size: 18px;
-	font-weight: 700;
-	opacity: .75;
-
-	div {
-		font-size: 16px;
-		font-weight: 400;
+		padding: 8px;
 	}
 `;
 
@@ -182,12 +175,6 @@ const networkButtonStyle = css`
 		margin-right: 12px;
 		margin-left: 4px;
 	}
-
-	&[data-network=polkadot],
-	&[data-network=kusama] {
-		grid-row-start: 2;
-		grid-row-end: 4;
-	}
 `;
 
 const footerStyle = css`
@@ -199,7 +186,7 @@ const footerStyle = css`
 `;
 
 export const HomePage = () => {
-	const networkGroups = useNetworkGroups();
+	const networks = useNetworks();
 
 	return (
 		<div css={containerStyle}>
@@ -214,20 +201,12 @@ export const HomePage = () => {
 					/>
 				</div>
 				<div css={networksStyle} data-test="networks">
-					{networkGroups.map((group) =>
-						<Card css={networksGroupStyle} key={group.relayChainNetwork?.name || "other"}>
-							<div css={newtorkGroupTitleStyle}>
-								{group.relayChainNetwork?.displayName || "Other"}
-								{group.relayChainNetwork && <div>and parachains</div>}
-							</div>
-							{group.networks.map(network =>
-								network && (
-									<ButtonLink to={`/${network.name}`} key={network.name} css={networkButtonStyle} data-network={network.name}>
-										<img src={network.icon} />
-										{network.displayName}
-									</ButtonLink>
-								)
-							)}
+					{networks.map((network) =>
+						<Card css={networkStyle} key={network.name}>
+							<ButtonLink to={`/${network.name}`} key={network.name} css={networkButtonStyle} data-network={network.name}>
+								<img src={network.icon} />
+								{network.displayName}
+							</ButtonLink>
 						</Card>
 					)}
 				</div>
