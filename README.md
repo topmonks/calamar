@@ -9,7 +9,7 @@ This app is based on [Create React App](https://facebook.github.io/create-react-
 > This is following the deprecation of Firesquid archives and its resulting effect on Giant Squid.
 > We apologize for any inconvenience.
 >
-> To setup data sources follow this guide.
+> Read more about [data sources](https://github.com/topmonks/calamar/wiki/Data-sources).
 
 ## Setup
 
@@ -21,7 +21,7 @@ $ cd calamar
 $ npm install
 ```
 
-Edit `src/networks.json` and configure your network and its data source's endpoints.
+Edit `src/networks.json` and configure your network and its [data source's](https://github.com/topmonks/calamar/wiki/Data-sources) endpoints.
 
 <details>
 	<summary>Network configuration structure</summary>
@@ -34,11 +34,11 @@ Edit `src/networks.json` and configure your network and its data source's endpoi
 - **decimals**: number of decimals for the network's symbol (required, e.g. `10`)
 - **symbol**: network's symbol (required, `"DOT"`)
 - **squids**:
-	- **archive**: GraphQL API explorer of the Firesquid archive (required, e.g. `"https://polkadot.explorer.subsquid.io/graphql"`)
-	- **explorer**: GiantSquid explorer squid (optional, but highly recommended, e.g. `"https://squid.subsquid.io/gs-explorer-polkadot/graphql"`)
-	- **main**: GiantSquid main squid (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
-	- **identites**: GiantSquid main squid if it contains indentity data (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
-	- **stats**: GianSquid stats squid (optional, e.g. `"https://squid.subsquid.io/gs-stats-polkadot/graphql"`)
+	- **archive**: GraphQL API explorer of the [Firesquid archive](https://github.com/topmonks/calamar/wiki/Data-sources#firesquid-archive) (required, e.g. `"https://polkadot.explorer.subsquid.io/graphql"`)
+	- **explorer**: [GiantSquid explorer](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-explorer) (optional, but highly recommended, e.g. `"https://squid.subsquid.io/gs-explorer-polkadot/graphql"`)
+	- **main**: [GiantSquid main](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-main) (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
+	- **identites**: [GiantSquid main](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-main) if it provides indentity data (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
+	- **stats**: [GianSquid stats](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-stats) (optional, e.g. `"https://squid.subsquid.io/gs-stats-polkadot/graphql"`)
 - **coinGeckoId**: CoinGecko network ID to fetch USD values (optional, `"polkadot"`)
 </details>
 
