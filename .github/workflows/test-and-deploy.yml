@@ -58,14 +58,14 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: test-screenshots-${{ matrix.shardIndex }}
+          name: test-screenshots
           path: test/screenshots
           retention-days: 14
       - name: Upload test report artifact
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: test-blob-reports-${{ matrix.shardIndex }}
+          name: test-blob-reports
           path: test/report/
           retention-days: 14
   test-report:
@@ -82,17 +82,16 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/install-dependencies
       - name: Download test screenshots artifact
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v3
         with:
-          pattern: test-screenshots-*
+          name: test-screenshots
           path: test/screenshots
           merge-multiple: true
       - name: Download test report artifact
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v3
         with:
-          pattern: test-blob-reports-*
+          name: test-blob-reports
           path: test/blob-reports
-          merge-multiple: true
       - name: Merge blob reports into HTML report
         run: npx playwright merge-reports --config playwright.merge-reports.config.ts ./test/blob-reports
       - name: Upload Argos screenshots
