@@ -1,14 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import { useCallback, useState } from "react";
-import { Button, ButtonProps, Checkbox, Divider, ListItem, ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Button, ButtonProps, Checkbox, Divider, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { BlurOn as AllIcon, ArrowDropDown } from "@mui/icons-material";
-import { Theme, css } from "@emotion/react";
+import { css } from "@emotion/react";
 
-import { useNetworkGroups } from "../hooks/useNetworkGroups";
 import { Network } from "../model/network";
 
-import { Link } from "./Link";
+import { useNetworks } from "../hooks/useNetworks";
 
 const buttonStyle = css`
 	display: flex;
@@ -25,22 +24,6 @@ const buttonStyle = css`
 
 	&, &:hover {
 		background-color: ${grey[100]};
-	}
-`;
-
-const headerStyle = css`
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-
-	padding-top: 12px;
-	padding-bottom: 20px;
-
-	line-height: 1.2;
-
-	a {
-		font-weight: 400;
-		cursor: pointer;
 	}
 `;
 
@@ -95,60 +78,52 @@ interface NetworkSelectProps extends Omit<ButtonProps, "value" | "onChange"> {
 export const NetworkSelect = (props: NetworkSelectProps) => {
 	const { value, multiselect, onChange, ...buttonProps } = props;
 
-	const networkGroups = useNetworkGroups();
+	const networks = useNetworks();
 
 	const [anchorEl, setAnchorEl] = useState<HTMLElement>();
-
-	const open = !!anchorEl;
-
-	const setSelection = useCallback((networks: Network[]) => {
-		const newValue = [];
-
-		for (const networkGroup of networkGroups) {
-			for (const network of networkGroup.networks) {
-				if (networks.includes(network)) {
-					newValue.push(network);
-				}
-			}
-		}
-
-		onChange?.(newValue, true);
-		handleClose();
-	}, [onChange]);
-
-	const addSelection = useCallback((networks: Network[]) => {
-		const newValue = [];
-
-		for (const networkGroup of networkGroups) {
-			for (const network of networkGroup.networks) {
-				if (networks.includes(network) || value.includes(network)) {
-					newValue.push(network);
-				}
-			}
-		}
-
-		onChange?.(newValue, true);
-	}, [value, networkGroups, onChange]);
-
-	const removeSelection = useCallback((networks: Network[]) => {
-		const newValue = [];
-
-		for (const networkGroup of networkGroups) {
-			for (const network of networkGroup.networks) {
-				if (value.includes(network) && !networks.includes(network)) {
-					newValue.push(network);
-				}
-			}
-		}
-
-		onChange?.(newValue, true);
-	}, [value, networkGroups, onChange]);
 
 	const handleClose = useCallback(() => setAnchorEl(undefined), []);
 
 	const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
 	}, []);
+
+	const setSelection = useCallback((selected: Network[]) => {
+		const newValue = [];
+
+		for (const network of networks) {
+			if (selected.includes(network)) {
+				newValue.push(network);
+			}
+		}
+
+		onChange?.(newValue, true);
+		handleClose();
+	}, [networks, onChange]);
+
+	const addSelection = useCallback((selected: Network[]) => {
+		const newValue = [];
+
+		for (const network of networks) {
+			if (selected.includes(network) || value.includes(network)) {
+				newValue.push(network);
+			}
+		}
+
+		onChange?.(newValue, true);
+	}, [value, networks, onChange]);
+
+	const removeSelection = useCallback((selected: Network[]) => {
+		const newValue = [];
+
+		for (const network of networks) {
+			if (value.includes(network) && !selected.includes(network)) {
+				newValue.push(network);
+			}
+		}
+
+		onChange?.(newValue, true);
+	}, [value, networks, onChange]);
 
 	const handleItemClick = useCallback((network: Network, event: React.MouseEvent) => {
 		if ("key" in event && event.key === " ") {
@@ -164,8 +139,15 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 		setSelection([network]);
 	}, [value, addSelection, setSelection]);
 
-	console.log("value", value);
+	useEffect(() => {
+		if(value.length === 0 && networks.length === 1) {
+			onChange([networks[0]!], false);
+		}
+	}, [networks, value]);
 
+	const open = !!anchorEl;
+
+	console.log("value", value);
 
 	return (
 		<>
@@ -207,7 +189,7 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 					"aria-labelledby": "basic-button",
 				}}
 			>
-				{multiselect && [
+				{networks.length > 1 && multiselect && [
 					<MenuItem
 						css={menuItemStyle}
 						selected={value.length === 0}
@@ -221,54 +203,31 @@ export const NetworkSelect = (props: NetworkSelectProps) => {
 					</MenuItem>,
 					<Divider key="all-divider" />
 				]}
-				{networkGroups.map((group, index) => {
-					const allSelected = group.networks.every(it => value.includes(it));
-
-					return [
-						index > 0 && <Divider key={`divider-${index}`} />,
-						<ListSubheader css={headerStyle} key={`subheader-${index}`}>
-							<div>
-								{group.relayChainNetwork?.displayName || "Other"}{" "}
-								{group.relayChainNetwork && <><br /><span style={{fontSize: 12}}>and parachains</span></>}
-							</div>
-							{multiselect && (
-								<Link
-									onClick={() => allSelected
-										? removeSelection(group.networks)
-										: addSelection(group.networks)
-									}
-								>
-									{allSelected ? "deselect" : "select"} all
-								</Link>
-							)}
-						</ListSubheader>,
-						group.networks.map((network) => (
-							<MenuItem
-								css={menuItemStyle}
-								selected={value.includes(network)}
-								onClick={(ev) => handleItemClick(network, ev)}
-								key={network.name}
-							>
-								<ListItemIcon>
-									<img
-										src={network.icon}
-										css={iconStyle}
-									/>
-								</ListItemIcon>
-								<ListItemText>{network.displayName}</ListItemText>
-								{multiselect && (
-									<Checkbox
-										css={checkboxStyle}
-										checked={value.includes(network)}
-										onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
-										onClick={(ev) => ev.stopPropagation()}
-										disableRipple
-									/>
-								)}
-							</MenuItem>
-						))
-					];
-				})}
+				{networks.map((network) => (
+					<MenuItem
+						css={menuItemStyle}
+						selected={value.includes(network)}
+						onClick={(ev) => handleItemClick(network, ev)}
+						key={network.name}
+					>
+						<ListItemIcon>
+							<img
+								src={network.icon}
+								css={iconStyle}
+							/>
+						</ListItemIcon>
+						<ListItemText>{network.displayName}</ListItemText>
+						{networks.length > 1 && multiselect && (
+							<Checkbox
+								css={checkboxStyle}
+								checked={value.includes(network)}
+								onChange={(ev, checked) => checked ? addSelection([network]) : removeSelection([network])}
+								onClick={(ev) => ev.stopPropagation()}
+								disableRipple
+							/>
+						)}
+					</MenuItem>
+				))}
 			</Menu>
 		</>
 	);

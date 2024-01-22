@@ -4,6 +4,16 @@ Calamar is a block explorer for Polkadot, Kusama and their parachains. The explo
 
 This app is based on [Create React App](https://facebook.github.io/create-react-app/docs/getting-started).
 
+> [!WARNING]
+> Since January 31, Calamar and its data source can only be **self-hosted**.
+> This is following the deprecation of Firesquid archives and its resulting effect on Giant Squid.
+>
+> Read more about [data sources](https://github.com/topmonks/calamar/wiki/Data-sources).
+>
+> *We are looking for a solution to make Calamar online and publicly available again, but we have no ETA yet.*
+>
+> We apologize for any inconvenience.
+
 ## Setup
 
 Clone the repo and install the NPM dependencies.
@@ -13,6 +23,27 @@ $ git clone https://github.com/topmonks/calamar
 $ cd calamar
 $ npm install
 ```
+
+Edit `src/networks.json` and configure your network and its [data source's](https://github.com/topmonks/calamar/wiki/Data-sources) endpoints.
+
+<details>
+	<summary>Network configuration structure</summary>
+
+- **name**: network identificator used in url etc. (required, `"polkadot"`)
+- **displayName**: name of the network to be displayed in the app (required, `"Polkadot"`)
+- **icon**: path to icon asset (required, e.g. `"/assets/network-icons/polkadot.svg"`)
+- **color**: color associated with the network (optional, e.g. `"#e6007a"`)
+- **prefix**: SS58 prefix (required, e.g. `0`)
+- **decimals**: number of decimals for the network's symbol (required, e.g. `10`)
+- **symbol**: network's symbol (required, `"DOT"`)
+- **squids**:
+	- **archive**: GraphQL API explorer of the [Firesquid archive](https://github.com/topmonks/calamar/wiki/Data-sources#firesquid-archive) (required, e.g. `"https://polkadot.explorer.subsquid.io/graphql"`)
+	- **explorer**: [GiantSquid explorer](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-explorer) (optional, but highly recommended, e.g. `"https://squid.subsquid.io/gs-explorer-polkadot/graphql"`)
+	- **main**: [GiantSquid main](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-main) (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
+	- **identites**: [GiantSquid main](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-main) if it provides indentity data (optional, e.g. `"https://squid.subsquid.io/gs-main-polkadot/graphql"`)
+	- **stats**: [GianSquid stats](https://github.com/topmonks/calamar/wiki/Data-sources#giantsquid-stats) (optional, e.g. `"https://squid.subsquid.io/gs-stats-polkadot/graphql"`)
+- **coinGeckoId**: CoinGecko network ID to fetch USD values (optional, `"polkadot"`)
+</details>
 
 ## Run locally
 
